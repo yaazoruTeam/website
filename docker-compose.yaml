@@ -1,0 +1,53 @@
+services:
+  backend:
+    image: node:20
+    container_name: node-backend
+    working_dir: /app
+    volumes:
+      - ./lib/backend/src:/app/src
+      - ./lib/backend/package.json:/app/package.json
+      - ./lib/backend/tsconfig.json:/app/tsconfig.json
+    ports:
+      - "3006:3006"
+    command: sh -c "npm install && PORT=3006 npm run dev"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:password@database:5432/mydb
+    depends_on:
+      - database
+    networks:
+      - app-network
+  frontend:
+    image: node:20
+    container_name: react-frontend
+    working_dir: /app
+    volumes:
+      - ./lib/frontend/public:/app/public
+      - ./lib/frontend/src:/app/src
+      - ./lib/frontend/package.json:/app/package.json
+      - ./lib/frontend/tsconfig.json:/app/tsconfig.json
+    ports:
+      - "3005:3005"
+    command: sh -c "npm install && PORT=3005 npm start"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+  database:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+volumes:
+  db-data:
+networks:
+  app-network:
+    driver: bridge
