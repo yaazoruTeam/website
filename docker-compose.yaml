@@ -12,11 +12,17 @@ services:
     command: sh -c "npm install && PORT=3006 npm run dev"
     environment:
       - NODE_ENV=development
+      - POSTGRES_DB=yaazoru
+      - DB_HOST=yaazoru-internal
+      - DB_PORT=5432
+      - DB_USER=yaazoru
+      - DB_NAME=yaazoru
+      - DB_PASSWORD=password
       - DATABASE_URL=postgres://postgres:password@database:5432/mydb
     depends_on:
       - database
     networks:
-      - app-network
+      - yaazoru-internal
   frontend:
     image: node:20
     container_name: react-frontend
@@ -32,22 +38,22 @@ services:
     environment:
       - NODE_ENV=development
     networks:
-      - app-network
+      - yaazoru-internal
   database:
     image: postgres:15
     container_name: postgres-db
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: yaazoru
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      POSTGRES_DB: yaazoru
     ports:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - yaazoru-internal
 volumes:
   db-data:
 networks:
-  app-network:
+  yaazoru-internal:
     driver: bridge
