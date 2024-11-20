@@ -10,6 +10,7 @@ const connection = knex({
         password: process.env.DB_PASSWORD,
         ssl: false,
     },
+    pool: { min: 0, max: 7 },
 });
 
-export default connection;
+export default connection ;

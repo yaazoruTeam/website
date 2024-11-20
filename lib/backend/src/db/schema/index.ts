@@ -1,8 +1,10 @@
-import { createCostumerSchema } from "./costumer"
+import { createCustomerSchema } from "./customer"
 import connection from "./connection";
 
-function createSchema() {
-    createCostumerSchema(connection);
+const createSchema = () => {
+    console.log("create schema");
+    
+    createCustomerSchema(connection);
 }
 
 export {
