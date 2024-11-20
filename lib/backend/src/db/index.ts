@@ -1,6 +1,6 @@
 
-import * as Costumer from "./Costumer";
+import * as Customer from "./Customer";
 
 export {
-    Costumer
+    Customer
 }

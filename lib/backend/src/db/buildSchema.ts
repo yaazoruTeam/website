@@ -1,3 +1,5 @@
 import { createSchema } from "./schema"
 
-createSchema()
+// checkAndCreateDatabase();
+createSchema();
+
