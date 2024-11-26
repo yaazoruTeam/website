@@ -1,10 +1,13 @@
 import { createCustomerSchema } from "./customer"
-import connection from "./connection";
 
-const createSchema = () => {
-    console.log("create schema");
-    
-    createCustomerSchema(connection);
+const createSchema = async() => {
+    console.log("Creating schema...");
+    try {
+        await createCustomerSchema();
+        console.log("Schema created successfully");
+    } catch (err) {
+        console.error("Error creating schema", err);
+    }
 }
 
 export {
