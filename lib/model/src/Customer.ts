@@ -20,27 +20,60 @@ function sanitize(customer: Customer): Customer {
         /^\d{9,15}$/.test(phone);
 
     if (customer.id && !isString(customer.id))
-        throw new Error('Invalid or missing "id".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "id".'
+        };
     if (!isString(customer.first_name) || customer.first_name.trim() === '')
-        throw new Error('Invalid or missing "first_name".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "first_name".'
+        };
     if (!isString(customer.last_name) || customer.last_name.trim() === '')
-        throw new Error('Invalid or missing "last_name".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "last_name".'
+        };
     if (!isString(customer.id_number) || customer.id_number.trim() === '')
-        throw new Error('Invalid or missing "id_number".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "id_number".'
+        };
     if (!isString(customer.phone_number) || !isValidPhoneNumber(customer.phone_number))
-        throw new Error('Invalid or missing "phone_number". It must be a number between 9 and 15 digits.');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.'
+        };
     if (customer.additional_phone && (!isString(customer.additional_phone) || !isValidPhoneNumber(customer.additional_phone)))
-        throw new Error('Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.'
+        };
     if (!isString(customer.email) || !isValidEmail(customer.email))
-        throw new Error('Invalid or missing "email".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "email".'
+        };
     if (!isString(customer.city) || customer.city.trim() === '')
-        throw new Error('Invalid or missing "city".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "city".'
+        };
     if (!isString(customer.address1) || customer.address1.trim() === '')
-        throw new Error('Invalid or missing "address1".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "address1".'
+        };
     if (customer.address2 && !isString(customer.address2))
-        throw new Error('Invalid or missing "address2".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "address2".'
+        };
     if (!isString(customer.zipCode) || customer.zipCode.trim() === '')
-        throw new Error('Invalid or missing "zipCode".');
+        throw {
+            status: 400,
+            message: 'Invalid or missing "zipCode".'
+        };
 
     const newCustomer: Customer = {
         id: customer.id,
