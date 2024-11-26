@@ -1,6 +1,6 @@
 
 import * as Customer from "./Customer";
 
-export {
+export default {
     Customer
 }
