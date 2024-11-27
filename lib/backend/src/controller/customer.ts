@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import db from "../db"
-import { Customer, sanitize } from "../model/Customer";
+import db from "../db";
+import { Customer } from "@yaazoru/model";
 
 const createCustomer = async (req: Request, res: Response): Promise<void> => {
     try {
         const customerData = req.body;
-        const sanitized = sanitize(customerData, false);
-        const customers: Customer[] = await db.Customer.getCustomers();
+        const sanitized = Customer.sanitize(customerData, false);
+        const customers: Customer.Model[] = await db.Customer.getCustomers();
 
         const existingCustomer = customers?.find(customer => customer.email === sanitized.email || customer.id_number === sanitized.id_number);
         if (existingCustomer) {
@@ -64,8 +64,8 @@ const updateCustomer = async (req: Request, res: Response): Promise<void> => {
                 status: 400,
                 message: 'No body provaider'
             }
-        const sanitized = sanitize(req.body, true);
-        const customers: Customer[] = await db.Customer.getCustomers();
+        const sanitized = Customer.sanitize(req.body, true);
+        const customers: Customer.Model[] = await db.Customer.getCustomers();
         const existingCustomer = customers?.find(customer => customer.customer_id != sanitized.customer_id && (customer.email === sanitized.email || customer.id_number === sanitized.id_number));
         if (existingCustomer) {
             if (existingCustomer.email === sanitized.email) {
