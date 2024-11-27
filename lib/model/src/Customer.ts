@@ -1,5 +1,5 @@
-interface Customer {
-    id: string;
+interface Model {
+    customer_id: string;
     first_name: string;
     last_name: string;
     id_number: string;
@@ -12,14 +12,14 @@ interface Customer {
     zipCode: string
 }
 
-function sanitize(customer: Customer): Customer {
+function sanitize(customer: Model, hasId: boolean): Model {
     const isString = (value: any) => typeof value === 'string';
     const isValidEmail = (email: string) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isValidPhoneNumber = (phone: string) =>
         /^\d{9,15}$/.test(phone);
 
-    if (customer.id && !isString(customer.id))
+    if (hasId && (!customer.customer_id || !isString(customer.customer_id) || customer.customer_id.trim() === ''))
         throw {
             status: 400,
             message: 'Invalid or missing "id".'
@@ -75,8 +75,8 @@ function sanitize(customer: Customer): Customer {
             message: 'Invalid or missing "zipCode".'
         };
 
-    const newCustomer: Customer = {
-        id: customer.id,
+    const newCustomer: Model = {
+        customer_id: customer.customer_id,
         first_name: customer.first_name.trim(),
         last_name: customer.last_name.trim(),
         id_number: customer.id_number.trim(),
@@ -90,4 +90,4 @@ function sanitize(customer: Customer): Customer {
     };
     return newCustomer;
 }
-export { Customer, sanitize }
+export { Model, sanitize }

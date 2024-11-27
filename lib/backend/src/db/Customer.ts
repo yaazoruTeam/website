@@ -1,9 +1,9 @@
-import { Customer } from "../model/Customer";
+import { Customer } from "@yaazoru/model";
 import getConnection from "./connection";
 
 
 
-const createCustomer = async (customer: Customer) => {
+const createCustomer = async (customer: Customer.Model) => {
     const knex = getConnection();
     try {
         const [newCustomer] = await knex('yaazoru.customers')
@@ -26,7 +26,7 @@ const createCustomer = async (customer: Customer) => {
     };
 }
 
-const getCustomers = async (): Promise<Customer[]> => {
+const getCustomers = async (): Promise<Customer.Model[]> => {
     const knex = getConnection();
     try {
         return await knex.select().table('yaazoru.customers');
@@ -45,7 +45,7 @@ const getCustomerById = async (customer_id: string) => {
     };
 };
 
-const updateCustomer = async (customer_id: string, customer: Customer) => {
+const updateCustomer = async (customer_id: string, customer: Customer.Model) => {
     const knex = getConnection();
     try {
         const updateCustomer = await knex('yaazoru.customers')
