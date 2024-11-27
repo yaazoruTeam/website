@@ -6,16 +6,6 @@ const createCustomerSchema = async () => {
 
     const knex = getConnection();
     try {
-        const schemaExists = await knex('information_schema.schemata')
-            .select('schema_name')
-            .where('schema_name', '=', 'yaazoru');
-        if (schemaExists.length === 0) {
-            console.log('Schema "yaazoru" does not exist. Creating it now...');
-            await knex.schema.createSchema("yaazoru");
-            console.log('Schema "yaazoru" created successfully.');
-        } else {
-            console.log('Schema "yaazoru" already exists.');
-        }
         const tableExists = await knex.schema.withSchema("yaazoru").hasTable("customers");
         if (!tableExists) {
             console.log('Creating customer table...');
@@ -34,8 +24,6 @@ const createCustomerSchema = async () => {
                 // table.text("customer_notes");
             });
             console.log('Customer table created successfully.');
-
-
         }
         else {
             console.log("Customer table already exists. Skipping creation.");
