@@ -40,19 +40,13 @@ const getCustomers = async (req: Request, res: Response): Promise<void> => {
 };
 
 const getCustomerById = async (req: Request, res: Response): Promise<void> => {
-    console.log('get by id');
-
     try {
         if (!req.params.id)
             throw {
                 status: 400,
                 message: 'No ID provided'
             };
-        console.log(req.params.id);
-
         const customer = await db.Customer.getCustomerById(req.params.id);
-        console.log(customer);
-
         if (!customer) {
             res.status(404).json({ message: 'Customer not found' });
             return;
@@ -64,23 +58,31 @@ const getCustomerById = async (req: Request, res: Response): Promise<void> => {
 };
 
 const updateCustomer = async (req: Request, res: Response): Promise<void> => {
-    console.log('i in update');
-    
     try {
-        console.log('update');
-        
         if (!req.body)
             throw {
                 status: 400,
                 message: 'No body provaider'
             }
-        const sanitized = sanitize(req.body, false);
-        console.log('after sanitize');
-        console.log(sanitize);
-        
-        
-        await db.Customer.updateCustomer(req.params.id, sanitized);
-        res.status(200).json({ message: 'Customer updated successfully.' });
+        const sanitized = sanitize(req.body, true);
+        const customers: Customer[] = await db.Customer.getCustomers();
+        const existingCustomer = customers?.find(customer => customer.customer_id != sanitized.customer_id && (customer.email === sanitized.email || customer.id_number === sanitized.id_number));
+        if (existingCustomer) {
+            if (existingCustomer.email === sanitized.email) {
+                throw {
+                    status: 409,
+                    message: 'Email already exists',
+                };
+            }
+            if (existingCustomer.id_number === sanitized.id_number) {
+                throw {
+                    status: 409,
+                    message: 'ID number already exists',
+                };
+            }
+        }
+        const updateCustomer = await db.Customer.updateCustomer(req.params.id, sanitized);
+        res.status(200).json(updateCustomer);
     } catch (error: any) {
         handleError(res, error);
     }
@@ -93,8 +95,8 @@ const deleteCustomer = async (req: Request, res: Response): Promise<void> => {
                 status: 400,
                 message: 'No ID provided'
             };
-        await db.Customer.deleteCustomer(req.params.id);
-        res.status(200).json({ message: 'Customer deleted successfully.' });
+        const deleteCustomer = await db.Customer.deleteCustomer(req.params.id);
+        res.status(200).json(deleteCustomer);
     } catch (error: any) {
         handleError(res, error);
     }

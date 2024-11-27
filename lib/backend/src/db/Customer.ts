@@ -45,30 +45,30 @@ const getCustomerById = async (customer_id: string) => {
     };
 };
 
-const updateCustomer = async (id: string, customer: Customer) => {
+const updateCustomer = async (customer_id: string, customer: Customer) => {
     const knex = getConnection();
     try {
-        const result = await knex('yaazoru.customers')
-            .where({ id })
-            .update(customer);
-        if (result === 0) {
+        const updateCustomer = await knex('yaazoru.customers')
+            .where({ customer_id })
+            .update(customer)
+            .returning('*');
+        if (updateCustomer.length === 0) {
             throw { status: 404, message: 'Customer not found' };
         }
-        console.log(result);
-        
-        return result;
+        return updateCustomer[0];
     } catch (err) {
         throw err;
     };
 };
 
-const deleteCustomer = async (id: string) => {
+const deleteCustomer = async (customer_id: string) => {
     const knex = getConnection();
     try {
-        const result = await knex('yaazoru.customers').where({ id }).del();
-        if (result === 0) {
+        const deleteCustomer = await knex('yaazoru.customers').where({ customer_id }).del().returning('*');
+        if (deleteCustomer.length === 0) {
             throw { status: 404, message: 'Customer not found' };
-        }
+        }        
+        return deleteCustomer[0];
     } catch (err) {
         throw err;
     };
