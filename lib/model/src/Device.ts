@@ -8,9 +8,8 @@ interface Model {
 
 
 function sanitize(device: Model, hasId: boolean): Model {
-    const isString = (value: any) => typeof value === 'string';
 
-    if (hasId && (!device.device_id || !isString(device.device_id) || device.device_id.trim() === ''))
+    if (hasId && (!device.device_id ))
         throw {
             status: 400,
             message: 'Invalid or missing "id".'
