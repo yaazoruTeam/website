@@ -19,7 +19,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     const isValidPhoneNumber = (phone: string) =>
         /^\d{9,15}$/.test(phone);
 
-    if (hasId && (!customer.customer_id || !isString(customer.customer_id) || customer.customer_id.trim() === ''))
+    if (hasId && (!customer.customer_id))
         throw {
             status: 400,
             message: 'Invalid or missing "id".'
