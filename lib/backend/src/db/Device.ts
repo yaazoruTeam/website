@@ -94,7 +94,19 @@ const findDevice = async (criteria: { device_id?: string; SIM_number?: number; I
     }
 };
 
+const doesDeviceExist = async (device_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {        
+        const result = await knex('yaazoru.devices')
+            .select('device_id')
+            .where({ device_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
 
 export {
-    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice, findDevice
+    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice, findDevice, doesDeviceExist
 }

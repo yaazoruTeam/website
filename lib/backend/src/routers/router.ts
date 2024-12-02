@@ -1,6 +1,7 @@
-import { Router } from 'express';
+import { Router, ErrorRequestHandler } from 'express';
 import * as customersController from '../controller/customer';
 import * as devicesController from '../controller/device';
+import { errorHandler } from 'src/errorHandler';
 
 
 const router = Router();
@@ -17,6 +18,9 @@ router.get(`${ROUTE_PATH}/device`, devicesController.getDevices);
 router.get(`${ROUTE_PATH}/device/:id`, devicesController.getDeviceById);
 router.put(`${ROUTE_PATH}/device/:id`, devicesController.updateDevice);
 router.delete(`${ROUTE_PATH}/device/:id`, devicesController.deleteDevice);
+
+
+router.all('*', errorHandler)
 
 export {
     router,
