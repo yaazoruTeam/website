@@ -1,6 +1,7 @@
 import { createYaazoruSchema } from "./yaazoru"
 import { createCustomerSchema } from "./customer"
 import { createDeviceSchema } from "./device"
+import { createCustomerDeviceSchema } from "./customerDevice"
 
 
 const createSchema = async () => {
@@ -9,6 +10,7 @@ const createSchema = async () => {
         await createYaazoruSchema();
         await createCustomerSchema();
         await createDeviceSchema();
+        await createCustomerDeviceSchema();
         console.log("Schema created successfully");
     } catch (err) {
         console.error("Error creating schema", err);
