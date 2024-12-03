@@ -1,8 +1,8 @@
-import { Router, ErrorRequestHandler } from 'express';
+import { Router } from 'express';
 import * as customersController from '../controller/customer';
 import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
-import { errorHandler } from 'src/errorHandler';
+import { errorHandler } from '../errorHandler';
 
 
 const router = Router();

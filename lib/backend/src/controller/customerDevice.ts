@@ -5,8 +5,8 @@ import { CustomerDevice, HttpError } from "@yaazoru/model";
 const createCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         CustomerDevice.sanitizeBodyExisting(req);
-        const customerDeviceData = req.body;
-        const sanitized = CustomerDevice.sanitize(customerDeviceData, false);
+        const customerDeviceData: CustomerDevice.Model = req.body;
+        const sanitized:CustomerDevice.Model = CustomerDevice.sanitize(customerDeviceData, false);       
         await existingCustomerDevice(sanitized, false);
         const customerDevice = await db.CustomerDevice.createCustomerDevice(sanitized);
         res.status(201).json(customerDevice);
@@ -75,6 +75,22 @@ const deleteCustomerDevice = async (req: Request, res: Response, next: NextFunct
 
 const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasId: boolean) => {
     try {
+        const customerExist = await db.Customer.doesCustomerExist(customerDevice.customer_id);
+        if (!customerExist) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'customer does not exist.'
+            }
+            throw error;
+        }
+        const deviceExist = await db.Device.doesDeviceExist(customerDevice.device_id);
+        if (!deviceExist) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'device does not exist.'
+            }
+            throw error;
+        }
         let customerDeviceEx;
         if (hasId) {
             customerDeviceEx = await db.CustomerDevice.findCustomerDevice({
