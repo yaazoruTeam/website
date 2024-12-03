@@ -1,4 +1,4 @@
-import { Customer } from "@yaazoru/model";
+import { Customer } from "../model";
 import getConnection from "./connection";
 
 
