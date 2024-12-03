@@ -1,4 +1,4 @@
-import { Device } from "@yaazoru/model";
+import { Device } from "../model";
 import getConnection from "./connection";
 
 
@@ -68,33 +68,6 @@ const deleteDevice = async (device_id: string) => {
     };
 };
 
-const findDevice = async (criteria: { device_id?: string; SIM_number?: number; IMEI_1?: number; mehalcha_number?: number }) => {
-    const knex = getConnection();
-    try {
-        return await knex('yaazoru.devices')
-            .where(function () {
-                if (criteria.SIM_number) {
-                    this.orWhere({ SIM_number: criteria.SIM_number });
-                }
-                if (criteria.IMEI_1) {
-                    this.orWhere({ IMEI_1: criteria.IMEI_1 });
-                }
-                if (criteria.mehalcha_number) {
-                    this.orWhere({ mehalcha_number: criteria.mehalcha_number });
-                }
-            })
-            .andWhere(function () {
-                if (criteria.device_id) {
-                    this.whereNot({ device_id: criteria.device_id });
-                }
-            })
-            .first();
-    } catch (err) {
-        throw err;
-    }
-};
-
-
 export {
-    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice, findDevice
+    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice
 }

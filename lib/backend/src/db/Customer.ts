@@ -67,36 +67,13 @@ const deleteCustomer = async (customer_id: string) => {
         const deleteCustomer = await knex('yaazoru.customers').where({ customer_id }).del().returning('*');
         if (deleteCustomer.length === 0) {
             throw { status: 404, message: 'Customer not found' };
-        }
+        }        
         return deleteCustomer[0];
     } catch (err) {
         throw err;
     };
 };
 
-const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
-    const knex = getConnection();
-    try {
-        return await knex('yaazoru.customers')
-            .where(function () {
-                if (criteria.email) {
-                    this.orWhere({ email: criteria.email });
-                }
-                if (criteria.id_number) {
-                    this.orWhere({ id_number: criteria.id_number });
-                }
-            })
-            .andWhere(function () {
-                if (criteria.customer_id) {
-                    this.whereNot({ customer_id: criteria.customer_id });
-                }
-            })
-            .first();
-    } catch (err) {
-        throw err;
-    }
-};
-
 export {
-    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, findCustomer
+    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer
 }

@@ -1,13 +1,33 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import db from "../db";
-import { Device } from "@yaazoru/model";
-import { handleError } from '../middleware';
+import { Device } from "../model";
 
 const createDevice = async (req: Request, res: Response): Promise<void> => {
     try {
         const deviceData = req.body;
         const sanitized = Device.sanitize(deviceData, false);
-        await existingDevice(sanitized, false);
+        const devices: Device.Model[] = await db.Device.getDevices();
+        const existingDevice = devices?.find(device => device.SIM_number === sanitized.SIM_number || device.IMEI_1 === sanitized.IMEI_1 || device.mehalcha_number === device.mehalcha_number);
+        if (existingDevice) {
+            if (existingDevice.SIM_number === sanitized.SIM_number) {
+                throw {
+                    status: 409,
+                    message: 'SIM_number already exists',
+                };
+            }
+            if (existingDevice.IMEI_1 === sanitized.IMEI_1) {
+                throw {
+                    status: 409,
+                    message: 'IMEI_1 already exists',
+                };
+            }
+            if (existingDevice.mehalcha_number === sanitized.mehalcha_number) {
+                throw {
+                    status: 409,
+                    message: 'mehalcha_number already exists',
+                };
+            }
+        }
         const device = await db.Device.createDevice(sanitized);
         res.status(201).json(device);
     } catch (error: any) {
@@ -24,7 +44,7 @@ const getDevices = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const getDeviceById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getDeviceById = async (req: Request, res: Response): Promise<void> => {
     try {
         if (!req.params.id)
             throw {
@@ -33,10 +53,8 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
             };
         const device = await db.Device.getDeviceById(req.params.id);
         if (!device) {
-            return next({
-                status: 404,
-                message: 'device not found'
-            });
+            res.status(404).json({ message: 'device not found' });
+            return;
         }
         res.status(200).json(device);
     } catch (error: any) {
@@ -52,7 +70,28 @@ const updateDevice = async (req: Request, res: Response): Promise<void> => {
                 message: 'No body provaider'
             }
         const sanitized = Device.sanitize(req.body, true);
-        await existingDevice(sanitized, true);
+        const devices: Device.Model[] = await db.Device.getDevices();
+        const existingDevice = devices?.find(device => device.SIM_number === sanitized.SIM_number || device.IMEI_1 === sanitized.IMEI_1 || device.mehalcha_number === device.mehalcha_number);
+        if (existingDevice) {
+            if (existingDevice.SIM_number === sanitized.SIM_number) {
+                throw {
+                    status: 409,
+                    message: 'SIM_number already exists',
+                };
+            }
+            if (existingDevice.IMEI_1 === sanitized.IMEI_1) {
+                throw {
+                    status: 409,
+                    message: 'IMEI_1 already exists',
+                };
+            }
+            if (existingDevice.mehalcha_number === sanitized.mehalcha_number) {
+                throw {
+                    status: 409,
+                    message: 'mehalcha_number already exists',
+                };
+            }
+        }
         const updateDevice = await db.Device.updateDevice(req.params.id, sanitized);
         res.status(200).json(updateDevice);
     } catch (error: any) {
@@ -67,15 +106,6 @@ const deleteDevice = async (req: Request, res: Response): Promise<void> => {
                 status: 400,
                 message: 'No ID provided'
             };
-
-        const device = await db.Device.getDeviceById(req.params.id);
-
-        if (!device) {
-            throw {
-                status: 404,
-                message: 'Device not found'
-            };
-        }
         const deleteDevice = await db.Device.deleteDevice(req.params.id);
         res.status(200).json(deleteDevice);
     } catch (error: any) {
@@ -83,42 +113,13 @@ const deleteDevice = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const existingDevice = async (device: Device.Model, hasId: boolean) => {
-    let deviceEx;
-    if (hasId) {
-        deviceEx = await db.Device.findDevice({
-            device_id: device.device_id,
-            SIM_number: device.SIM_number,
-            IMEI_1: device.IMEI_1,
-            mehalcha_number: device.mehalcha_number,
-        });
+const handleError = (res: Response, error: any): void => {
+    console.error('Error:', error.message);
+    if (error.status) {
+        res.status(error.status).json({ message: error.message });
     } else {
-        deviceEx = await db.Device.findDevice({
-            SIM_number: device.SIM_number,
-            IMEI_1: device.IMEI_1,
-            mehalcha_number: device.mehalcha_number,
-        });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
-    if (deviceEx) {
-        if (deviceEx.SIM_number === device.SIM_number) {
-            throw {
-                status: 409,
-                message: 'SIM_number already exists',
-            };
-        }
-        if (deviceEx.IMEI_1 === device.IMEI_1) {
-            throw {
-                status: 409,
-                message: 'IMEI_1 already exists',
-            };
-        }
-        if (deviceEx.mehalcha_number === device.mehalcha_number) {
-            throw {
-                status: 409,
-                message: 'mehalcha_number already exists',
-            };
-        }
-    };
 };
 
 export {
