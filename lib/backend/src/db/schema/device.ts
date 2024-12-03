@@ -14,7 +14,7 @@ const createDeviceSchema = async () => {
                 table.integer("SIM_number").notNullable().unique();
                 table.integer("IMEI_1").notNullable().unique();
                 table.integer("mehalcha_number").notNullable().unique();
-                table.string("model").notNullable();
+                table.integer("model").notNullable();
             });
             console.log('Device table created successfully.');
 
@@ -25,7 +25,7 @@ const createDeviceSchema = async () => {
         }
 
     } catch (err) {
-        console.error('error creat schema device', err)
+        console.error('error creat schema customer', err)
     }
 }
 
