@@ -1,22 +1,3 @@
-// import React from 'react';
-// import './App.css';
-// // import Header from './components/layout/header';
-// import SideNav from './components/layout/SideNav';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         {/* <Header /> */}
-//         <SideNav />
-
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
