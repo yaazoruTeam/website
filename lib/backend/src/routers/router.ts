@@ -23,6 +23,7 @@ router.delete(`${ROUTE_PATH}/device/:id`, devicesController.deleteDevice);
 router.post(`${ROUTE_PATH}/customerDevice`, customerDevicesController.createCustomerDevice);
 router.get(`${ROUTE_PATH}/customerDevice`, customerDevicesController.getCustomersDevices);
 router.get(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.getCustomerDeviceById);
+router.get(`${ROUTE_PATH}/customerDevice/allDevices/:id`, customerDevicesController.getAllDevicesByCustomerId);
 router.put(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.updateCustomerDevice);
 router.delete(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.deleteCustomerDevice);
 

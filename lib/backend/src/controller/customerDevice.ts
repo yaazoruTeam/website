@@ -6,7 +6,7 @@ const createCustomerDevice = async (req: Request, res: Response, next: NextFunct
     try {
         CustomerDevice.sanitizeBodyExisting(req);
         const customerDeviceData: CustomerDevice.Model = req.body;
-        const sanitized:CustomerDevice.Model = CustomerDevice.sanitize(customerDeviceData, false);       
+        const sanitized: CustomerDevice.Model = CustomerDevice.sanitize(customerDeviceData, false);
         await existingCustomerDevice(sanitized, false);
         const customerDevice = await db.CustomerDevice.createCustomerDevice(sanitized);
         res.status(201).json(customerDevice);
@@ -40,6 +40,37 @@ const getCustomerDeviceById = async (req: Request, res: Response, next: NextFunc
     } catch (error: any) {
         next(error);
     }
+};
+
+const getAllDevicesByCustomerId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        CustomerDevice.sanitizeIdExisting(req);
+        const existCustomer = await db.Customer.doesCustomerExist(req.params.id);
+        if (!existCustomer) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Customer does not exist.'
+            };
+            throw error;
+        }
+        const allCustomerDevice: CustomerDevice.Model[] = await db.CustomerDevice.getCustomerDeviceByCustomerId(req.params.id);
+        let devices: any = [];
+        for (const customerDevice of allCustomerDevice) {
+            devices.push(await db.Device.getDeviceById(customerDevice.device_id));
+        }
+        if (devices.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'This customer has no devices.'
+            };
+            throw error;
+        }
+
+        res.status(200).json(devices);
+    } catch (error: any) {
+        next(error);
+    }
+
 };
 
 const updateCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -116,5 +147,5 @@ const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasI
 
 
 export {
-    createCustomerDevice, getCustomersDevices, getCustomerDeviceById, updateCustomerDevice, deleteCustomerDevice,
+    createCustomerDevice, getCustomersDevices, getCustomerDeviceById, updateCustomerDevice, deleteCustomerDevice, getAllDevicesByCustomerId,
 }
