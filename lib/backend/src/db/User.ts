@@ -18,7 +18,7 @@ const createUser = async (user: User.Model) => {
                 address1: user.address1,
                 address2: user.address2,
                 zipCode: user.zipCode,
-                pssword: user.password,
+                password: user.password,
                 user_name: user.user_name,
             }).returning('*');
         return newUser;

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as customersController from '../controller/customer';
 import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
+import * as userController from '../controller/user';
 import { errorHandler } from '../errorHandler';
 
 
@@ -27,6 +28,11 @@ router.get(`${ROUTE_PATH}/customerDevice/allDevices/:id`, customerDevicesControl
 router.put(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.updateCustomerDevice);
 router.delete(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.deleteCustomerDevice);
 
+router.post(`${ROUTE_PATH}/user`, userController.createUser);
+router.get(`${ROUTE_PATH}/user`, userController.getUsers);
+router.get(`${ROUTE_PATH}/user/:id`, userController.getUserById);
+router.put(`${ROUTE_PATH}/user/:id`, userController.updateUser);
+router.delete(`${ROUTE_PATH}/user/:id`, userController.deleteUser);
 
 router.all('*', errorHandler)
 
