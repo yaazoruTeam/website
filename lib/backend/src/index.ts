@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { router } from './routers/router';
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./Middleware/errorHandler";
 const app = express();
 const PORT = process.env.PORT || 3000;
 // Middleware

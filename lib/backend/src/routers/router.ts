@@ -4,14 +4,15 @@ import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
 import * as userController from '../controller/user';
 import * as authController from '../controller/AuthController';
-import { errorHandler } from '../errorHandler';
+import { errorHandler } from '../Middleware/errorHandler';
+import { isAdmin, isBranch } from '../Middleware/auth';
 
 
 const router = Router();
 const ROUTE_PATH = '/controller';
 
 router.post(`${ROUTE_PATH}/customer`, customersController.createCustomer);
-router.get(`${ROUTE_PATH}/customer`, customersController.getCustomers);
+router.get(`${ROUTE_PATH}/customer`, isAdmin, customersController.getCustomers);
 router.get(`${ROUTE_PATH}/customer/:id`, customersController.getCustomerById);
 router.put(`${ROUTE_PATH}/customer/:id`, customersController.updateCustomer);
 router.delete(`${ROUTE_PATH}/customer/:id`, customersController.deleteCustomer);

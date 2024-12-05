@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '@yaazoru/model';
+import { HttpError, User } from '@yaazoru/model';
 import db from '../db';
 import { generateToken } from '../utils/jwt';
-import { comparePasswords } from '../utils/password'; 
+import { comparePasswords } from '../utils/password';
 import { createUser } from './user';
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -16,7 +16,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
 const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { user_name, password } = req.body;
-        const user = await db.User.findUser({ user_name }); 
+        const user: User.Model = await db.User.findUser({ user_name });
         if (!user) {
             const error: HttpError.Model = {
                 status: 404,
@@ -32,7 +32,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
             };
             throw error;
         }
-        const token = generateToken(user.user_id);
+        const token = generateToken(user.user_id, user.role);
         res.status(200).json({ token });
     } catch (error: any) {
         next(error);
