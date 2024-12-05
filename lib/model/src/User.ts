@@ -14,6 +14,7 @@ interface Model {
     zipCode: string;
     password: string;
     user_name: string;
+    role: string;
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
@@ -100,6 +101,27 @@ function sanitize(user: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!isString(user.password) || user.password.trim() === '') {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "password".'
+        };
+        throw error;
+    }
+    if (!isString(user.user_name) || user.user_name.trim() === '') {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "user_name".'
+        };
+        throw error;
+    }
+    if (!isString(user.role) || user.role.trim() === '') {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "role".'
+        };
+        throw error;
+    }
     const newUser: Model = {
         user_id: user.user_id,
         first_name: user.first_name.trim(),
@@ -114,6 +136,7 @@ function sanitize(user: Model, hasId: boolean): Model {
         zipCode: user.zipCode,
         password: user.password,
         user_name: user.user_name,
+        role:user.role,
     };
     return newUser;
 }

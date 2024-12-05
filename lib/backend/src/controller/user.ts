@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import db from "../db";
 import { User, HttpError } from "@yaazoru/model";
+import { hashPassword } from '../utils/password';
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         User.sanitizeBodyExisting(req);
         const userData = req.body;
+        userData.password = await hashPassword(userData.password);
         const sanitized = User.sanitize(userData, false);
         await existingUser(sanitized, false);
         const user = await db.User.createUser(sanitized);
@@ -46,7 +48,11 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
     try {
         User.sanitizeIdExisting(req);
         User.sanitizeBodyExisting(req);
-        const sanitized = User.sanitize(req.body, true);
+        const userData = req.body;
+        if (userData.password) {
+            userData.password = await hashPassword(userData.password);
+        }
+        const sanitized = User.sanitize(userData, true);
         await existingUser(sanitized, true);
         const updateUser = await db.User.updateUser(req.params.id, sanitized);
         res.status(200).json(updateUser);
