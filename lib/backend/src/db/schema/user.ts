@@ -23,7 +23,7 @@ const createUserSchema = async () => {
                 table.string("zipCode").notNullable();
                 table.string("password").notNullable().unique();
                 table.string("user_name").notNullable().unique();
-                table.string("role").notNullable();
+                table.enu("role", ["admin", "branch"]).notNullable();
             });
             console.log('User table created successfully.');
         }
