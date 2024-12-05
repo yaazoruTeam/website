@@ -20,6 +20,7 @@ const createUser = async (user: User.Model) => {
                 zipCode: user.zipCode,
                 password: user.password,
                 user_name: user.user_name,
+                role: user.role,
             }).returning('*');
         return newUser;
     }
@@ -76,7 +77,7 @@ const deleteUser = async (user_id: string) => {
     };
 };
 
-const findUser = async (criteria: { user_id?: string; email?: string; id_number?: string; password: string; user_name: string; }) => {
+const findUser = async (criteria: { user_id?: string; email?: string; id_number?: string; password?: string; user_name?: string; }) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.users')

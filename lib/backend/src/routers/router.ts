@@ -3,6 +3,7 @@ import * as customersController from '../controller/customer';
 import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
 import * as userController from '../controller/user';
+import * as authController from '../controller/AuthController';
 import { errorHandler } from '../errorHandler';
 
 
@@ -33,6 +34,9 @@ router.get(`${ROUTE_PATH}/user`, userController.getUsers);
 router.get(`${ROUTE_PATH}/user/:id`, userController.getUserById);
 router.put(`${ROUTE_PATH}/user/:id`, userController.updateUser);
 router.delete(`${ROUTE_PATH}/user/:id`, userController.deleteUser);
+
+router.post(`${ROUTE_PATH}/register`, authController.register);
+router.post(`${ROUTE_PATH}/login`, authController.login);
 
 router.all('*', errorHandler)
 
