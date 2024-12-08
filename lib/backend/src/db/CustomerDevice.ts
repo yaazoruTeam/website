@@ -1,4 +1,4 @@
-import { CustomerDevice } from "@yaazoru//model";
+import { CustomerDevice } from "@yaazoru/model";
 import getConnection from "./connection";
 
 
@@ -32,6 +32,15 @@ const getCustomerDeviceById = async (customerDevice_id: string) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.customerDevice').where({ customerDevice_id }).first();
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getCustomerDeviceByCustomerId = async (customer_id: string): Promise<CustomerDevice.Model[]> => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.customerDevice').where({ customer_id });
     } catch (err) {
         throw err;
     };
@@ -100,5 +109,12 @@ const doesCustomerDeviceExist = async (customerDevice_id: string): Promise<boole
 };
 
 export {
-    createCustomerDevice, getCustomersDevices, getCustomerDeviceById, updateCustomerDevice, deleteCustomerDevice, findCustomerDevice, doesCustomerDeviceExist
+    createCustomerDevice,
+    getCustomersDevices,
+    getCustomerDeviceById,
+    getCustomerDeviceByCustomerId,
+    updateCustomerDevice,
+    deleteCustomerDevice,
+    findCustomerDevice,
+    doesCustomerDeviceExist,
 }

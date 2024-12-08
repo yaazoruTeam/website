@@ -1,4 +1,4 @@
-import { Customer } from "@yaazoru//model";
+import { Customer } from "@yaazoru/model";
 import getConnection from "./connection";
 
 
@@ -99,12 +99,12 @@ const findCustomer = async (criteria: { customer_id?: string; email?: string; id
 
 const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
     const knex = getConnection();
-    try {        
+    try {   
         const result = await knex('yaazoru.customers')
             .select('customer_id')
             .where({ customer_id })
             .first();
-        return !!result; // אם נמצא רשומה עם ID, מחזיר true, אחרת false
+        return !!result;
     } catch (err) {
         throw err;
     }
