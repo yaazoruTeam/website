@@ -84,7 +84,6 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
             });
         } else {
             customerEx = await db.Customer.findCustomer({
-                customer_id: customer.customer_id,
                 email: customer.email,
                 id_number: customer.id_number
             });

@@ -11,7 +11,7 @@ interface Model {
     city: string;
     address1: string;
     address2: string;
-    zipCode: string
+    zipCode: string;
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
