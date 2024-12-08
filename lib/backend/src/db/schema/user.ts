@@ -1,3 +1,4 @@
+import { User } from "src/model/src";
 import getConnection from "../connection";
 import { Knex } from "knex"
 
@@ -6,6 +7,7 @@ const createUserSchema = async () => {
 
     const knex = getConnection();
     try {
+        const roles: Array<User.Model['role']> = ['admin', 'branch'];
         const tableExists = await knex.schema.withSchema("yaazoru").hasTable("users");
         if (!tableExists) {
             console.log('Creating user table...');
@@ -23,7 +25,7 @@ const createUserSchema = async () => {
                 table.string("zipCode").notNullable();
                 table.string("password").notNullable().unique();
                 table.string("user_name").notNullable().unique();
-                table.enu("role", ["admin", "branch"]).notNullable();
+                table.enu("role", roles).notNullable();
             });
             console.log('User table created successfully.');
         }
