@@ -11,6 +11,7 @@ import { hasRole } from '../Middleware/auth';
 const router = Router();
 const ROUTE_PATH = '/controller';
 
+
 router.post(`${ROUTE_PATH}/customer`, hasRole('admin', 'branch'), customersController.createCustomer);
 router.get(`${ROUTE_PATH}/customer`, hasRole('admin'), customersController.getCustomers);
 router.get(`${ROUTE_PATH}/customer/:id`, hasRole('admin'), customersController.getCustomerById);
@@ -26,6 +27,7 @@ router.delete(`${ROUTE_PATH}/device/:id`, hasRole('admin'), devicesController.de
 router.post(`${ROUTE_PATH}/customerDevice`, hasRole('admin', 'branch'), customerDevicesController.createCustomerDevice);
 router.get(`${ROUTE_PATH}/customerDevice`, hasRole('admin'), customerDevicesController.getCustomersDevices);
 router.get(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin'), customerDevicesController.getCustomerDeviceById);
+
 router.get(`${ROUTE_PATH}/customerDevice/allDevices/:id`, customerDevicesController.getAllDevicesByCustomerId);
 router.put(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin', 'branch'), customerDevicesController.updateCustomerDevice);
 router.delete(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin', 'branch'), customerDevicesController.deleteCustomerDevice);
