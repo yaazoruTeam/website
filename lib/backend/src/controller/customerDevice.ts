@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import db from "../db";
-import { CustomerDevice, HttpError } from "@yaazoru/model";
+import { CustomerDevice, HttpError } from "../model";
 
 const createCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -70,7 +70,25 @@ const getAllDevicesByCustomerId = async (req: Request, res: Response, next: Next
     } catch (error: any) {
         next(error);
     }
+};
 
+const getCustomerIdByDeviceId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        CustomerDevice.sanitizeIdExisting(req);
+        const device_id = req.params.id;
+        const deviceExist = await db.Device.doesDeviceExist(device_id);
+        if (!deviceExist) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'device does not exist.'
+            }
+            throw error;
+        }
+        const [customerDevice] = await db.CustomerDevice.getCustomerDeviceByDeviceId(device_id);
+        res.status(200).json(customerDevice);
+    } catch (error: any) {
+        next(error);
+    }
 };
 
 const updateCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -147,5 +165,11 @@ const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasI
 
 
 export {
-    createCustomerDevice, getCustomersDevices, getCustomerDeviceById, updateCustomerDevice, deleteCustomerDevice, getAllDevicesByCustomerId,
+    createCustomerDevice,
+    getCustomersDevices,
+    getCustomerDeviceById,
+    updateCustomerDevice,
+    deleteCustomerDevice,
+    getAllDevicesByCustomerId,
+    getCustomerIdByDeviceId,
 }

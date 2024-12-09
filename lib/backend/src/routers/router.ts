@@ -27,6 +27,7 @@ router.post(`${ROUTE_PATH}/customerDevice`, customerDevicesController.createCust
 router.get(`${ROUTE_PATH}/customerDevice`, customerDevicesController.getCustomersDevices);
 router.get(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.getCustomerDeviceById);
 router.get(`${ROUTE_PATH}/customerDevice/allDevices/:id`, customerDevicesController.getAllDevicesByCustomerId);
+router.get(`${ROUTE_PATH}/customerDevice/device/:id`, customerDevicesController.getCustomerIdByDeviceId);
 router.put(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.updateCustomerDevice);
 router.delete(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.deleteCustomerDevice);
 
