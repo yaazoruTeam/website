@@ -4,8 +4,8 @@ import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
 import * as userController from '../controller/user';
 import * as authController from '../controller/AuthController';
-import { errorHandler } from '../Middleware/errorHandler';
-import { hasRole } from '../Middleware/auth';
+import { errorHandler } from '../middleware/errorHandler';
+import { hasRole } from '../middleware/auth';
 
 
 const router = Router();
@@ -40,8 +40,6 @@ router.delete(`${ROUTE_PATH}/user/:id`, hasRole('admin'), userController.deleteU
 
 router.post(`${ROUTE_PATH}/register`, hasRole('admin'), authController.register);
 router.post(`${ROUTE_PATH}/login`, authController.login);
-router.post(`${ROUTE_PATH}/refresh`, authController.refreshToken);
-
 
 router.all('*', errorHandler)
 

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpError, User } from '@yaazoru/model';
 import db from '../db';
-import { generateToken, generateRefreshToken, verifyToken } from '../utils/jwt';
+import { generateToken } from '../utils/jwt';
 import { comparePasswords } from '../utils/password';
 import { createUser } from './user';
 
@@ -33,31 +33,11 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
             throw error;
         }
         const accessToken = generateToken(user.user_id, user.role);
-        const refreshToken = generateRefreshToken({ userId: user.user_id, role: user.role });
 
-        res.status(200).json({ accessToken, refreshToken });
+        res.status(200).json(accessToken);
     } catch (error: any) {
         next(error);
     }
 };
 
-const refreshToken = (req: Request, res: Response, next: NextFunction): void => {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-        const error: HttpError.Model = {
-            status: 403,
-            message: 'Refresh token is required'
-        }
-    }
-    try {
-        const decoded = verifyToken(refreshToken);
-        const newAccessToken = generateToken(decoded.userId, decoded.role);
-        const newRefreshToken = generateRefreshToken({ userId: decoded.userId, role: decoded.role });
-        res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
-    } catch (error) {
-        next(error);
-    }
-};
-
-
-export { register, login, refreshToken };
+export { register, login };

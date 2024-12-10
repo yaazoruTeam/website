@@ -1,12 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { HttpError, User } from '../model';
+import { HttpError, User,JwtPayload } from '@yaazoru/model';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 const hasRole = (...roles: Array<User.Model['role']>) => {
-    console.log('has role', roles);
-
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.headers['authorization']?.split(' ')[1];
         if (!token) {
@@ -18,7 +16,7 @@ const hasRole = (...roles: Array<User.Model['role']>) => {
         }
 
         try {
-            const decoded: any = jwt.verify(token, JWT_SECRET);
+            const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model;
 
             if (!roles.includes(decoded.role)) {
                 const error: HttpError.Model = {
