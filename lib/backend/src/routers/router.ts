@@ -40,6 +40,8 @@ router.delete(`${ROUTE_PATH}/user/:id`, hasRole('admin'), userController.deleteU
 
 router.post(`${ROUTE_PATH}/register`, hasRole('admin'), authController.register);
 router.post(`${ROUTE_PATH}/login`, authController.login);
+router.post(`${ROUTE_PATH}/auth/refresh`, authController.refreshToken);
+
 
 router.all('*', errorHandler)
 

@@ -1,5 +1,5 @@
 interface Model {
-    userId: string;
+    user_id: string;
     role: 'admin' | 'branch';
 }
 

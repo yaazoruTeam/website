@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpError, User } from '@yaazoru/model';
 import db from '../db';
-import { generateToken } from '../utils/jwt';
+import { generateToken, verifyToken } from '../utils/jwt';
 import { comparePasswords } from '../utils/password';
 import { createUser } from './user';
 
@@ -40,4 +40,37 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
     }
 };
 
-export { register, login };
+const refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const token = req.headers['authorization']?.split(' ')[1];
+        if (!token) {
+            const error: HttpError.Model = {
+                status: 403,
+                message: 'Access denied - missing token',
+            };
+            throw error;
+        }
+
+        const { valid, expired, decoded } = verifyToken(token);
+
+        if (valid) {
+            res.status(200).json({ message: 'Token is still valid' });
+        }
+
+        if (expired && decoded) {
+            const { user_id, role } = decoded;
+            const newAccessToken = generateToken(user_id, role);
+            res.status(200).json(newAccessToken);
+        }
+
+        const error: HttpError.Model = {
+            status: 401,
+            message: 'Invalid token',
+        };
+        throw error;
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export { register, login, refreshToken };
