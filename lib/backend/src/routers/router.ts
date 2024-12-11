@@ -29,8 +29,9 @@ router.get(`${ROUTE_PATH}/customerDevice`, hasRole('admin'), customerDevicesCont
 router.get(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin'), customerDevicesController.getCustomerDeviceById);
 
 router.get(`${ROUTE_PATH}/customerDevice/allDevices/:id`, customerDevicesController.getAllDevicesByCustomerId);
-router.put(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin', 'branch'), customerDevicesController.updateCustomerDevice);
-router.delete(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin', 'branch'), customerDevicesController.deleteCustomerDevice);
+router.get(`${ROUTE_PATH}/customerDevice/device/:id`, customerDevicesController.getCustomerIdByDeviceId);
+router.put(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.updateCustomerDevice);
+router.delete(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.deleteCustomerDevice);
 
 router.post(`${ROUTE_PATH}/user`, hasRole('admin'), userController.createUser);
 router.get(`${ROUTE_PATH}/user`, hasRole('admin'), userController.getUsers);

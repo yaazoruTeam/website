@@ -46,6 +46,15 @@ const getCustomerDeviceByCustomerId = async (customer_id: string): Promise<Custo
     };
 };
 
+const getCustomerDeviceByDeviceId = async (device_id: string): Promise<CustomerDevice.Model[]> => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.customerDevice').where({ device_id });
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateCustomerDevice = async (customerDevice_id: string, customerDevice: CustomerDevice.Model) => {
     const knex = getConnection();
     try {
@@ -113,6 +122,7 @@ export {
     getCustomersDevices,
     getCustomerDeviceById,
     getCustomerDeviceByCustomerId,
+    getCustomerDeviceByDeviceId,
     updateCustomerDevice,
     deleteCustomerDevice,
     findCustomerDevice,
