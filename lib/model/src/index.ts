@@ -4,10 +4,7 @@ import * as HttpError from './HttpError';
 import * as CustomerDevice from './CustomerDevice';
 import * as User from './User';
 import * as JwtPayload from './JwtPayload';
-
-
-
-
+import * as Branch from './Branch';
 
 export {
     Customer,
@@ -16,4 +13,5 @@ export {
     CustomerDevice,
     User,
     JwtPayload,
+    Branch,
 }
