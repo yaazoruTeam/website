@@ -12,7 +12,7 @@ const createBranchSchema = async () => {
             await knex.schema.withSchema("yaazoru").createTable("branches", (table: Knex.TableBuilder) => {
                 table.increments("branch_id").primary();
                 table.string("city", 20).notNullable();
-                table.string("addrss", 20).notNullable();
+                table.string("address", 20).notNullable();
                 table.string("manager_name", 20).notNullable();
                 table.string("phone_number", 20).notNullable();
                 table.string("additional_phone", 20).nullable();

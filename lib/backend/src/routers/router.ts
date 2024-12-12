@@ -4,6 +4,7 @@ import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
 import * as userController from '../controller/user';
 import * as authController from '../controller/AuthController';
+import * as branchController from '../controller/branch';
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
 
@@ -27,7 +28,6 @@ router.delete(`${ROUTE_PATH}/device/:id`, hasRole('admin'), devicesController.de
 router.post(`${ROUTE_PATH}/customerDevice`, hasRole('admin', 'branch'), customerDevicesController.createCustomerDevice);
 router.get(`${ROUTE_PATH}/customerDevice`, hasRole('admin'), customerDevicesController.getCustomersDevices);
 router.get(`${ROUTE_PATH}/customerDevice/:id`, hasRole('admin'), customerDevicesController.getCustomerDeviceById);
-
 router.get(`${ROUTE_PATH}/customerDevice/allDevices/:id`, customerDevicesController.getAllDevicesByCustomerId);
 router.get(`${ROUTE_PATH}/customerDevice/device/:id`, customerDevicesController.getCustomerIdByDeviceId);
 router.put(`${ROUTE_PATH}/customerDevice/:id`, customerDevicesController.updateCustomerDevice);
@@ -43,6 +43,11 @@ router.post(`${ROUTE_PATH}/register`, hasRole('admin'), authController.register)
 router.post(`${ROUTE_PATH}/login`, authController.login);
 router.post(`${ROUTE_PATH}/auth/refresh`, authController.refreshToken);
 
+router.post(`${ROUTE_PATH}/branch`, hasRole('admin'), branchController.createBranch);
+router.get(`${ROUTE_PATH}/branch`, hasRole('admin'), branchController.getBranches);
+router.get(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.getBranchById);
+router.put(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.updateBranch);
+router.delete(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.deleteBranch);
 
 router.all('*', errorHandler)
 
