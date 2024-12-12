@@ -51,23 +51,18 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction): Pr
             throw error;
         }
 
-        const { valid, expired, decoded } = verifyToken(token);
-
-        if (valid) {
-            res.status(200).json({ message: 'Token is still valid' });
-        }
-
-        if (expired && decoded) {
+        const { valid, decoded } = verifyToken(token);
+        if (valid && decoded) {
             const { user_id, role } = decoded;
             const newAccessToken = generateToken(user_id, role);
             res.status(200).json(newAccessToken);
+        } else {
+            const error: HttpError.Model = {
+                status: 401,
+                message: 'Invalid token',
+            };
+            throw error;
         }
-
-        const error: HttpError.Model = {
-            status: 401,
-            message: 'Invalid token',
-        };
-        throw error;
     } catch (error: any) {
         next(error);
     }

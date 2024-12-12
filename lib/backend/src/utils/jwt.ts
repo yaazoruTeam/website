@@ -11,15 +11,12 @@ const generateToken = (userId: string, role: string): string => {
     return token;
 };
 
-const verifyToken = (token: string): { valid: boolean; expired: boolean; decoded?: JwtPayload.Model } => {
+const verifyToken = (token: string): { valid: boolean; decoded?: JwtPayload.Model } => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model;
-        return { valid: true, expired: false, decoded };
-    } catch (error: any) {
-        if (error.name === 'TokenExpiredError') {
-            return { valid: false, expired: true, decoded: jwt.decode(token) as JwtPayload.Model };
-        }
-        return { valid: false, expired: false };
+        return { valid: true, decoded };
+    } catch (error: any) {        
+        return { valid: false };
     }
 };
 
