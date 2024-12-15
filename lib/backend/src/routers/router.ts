@@ -5,6 +5,9 @@ import * as customerDevicesController from '../controller/customerDevice';
 import * as userController from '../controller/user';
 import * as authController from '../controller/AuthController';
 import * as branchController from '../controller/branch';
+import * as branchCustomerController from '../controller/branchCustomer';
+import * as branchUserController from '../controller/branchUser';
+
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
 
@@ -48,6 +51,18 @@ router.get(`${ROUTE_PATH}/branch`, hasRole('admin'), branchController.getBranche
 router.get(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.getBranchById);
 router.put(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.updateBranch);
 router.delete(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.deleteBranch);
+
+router.post(`${ROUTE_PATH}/branchCustomer`, hasRole('admin'), branchCustomerController.createBranchCustomer);
+router.get(`${ROUTE_PATH}/branchCustomer`, hasRole('admin'), branchCustomerController.getAllBranchCustomer);
+router.get(`${ROUTE_PATH}/branchCustomer/:id`, hasRole('admin'), branchCustomerController.getBranchCustomerById);
+router.put(`${ROUTE_PATH}/branchCustomer/:id`, hasRole('admin'), branchCustomerController.updateBranchCustomer);
+router.delete(`${ROUTE_PATH}/branchCustomer/:id`, hasRole('admin'), branchCustomerController.deleteBranchCustomer);
+
+router.post(`${ROUTE_PATH}/branchUser`, hasRole('admin'), branchUserController.createBranchUser);
+router.get(`${ROUTE_PATH}/branchUser`, hasRole('admin'), branchUserController.getAllBranchUser);
+router.get(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserController.getBranchUserById);
+router.put(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserController.updateBranchUser);
+router.delete(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserController.deleteBranchUser);
 
 router.all('*', errorHandler)
 
