@@ -37,10 +37,28 @@ const getBranchCustomerById = async (branchCustomer_id: string) => {
     };
 };
 
+const getBranchCustomerByBranc_id = async (branch_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.branchCustomer').where({ branch_id }).select();
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getBranchCustomerByCuseomer_id = async (customer_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.branchCustomer').where({ customer_id }).select();
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateBranchCustomer = async (branchCustomer_id: string, branchCustomer: BranchCustomer.Model) => {
     const knex = getConnection();
     try {
-        const updateBranchCustomer = await knex('yaazoru.branchcustomer')
+        const updateBranchCustomer = await knex('yaazoru.branchCustomer')
             .where({ branchCustomer_id })
             .update(branchCustomer)
             .returning('*');
@@ -79,11 +97,55 @@ const doesBranchCustomerExist = async (branchCustomer_id: string): Promise<boole
     }
 };
 
+const doesBranchExist = async (branch_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.branchCustomer')
+            .select('branch_id')
+            .where({ branch_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
+const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.branchCustomer')
+            .select('customer_id')
+            .where({ customer_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
+const doesBranchCustomerCombinationExist = async (branch_id: string, customer_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.branchCustomer')
+            .select('branch_id', 'customer_id')
+            .where({ branch_id, customer_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
 export {
     createBranchCustomer,
     getAllBranchCustomer,
     getBranchCustomerById,
+    getBranchCustomerByBranc_id,
+    getBranchCustomerByCuseomer_id,
     updateBranchCustomer,
     deleteBranchCustomer,
     doesBranchCustomerExist,
+    doesBranchExist,
+    doesCustomerExist,
+    doesBranchCustomerCombinationExist,
 }

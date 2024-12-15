@@ -37,6 +37,24 @@ const getBranchUserById = async (branchUser_id: string) => {
     };
 };
 
+const getBranchUserByBranch_id = async (branch_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.branchUser').where({ branch_id }).select();
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getBranchUserByUser_id = async (user_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.branchUser').where({ user_id }).select();
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateBranchUser = async (branchUser_id: string, branchUser: BranchUser.Model) => {
     const knex = getConnection();
     try {
@@ -79,11 +97,55 @@ const doesBranchUserExist = async (branchUser_id: string): Promise<boolean> => {
     }
 };
 
+const doesBranchExist = async (branch_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.branchUser')
+            .select('branch_id')
+            .where({ branch_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
+const doesUserExist = async (user_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.branchUser')
+            .select('user_id')
+            .where({ user_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
+const doesBranchUserCombinationExist = async (branch_id: string, user_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.branchUser')
+            .select('branch_id', 'user_id')
+            .where({ branch_id, user_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
 export {
     createBranchUser,
     getAllBranchUser,
     getBranchUserById,
+    getBranchUserByBranch_id,
+    getBranchUserByUser_id,
     updateBranchUser,
     deleteBranchUser,
     doesBranchUserExist,
+    doesBranchExist,
+    doesUserExist,
+    doesBranchUserCombinationExist,
 }

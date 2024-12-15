@@ -55,12 +55,16 @@ router.delete(`${ROUTE_PATH}/branch/:id`, hasRole('admin'), branchController.del
 router.post(`${ROUTE_PATH}/branchCustomer`, hasRole('admin'), branchCustomerController.createBranchCustomer);
 router.get(`${ROUTE_PATH}/branchCustomer`, hasRole('admin'), branchCustomerController.getAllBranchCustomer);
 router.get(`${ROUTE_PATH}/branchCustomer/:id`, hasRole('admin'), branchCustomerController.getBranchCustomerById);
+router.get(`${ROUTE_PATH}/branchCustomer/branch/:id`, hasRole('admin'), branchCustomerController.getBranchCustomerByBranch_id);
+router.get(`${ROUTE_PATH}/branchCustomer/customer/:id`, hasRole('admin'), branchCustomerController.getBranchCustomerByCustomer_id);
 router.put(`${ROUTE_PATH}/branchCustomer/:id`, hasRole('admin'), branchCustomerController.updateBranchCustomer);
 router.delete(`${ROUTE_PATH}/branchCustomer/:id`, hasRole('admin'), branchCustomerController.deleteBranchCustomer);
 
 router.post(`${ROUTE_PATH}/branchUser`, hasRole('admin'), branchUserController.createBranchUser);
 router.get(`${ROUTE_PATH}/branchUser`, hasRole('admin'), branchUserController.getAllBranchUser);
 router.get(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserController.getBranchUserById);
+router.get(`${ROUTE_PATH}/branchUser/branch/:id`, hasRole('admin'), branchUserController.getBranchUserByBranch_id);
+router.get(`${ROUTE_PATH}/branchUser/user/:id`, hasRole('admin'), branchUserController.getBranchUserByUser_id);
 router.put(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserController.updateBranchUser);
 router.delete(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserController.deleteBranchUser);
 
