@@ -1,115 +1,105 @@
-import { Request, Response } from 'express';
-import db from "../db"
-import { Customer, sanitize } from "../model/Customer";
+import { NextFunction, Request, Response } from 'express';
+import db from "../db";
+import { Customer, HttpError } from "@yaazoru/model";
 
-const createCustomer = async (req: Request, res: Response): Promise<void> => {
+const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        Customer.sanitizeBodyExisting(req);
         const customerData = req.body;
-        const sanitized = sanitize(customerData, false);
-        const customers: Customer[] = await db.Customer.getCustomers();
-
-        const existingCustomer = customers?.find(customer => customer.email === sanitized.email || customer.id_number === sanitized.id_number);
-        if (existingCustomer) {
-            if (existingCustomer.email === sanitized.email) {
-                throw {
-                    status: 409,
-                    message: 'Email already exists',
-                };
-            }
-            if (existingCustomer.id_number === sanitized.id_number) {
-                throw {
-                    status: 409,
-                    message: 'ID number already exists',
-                };
-            }
-        }
+        const sanitized = Customer.sanitize(customerData, false);
+        await existingCustomer(sanitized, false);
         const customer = await db.Customer.createCustomer(sanitized);
         res.status(201).json(customer);
     } catch (error: any) {
-        handleError(res, error);
+        next(error);
     }
 };
 
-const getCustomers = async (req: Request, res: Response): Promise<void> => {
+const getCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const customers = await db.Customer.getCustomers();
         res.status(200).json(customers);
     } catch (error: any) {
-        handleError(res, error)
+        next(error);
     }
 };
 
-const getCustomerById = async (req: Request, res: Response): Promise<void> => {
+const getCustomerById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        if (!req.params.id)
-            throw {
-                status: 400,
-                message: 'No ID provided'
+        Customer.sanitizeIdExisting(req);
+        const existCustomer = await db.Customer.doesCustomerExist(req.params.id);
+        if (!existCustomer) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Customer does not exist.'
             };
-        const customer = await db.Customer.getCustomerById(req.params.id);
-        if (!customer) {
-            res.status(404).json({ message: 'Customer not found' });
-            return;
+            throw error;
         }
+        const customer = await db.Customer.getCustomerById(req.params.id);
         res.status(200).json(customer);
     } catch (error: any) {
-        handleError(res, error);
+        next(error);
     }
 };
 
-const updateCustomer = async (req: Request, res: Response): Promise<void> => {
+const updateCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        if (!req.body)
-            throw {
-                status: 400,
-                message: 'No body provaider'
-            }
-        const sanitized = sanitize(req.body, true);
-        const customers: Customer[] = await db.Customer.getCustomers();
-        const existingCustomer = customers?.find(customer => customer.customer_id != sanitized.customer_id && (customer.email === sanitized.email || customer.id_number === sanitized.id_number));
-        if (existingCustomer) {
-            if (existingCustomer.email === sanitized.email) {
-                throw {
-                    status: 409,
-                    message: 'Email already exists',
-                };
-            }
-            if (existingCustomer.id_number === sanitized.id_number) {
-                throw {
-                    status: 409,
-                    message: 'ID number already exists',
-                };
-            }
-        }
+        Customer.sanitizeIdExisting(req);
+        Customer.sanitizeBodyExisting(req);
+        const sanitized = Customer.sanitize(req.body, true);
+        await existingCustomer(sanitized, true);
         const updateCustomer = await db.Customer.updateCustomer(req.params.id, sanitized);
         res.status(200).json(updateCustomer);
     } catch (error: any) {
-        handleError(res, error);
+        next(error);
     }
 };
 
-const deleteCustomer = async (req: Request, res: Response): Promise<void> => {
+const deleteCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        if (!req.params.id)
-            throw {
-                status: 400,
-                message: 'No ID provided'
+        Customer.sanitizeIdExisting(req);
+        const existCustomer = await db.Customer.doesCustomerExist(req.params.id);
+        if (!existCustomer) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Customer does not exist.'
             };
+            throw error;
+        }
         const deleteCustomer = await db.Customer.deleteCustomer(req.params.id);
         res.status(200).json(deleteCustomer);
     } catch (error: any) {
-        handleError(res, error);
+        next(error);
     }
 };
 
-const handleError = (res: Response, error: any): void => {
-    console.error('Error:', error.message);
-    if (error.status) {
-        res.status(error.status).json({ message: error.message });
-    } else {
-        res.status(500).json({ message: 'Internal server error', error: error.message });
+const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
+    try {
+        let customerEx;
+        if (hasId) {
+            customerEx = await db.Customer.findCustomer({
+                customer_id: customer.customer_id,
+                email: customer.email,
+                id_number: customer.id_number
+            });
+        } else {
+            customerEx = await db.Customer.findCustomer({
+                email: customer.email,
+                id_number: customer.id_number
+            });
+        }
+        if (customerEx) {
+            try {
+                Customer.sanitizeExistingCustomer(customerEx, customer);
+            } catch (err) {
+                throw err;
+            }
+        };
+    } catch (err) {
+        throw err;
     }
 };
+
 
 export {
     createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer,
