@@ -1,59 +1,40 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { HttpError } from '../model';
+import { HttpError, User,JwtPayload } from '@yaazoru/model';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
-const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-
-    if (!token) {
-        const error: HttpError.Model = {
-            status: 403,
-            message: 'Access denied - missing token'
-        }
-        throw error;
-    }
-
-    try {
-        const decoded: any = jwt.verify(token, JWT_SECRET);
-        if (decoded.role !== 'admin') {
+const hasRole = (...roles: Array<User.Model['role']>) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const token = req.headers['authorization']?.split(' ')[1];
+        if (!token) {
             const error: HttpError.Model = {
                 status: 403,
-                message: 'Not authorized admin'
-            }
-            throw error;
+                message: 'Access denied - missing token',
+            };
+            return next(error);
         }
-        next();
-    } catch (error) {
-        next(error);
-    }
+
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model;
+
+            if (!roles.includes(decoded.role)) {
+                const error: HttpError.Model = {
+                    status: 403,
+                    message: `Access denied - role '${decoded.role}' not authorized`,
+                };
+                return next(error);
+            }
+
+            next();
+        } catch (error) {
+            const err: HttpError.Model = {
+                status: 401,
+                message: 'Invalid or expired token',
+            };
+            return next(err);
+        }
+    };
 };
 
-const isBranch = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-
-    if (!token) {
-        const error: HttpError.Model = {
-            status: 403,
-            message: 'Access denied - missing token'
-        }
-        throw error;
-    }
-
-    try {
-        const decoded: any = jwt.verify(token, JWT_SECRET);
-        if (decoded.role !== 'branch') {
-            const error: HttpError.Model = {
-                status: 403,
-                message: 'Not authorized branch'
-            }
-            throw error;
-        }
-        next();
-    } catch (error) {
-        next(error);
-    }
-};
-
-export { isAdmin, isBranch };
+export { hasRole };

@@ -7,9 +7,9 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
     try {
         User.sanitizeBodyExisting(req);
         const userData = req.body;
-        userData.password = await hashPassword(userData.password);
         const sanitized = User.sanitize(userData, false);
         await existingUser(sanitized, false);
+        sanitized.password = await hashPassword(sanitized.password);
         const user = await db.User.createUser(sanitized);
         res.status(201).json(user);
     } catch (error: any) {
