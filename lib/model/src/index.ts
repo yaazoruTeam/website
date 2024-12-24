@@ -8,7 +8,6 @@ import * as Branch from './Branch';
 import * as BranchCustomer from './BranchCustomer';
 import * as BranchUser from './BranchUser';
 
-
 export {
     Customer,
     Device,

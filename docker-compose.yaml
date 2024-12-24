@@ -19,6 +19,9 @@ services:
       - DB_NAME=yaazoru
       - DB_PASSWORD=${DB_PASSWORD}
       - DATABASE_URL=postgres://postgres:password@database:5432/mydb
+      - BRAND_TOKEN=da2ab7d7-810a-41b2-be51-6547d6fdc841
+      - BRAND_ID=1
+      - WIDELY_URL=https://widelyapp-api-01.widelymobile.com:3001/api/v2/widely_app/app_action
     # depends_on:
     #   - database
     # networks:

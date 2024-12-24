@@ -6,8 +6,7 @@ import * as userController from '../controller/user';
 import * as authController from '../controller/AuthController';
 import * as branchController from '../controller/branch';
 import * as branchCustomerController from '../controller/branchCustomer';
-import * as branchUserController from '../controller/branchUser';
-
+import * as branchUserController from '../controller/branchUser'
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
 
