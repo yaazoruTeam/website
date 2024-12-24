@@ -4,8 +4,8 @@ import * as devicesController from '../controller/device';
 import * as customerDevicesController from '../controller/customerDevice';
 import * as userController from '../controller/user';
 import * as authController from '../controller/AuthController';
-import { errorHandler } from '../Middleware/errorHandler';
-import { isAdmin, isBranch } from '../Middleware/auth';
+import { errorHandler } from '../middleware/errorHandler';
+import { isAdmin, isBranch } from '../middleware/auth';
 
 
 const router = Router();
