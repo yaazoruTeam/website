@@ -23,77 +23,78 @@ const Template: StoryFn<typeof CustomButton> = (args) => <CustomButton {...args}
 
 // כפתור "הזמנה חדשה"
 export const AddNewOrder = Template.bind({});
-AddNewOrder.args = {
+const addNewOrderArgs = AddNewOrder.args = {
   label: "הזמנה חדשה",
   sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "התחברות למערכת"
 export const LoginToSystem = Template.bind({});
-LoginToSystem.args = {
+const loginToSystemArgs = LoginToSystem.args = {
   label: "התחברות למערכת",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "הוספת סניף חדש"
 export const AddNewBranch = Template.bind({});
-AddNewBranch.args = {
+const addNewBranchArgs = AddNewBranch.args = {
   label: "הוספת סניף חדש",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "שמירת שינויים"
 export const SaveChanges = Template.bind({});
-SaveChanges.args = {
+const saveChangesArgs = SaveChanges.args = {
   label: "שמירת שינויים",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "העברת מכשיר"
 export const TransferDevice = Template.bind({});
-TransferDevice.args = {
+const transferDeviceArgs = TransferDevice.args = {
   label: "העברת מכשיר",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "הוספת לקוח חדש"
 export const AddNewCustomer = Template.bind({});
-AddNewCustomer.args = {
+const addNewCustomerArgs = AddNewCustomer.args = {
   label: "הוספת לקוח חדש",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
+
 
 // כפתור "שמירה"
 export const Save = Template.bind({});
-Save.args = {
+const saveArgs = Save.args = {
   label: "שמירה",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "הוספת מכשיר חדש"
 export const AddNewDevice = Template.bind({});
-AddNewDevice.args = {
+const addNewDeviceArgs = AddNewDevice.args = {
   label: "הוספת מכשיר חדש",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "שמור"
 export const SaveButton = Template.bind({});
-SaveButton.args = {
+const saveButtonArgs = SaveButton.args = {
   label: "שמור",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "הוסף"
 export const AddButton = Template.bind({});
-AddButton.args = {
+const addButtonArgs = AddButton.args = {
   label: "הוסף",
-  sx: {  background: commonBackgroundColor, color: "white", ...commonHoverStyles },
+  sx: { background: commonBackgroundColor, color: "white", ...commonHoverStyles },
 };
 
 // כפתור "ביטול"
 export const Cancel = Template.bind({});
-Cancel.args = {
+const cancelArgs = Cancel.args = {
   label: "ביטול",
   sx: {
     background: cancelBackgroundColor,
@@ -106,7 +107,7 @@ Cancel.args = {
 
 // כפתור "מחיקת לקוח"
 export const DeleteCustomer = Template.bind({});
-DeleteCustomer.args = {
+const deleteCustomerArgs = DeleteCustomer.args = {
   label: "מחיקת לקוח",
   sx: {
     background: "white",
@@ -118,3 +119,18 @@ DeleteCustomer.args = {
   },
   img: trashIcon,
 };
+
+export {
+  addNewOrderArgs,
+  loginToSystemArgs,
+  addNewBranchArgs,
+  saveChangesArgs,
+  transferDeviceArgs,
+  addNewCustomerArgs,
+  saveArgs,
+  addNewDeviceArgs,
+  saveButtonArgs,
+  addButtonArgs,
+  cancelArgs,
+  deleteCustomerArgs,
+}

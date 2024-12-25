@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button, Box, Typography } from "@mui/material";
 import AddCustomerForm from "./AddCustomerForm";
+import { CustomButton } from "../../stories/Button/Button";
+import { addNewCustomerArgs } from "../../stories/Button/Button.stories";
 
 interface CustomersListProps {
   customers: string[];
@@ -30,37 +32,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
         <AddCustomerForm onBack={() => setShowAddCustomer(false)} />
       ) : (
         <>
-          <Button
-            variant="contained"
-            onClick={() => setShowAddCustomer(true)}
-            sx={{
-              backgroundColor: "#D55188",
-              borderRadius: "40px",
-              paddingLeft: 3,
-              paddingRight: 3,
-              paddingTop: 1,
-              paddingBottom: 1,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 1,
-              color: "white",
-              fontWeight: 500,
-              fontSize: 20,
-              textAlign: "center",
-              textTransform: "none",
-            }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Assistant, sans-serif",
-                wordWrap: "break-word",
-              }}
-            >
-              הוספת לקוח חדש
-            </Typography>
-          </Button>
-
+          <CustomButton {...addNewCustomerArgs} onClick={() => setShowAddCustomer(true)}/>
           <Box
             sx={{
               display: "flex",
