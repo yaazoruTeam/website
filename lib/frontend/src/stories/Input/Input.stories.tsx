@@ -14,7 +14,7 @@ const Template: StoryFn<typeof CustomTextField> = (args) => <CustomTextField {..
 
 // שדה טקסט "שם משתמש"
 export const UsernameField = Template.bind({});
-UsernameField.args = {
+const UsernameFieldArgs = UsernameField.args = {
   label: "שם משתמש",
   sx: {
     "& .MuiInputLabel-root": {
@@ -25,19 +25,19 @@ UsernameField.args = {
 
 // שדה טקסט "סיסמה"
 export const PasswordField = Template.bind({});
-PasswordField.args = {
+const PasswordFieldArgs = PasswordField.args = {
   label: "סיסמה",
   type: "password",
 };
 
 // שדה טקסט עם טקסט עזר
 export const EmailField = Template.bind({});
-EmailField.args = {
+const EmailFieldArgs = EmailField.args = {
   label: "אימייל",
 };
 
 export const FirstNameField = Template.bind({});
-FirstNameField.args = {
+const FirstNameFieldArgs = FirstNameField.args = {
   label: "שם פרטי",
   sx: {
     direction: "rtl",
@@ -45,9 +45,17 @@ FirstNameField.args = {
 };
 
 export const LastNameField = Template.bind({});
-LastNameField.args = {
+const LastNameFieldArgs = LastNameField.args = {
   label: "שם פרטי",
   sx: {
     direction: "rtl",
   }
 };
+
+export {
+  UsernameFieldArgs,
+  PasswordFieldArgs,
+  EmailFieldArgs,
+  FirstNameFieldArgs,
+  LastNameFieldArgs,
+}
