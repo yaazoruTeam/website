@@ -12,6 +12,7 @@ interface Model {
     address1: string;
     address2: string;
     zipCode: string;
+    status: string;
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
@@ -110,6 +111,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         address1: customer.address1.trim(),
         address2: customer.address2,
         zipCode: customer.zipCode,
+        status: customer.status || 'active',
     };
     return newCustomer;
 }
