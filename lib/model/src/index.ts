@@ -7,6 +7,7 @@ import * as JwtPayload from './JwtPayload';
 import * as Branch from './Branch';
 import * as BranchCustomer from './BranchCustomer';
 import * as BranchUser from './BranchUser';
+import * as CustomerDeviceExcel from './CustomerDeviceExcel';
 
 export {
     Customer,
@@ -17,5 +18,6 @@ export {
     JwtPayload,
     Branch,
     BranchCustomer,
-    BranchUser
+    BranchUser,
+    CustomerDeviceExcel,
 }

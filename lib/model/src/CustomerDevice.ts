@@ -4,6 +4,7 @@ interface Model {
     customerDevice_id: string;
     customer_id: string;
     device_id: string;
+    date: Date;
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
@@ -34,7 +35,8 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     const newCustomerDevice: Model = {
         customerDevice_id: customerDevice.customerDevice_id,
         customer_id: customerDevice.customer_id,
-        device_id: customerDevice.device_id
+        device_id: customerDevice.device_id,
+        date: customerDevice.date,
     };
     return newCustomerDevice;
 }

@@ -11,9 +11,10 @@ const createDeviceSchema = async () => {
             console.log('Creating devices table...');
             await knex.schema.withSchema("yaazoru").createTable("devices", (table: Knex.TableBuilder) => {
                 table.increments("device_id").primary();
-                table.integer("SIM_number").notNullable().unique();
-                table.integer("IMEI_1").notNullable().unique();
-                table.integer("mehalcha_number").notNullable().unique();
+                table.string("SIM_number").notNullable().unique();
+                table.string("IMEI_1").notNullable().unique();
+                table.string("mehalcha_number").notNullable().unique();
+                table.string("device_number").notNullable().unique();
                 table.string("model").notNullable();
                 table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active');
             });
