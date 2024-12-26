@@ -15,6 +15,7 @@ const createDeviceSchema = async () => {
                 table.integer("IMEI_1").notNullable().unique();
                 table.integer("mehalcha_number").notNullable().unique();
                 table.string("model").notNullable();
+                table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active');
             });
             console.log('Device table created successfully.');
 

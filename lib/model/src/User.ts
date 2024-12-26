@@ -15,6 +15,7 @@ interface Model {
     password: string;
     user_name: string;
     role: 'admin' | 'branch';
+    status: string;
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
@@ -137,6 +138,7 @@ function sanitize(user: Model, hasId: boolean): Model {
         password: user.password,
         user_name: user.user_name,
         role: user.role,
+        status: user.status || 'active',
     };
     return newUser;
 }

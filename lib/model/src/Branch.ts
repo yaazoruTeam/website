@@ -7,6 +7,7 @@ interface Model {
    manager_name: string;
    phone_number: string;
    additional_phone?: string;
+   status: string;
 };
 
 function sanitize(branch: Model, hasId: boolean): Model {
@@ -63,7 +64,8 @@ function sanitize(branch: Model, hasId: boolean): Model {
       address: branch.address,
       manager_name: branch.manager_name,
       phone_number: branch.phone_number,
-      additional_phone: branch.additional_phone
+      additional_phone: branch.additional_phone,
+      status: branch.status || 'active',
    };
    return newBranch;
 }

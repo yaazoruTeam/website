@@ -1,4 +1,4 @@
-import { Device } from "@yaazoru/model";
+import { Device, HttpError } from "@yaazoru/model";
 import getConnection from "./connection";
 
 
@@ -58,14 +58,21 @@ const updateDevice = async (device_id: string, device: Device.Model) => {
 const deleteDevice = async (device_id: string) => {
     const knex = getConnection();
     try {
-        const deleteDevice = await knex('yaazoru.devices').where({ device_id }).del().returning('*');
-        if (deleteDevice.length === 0) {
-            throw { status: 404, message: 'Device not found' };
+        const updateDevice = await knex('yaazoru.devices')
+            .where({ device_id })
+            .update({ status: 'inactive' })
+            .returning('*');
+        if (updateDevice.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Device not found'
+            }
+            throw error;
         }
-        return deleteDevice[0];
+        return updateDevice[0];
     } catch (err) {
         throw err;
-    };
+    }
 };
 
 const findDevice = async (criteria: { device_id?: string; SIM_number?: number; IMEI_1?: number; mehalcha_number?: number }) => {

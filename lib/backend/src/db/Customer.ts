@@ -1,4 +1,4 @@
-import { Customer } from "@yaazoru/model";
+import { Customer, HttpError } from "@yaazoru/model";
 import getConnection from "./connection";
 
 
@@ -63,15 +63,22 @@ const updateCustomer = async (customer_id: string, customer: Customer.Model) => 
 
 const deleteCustomer = async (customer_id: string) => {
     const knex = getConnection();
-    try {
-        const deleteCustomer = await knex('yaazoru.customers').where({ customer_id }).del().returning('*');
-        if (deleteCustomer.length === 0) {
-            throw { status: 404, message: 'Customer not found' };
+       try {
+            const updateCustomer = await knex('yaazoru.customers')
+                .where({ customer_id })
+                .update({ status: 'inactive' })
+                .returning('*');
+            if (updateCustomer.length === 0) {
+                const error: HttpError.Model = {
+                    status: 404,
+                    message: 'customer not found'
+                }
+                throw error;
+            }
+            return updateCustomer[0];
+        } catch (err) {
+            throw err;
         }
-        return deleteCustomer[0];
-    } catch (err) {
-        throw err;
-    };
 };
 
 const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {

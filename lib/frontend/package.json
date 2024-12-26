@@ -53,8 +53,7 @@
   "devDependencies": {
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
     "@chromatic-com/storybook": "^3.2.3",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",

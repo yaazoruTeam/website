@@ -6,6 +6,7 @@ interface Model {
     IMEI_1: number;
     mehalcha_number: number;
     model: string;
+    status: string;
 }
 
 
@@ -54,6 +55,7 @@ function sanitize(device: Model, hasId: boolean): Model {
         IMEI_1: device.IMEI_1,
         mehalcha_number: device.mehalcha_number,
         model: device.model,
+        status: device.status || 'active',
     };
 
     return newDevice;
