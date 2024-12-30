@@ -1,18 +1,24 @@
 import React from "react";
-import { TextFieldProps, TextField, Box, Typography } from "@mui/material";
-import "@fontsource/heebo";
+import { Controller, Control } from "react-hook-form";
+import { TextField, Box, Typography, TextFieldProps } from "@mui/material";
 
 export interface CustomTextFieldProps extends Omit<TextFieldProps, "variant"> {
     label?: string;
     helperText?: string;
-    img?: string;
+    errorMessage?: string;
+    control: Control<any>;
+    name: string;
+    rules?: any
 }
 
 export const CustomTextField: React.FC<CustomTextFieldProps> = ({
     label,
     helperText,
+    errorMessage,
+    control,
+    name,
+    rules,
     sx,
-    img,
     ...props
 }) => {
     return (
@@ -31,50 +37,57 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                 <Typography
                     sx={{
                         color: "var(--Color-11, #032B40)",
-                        fontFeatureSettings: "'liga' off, 'clig' off",
                         textAlign: "right",
                         fontSize: "18px",
                         fontFamily: "Heebo",
                         fontWeight: 400,
-                        wordWrap: "break-word",
                         lineHeight: "normal",
                     }}
                 >
                     {label}
                 </Typography>
             )}
-
-            <TextField
-                helperText={helperText}
-                variant="standard"
-                slotProps={{
-                    input: {
-                      disableUnderline: true,
-                      sx: {
-                        color: "#032B40",
-                        fontSize: 20,
-                        fontFamily: "Heebo",
-                        fontWeight: 400,
-                        wordWrap: "break-word",
-                    },
-                    },
-                  }}
-                sx={{
-                    borderRadius: "6px",
-                    background: "var(--feild, rgba(246, 248, 252, 0.58))",
-                    alignSelf: "stretch",
-                    padding: "10px",
-                    "& .MuiInputBase-root": {
-                        height: "49px",
-                        display: "flex",
-                        alignItems: "center",
-                    },
-                    "& .MuiFormHelperText-root": {
-                        fontSize: "14px",
-                    },
-                    ...sx,
-                }}
-                {...props}
+            <Controller
+                name={name}
+                rules={rules}
+                control={control}
+                render={({ field, fieldState }) => (
+                    <TextField
+                        {...field}
+                        {...props}
+                        error={!!fieldState.error || !!errorMessage}
+                        helperText={fieldState.error?.message || errorMessage || helperText}
+                        variant="standard"
+                        slotProps={{
+                            input: {
+                                disableUnderline: true,
+                                sx: {
+                                    color: "#032B40",
+                                    fontSize: 20,
+                                    fontFamily: "Heebo",
+                                    fontWeight: 400,
+                                    wordWrap: "break-word",
+                                },
+                            },
+                        }}
+                        fullWidth
+                        sx={{
+                            borderRadius: "6px",
+                            background: "var(--feild, rgba(246, 248, 252, 0.58))",
+                            alignSelf: "stretch",
+                            padding: "10px",
+                            "& .MuiInputBase-root": {
+                                height: "49px",
+                                display: "flex",
+                                alignItems: "center",
+                            },
+                            "& .MuiFormHelperText-root": {
+                                fontSize: "14px",
+                            },
+                            ...sx,
+                        }}
+                    />
+                )}
             />
         </Box>
     );

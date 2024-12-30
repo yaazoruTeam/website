@@ -44,63 +44,63 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <ProtectedRoute>
+        <Header
+          placeholderText="הקלד שם לקוח / מספר מכשיר"
+          searchIconColor="#7d97c5"
+          backgroundColor="white"
+          textFieldColor="var(--Color-21, rgba(229, 242, 255, 0.50))"
+        />
+      </ProtectedRoute>
+
+      <div style={{ display: "flex" }}>
         <ProtectedRoute>
-          <Header
-            placeholderText="הקלד שם לקוח / מספר מכשיר"
-            searchIconColor="#7d97c5"
-            backgroundColor="white"
-            textFieldColor="var(--Color-21, rgba(229, 242, 255, 0.50))"
+          <SideNav
+            listItems={[
+              {
+                iconWhite: dashboardIconWhite,
+                iconBlue: dashboardIconBlue,
+                link: "../dashboard",
+                text: "דאשבורד",
+              },
+              {
+                iconWhite: customerIconWhite,
+                iconBlue: customerIconBlue,
+                link: "../customers",
+                text: "לקוחות",
+              },
+              {
+                iconWhite: devicesIconWhite,
+                iconBlue: devicesIconBlue,
+                link: "../devices",
+                text: "מכשירים",
+              },
+            ]}
           />
         </ProtectedRoute>
+        <main style={{ flexGrow: 1, padding: "20px" }}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
 
-        <div style={{ display: "flex" }}>
-          <ProtectedRoute>
-            <SideNav
-              listItems={[
-                {
-                  iconWhite: dashboardIconWhite,
-                  iconBlue: dashboardIconBlue,
-                  link: "../dashboard",
-                  text: "דאשבורד",
-                },
-                {
-                  iconWhite: customerIconWhite,
-                  iconBlue: customerIconBlue,
-                  link: "../customers",
-                  text: "לקוחות",
-                },
-                {
-                  iconWhite: devicesIconWhite,
-                  iconBlue: devicesIconBlue,
-                  link: "../devices",
-                  text: "מכשירים",
-                },
-              ]}
-            />
-          </ProtectedRoute>
-          <main style={{ flexGrow: 1, padding: "20px" }}>
-            <Routes>
-              <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/customers" element={
+              <ProtectedRoute>
+                <Customers />
+              </ProtectedRoute>
+            } />
+            <Route path="/devices" element={
+              <ProtectedRoute>
+                <Devices />
+              </ProtectedRoute>
+            } />
+          </Routes>
 
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/customers" element={
-                <ProtectedRoute>
-                  <Customers />
-                </ProtectedRoute>
-              } />
-              <Route path="/devices" element={
-                <ProtectedRoute>
-                  <Devices />
-                </ProtectedRoute>
-              } />
-            </Routes>
-
-          </main>
-        </div>
+        </main>
+      </div>
     </ThemeProvider >
   );
 }

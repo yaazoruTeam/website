@@ -2,81 +2,99 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { CustomButton } from "../Button/Button";
 import { CustomTextField } from "../Input/Input";
+import { useForm } from "react-hook-form";
+import { passwordArgs, userNameArgs } from "../Input/Input.stories";
 import { loginToSystemArgs } from "../Button/Button.stories";
-import { PasswordFieldArgs, UsernameFieldArgs } from "../Input/Input.stories";
+import logo1 from '../../assets/logo1.svg';
+import logo2 from '../../assets/logo2.svg';
+interface LoginFormProps {
+    onSubmit: (data: LoginFormInputs) => void;
+}
 
 
-const LoginForm = () => {
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        maxWidth: 400,
-        padding: 4,
-        backgroundColor: "white",
-        borderRadius: 2,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 3,
-        boxShadow: 3,
-      }}
-    >
-      {/* Header with Images */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <img
-          style={{ width: 98, height: 34 }}
-          src="../../assets/logo1.png"
-          alt="Logo 1"
-        />
-        <img
-          style={{ width: 47, height: 45 }}
-          src="../../assets/logo2.png"
-          alt="Logo 2"
-        />
-      </Box>
+interface LoginFormInputs {
+    username: string;
+    password: string;
+}
 
-      {/* Form Inputs */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
-        {/* Username Input */}
-        <CustomTextField {...UsernameFieldArgs}/>
+const LoginForm: React.FC<LoginFormProps>  = ({ onSubmit }) => {
 
-        {/* Password Input */}
-        <CustomTextField {...PasswordFieldArgs} />
-
-        {/* Forgot Password Link */}
-        <Typography
-          sx={{
-            textAlign: "right",
-            color: "#032B40",
-            fontSize: 18,
-            textDecoration: "underline",
-            cursor: "pointer",
-          }}
+    const { control, handleSubmit } = useForm<LoginFormInputs>();
+  
+    return (
+        <Box
+            sx={{
+                width: '80%',
+                padding: 6,
+                backgroundColor: 'white',
+                borderRadius: 2,
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 2.5,
+                display: 'inline-flex',
+            }}
         >
-          שכחתי סיסמא?
-        </Typography>
-      </Box>
+            <Box
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 8.65,
+                    display: 'flex',
+                }}
+            >
+                <img
+                    style={{ width: 79.04, height: 33.53 }}
+                    src={logo1}
+                    alt=""
+                />
+                <img
+                    style={{ width: 47.19, height: 45.45 }}
+                    src={logo2}
+                    alt=""
+                />
+            </Box>
 
-      {/* Submit Button */}
-      <CustomButton {...loginToSystemArgs}/>
-    </Box>
-  );
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                }}
+            >
+                <CustomTextField
+                    {...userNameArgs}
+                    control={control}
+                />
+                <CustomTextField
+                    {...passwordArgs}
+                    control={control}
+                />
+
+
+                <Typography
+                    sx={{
+                        textAlign: "right",
+                        color: "#032B40",
+                        fontSize: 18,
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                    }}
+                >
+                    ?שכחתי סיסמה
+                </Typography>
+            </Box>
+
+            {/* Submit Button */}
+            <CustomButton
+                {...loginToSystemArgs}
+                onClick={handleSubmit(onSubmit)}
+            />
+        </Box>
+    );
 };
 
 export default LoginForm;

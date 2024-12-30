@@ -8,7 +8,7 @@ export default {
   component: LoginForm,
 } as Meta<typeof LoginForm>;
 
-const Template: StoryFn<typeof LoginForm> = (args) => <LoginForm/>;
+const Template: StoryFn<typeof LoginForm> = (args) => <LoginForm onSubmit={()=>{}}/>;
 
-export const Default = Template.bind({});
-Default.args = {};
+export const Form = Template.bind({});
+Form.args = {};
