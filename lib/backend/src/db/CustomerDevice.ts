@@ -10,6 +10,7 @@ const createCustomerDevice = async (customerDevice: CustomerDevice.Model) => {
             .insert({
                 customer_id: customerDevice.customer_id,
                 device_id: customerDevice.device_id,
+                date: customerDevice.date,
             }).returning('*');
         return newCustomerDevice;
     }

@@ -2,11 +2,13 @@ import { HttpError } from ".";
 
 interface Model {
     device_id: string;
-    SIM_number: number;
-    IMEI_1: number;
-    mehalcha_number: number;
+    device_number: string;
+    SIM_number: string;
+    IMEI_1: string;
+    mehalcha_number: string;
     model: string;
     status: string;
+    isDonator: boolean;
 }
 
 
@@ -47,15 +49,24 @@ function sanitize(device: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!device.device_number) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "device_number".'
+        };
+        throw error;
+    }
 
 
     const newDevice: Model = {
         device_id: device.device_id,
+        device_number: device.device_number,
         SIM_number: device.SIM_number,
         IMEI_1: device.IMEI_1,
         mehalcha_number: device.mehalcha_number,
         model: device.model,
         status: device.status || 'active',
+        isDonator: device.isDonator,
     };
 
     return newDevice;
@@ -97,7 +108,7 @@ const sanitizeIdExisting = (id: any) => {
 }
 
 const sanitizeBodyExisting = (req: any) => {
-    if (!req.body ||  Object.keys(req.body).length === 0) {
+    if (!req.body || Object.keys(req.body).length === 0) {
         const error: HttpError.Model = {
             status: 400,
             message: 'No body provaider'
