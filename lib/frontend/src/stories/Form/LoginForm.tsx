@@ -7,6 +7,7 @@ import { passwordArgs, userNameArgs } from "../Input/Input.stories";
 import { loginToSystemArgs } from "../Button/Button.stories";
 import logo1 from '../../assets/logo1.svg';
 import logo2 from '../../assets/logo2.svg';
+
 interface LoginFormProps {
     onSubmit: (data: LoginFormInputs) => void;
 }

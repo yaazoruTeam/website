@@ -27,10 +27,10 @@ ErrorField.args = {
 };
 
 export const EmailField = Template.bind({});
-EmailField.args = {
+const emailArgs = EmailField.args = {
   name: "email",
-  label: "Email Address",
-  helperText: "Please enter your email",
+  label: "אימייל",
+  // helperText: "Please enter your email",
   type: "email",
   rules: {
     required: "אימייל הוא שדה חובה",
@@ -66,4 +66,114 @@ const passwordArgs = PasswordField.args = {
   }
 };
 
-export { userNameArgs, passwordArgs }
+export const IdNumberField = Template.bind({});
+const idNumberArgs = IdNumberField.args = {
+  name: "id_number",
+  label: "מספר ת.ז",
+  rules: {
+    required: "שדה חובה",
+    minLength: {
+      value: 9,
+      message: "מספר ת.ז צריך להיות 9 ספרות"
+    },
+    maxLength: {
+      value: 9,
+      message: "מספר ת.ז צריך להיות 9 ספרות",
+    },
+  }
+};
+
+export const FirstNameField = Template.bind({});
+const firstNameArgs = FirstNameField.args = {
+  name: "first_name",
+  label: "שם פרטי",
+  rules: {
+    required: "שדה חובה",
+  },
+  sx: { direction: 'rtl' }
+};
+
+export const LastNameField = Template.bind({});
+const lastNameArgs = LastNameField.args = {
+  name: "last_name",
+  label: "שם משפחה",
+  rules: {
+    required: "שדה חובה",
+  },
+  sx: { direction: 'rtl' }
+};
+
+export const PhoneNumberField = Template.bind({});
+const phoneNumberArgs = PhoneNumberField.args = {
+  name: "phone_number",
+  label: "טלפון",
+  rules: {
+    required: "שדה חובה",
+    minLength: {
+      value: 9,
+      message: 'מספר טלפון צריך להיות לפחות 9 ספרות',
+    },
+    maxLength: {
+      value: 15,
+      message: 'מספר טלפון לא יכול להיות יותר מ-15 ספרות',
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: 'מספר הטלפון חייב להכיל רק ספרות',
+    },
+  }
+};
+
+export const AdditionalPhoneField = Template.bind({});
+const additionalPhoneArgs = AdditionalPhoneField.args = {
+  name: "additional_phone",
+  label: "מספר נוסף",
+  rules: {
+    minLength: {
+      value: 9,
+      message: 'מספר טלפון צריך להיות לפחות 9 ספרות',
+    },
+    maxLength: {
+      value: 15,
+      message: 'מספר טלפון לא יכול להיות יותר מ-15 ספרות',
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: 'מספר הטלפון חייב להכיל רק ספרות',
+    },
+  }
+};
+
+export const AddressField = Template.bind({});
+const addressArgs = AddressField.args = {
+  name: "address",
+  label: "כתובת",
+  rules: {
+    required: "שדה חובה",
+  },
+  sx: { direction: 'rtl' }
+};
+
+export const CityField = Template.bind({});
+const cityArgs = CityField.args = {
+  name: "city",
+  label: "עיר",
+  rules: {
+    required: "שדה חובה",
+  },
+  sx: { direction: 'rtl' }
+};
+
+
+export {
+  userNameArgs,
+  passwordArgs,
+  emailArgs,
+  idNumberArgs,
+  firstNameArgs,
+  lastNameArgs,
+  phoneNumberArgs,
+  additionalPhoneArgs,
+  addressArgs,
+  cityArgs,
+}

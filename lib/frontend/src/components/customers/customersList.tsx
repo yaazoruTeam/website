@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Box, Typography } from "@mui/material";
-import AddCustomerForm from "./AddCustomerForm";
+import AddCustomer from "./AddCustomer";
 import { CustomButton } from "../../stories/Button/Button";
 import { addNewCustomerArgs } from "../../stories/Button/Button.stories";
 
@@ -16,10 +16,10 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
       sx={{
         width: "50%",
         height: "50%",
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingTop: 15,
-        paddingBottom: 15,
+        // paddingLeft: 10,
+        // paddingRight: 10,
+        // paddingTop: 15,
+        // paddingBottom: 15,
         borderRadius: 2,
         display: "flex",
         flexDirection: "column",
@@ -29,7 +29,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
       }}
     >
       {showAddCustomer ? (
-        <AddCustomerForm onBack={() => setShowAddCustomer(false)} />
+        <AddCustomer onBack={() => setShowAddCustomer(false)} />
       ) : (
         <>
           <CustomButton {...addNewCustomerArgs} onClick={() => setShowAddCustomer(true)}/>

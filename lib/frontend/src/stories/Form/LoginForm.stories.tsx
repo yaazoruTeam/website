@@ -1,7 +1,6 @@
-import React from "react";
 import { Meta, StoryFn } from "@storybook/react";
 
-import LoginForm from "./Form";
+import LoginForm from "./LoginForm";
 
 export default {
   title: "Stories/LoginForm",

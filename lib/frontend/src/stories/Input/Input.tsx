@@ -25,7 +25,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
         <Box
             sx={{
                 width: "100%",
-                height: "90px",
+                // height: "1",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "flex-end",
@@ -77,7 +77,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                             alignSelf: "stretch",
                             padding: "10px",
                             "& .MuiInputBase-root": {
-                                height: "49px",
+                                height: "29px",
                                 display: "flex",
                                 alignItems: "center",
                             },

@@ -1,6 +1,6 @@
 import React from "react";
 import loginImage from '../../assets/loginImage.svg';
-import LoginForm from "../../stories/Form/Form";
+import LoginForm from "../../stories/Form/LoginForm";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/authApi";
