@@ -13,16 +13,13 @@ services:
     command: sh -c "npm install && npm run build-schema && PORT=3006 npm run dev"
     environment:
       - NODE_ENV=development
-      - POSTGRES_DB=postgres
-      - DB_HOST=host.docker.internal
+      - POSTGRES_DB=yaazoru
+      - DB_HOST=database
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_NAME=yaazoru
       - DB_PASSWORD=${DB_PASSWORD}
       - DATABASE_URL=postgres://postgres:password@database:5432/mydb
-      - BRAND_TOKEN=da2ab7d7-810a-41b2-be51-6547d6fdc841
-      - BRAND_ID=1
-      - WIDELY_URL=https://widelyapp-api-01.widelymobile.com:3001/api/v2/widely_app/app_action
     # depends_on:
     #   - database
     # networks:
