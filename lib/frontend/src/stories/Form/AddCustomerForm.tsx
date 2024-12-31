@@ -27,25 +27,25 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
 
     return (
         <Box style={{
-            // alignSelf: 'stretch',
-            // height: 459,
-            // width: '100%',
-            // flexDirection: 'column',
-            // justifyContent: 'flex-start',
-            // alignItems: 'stretch',
-            // gap: 80,
-            // display: 'flex'
+            alignSelf: 'stretch',
+            height: 459,
+            width: '100%',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'stretch',
+            gap: 80,
+            display: 'flex'
         }}
         >
             <Box style={{
-                // alignSelf: 'stretch',
-                // height: 459,
-                // boxShadow: '0px 4px 10px rgba(41.60, 59.76, 109.70, 0.04)',
-                // flexDirection: 'column',
-                // justifyContent: 'flex-end',
-                // alignItems: 'flex-start',
-                // gap: 20,
-                // display: 'flex'
+                alignSelf: 'stretch',
+                height: 459,
+                boxShadow: '0px 4px 10px rgba(41.60, 59.76, 109.70, 0.04)',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+                alignItems: 'flex-start',
+                gap: 20,
+                display: 'flex'
             }}
             >
                 <Box style={{

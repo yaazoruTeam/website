@@ -46,13 +46,13 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
     <Box
       sx={{
         display: 'flex',
-        width: '100%',
+        width: '150%',
         height: '100%',
         // // padding: '2% 0',
         flexDirection: 'column',
         alignItems: 'flex-start',
         gap: '28px',
-        left: 0,
+        // left: 0,
         // flexShrink: 0,
       }}
     >
@@ -88,8 +88,6 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
           </Typography>
         </Box>
       </Box>
-      {/*כאן יהיה טופס*/}
-      {/* התוכן שלך כאן */}
       <AddCustomerForm onSubmit={addCustomer} />
       <h1>hbgg</h1>
     </Box>
