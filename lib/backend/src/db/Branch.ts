@@ -1,4 +1,4 @@
-import { Branch, HttpError } from "@yaazoru/model";
+import { Branch, HttpError } from "../model";
 import getConnection from "./connection";
 
 

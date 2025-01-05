@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(router);
 app.use(errorHandler);
-sendPing();
+// sendPing();
 
 // Start server
 app.listen(PORT, () => {
