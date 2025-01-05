@@ -1,4 +1,4 @@
-import { CustomerDevice } from "@yaazoru/model";
+import { CustomerDevice } from "../model";
 import getConnection from "./connection";
 
 

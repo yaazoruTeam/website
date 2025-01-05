@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import db from "../db";
-import { Device, HttpError } from "@yaazoru/model";
+import { Device, HttpError } from "../model";
 
 const createDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -82,12 +82,14 @@ const existingDevice = async (device: Device.Model, hasId: boolean) => {
                 SIM_number: device.SIM_number,
                 IMEI_1: device.IMEI_1,
                 mehalcha_number: device.mehalcha_number,
+                device_number: device.device_number,
             });
         } else {
             deviceEx = await db.Device.findDevice({
                 SIM_number: device.SIM_number,
                 IMEI_1: device.IMEI_1,
                 mehalcha_number: device.mehalcha_number,
+                device_number: device.device_number,
             });
         }
         if (deviceEx) {

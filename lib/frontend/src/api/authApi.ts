@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { User } from '@yaazoru/model';
+import { User } from '../model';
 
 const baseUrl = 'http://localhost:3006/controller';
 
