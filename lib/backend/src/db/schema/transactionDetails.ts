@@ -15,12 +15,12 @@ const createTransactionDetailsSchema = async () => {
         .withSchema("yaazoru")
         .createTable("transactionDetails", (table: Knex.TableBuilder) => {
           table.increments("transaction_id").primary();
-          table.string("credit_id").notNullable();
+          table.foreign("credit_id").references("yaazoru.creditDetails.credit_id");
           table.integer("monthlyAmount").notNullable();
           table.integer("totalAmount").notNullable();
           table.date("nextBillingDate").notNullable();
           table.date("lastBillingDate").notNullable();
-          table.boolean("isActive").notNullable();
+          table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active');
         });
       console.log("transactionDetails table created successfully.");
     } else {
