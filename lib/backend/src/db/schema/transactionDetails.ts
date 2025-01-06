@@ -15,7 +15,7 @@ const createTransactionDetailsSchema = async () => {
         .withSchema("yaazoru")
         .createTable("transactionDetails", (table: Knex.TableBuilder) => {
           table.increments("transaction_id").primary();
-          table.foreign("credit_id").references("yaazoru.creditDetails.credit_id");
+          table.string("credit_id").notNullable();
           table.integer("monthlyAmount").notNullable();
           table.integer("totalAmount").notNullable();
           table.date("nextBillingDate").notNullable();
