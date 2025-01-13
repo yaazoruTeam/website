@@ -56,7 +56,7 @@ const sanitizeBodyExisting = (req: any) => {
   }
 };
 
-export {
+export{
   Model,
   sanitize,
   sanitizeIdExisting,
