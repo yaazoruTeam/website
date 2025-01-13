@@ -13,6 +13,7 @@ const createCustomerDeviceSchema = async () => {
                 table.increments("customerDevice_id").primary();
                 table.string("customer_id").notNullable();
                 table.string("device_id").notNullable().unique();
+                table.date("date").notNullable();
             });
             console.log('CustomerDevice table created successfully.');
         }

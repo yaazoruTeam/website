@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import db from "../db";
-import { User, HttpError } from "@yaazoru/model";
+import { User, HttpError } from "../model";
 import { hashPassword } from '../utils/password';
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -9,7 +9,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
         const userData = req.body;
         const sanitized = User.sanitize(userData, false);
         await existingUser(sanitized, false);
-        userData.password = await hashPassword(userData.password);
+        sanitized.password = await hashPassword(sanitized.password);
         const user = await db.User.createUser(sanitized);
         res.status(201).json(user);
     } catch (error: any) {
