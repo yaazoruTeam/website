@@ -10,10 +10,10 @@ import Customers from "./components/customers/customers";
 import Devices from "./components/devices/devices";
 import Header from "./components/layout/Header";
 import Login from "./components/auth/Login";
+import CustomerSelector from "./components/customers/CustomerSelector";
 
 
 import ProtectedRoute from "./components/ProtectedRoute";
-
 
 import dashboardIconWhite from "../src/assets/dashboardIcon-white.svg";
 import dashboardIconBlue from "../src/assets/dashboardIcon-blue.svg";
@@ -95,6 +95,11 @@ function App() {
             <Route path="/devices" element={
               <ProtectedRoute>
                 <Devices />
+              </ProtectedRoute>
+            } />
+            <Route path="/monthlyAmount" element={
+              <ProtectedRoute>
+                <CustomerSelector onCustomerSelect={() => { }} />
               </ProtectedRoute>
             } />
           </Routes>

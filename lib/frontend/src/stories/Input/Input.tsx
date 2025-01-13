@@ -9,6 +9,7 @@ export interface CustomTextFieldProps extends Omit<TextFieldProps, "variant"> {
     control: Control<any>;
     name: string;
     rules?: any
+    placeholder?: string;
 }
 
 export const CustomTextField: React.FC<CustomTextFieldProps> = ({
@@ -18,6 +19,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
     control,
     name,
     rules,
+    placeholder,
     sx,
     ...props
 }) => {
@@ -56,6 +58,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                         {...field}
                         {...props}
                         error={!!fieldState.error || !!errorMessage}
+                        placeholder={placeholder}
                         helperText={fieldState.error?.message || errorMessage || helperText}
                         variant="standard"
                         slotProps={{
@@ -87,6 +90,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                             ...sx,
                         }}
                     />
+
                 )}
             />
         </Box>
