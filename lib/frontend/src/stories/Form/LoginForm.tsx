@@ -1,10 +1,9 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { CustomButton } from "../Button/Button";
+import { CustomButton } from "../../components/Button/Button";
 import { CustomTextField } from "../Input/Input";
 import { useForm } from "react-hook-form";
 import { passwordArgs, userNameArgs } from "../Input/Input.stories";
-import { loginToSystemArgs } from "../Button/Button.stories";
 import logo1 from '../../assets/logo1.svg';
 import logo2 from '../../assets/logo2.svg';
 
@@ -18,10 +17,10 @@ interface LoginFormInputs {
     password: string;
 }
 
-const LoginForm: React.FC<LoginFormProps>  = ({ onSubmit }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
     const { control, handleSubmit } = useForm<LoginFormInputs>();
-  
+
     return (
         <Box
             sx={{
@@ -89,9 +88,16 @@ const LoginForm: React.FC<LoginFormProps>  = ({ onSubmit }) => {
                 </Typography>
             </Box>
 
-            {/* Submit Button */}
             <CustomButton
-                {...loginToSystemArgs}
+                label="התחברות למערכת"
+                sx={{
+                    background: "#FF7F07",
+                    color: "white",
+                    "&:hover": {
+                        background: "#0a425f",
+                    },
+                }}
+
                 onClick={handleSubmit(onSubmit)}
             />
         </Box>
