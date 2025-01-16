@@ -1,4 +1,4 @@
-import { Device, HttpError } from "@yaazoru/model";
+import { Device, HttpError } from "../model";
 import getConnection from "./connection";
 
 

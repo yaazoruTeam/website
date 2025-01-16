@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import db from "../db";
-import { User, HttpError } from "@yaazoru/model";
+import { User, HttpError } from "../model";
 import { hashPassword } from '../utils/password';
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

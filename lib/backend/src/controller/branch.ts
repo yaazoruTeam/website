@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import db from "../db";
-import { Branch, HttpError } from "@yaazoru/model";
+import { Branch, HttpError } from "../model";
 
 const createBranch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

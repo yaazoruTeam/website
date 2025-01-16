@@ -1,4 +1,4 @@
-import { Customer, HttpError } from "@yaazoru/model";
+import { Customer, HttpError } from "../model";
 import getConnection from "./connection";
 
 

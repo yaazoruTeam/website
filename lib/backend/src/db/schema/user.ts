@@ -1,4 +1,4 @@
-import { User } from "@yaazoru/model";
+import { User } from "../../model";
 import getConnection from "../connection";
 import { Knex } from "knex"
 
