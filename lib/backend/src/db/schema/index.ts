@@ -6,6 +6,8 @@ import { createUserSchema } from "./user"
 import { createBranchSchema } from "./branch"
 import { createBranchCustomerSchema } from "./branchCustomer"
 import { createBranchUserSchema } from "./branchUser"
+import { createCreditDetailsSchema } from "./creditDetails"
+import { createTransactionDetailsSchema } from "./transactionDetails"
 
 const createSchema = async () => {
     console.log("Creating schema...");
@@ -18,6 +20,8 @@ const createSchema = async () => {
         await createBranchSchema();
         await createBranchCustomerSchema();
         await createBranchUserSchema();
+        await createCreditDetailsSchema();
+        await createTransactionDetailsSchema();
         console.log("Schema created successfully");
     } catch (err) {
         console.error("Error creating schema", err);

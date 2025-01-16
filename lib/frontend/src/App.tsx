@@ -10,33 +10,43 @@ import Customers from "./components/customers/customers";
 import Devices from "./components/devices/devices";
 import Header from "./components/layout/Header";
 import Login from "./components/auth/Login";
-
-
+import MonthlyPayment from "./components/monthlyPayment/MonthlyPayment";
+import Orders from "./components/orders/Orders";
+import Branches from "./components/branches/Branches";
+import Permissions from "./components/Permissions/Permissions";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 
 import dashboardIconWhite from "../src/assets/dashboardIcon-white.svg";
 import dashboardIconBlue from "../src/assets/dashboardIcon-blue.svg";
-
 import customerIconWhite from "../src/assets/customerIcon-white.svg";
 import customerIconBlue from "../src/assets/customerIcon-blue.svg";
-
 import devicesIconWhite from "../src/assets/deviceIcon-white.svg";
 import devicesIconBlue from "../src/assets/deviceIcon-blue.svg";
+import ordersIconWhite from "../src/assets/orders-white.svg";
+import ordersIconBlue from "../src/assets/orders-blue.svg";
+import branchesIconWhite from "../src/assets/branches-white.svg";
+import branchesIconBlue from "../src/assets/branches-blue.svg";
+import monthlyPaymentIconWhite from "../src/assets/monthlyPayment-white.svg";
+import monthlyPaymentIconBlue from "../src/assets/monthlyPayment-blue.svg";
+import permissionsIconWhite from "../src/assets/permissions-white.svg";
+import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 
-import { setupAxiosInterceptors } from "./api/axiosInterceptor"; // ייבוא הפונקציה
+import { setupAxiosInterceptors } from "./api/axiosInterceptor";
+
 
 
 const theme = createTheme({
   typography: {
-    fontFamily: "Assistant, sans-serif",
-    fontSize: 18
+    fontSize: 17,
+    fontFamily: 'Heebo',
+    // fontWeight: '400',
+    // wordWrap: 'break-word'
   },
 });
 
 function App() {
 
-  const navigate = useNavigate(); // הגדרת הניווט
+  const navigate = useNavigate();
 
   useEffect(() => {
     setupAxiosInterceptors(navigate);
@@ -75,6 +85,30 @@ function App() {
                 link: "../devices",
                 text: "מכשירים",
               },
+              {
+                iconWhite: ordersIconWhite,
+                iconBlue: ordersIconBlue,
+                link: "../orders",
+                text: "הזמנות",
+              },
+              {
+                iconWhite: branchesIconWhite,
+                iconBlue: branchesIconBlue,
+                link: "../branches",
+                text: "סניפים",
+              },
+              {
+                iconWhite: monthlyPaymentIconWhite,
+                iconBlue: monthlyPaymentIconBlue,
+                link: "../monthlyPayment",
+                text: "הוראת קבע",
+              },
+              {
+                iconWhite: permissionsIconWhite,
+                iconBlue: permissionsIconBlue,
+                link: "../permissions",
+                text: "הרשאות",
+              },
             ]}
           />
         </ProtectedRoute>
@@ -97,8 +131,27 @@ function App() {
                 <Devices />
               </ProtectedRoute>
             } />
+            <Route path="/orders" element={
+              <ProtectedRoute>
+                <Orders />
+              </ProtectedRoute>
+            } />
+            <Route path="/branches" element={
+              <ProtectedRoute>
+                <Branches />
+              </ProtectedRoute>
+            } />
+            <Route path="/monthlyPayment" element={
+              <ProtectedRoute>
+                <MonthlyPayment />
+              </ProtectedRoute>
+            } />
+            <Route path="/permissions" element={
+              <ProtectedRoute>
+                <Permissions />
+              </ProtectedRoute>
+            } />
           </Routes>
-
         </main>
       </div>
     </ThemeProvider >

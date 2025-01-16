@@ -3,4 +3,4 @@ interface Model {
     message: string;
 }
 
-export { Model }
+export type { Model };
