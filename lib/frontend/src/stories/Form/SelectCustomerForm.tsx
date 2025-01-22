@@ -36,14 +36,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
 
 
                 width: 1000,
-                // paddingLeft: 2,
-                // paddingRight: 2,
-                // paddingTop: 1,
-                // paddingBottom: 1,
-
-
-
-                // width: "80%",
                 height: "100%",
                 padding: 3.5,
                 backgroundColor: "white",

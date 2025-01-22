@@ -1,10 +1,7 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import AddCustomerForm, { AddCustomerFormInputs } from '../../stories/Form/AddCustomerForm';
-import { createCustomer } from '../../api/customerApi';
-import { Customer } from '../../model/src';
-import MonthlyPaymentForm from '../../stories/Form/SelectCustomerForm';
 import CustomerSelector from '../customers/CustomerSelector';
+import PaymentForm from './PaymentForm';
+import FormToAddItems from './FormToAddItems';
 
 interface Props {
     onBack: () => void;
@@ -23,9 +20,11 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     };
 
     return (
-        // <h1>הוספת הוראת קבע</h1>
-        // <MonthlyAmountForm  />
-        <CustomerSelector onCustomerSelect={() => { }} />
+        <>
+            <CustomerSelector onCustomerSelect={() => { }} />
+            <FormToAddItems />
+            <PaymentForm />
+        </>
     );
 };
 
