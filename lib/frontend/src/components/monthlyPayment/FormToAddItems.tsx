@@ -4,7 +4,7 @@ import ItemForm, { ItemFormInputs } from "../../stories/Form/AddItemForm";
 import trashIcon from '../../assets/trash-can.svg';
 import edited from '../../assets/edited.svg';
 
-const FormToAddItems: React.FC = () => {
+const FormToAddItems: React.FC<{ onItemsChange: (items: ItemFormInputs[]) => void }> = ({ onItemsChange }) => {
   const [items, setItems] = useState<ItemFormInputs[]>([]);
   const [editingItem, setEditingItem] = useState<ItemFormInputs | null>(null);
 
@@ -29,8 +29,12 @@ const FormToAddItems: React.FC = () => {
         item === editingItem ? updatedItem : item
       )
     );
-    setEditingItem(null); 
+    setEditingItem(null);
   }
+
+  useEffect(() => {
+    onItemsChange(items); 
+  }, [items, onItemsChange]);
 
   useEffect(() => {
     console.log("פריטים מעודכנים:", items);

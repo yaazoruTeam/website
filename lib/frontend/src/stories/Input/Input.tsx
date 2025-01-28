@@ -89,8 +89,8 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                             },
                             ...sx,
                         }}
+                        value={field.value || ''}
                     />
-
                 )}
             />
         </Box>

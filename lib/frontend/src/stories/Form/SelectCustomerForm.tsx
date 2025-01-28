@@ -23,7 +23,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
             setValue("email", customer.email);
             setValue("phone_number", customer.phone_number);
         } else {
-            // Reset the form if no customer is selected
             setValue("full_name", "הקלד שם לקוח");
             setValue("email", "");
             setValue("phone_number", "");
@@ -33,8 +32,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
     return (
         <Box
             sx={{
-
-
                 width: 1000,
                 height: "100%",
                 padding: 3.5,
@@ -71,10 +68,8 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
             >
 
 
-                {/* שדה טלפון */}
                 {customer && (
                     <>
-                        {/* שדה אימייל */}
                         <Box
                             sx={{
                                 width: 393.33,
@@ -130,7 +125,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                     </>
                 )
                 }
-                {/* שדה שם לקוח */}
                 <Box
                     sx={{
                         width: 393.33,
@@ -158,7 +152,7 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                             backgroundColor: "rgba(246, 248, 252, 0.58)",
                             borderRadius: 1,
                         }}
-                        onClick={onNameClick} // נוסיף את ההאזנה לאירוע
+                        onClick={onNameClick}
                     />
                 </Box>
 

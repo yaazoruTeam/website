@@ -1,134 +1,181 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import { CustomTextField } from '../../stories/Input/Input';
 import { useForm } from 'react-hook-form';
 interface PaymentFormInput {
     name: string;
+    OwedAll: string;
+    Payments: string;
+    startDate: string;
 }
 declare global {
     interface Window {
         TzlaHostedFields: any;
-        fields: any;
-        fieldsInitialized: any;
+        fieldsInitialized: boolean;
     }
 }
+let fields: any = null;
 
-const PaymentForm: React.FC = () => {
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => void, OnTimeChange: (timeData: any) => void }, ref) => {
+    const { onPaymentChange } = props;
+    const { OnTimeChange } = props;
+    const [errors, setErrors] = useState<string[]>([]);
     const [fieldsInitialized, setFieldsInitialized] = useState<boolean>(false);
+    // const terminalName = process.env.TRANZILA_TERMINAL_NAME;
 
-    const { control } = useForm<PaymentFormInput>();
+    const { control, watch } = useForm<PaymentFormInput>();
 
+    useImperativeHandle(ref, () => ({
+        chargeCcData, // חושפים את הפונקציה החיונית
+    }));
+    const initializeTzlaFields = () => {
+        console.log('מנסה לטעון שדות Tranzila...');
+
+        if (fieldsInitialized || window.fieldsInitialized) {
+            console.log('השדות כבר אותחלו בעבר.');
+            return;
+        }
+        if (!window.TzlaHostedFields) {
+            console.error('TzlaHostedFields אינו זמין.');
+            return;
+        }
+
+        fields = window.TzlaHostedFields.create({
+            sandbox: true,
+            fields: {
+                credit_card_number: {
+                    selector: '#credit_card_number',
+                    placeholder: 'מספר כרטיס אשראי',
+                    tabindex: 1
+                },
+                cvv: {
+                    selector: '#cvv',
+                    placeholder: 'CVV',
+                    tabindex: 2
+                },
+                expiry: {
+                    selector: '#expiry',
+                    placeholder: 'MM/YYYY',
+                    version: '1'
+                },
+                identity_number: {
+                    selector: '#identity_number',
+                    placeholder: 'מספר תעודת זהות',
+                    tabindex: 4,
+                }
+            },
+            styles: {
+                input: {
+                    height: '29px',
+                    width: '100%',
+                    color: '#032B40'
+                },
+                select: {
+                    height: 'auto',
+                    width: 'auto'
+                }
+            }
+        });
+        console.log('tzlFields (fields):', fields);
+
+        setFieldsInitialized(true);
+        window.fieldsInitialized = true;
+    };
 
     useEffect(() => {
-        if (fieldsInitialized) return; // אם השדות כבר נוצרו, אל תמשיך
-        const initializeTzlaFields = () => {
-            console.log('initializeTzlaFields');
-            if (fieldsInitialized || window.fieldsInitialized) {
-                console.log('השדות כבר נוצרו');
-                return;
-            }
-    
-            if (!fieldsInitialized && window.TzlaHostedFields) {
-                window.TzlaHostedFields.create({
-                    sandbox: true,
-                    fields: {
-                        credit_card_number: {
-                            selector: '#credit_card_number',
-                            placeholder: '4580 4580 4580 4580',
-                            tabindex: 1
-                        },
-                        cvv: {
-                            selector: '#cvv',
-                            placeholder: '123',
-                            tabindex: 2
-                        },
-                        expiry: {
-                            selector: '#expiry',
-                            placeholder: '12/21',
-                            version: '1'
-                        }
-                    },
-                    styles: {
-                        input: {
-                            height: '29px',
-                            width: '100%',
-                            color: '#032B40'
-    
-                        },
-                        select: {
-                            height: 'auto',
-                            width: 'auto'
-                        }
-                    }
-                });
-                setFieldsInitialized(true);
-    
-            }
-        };
-
         if (!window.TzlaHostedFields) {
-            if (document.querySelector('script[src="https://hf.tranzila.com/assets/js/thostedf.js"]')) {
-                console.log('הסקריפט כבר נטען בעבר');
-                return;
-            }
-            const script = document.createElement('script');
-            script.src = 'https://hf.tranzila.com/assets/js/thostedf.js';
-            script.async = true;
-            script.onload = () => {
-                console.log('הסקריפט  נטען בהצלחה😊');
-                initializeTzlaFields();
-            };
-            script.onerror = () => {
-                console.error("Failed to load TzlaHostedFields script.");
-            };
-            document.body.appendChild(script);
-        } else {
+            console.error('TzlaHostedFields לא נטען מה-scripts.');
+            return;
+        }
+
+        if (!fieldsInitialized) {
             initializeTzlaFields();
         }
     }, [fieldsInitialized]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        chargeCcData();
-    };
 
-    const chargeCcData = () => {
-        const fields = window.TzlaHostedFields;
-        fields.charge(
-            {
-                terminal_name: 'naortest', // Change to your terminal name
-                requested_by_user: 'tamar peleg'
-            },
-            (err: any, response: any) => {
-                if (err) {
-                    handleErrors(err);
-                }
-                if (response) {
-                    parseResponse(response);
-                }
-            }
-        );
-    };
+    const chargeCcData = async () => {
+        console.log('ביצוע עיסקה התחיל-----');
+        if (!fields) {
+            console.error('השדה fields אינו מאותחל.');
+            return;
+        }
 
-    const handleErrors = (error: any) => {
-        const errorMessages: { [key: string]: string } = {};
-        error.messages.forEach((message: any) => {
-            errorMessages[message.param] = message.message;
+        console.log('פונקציות זמינות:', Object.keys(fields));
+
+        if (typeof fields.charge !== 'function') {
+            console.error('פונקציית charge אינה זמינה ב-fields.');
+            return;
+        }
+
+        return new Promise((resolve, reject) => {
+            fields.charge(
+                {
+                    terminal_name: 'yaazoru',
+                    amount: 5,
+                    tran_mode: 'N',
+                    tokenize: true,
+                    response_language: 'Hebrew',
+                },
+                (err: any, response: any) => {
+                    if (err) {
+                        handleError(err);
+                        reject(err);
+                    }
+                    if (response) {
+                        onPaymentChange(response.transaction_response);
+                        resolve(response);
+                    }
+                }
+            );
         });
+    };
+
+    const handleError = (err: any) => {
+        console.log('העסקה נכשלה.');
+        const errorMessages = err.messages.map((message: any) => message.message);
         setErrors(errorMessages);
     };
 
-    const parseResponse = (response: any) => {
-        console.log('Response:', response);
-    };
+    // const parseResponse = (response: any) => {
+    //     console.log('העיסקה הצליחה!!');
+    //     console.log('פרטי עיסקה:', response);
+
+    //     if (response.errors) {
+    //         const errorMessages = response.errors.map((error: any) => error.message);
+    //         setErrors(errorMessages);
+    //     } else {
+    //         if (response.transaction_response.success) {
+    //             //העיסקה הצליחה? זה אומר שהאימות עבר בהצלחה אז מה צריך לעשות עכשיו:
+    //             //1. שמירה של הטוקן הDB ע"י קריאת שרת
+    //             //2. לעדכן את כל הנתונים 
+    //             onPaymentChange(response.transaction_response.success);
+    //         } else {
+    //             setErrors([response.transaction_response.error]);
+    //         }
+    //     }
+    // };
+
+    useEffect(() => {
+        const subscription = watch((value) => {
+            const { name, OwedAll, Payments, startDate } = value;
+            console.log("timeData update:", { name, OwedAll, Payments, startDate });            
+            OnTimeChange({
+                name: name,
+                owedAll: OwedAll,
+                payments: Payments,
+                startDate: startDate
+            });
+        });
+    
+        return () => subscription.unsubscribe();
+    }, [watch, OnTimeChange]); // דאג שלא יקרה שיבוש בצפייה
 
 
     return (
         <Box
             component="form"
             id="payment_form"
-            onSubmit={handleSubmit}
             sx={{
                 width: 1000,
                 height: '100%',
@@ -141,24 +188,19 @@ const PaymentForm: React.FC = () => {
                 alignItems: 'flex-end',
             }}
         >
-            {/* כותרת */}
             <Typography variant="h6" sx={{ textAlign: 'center', color: '#0A425F', fontSize: 22, fontWeight: '500' }}>
                 פרטי תשלום
             </Typography>
-
-            {/* שדות פרטי כרטיס */}
-
             <Box
                 sx={{
                     alignSelf: 'stretch',
                     height: 90,
                     justifyContent: 'flex-end',
                     alignItems: 'center',
-                    gap: 4, // 28px אם נרצה את אותו המרחק
+                    gap: 4,
                     display: 'inline-flex',
                 }}
             >
-
                 <CustomTextField
                     control={control}
                     name='name'
@@ -168,6 +210,48 @@ const PaymentForm: React.FC = () => {
                         direction: 'rtl'
                     }}
                 />
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1,
+                        display: 'inline-flex',
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            color: "var(--Color-11, #032B40)",
+                            textAlign: "right",
+                            fontSize: "18px",
+                            fontFamily: "Heebo",
+                            fontWeight: 400,
+                            lineHeight: "normal",
+                            wordWrap: 'break-word',
+                        }}
+                    >
+                        מס' ת.ז
+                    </Typography>
+
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1,
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1,
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            display: 'inline-flex',
+                        }}
+                    >
+                        <div
+                            id="identity_number"
+                            style={{ width: '100%', height: '29px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
 
                 {/* CVV */}
                 <Box
@@ -207,7 +291,7 @@ const PaymentForm: React.FC = () => {
                     >
                         <div
                             id="cvv"
-                            style={{ width: '100%', height: '29px'}}
+                            style={{ width: '100%', height: '29px' }}
                         >
                         </div>
                     </Box>
@@ -220,7 +304,7 @@ const PaymentForm: React.FC = () => {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'flex-end',
-                        gap: 1, // המרחק בין האלמנטים (8px, כי 1rem = 8px)
+                        gap: 1,
                         display: 'inline-flex',
                     }}
                 >
@@ -241,9 +325,9 @@ const PaymentForm: React.FC = () => {
                     <Box
                         sx={{
                             alignSelf: 'stretch',
-                            padding: 1, // 10px
+                            padding: 1,
                             background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1, // 6px
+                            borderRadius: 1,
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             display: 'inline-flex',
@@ -251,7 +335,7 @@ const PaymentForm: React.FC = () => {
                     >
                         <div
                             id="expiry"
-                            style={{ width: '100%', height: '29px'}}
+                            style={{ width: '100%', height: '29px' }}
                         >
                         </div>
                     </Box>
@@ -264,7 +348,7 @@ const PaymentForm: React.FC = () => {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'flex-end',
-                        gap: 1, // המרחק בין האלמנטים (8px, כי 1rem = 8px)
+                        gap: 1,
                         display: 'inline-flex',
                     }}
                 >
@@ -285,9 +369,9 @@ const PaymentForm: React.FC = () => {
                     <Box
                         sx={{
                             alignSelf: 'stretch',
-                            padding: 1, // 10px
+                            padding: 1,
                             background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1, // 6px
+                            borderRadius: 1,
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             display: 'inline-flex',
@@ -319,32 +403,28 @@ const PaymentForm: React.FC = () => {
                 תאריך חיוב
             </Typography>
 
-            {/* בלוק עם שלושה אלמנטים */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '75%' }}>
-                {/* חודשיים */}
-                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1,paddingLeft:'50px' }}>
+                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
                         label='חייב כל'
                         name='OwedAll'
                         placeholder='1 חודשיים'
-                        sx={{ direction: 'rtl'}}
+                        sx={{ direction: 'rtl' }}
                     />
                 </Box>
 
-                {/* תשלומים */}
-                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1,paddingLeft:'50px'  }}>
+                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
                         label='תשלומים'
                         name='Payments'
                         placeholder='0'
-                        sx={{direction:'rtl'}}
+                        sx={{ direction: 'rtl' }}
                     />
                 </Box>
 
-                {/* תאריך התחלה */}
-                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 ,paddingLeft:'50px' }}>
+                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
                         label='תאריך התחלה'
@@ -354,8 +434,9 @@ const PaymentForm: React.FC = () => {
                     />
                 </Box>
             </Box>
+            {errors && <Box><Typography>{errors}</Typography></Box>}
         </Box>
     );
-};
+});
 
 export default PaymentForm;

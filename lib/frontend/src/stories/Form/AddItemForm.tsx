@@ -20,7 +20,15 @@ interface ItemFormProps {
 }
 
 const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
-    const { control, handleSubmit, reset, watch, setValue } = useForm<ItemFormInputs>();
+    const { control, handleSubmit, reset, watch, setValue } = useForm<ItemFormInputs>({
+        defaultValues: {
+            description: '',
+            quantity: '',
+            price: '',
+            total: '',
+            paymentType: ''
+        }
+    });
     const quantity = watch("quantity");
     const price = watch("price");
 
@@ -49,7 +57,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
     };
     const deleteForm = () => {
         console.log('delete form');
-        
+
         reset({
             description: '',
             quantity: '',
@@ -63,7 +71,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
         <Box style={{ alignSelf: 'stretch', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 24, display: 'inline-flex' }}>
             <Box style={{ flex: '1 1 0', height: 50, justifyContent: 'flex-start', alignItems: 'center', gap: 8, display: 'flex' }}>
                 <Box style={{ width: 24, height: 24, position: 'relative' }}>
-                    <img src={trashIcon} alt="delete" onClick={() => deleteForm()}  style={{ cursor: 'pointer' }}/>
+                    <img src={trashIcon} alt="delete" onClick={() => deleteForm()} style={{ cursor: 'pointer' }} />
                 </Box>
                 <CustomButton
                     label="אישור"
