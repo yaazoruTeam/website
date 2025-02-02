@@ -1,15 +1,20 @@
-import { HttpError } from ".";
+import { HttpError, ItemForMonthlyPayment } from ".";
 
 interface Model {
   transaction_id: string;
   credit_id: string;
-  monthlyAmount: number;
-  totalAmount: number;
-  nextBillingDate: Date;
-  lastBillingDate?: Date;
+  customer_name: string;//שם לקוח
+  dates: string;//תאריכים
+  amount: number;//(חודשי)סכום
+  total_sum: number;//סה"כ
+  belongs_to_organization: string;//שייל לאירגון
+  last_attempt: Date;//נסיון אחרון
+  last_success: Date;//הצלחה אחרונה
+  next_charge: Date;//החיוב הבא
+  update: Date;//עידכון
+  items: ItemForMonthlyPayment.Model[];//פריטים
   status: "active" | "inactive";
 }
-
 
 function sanitize(transactionDetails: Model, hasId: boolean): Model {
   if (hasId && !transactionDetails.transaction_id) {
@@ -26,41 +31,89 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
-  if (!transactionDetails.monthlyAmount) {
+  if (!transactionDetails.customer_name) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "monthlyAmount".',
+      message: 'Invalid or missing "customer_name".',
     };
     throw error;
   }
-  if (!transactionDetails.totalAmount) {
+  if (!transactionDetails.dates) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "totalAmount".',
+      message: 'Invalid or missing "dates".',
     };
     throw error;
   }
-  if (!transactionDetails.nextBillingDate) {
+  if (!transactionDetails.amount) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "nextBillingDate".',
+      message: 'Invalid or missing "amount".',
     };
     throw error;
   }
-  if (!transactionDetails.lastBillingDate) {
+  if (!transactionDetails.total_sum) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "lastBillingDate".',
+      message: 'Invalid or missing "total_sum".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.belongs_to_organization) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "belongs_to_organization".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.last_attempt) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "last_attempt".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.last_success) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "last_success".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.next_charge) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "next_charge".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.update) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "update".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.items) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "items".',
     };
     throw error;
   }
   const newTransactionDetails: Model = {
     transaction_id: transactionDetails.transaction_id,
     credit_id: transactionDetails.credit_id,
-    monthlyAmount: transactionDetails.monthlyAmount,
-    totalAmount: transactionDetails.totalAmount,
-    nextBillingDate: transactionDetails.nextBillingDate,
-    lastBillingDate: transactionDetails.lastBillingDate,
+    customer_name: transactionDetails.customer_name,
+    dates: transactionDetails.dates,
+    amount: transactionDetails.amount,
+    total_sum: transactionDetails.total_sum,
+    belongs_to_organization: transactionDetails.belongs_to_organization,
+    last_attempt: transactionDetails.last_attempt,
+    last_success: transactionDetails.last_success,
+    next_charge: transactionDetails.next_charge,
+    update: transactionDetails.update,
+    items: transactionDetails.items,
     status: transactionDetails.status || 'active',
   };
   return newTransactionDetails;

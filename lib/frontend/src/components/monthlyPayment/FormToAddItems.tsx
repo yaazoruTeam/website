@@ -1,29 +1,30 @@
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import ItemForm, { ItemFormInputs } from "../../stories/Form/AddItemForm";
+import ItemForm from "../../stories/Form/AddItemForm";
 import trashIcon from '../../assets/trash-can.svg';
 import edited from '../../assets/edited.svg';
+import { ItemForMonthlyPayment } from "../../model/src";
 
-const FormToAddItems: React.FC<{ onItemsChange: (items: ItemFormInputs[]) => void }> = ({ onItemsChange }) => {
-  const [items, setItems] = useState<ItemFormInputs[]>([]);
-  const [editingItem, setEditingItem] = useState<ItemFormInputs | null>(null);
+const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Model[]) => void }> = ({ onItemsChange }) => {
+  const [items, setItems] = useState<ItemForMonthlyPayment.Model[]>([]);
+  const [editingItem, setEditingItem] = useState<ItemForMonthlyPayment.Model | null>(null);
 
-  const addItem = (data: ItemFormInputs) => {
+  const addItem = (data: ItemForMonthlyPayment.Model) => {
     console.log(data);
     setItems(prevItems => [...prevItems, data]);
   }
 
-  const deleteItem = (itemToDelete: ItemFormInputs) => {
+  const deleteItem = (itemToDelete: ItemForMonthlyPayment.Model) => {
     console.log('delete item', itemToDelete);
     setItems(prevItems => prevItems.filter(item => item !== itemToDelete));
   }
 
-  const editItem = (itemToEdit: ItemFormInputs) => {
+  const editItem = (itemToEdit: ItemForMonthlyPayment.Model) => {
     console.log('edit item', itemToEdit);
     setEditingItem(itemToEdit);
   }
 
-  const saveEditedItem = (updatedItem: ItemFormInputs) => {
+  const saveEditedItem = (updatedItem: ItemForMonthlyPayment.Model) => {
     setItems(prevItems =>
       prevItems.map(item =>
         item === editingItem ? updatedItem : item

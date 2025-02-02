@@ -5,22 +5,15 @@ import { CustomTextField } from "../Input/Input";
 import CustomSelect from "../Select/CustomSelect";
 import { CustomButton } from "../../components/Button/Button";
 import trashIcon from '../../assets/trash-can.svg';
-
-export interface ItemFormInputs {
-    description: string;
-    quantity: number | string;
-    price: number | string;
-    total: number | string;
-    paymentType: string;
-}
+import { ItemForMonthlyPayment } from "../../model/src";
 
 interface ItemFormProps {
-    onSubmit: (data: ItemFormInputs) => void;
-    initialValues?: ItemFormInputs | null;
+    onSubmit: (data: ItemForMonthlyPayment.Model) => void;
+    initialValues?: ItemForMonthlyPayment.Model | null;
 }
 
 const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
-    const { control, handleSubmit, reset, watch, setValue } = useForm<ItemFormInputs>({
+    const { control, handleSubmit, reset, watch, setValue } = useForm<ItemForMonthlyPayment.Model>({
         defaultValues: {
             description: '',
             quantity: '',
@@ -45,7 +38,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
         }
     }, [initialValues, reset]);
 
-    const onFormSubmit = (data: ItemFormInputs) => {
+    const onFormSubmit = (data: ItemForMonthlyPayment.Model) => {
         onSubmit(data);
         reset({
             description: '',

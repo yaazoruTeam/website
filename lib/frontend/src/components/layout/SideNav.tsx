@@ -74,8 +74,8 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
               src={selectedLink === li.link ? li.iconBlue : li.iconWhite}
               alt={`${li.text} icon`}
               style={{
-                width: "45px",
-                height: "45px",
+                width: "40px",
+                height: "40px",
                 marginRight: "10px",
               }}
             />

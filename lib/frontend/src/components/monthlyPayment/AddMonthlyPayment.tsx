@@ -3,7 +3,9 @@ import CustomerSelector from '../customers/CustomerSelector';
 import PaymentForm from './PaymentForm';
 import FormToAddItems from './FormToAddItems';
 import { CustomButton } from '../Button/Button';
-import { ItemFormInputs } from '../../stories/Form/AddItemForm';
+import { CreditDetails, ItemForMonthlyPayment, TransactionDetails } from '../../model/src';
+import { createTransactionDetails } from '../../api/TransactionDetails';
+import { createCreditDetails } from '../../api/creditDetails';
 
 interface Props {
     onBack: () => void;
@@ -15,7 +17,7 @@ export interface AddMonthlyPaymentFormInputs {
 
 const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     const [customerData, setCustomerData] = useState<any>(null); // נתוני לקוח
-    const [itemsData, setItemsData] = useState<ItemFormInputs[]>([]); // נתוני פריטים
+    const [itemsData, setItemsData] = useState<ItemForMonthlyPayment.Model[]>([]); // נתוני פריטים
     const [paymentData, setPaymentData] = useState<any>(null); // נתוני תשלום
     const [timeData, setTimeData] = useState<any>(null); // נתוני זמן ההוראת קבע
 
@@ -30,9 +32,9 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         if (!customerData || !itemsData.length || !paymentData || !timeData) {
             console.error("לא כל הנתונים מוכנים!");
             return; // אם יש נתון חסר, לא נבצע את קריאות השרת
-        }else{
+        } else {
             console.log('ניתן לבצע את הקריאות לשרת----------בהצלחה!!!');
-            
+            addMonthlyPayment();
         }
     }, [paymentData]); // זה יתעדכן כשתהיה עדכון ב-paymentData
 
@@ -40,7 +42,39 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         console.log('נתוני הזמן המעודכנים:', timeData);
     }, [timeData]);
 
-    const addMonthlyPayment = async () => {
+
+    // פונקציה לחישוב התאריך האחרון
+    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number) => {
+        // התאריך הסופי התחלתי הוא תאריך ההתחלה
+        let endDate = new Date(startDate);
+
+        // מוסיפים את החודשים הנדרשים לכל חיוב
+        endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
+
+        // מחזירים את התאריך האחרון בפורמט dd/mm/yy
+        const formattedEndDate = `${String(endDate.getDate()).padStart(2, '0')}/${String(endDate.getMonth() + 1).padStart(2, '0')}/${endDate.getFullYear().toString().slice(2)}`;
+
+        return formattedEndDate;
+    };
+
+    // פונקציה להחזרת התוצאה הסופית
+    const getTheRangeOfMonths = () => {
+        const formattedStartDate = `${String(timeData.startDate.getDate()).padStart(2, '0')}/${String(timeData.startDate.getMonth() + 1).padStart(2, '0')}/${timeData.startDate.getFullYear().toString().slice(2)}`;
+
+        const endDate = calculateEndDate(timeData.startDate, timeData.payments, timeData.mustEvery);
+
+        return `${formattedStartDate}-${endDate}`;
+    };
+
+    const getAmount = () => {
+        let sum: number = 0;
+        itemsData.forEach((item) => {
+            sum += parseFloat(item.total.toString());  // מוסיף את הערך של item.total לסכום
+        });
+        return sum;  // מחזיר את הסכום הכולל
+    };
+
+    const charge = async () => {
         console.log('Adding monthly payment:', {
             customerData,
             itemsData,
@@ -57,6 +91,40 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         }
     };
 
+    const addMonthlyPayment = async () => {
+        //כאן יתבצעו הקריאות שרת 
+        console.log('Adding monthly payment:', {
+            customerData,
+            itemsData,
+            paymentData,
+            timeData,
+        });
+        const credit: CreditDetails.Model = {
+            credit_id: '',
+            client_id: customerData.customer_id,
+            token: paymentData.token,
+            expiry_month: paymentData.expiry_month,
+            expiry_year: paymentData.expiry_year,
+        }
+        const creditDetails = await createCreditDetails(credit);
+        const transaction: TransactionDetails.Model = {
+            transaction_id: '',
+            credit_id: creditDetails.credit_id,
+            customer_name: customerData.first_name + ' ' + customerData.last_name,
+            dates: getTheRangeOfMonths(),
+            amount: getAmount(),
+            total_sum: getAmount() * timeData.payments,
+            belongs_to_organization: '',
+            last_attempt: new Date(),
+            last_success: new Date(),
+            next_charge: new Date(),
+            update: new Date(),
+            items: itemsData,
+            status: 'active',
+            //קודם כל קריאת שרת בשביל לשמור את הפרטי אשראי ואז אחר כך קריאת שרת כדי לשמור את הפרטי עיסקה ואז אני יוכל לעדכן גם את הכרטיס שמקושר לעיסקה
+        }
+        await createTransactionDetails(transaction)
+    }
     return (
         <>
             <CustomerSelector onCustomerSelect={setCustomerData} />
@@ -71,10 +139,9 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
                         background: "#0a425f",
                     },
                 }}
-                onClick={addMonthlyPayment}
+                onClick={charge}
             />
         </>
     );
 };
-
 export default AddMonthlyPayment;

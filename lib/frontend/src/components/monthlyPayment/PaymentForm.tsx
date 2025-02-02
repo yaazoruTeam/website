@@ -4,7 +4,7 @@ import { CustomTextField } from '../../stories/Input/Input';
 import { useForm } from 'react-hook-form';
 interface PaymentFormInput {
     name: string;
-    OwedAll: string;
+    mustEvery: string;
     Payments: string;
     startDate: string;
 }
@@ -158,11 +158,11 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
 
     useEffect(() => {
         const subscription = watch((value) => {
-            const { name, OwedAll, Payments, startDate } = value;
-            console.log("timeData update:", { name, OwedAll, Payments, startDate });            
+            const { name, mustEvery, Payments, startDate } = value;
+            console.log("timeData update:", { name, mustEvery, Payments, startDate });            
             OnTimeChange({
                 name: name,
-                owedAll: OwedAll,
+                mustEvery: mustEvery,
                 payments: Payments,
                 startDate: startDate
             });
@@ -408,7 +408,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     <CustomTextField
                         control={control}
                         label='חייב כל'
-                        name='OwedAll'
+                        name='mustEvery'
                         placeholder='1 חודשיים'
                         sx={{ direction: 'rtl' }}
                     />

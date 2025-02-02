@@ -2,17 +2,24 @@ import { TransactionDetails, HttpError } from "../model";
 import getConnection from "./connection";
 
 const createTransactionDetails = async (
-  TransactionDetails: TransactionDetails.Model
+  transactionDetails: TransactionDetails.Model
 ) => {
   const knex = getConnection();
   try {
     const [newTransactionDetails] = await knex("yaazoru.transactionDetails")
       .insert({
-        credit_id: TransactionDetails.credit_id,
-        monthlyAmount: TransactionDetails.monthlyAmount,
-        totalAmount: TransactionDetails.totalAmount,
-        nextBillingDate: TransactionDetails.nextBillingDate,
-        lastBillingDate: TransactionDetails.lastBillingDate,
+        credit_id: transactionDetails.credit_id,
+        customer_name: transactionDetails.customer_name,
+        dates: transactionDetails.dates,
+        amount: transactionDetails.amount,
+        total_sum: transactionDetails.total_sum,
+        belongs_to_organization: transactionDetails.belongs_to_organization,
+        last_attempt: transactionDetails.last_attempt,
+        last_success: transactionDetails.last_success,
+        next_charge: transactionDetails.next_charge,
+        update: transactionDetails.update,
+        items: transactionDetails.items,
+        status: "active",
       })
       .returning("*");
     return newTransactionDetails;

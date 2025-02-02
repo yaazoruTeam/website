@@ -37,7 +37,7 @@ import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 
 const theme = createTheme({
   typography: {
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: 'Heebo',
     // fontWeight: '400',
     // wordWrap: 'break-word'

@@ -10,7 +10,7 @@ import * as BranchUser from "./BranchUser";
 import * as CustomerDeviceExcel from "./CustomerDeviceExcel";
 import * as CreditDetails from "./CreditDetails";
 import * as TransactionDetails from "./TransactionDetails";
-import * as ItemMonthlyPyment from "./ItemMonthlyPyment";
+import * as ItemForMonthlyPayment from "./ItemForMonthlyPayment";
 
 
 export {
@@ -26,5 +26,5 @@ export {
   CustomerDeviceExcel,
   CreditDetails,
   TransactionDetails,
-  ItemMonthlyPyment
+  ItemForMonthlyPayment
 };
