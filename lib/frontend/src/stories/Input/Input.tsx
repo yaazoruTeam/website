@@ -1,6 +1,8 @@
 import React from "react";
 import { Controller, Control } from "react-hook-form";
-import { TextField, Box, Typography, TextFieldProps } from "@mui/material";
+import { TextField, Box, TextFieldProps } from "@mui/material";
+import CustomTypography from "../../components/designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 export interface CustomTextFieldProps extends Omit<TextFieldProps, "variant"> {
     label?: string;
@@ -36,18 +38,12 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
             }}
         >
             {label && (
-                <Typography
-                    sx={{
-                        color: "var(--Color-11, #032B40)",
-                        textAlign: "right",
-                        fontSize: "18px",
-                        fontFamily: "Heebo",
-                        fontWeight: 400,
-                        lineHeight: "normal",
-                    }}
-                >
-                    {label}
-                </Typography>
+                   <CustomTypography
+                   text={label}
+                   variant='h4'
+                   weight='regular'
+                   color={colors.brand.color_9}
+               />
             )}
             <Controller
                 name={name}

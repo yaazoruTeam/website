@@ -1,8 +1,10 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import AddCustomerForm, { AddCustomerFormInputs } from '../../stories/Form/AddCustomerForm';
 import { createCustomer } from '../../api/customerApi';
 import { Customer } from '../../model/src';
+import CustomTypography from '../designComponent/Typography';
+import { colors } from '../../styles/theme';
 
 interface Props {
   onBack: () => void;
@@ -73,23 +75,15 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
             display: 'flex',
           }}
         >
-          <Typography
-            sx={{
-              textAlign: 'center',
-              color: '#0059BA',
-              fontSize: 28,
-              fontFamily: 'Heebo',
-              fontWeight: 700,
-              // lineHeight: 33.6,
-              wordWrap: 'break-word',
-            }}
-          >
-            הוספת לקוח
-          </Typography>
+          <CustomTypography
+            text='הוספת לקוח'
+            variant='h1'
+            weight='bold'
+            color={colors.brand.color_7}
+          />
         </Box>
       </Box>
       <AddCustomerForm onSubmit={addCustomer} />
-      <h1>hbgg</h1>
     </Box>
   );
 };

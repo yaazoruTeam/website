@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, Typography, useMediaQuery } from "@mui/material";
 import AddCustomer from "./AddCustomer";
-import { CustomButton } from "../Button/Button";
+import { CustomButton } from "../designComponent/Button";
 
 interface CustomersListProps {
   customers: string[];
@@ -9,6 +9,7 @@ interface CustomersListProps {
 
 const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   return (
     <Box
@@ -29,13 +30,9 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
         <>
           <CustomButton
             label="הוספת לקוח חדש"
-            sx={{
-              background: "#FF7F07",
-              color: "white",
-              "&:hover": {
-                background: "#0a425f",
-              },
-            }}
+            size={isMobile ? 'small' : 'large'}
+            state="default"
+            buttonType="first"
             onClick={() => setShowAddCustomer(true)} />
           <Box
             sx={{

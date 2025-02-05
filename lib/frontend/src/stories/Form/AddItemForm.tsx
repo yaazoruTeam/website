@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { CustomTextField } from "../Input/Input";
 import CustomSelect from "../Select/CustomSelect";
-import { CustomButton } from "../../components/Button/Button";
+import { CustomButton } from "../../components/designComponent/Button";
 import trashIcon from '../../assets/trash-can.svg';
 import { ItemForMonthlyPayment } from "../../model/src";
 
@@ -13,6 +13,7 @@ interface ItemFormProps {
 }
 
 const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
+    const isMobile = useMediaQuery('(max-width:600px)');
     const { control, handleSubmit, reset, watch, setValue } = useForm<ItemForMonthlyPayment.Model>({
         defaultValues: {
             description: '',
@@ -68,10 +69,9 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
                 </Box>
                 <CustomButton
                     label="אישור"
-                    sx={{
-                        background: 'rgba(21.45, 53.71, 70.41, 0.37)',
-                        color: 'white',
-                    }}
+                    size={isMobile ? 'small' : 'large'}
+                    state="hover"
+                    buttonType="first"
                     onClick={handleSubmit(onFormSubmit)}
                 />
             </Box>

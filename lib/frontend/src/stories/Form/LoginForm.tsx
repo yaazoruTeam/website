@@ -1,11 +1,13 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import { CustomButton } from "../../components/Button/Button";
+import { Box, useMediaQuery } from "@mui/material";
+import { CustomButton } from "../../components/designComponent/Button";
 import { CustomTextField } from "../Input/Input";
 import { useForm } from "react-hook-form";
 import { passwordArgs, userNameArgs } from "../Input/Input.stories";
 import logo1 from '../../assets/logo1.svg';
 import logo2 from '../../assets/logo2.svg';
+import CustomTypography from "../../components/designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 interface LoginFormProps {
     onSubmit: (data: LoginFormInputs) => void;
@@ -20,6 +22,7 @@ interface LoginFormInputs {
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
     const { control, handleSubmit } = useForm<LoginFormInputs>();
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
         <Box
@@ -75,29 +78,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 />
 
 
-                <Typography
+                <CustomTypography
+                    text='?שכחתי סיסמה'
+                    variant='h3'
+                    weight='medium'
+                    color={colors.brand.color_9}
                     sx={{
                         textAlign: "right",
-                        color: "#032B40",
-                        fontSize: 18,
                         textDecoration: "underline",
                         cursor: "pointer",
                     }}
-                >
-                    ?שכחתי סיסמה
-                </Typography>
+                />
             </Box>
 
             <CustomButton
                 label="התחברות למערכת"
-                sx={{
-                    background: "#FF7F07",
-                    color: "white",
-                    "&:hover": {
-                        background: "#0a425f",
-                    },
-                }}
-
+                size={isMobile ? 'small' : 'large'}
+                state="default"
+                buttonType="first"
                 onClick={handleSubmit(onSubmit)}
             />
         </Box>

@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { CustomTextField } from "../Input/Input";
 import { Customer } from "../../model/src";
+import CustomTypography from "../../components/designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 interface SelectCustomerFormInputs {
     full_name: string;
@@ -44,19 +46,12 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                 gap: 3.5,
             }}
         >
-            <Typography
-                sx={{
-                    textAlign: "center",
-                    color: "#0A425F",
-                    fontSize: 24,
-                    fontFamily: "Heebo",
-                    fontWeight: 500,
-                    lineHeight: "1.2",
-                    wordWrap: "break-word",
-                }}
-            >
-                פרטי לקוח
-            </Typography>
+            <CustomTypography
+                text='פרטי לקוח'
+                variant='h2'
+                weight='medium'
+                color={colors.brand.color_8}
+            />
             <Box
                 sx={{
                     alignSelf: "stretch",

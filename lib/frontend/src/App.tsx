@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {  ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";
 import SideNav from "./components/layout/SideNav";
@@ -32,17 +32,7 @@ import permissionsIconWhite from "../src/assets/permissions-white.svg";
 import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
-
-
-
-const theme = createTheme({
-  typography: {
-    fontSize: 16,
-    fontFamily: 'Heebo',
-    // fontWeight: '400',
-    // wordWrap: 'break-word'
-  },
-});
+import {theme} from "./styles/theme";
 
 function App() {
 

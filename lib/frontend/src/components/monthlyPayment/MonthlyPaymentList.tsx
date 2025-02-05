@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button, Box, Typography } from "@mui/material";
-import { CustomButton } from "../Button/Button";
+import { Button, Box, Typography, useMediaQuery } from "@mui/material";
+import { CustomButton } from "../designComponent/Button";
 import AddMonthlyPayment from "./AddMonthlyPayment";
 
 interface MonthlyPaymentListProps {
@@ -9,6 +9,7 @@ interface MonthlyPaymentListProps {
 
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment }) => {
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
         <>
@@ -47,7 +48,9 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                         </Box>
                         <CustomButton
                             label="הוראת קבע חדש"
-                            sx={{ background: "#FF7F07", color: "white", "&:hover": { background: "#0a425f" } }}
+                            size={isMobile ? 'small' : 'large'}
+                            state="default"
+                            buttonType="first"
                             onClick={() => setShowAddMonthlyPayment(true)} />
                         <Box
                             sx={{

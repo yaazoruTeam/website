@@ -1,9 +1,9 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { CustomTextField } from "../Input/Input";
 import { additionalPhoneArgs, addressArgs, cityArgs, emailArgs, firstNameArgs, idNumberArgs, lastNameArgs, phoneNumberArgs } from "../Input/Input.stories";
 import { useForm } from "react-hook-form";
-import { CustomButton } from "../../components/Button/Button";
+import { CustomButton } from "../../components/designComponent/Button";
 
 interface AddCustomerFormProps {
     onSubmit: (data: AddCustomerFormInputs) => void;
@@ -23,6 +23,7 @@ export interface AddCustomerFormInputs {
 const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
 
     const { control, handleSubmit } = useForm<AddCustomerFormInputs>();
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
         <Box style={{
@@ -173,13 +174,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                     </Box>
                     <CustomButton
                         label="שמירה"
-                        sx={{
-                            background: '#FF7F07',
-                            color: "white",
-                            "&:hover": {
-                                background: "#0a425f",
-                            },
-                        }}
+                        state="default"
+                        size={isMobile ? 'small' : 'large'}
+                        buttonType="first"
                         onClick={handleSubmit(onSubmit)}
                     />
                 </Box>
