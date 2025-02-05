@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { CustomTextField } from "../Input/Input";
+import { CustomTextField } from "../../components/designComponent/Input";
 import CustomSelect from "../Select/CustomSelect";
 import { CustomButton } from "../../components/designComponent/Button";
 import trashIcon from '../../assets/trash-can.svg';
@@ -81,36 +81,24 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
                 name="total"
                 control={control}
                 placeholder="₪ 0.00"
-                sx={{
-                    direction: "rtl"
-                }}
             />
             <CustomTextField
                 label="מחיר"
                 name="price"
                 control={control}
                 placeholder="מחיר"
-                sx={{
-                    direction: "rtl"
-                }}
             />
             <CustomTextField
                 label="כמות"
                 name="quantity"
                 control={control}
                 placeholder="יש להזין כמות"
-                sx={{
-                    direction: "rtl"
-                }}
             />
             <CustomTextField
                 label="תיאור"
                 name="description"
                 control={control}
                 placeholder="כאן יהיה תיאור"
-                sx={{
-                    direction: "rtl"
-                }}
             />
             <CustomSelect
                 label="סוג תשלום"

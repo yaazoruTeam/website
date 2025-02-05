@@ -1,6 +1,9 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { CustomTextField, CustomTextFieldProps } from "./Input";
+import { CustomTextField, CustomTextFieldProps } from "../../components/designComponent/Input";
 import { useForm } from "react-hook-form";
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from "../../styles/theme";
+import { XCircleIcon } from '@heroicons/react/24/outline'
 
 export default {
   title: "Stories/CustomTextField",
@@ -9,7 +12,11 @@ export default {
 
 const Template: StoryFn<CustomTextFieldProps> = (args) => {
   const { control } = useForm();
-  return <CustomTextField {...args} control={control} />;
+  return (
+    <ThemeProvider theme={theme}> {/* עטוף את הקומפוננטה ב-ThemeProvider */}
+      <CustomTextField {...args} control={control} />
+    </ThemeProvider>
+  );;
 };
 
 export const DefaultField = Template.bind({});
@@ -27,7 +34,7 @@ ErrorField.args = {
 };
 
 export const EmailField = Template.bind({});
-const emailArgs = EmailField.args = {
+ EmailField.args = {
   name: "email",
   label: "אימייל",
   // helperText: "Please enter your email",
@@ -42,7 +49,7 @@ const emailArgs = EmailField.args = {
 };
 
 export const UserNameField = Template.bind({});
-const userNameArgs = UserNameField.args = {
+UserNameField.args = {
   name: "userName",
   label: "שם משתמש",
   // helperText: "Please enter your email",
@@ -52,10 +59,11 @@ const userNameArgs = UserNameField.args = {
 };
 
 export const PasswordField = Template.bind({});
-const passwordArgs = PasswordField.args = {
+PasswordField.args = {
   name: "password",
   label: "סיסמה",
   type: "password",
+  icon: <XCircleIcon />,
   // helperText: "Please enter your email",
   rules: {
     required: "שדה חובה",
@@ -67,9 +75,10 @@ const passwordArgs = PasswordField.args = {
 };
 
 export const IdNumberField = Template.bind({});
-const idNumberArgs = IdNumberField.args = {
+IdNumberField.args = {
   name: "id_number",
   label: "מספר ת.ז",
+  height:96,
   rules: {
     required: "שדה חובה",
     minLength: {
@@ -84,7 +93,7 @@ const idNumberArgs = IdNumberField.args = {
 };
 
 export const FirstNameField = Template.bind({});
-const firstNameArgs = FirstNameField.args = {
+FirstNameField.args = {
   name: "first_name",
   label: "שם פרטי",
   rules: {
@@ -94,7 +103,7 @@ const firstNameArgs = FirstNameField.args = {
 };
 
 export const LastNameField = Template.bind({});
-const lastNameArgs = LastNameField.args = {
+LastNameField.args = {
   name: "last_name",
   label: "שם משפחה",
   rules: {
@@ -104,7 +113,7 @@ const lastNameArgs = LastNameField.args = {
 };
 
 export const PhoneNumberField = Template.bind({});
-const phoneNumberArgs = PhoneNumberField.args = {
+PhoneNumberField.args = {
   name: "phone_number",
   label: "טלפון",
   rules: {
@@ -125,7 +134,7 @@ const phoneNumberArgs = PhoneNumberField.args = {
 };
 
 export const AdditionalPhoneField = Template.bind({});
-const additionalPhoneArgs = AdditionalPhoneField.args = {
+AdditionalPhoneField.args = {
   name: "additional_phone",
   label: "מספר נוסף",
   rules: {
@@ -145,7 +154,7 @@ const additionalPhoneArgs = AdditionalPhoneField.args = {
 };
 
 export const AddressField = Template.bind({});
-const addressArgs = AddressField.args = {
+AddressField.args = {
   name: "address",
   label: "כתובת",
   rules: {
@@ -155,7 +164,7 @@ const addressArgs = AddressField.args = {
 };
 
 export const CityField = Template.bind({});
-const cityArgs = CityField.args = {
+CityField.args = {
   name: "city",
   label: "עיר",
   rules: {
@@ -163,17 +172,3 @@ const cityArgs = CityField.args = {
   },
   sx: { direction: 'rtl' }
 };
-
-
-export {
-  userNameArgs,
-  passwordArgs,
-  emailArgs,
-  idNumberArgs,
-  firstNameArgs,
-  lastNameArgs,
-  phoneNumberArgs,
-  additionalPhoneArgs,
-  addressArgs,
-  cityArgs,
-}

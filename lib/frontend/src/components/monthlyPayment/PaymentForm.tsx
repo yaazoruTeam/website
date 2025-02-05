@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Box, Typography } from '@mui/material';
-import { CustomTextField } from '../../stories/Input/Input';
+import { CustomTextField } from '../designComponent/Input';
 import { useForm } from 'react-hook-form';
 import CustomTypography from '../designComponent/Typography';
 import { colors } from '../../styles/theme';
@@ -211,9 +211,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     name='name'
                     label='שם בעל הכרטיס'
                     placeholder='שם בעל הכרטיס'
-                    sx={{
-                        direction: 'rtl'
-                    }}
                 />
                 <Box
                     sx={{
@@ -375,7 +372,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         label='חייב כל'
                         name='mustEvery'
                         placeholder='1 חודשיים'
-                        sx={{ direction: 'rtl' }}
                     />
                 </Box>
 
@@ -385,7 +381,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         label='תשלומים'
                         name='Payments'
                         placeholder='0'
-                        sx={{ direction: 'rtl' }}
                     />
                 </Box>
 

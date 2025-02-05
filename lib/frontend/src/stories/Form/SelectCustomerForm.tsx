@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { CustomTextField } from "../Input/Input";
+import { CustomTextField } from "../../components/designComponent/Input";
 import { Customer } from "../../model/src";
 import CustomTypography from "../../components/designComponent/Typography";
 import { colors } from "../../styles/theme";
