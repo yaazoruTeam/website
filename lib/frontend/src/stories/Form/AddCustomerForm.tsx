@@ -25,16 +25,17 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
     const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
-        <Box style={{
-            alignSelf: 'stretch',
-            height: 459,
-            width: '100%',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'stretch',
-            gap: 80,
-            display: 'flex'
-        }}
+        <Box 
+            style={{
+                width: '100%', 
+                height: '100%', 
+                borderRadius: 12,
+                flexDirection: 'column', 
+                justifyContent: 'flex-start', 
+                alignItems: 'flex-start', 
+                gap: 28, 
+                display: 'inline-flex'
+            }}
         >
             <Box style={{
                 alignSelf: 'stretch',
@@ -45,8 +46,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                 alignItems: 'flex-start',
                 gap: 20,
                 display: 'flex'
-            }}
-            >
+            }}>
                 <Box style={{
                     alignSelf: 'stretch',
                     height: 459,
@@ -58,16 +58,14 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                     alignItems: 'flex-start',
                     gap: 28,
                     display: 'flex'
-                }}
-                >
+                }}>
                     <Box style={{
                         alignSelf: 'stretch',
                         justifyContent: 'flex-end',
                         alignItems: 'flex-start',
                         gap: 28,
-                        display: 'flex'
-                    }}
-                    >
+                        display: 'inline-flex'
+                    }}>
                         <Box style={{
                             flex: '1 1 0',
                             height: 90,
@@ -76,8 +74,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             alignItems: 'flex-end',
                             gap: 8,
                             display: 'flex'
-                        }}
-                        >
+                        }}>
                             <CustomTextField
                                 control={control}
                                 name="id_number"
@@ -95,7 +92,15 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                                 }}
                             />
                         </Box>
-                        <Box style={{ flex: '1 1 0', height: 90, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', gap: 8, display: 'flex' }}>
+                        <Box style={{
+                            flex: '1 1 0', 
+                            height: 90, 
+                            flexDirection: 'column', 
+                            justifyContent: 'center', 
+                            alignItems: 'flex-end', 
+                            gap: 8, 
+                            display: 'flex'
+                        }}>
                             <CustomTextField
                                 control={control}
                                 name="last_name"
@@ -105,7 +110,15 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                                 }}
                             />
                         </Box>
-                        <Box style={{ flex: '1 1 0', height: 90, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', gap: 8, display: 'flex' }}>
+                        <Box style={{
+                            flex: '1 1 0',
+                            height: 90,
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'flex-end',
+                            gap: 8,
+                            display: 'flex'
+                        }}>
                             <CustomTextField
                                 name="first_name"
                                 label="שם פרטי"
@@ -121,9 +134,8 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                         justifyContent: 'flex-end',
                         alignItems: 'flex-start',
                         gap: 28,
-                        display: 'flex'
-                    }}
-                    >
+                        display: 'inline-flex'
+                    }}>
                         <Box style={{
                             flex: '1 1 0',
                             height: 90,
@@ -137,7 +149,6 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                                 control={control}
                                 name="email"
                                 label="אימייל"
-                                // helperText: "Please enter your email",
                                 type="email"
                                 rules={{
                                     required: "אימייל הוא שדה חובה",
@@ -185,8 +196,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             alignItems: 'flex-end',
                             gap: 8,
                             display: 'flex'
-                        }}
-                        >
+                        }}>
                             <CustomTextField
                                 control={control}
                                 name="phone_number"
@@ -214,9 +224,8 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                         justifyContent: 'flex-start',
                         alignItems: 'flex-start',
                         gap: 28,
-                        display: 'flex'
-                    }}
-                    >
+                        display: 'inline-flex'
+                    }}>
                         <Box style={{
                             flex: '1 1 0',
                             height: 90,
@@ -225,36 +234,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             alignItems: 'flex-end',
                             gap: 8,
                             display: 'flex'
-                        }}
-                        >
-                            <CustomTextField
-                                control={control}
-                                name="phone_number"
-                                label="טלפון"
-                                rules={{
-                                    required: "שדה חובה",
-                                    minLength: {
-                                        value: 9,
-                                        message: 'מספר טלפון צריך להיות לפחות 9 ספרות',
-                                    },
-                                    maxLength: {
-                                        value: 15,
-                                        message: 'מספר טלפון לא יכול להיות יותר מ-15 ספרות',
-                                    },
-                                    pattern: {
-                                        value: /^\d+$/,
-                                        message: 'מספר הטלפון חייב להכיל רק ספרות',
-                                    },
-                                }}
-                            />
-                        </Box>
-                        <Box style={{
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                            gap: 16,
-                            display: 'flex'
-                        }}
-                        >
+                        }}>
                             <CustomTextField
                                 control={control}
                                 name="city"
@@ -272,8 +252,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             alignItems: 'flex-end',
                             gap: 8,
                             display: 'flex'
-                        }}
-                        >
+                        }}>
                             <CustomTextField
                                 control={control}
                                 name="address"

@@ -1,8 +1,8 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { CustomTextField, CustomTextFieldProps } from "../../components/designComponent/Input";
+import { CustomTextField, CustomTextFieldProps } from "../components/designComponent/Input";
 import { useForm } from "react-hook-form";
 import { ThemeProvider } from '@mui/material/styles';
-import { theme } from "../../styles/theme";
+import { theme } from "../styles/theme";
 import { XCircleIcon } from '@heroicons/react/24/outline'
 
 export default {

@@ -51,7 +51,6 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                     sx={{
                         textAlign: "right",
                         direction: "rtl",
-                        marginBottom: "8px",
                     }}
                 />
             )}
@@ -62,14 +61,11 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                 render={({ field, fieldState }) => (
                     <Box
                     sx={{
-                        // אפשר להתאים את הרוחב לפי המסך
-                        width: '100%', // רוחב דינמי של 100% בהתאמה
+                        width: '100%',
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "flex-end",
-                        gap: 1,
-                        padding: '0 10px', // padding מותאם
                     }}
                     >
                         <TextField
@@ -102,30 +98,22 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                                 borderRadius: "6px",
                                 background: colors.brand.color_11,
                                 alignSelf: "stretch",
-                                padding: "10px",
                                 height: height,
-                                paddingTop: "10px",
                                 "& .MuiInputBase-root": {
                                     height: "29px",
                                     display: "flex",
                                     alignItems: "center",
                                 },
-                                "& .MuiFormHelperText-root": {
-                                    fontSize: "14px",
-                                },
                                 ...sx,
-                               // התאמת רוחב וגובה דינמיים למובייל
-                               "@media (max-width: 600px)": { // למובייל
-                                width: "100%", // רוחב המלא של המסך
-                                fontSize: "16px", // גודל טקסט למובייל
-                                padding: "8px", // padding מותאם למובייל
-                                gap: "8px", // מרווח בין האלמנטים במובייל
+                               "@media (max-width: 600px)": { 
+                                width: "100%", 
+                                padding: "8px",
+                                gap: "8px",
                             },
-                            "@media (min-width: 600px)": { // לדסקטופ
-                                width: "100%", // רוחב המלא של המסך בגדול
-                                fontSize: "16px", // גודל טקסט לדסקטופ
-                                padding: "10px", // padding מותאם לדסקטופ
-                                height: height, // שדה בגובה מותאם
+                            "@media (min-width: 600px)": { 
+                                width: "100%",
+                                padding: "10px", 
+                                height: height,
                             },
                             }}
                             value={field.value || ""}
