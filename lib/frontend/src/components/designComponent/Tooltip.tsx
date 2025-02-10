@@ -61,8 +61,7 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "t
             variant="h5"
             weight="regular"
             color={colors.neutral.white}
-          >
-          </CustomTypography>
+          />
         </Box>
       }
     >
