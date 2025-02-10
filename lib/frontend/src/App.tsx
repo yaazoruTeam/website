@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import {  ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";
 import SideNav from "./components/layout/SideNav";
@@ -32,7 +32,7 @@ import permissionsIconWhite from "../src/assets/permissions-white.svg";
 import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
-import {theme} from "./styles/theme";
+import { theme } from "./styles/theme";
 
 function App() {
 
@@ -45,12 +45,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <ProtectedRoute>
-        <Header
-          placeholderText="הקלד שם לקוח / מספר מכשיר"
-          searchIconColor="#7d97c5"
-          backgroundColor="white"
-          textFieldColor="var(--Color-21, rgba(229, 242, 255, 0.50))"
-        />
+        <Header />
       </ProtectedRoute>
 
       <div style={{ display: "flex" }}>
