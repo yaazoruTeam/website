@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, useMediaQuery } from "@mui/material";
-import { CustomButton } from "../../components/designComponent/Button";
-import { CustomTextField } from "../../components/designComponent/Input";
+import { CustomButton } from "../designComponent/Button";
+import { CustomTextField } from "../designComponent/Input";
 import { useForm } from "react-hook-form";
 import logo1 from '../../assets/logo1.svg';
 import logo2 from '../../assets/logo2.svg';
-import CustomTypography from "../../components/designComponent/Typography";
+import CustomTypography from "../designComponent/Typography";
 import { colors } from "../../styles/theme";
 
 interface LoginFormProps {
@@ -80,18 +80,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                     control={control}
                     name="password"
                     label="סיסמה"
-                    type= "password"
-                // helperText: "Please enter your email",
-                rules= {{
-                    required: "שדה חובה",
-                    // minLength: {
-                    //   value: 6,
-                    //   message: "הסיסמה חייבת להיות לפחות 6 תווים"
-                    // }
-                }}                   
+                    type="password"
+                    // helperText: "Please enter your email",
+                    rules={{
+                        required: "שדה חובה",
+                        // minLength: {
+                        //   value: 6,
+                        //   message: "הסיסמה חייבת להיות לפחות 6 תווים"
+                        // }
+                    }}
                 />
-
-
                 <CustomTypography
                     text='?שכחתי סיסמה'
                     variant='h3'
