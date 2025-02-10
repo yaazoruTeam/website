@@ -8,6 +8,8 @@ import * as branchController from '../controller/branch';
 import * as branchCustomerController from '../controller/branchCustomer';
 import * as branchUserController from '../controller/branchUser';
 import * as excelController from '../controller/excel';
+import * as creditDetailsController from '../controller/creditDetails';
+import * as TransactionDetailsController from '../controller/TransactionDetails';
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
 
@@ -68,6 +70,17 @@ router.delete(`${ROUTE_PATH}/branchUser/:id`, hasRole('admin'), branchUserContro
 
 router.get(`${ROUTE_PATH}/excel`, hasRole('admin'), excelController.handleReadExcelFile);
 
+router.post(`${ROUTE_PATH}/creditDetails`, hasRole('admin'), creditDetailsController.createCreditDetails);
+router.get(`${ROUTE_PATH}/creditDetails`, hasRole('admin'), creditDetailsController.getCreditDetails);
+router.get(`${ROUTE_PATH}/creditDetails/:id`, hasRole('admin'), creditDetailsController.getCreditDetailsById);
+router.put(`${ROUTE_PATH}/creditDetails/:id`, hasRole('admin'), creditDetailsController.updateCreditDetails);
+// router.delete(`${ROUTE_PATH}/creditDetails/:id`, hasRole('admin'), branchController.deleteBranch);
+
+router.post(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDetailsController.createTransactionDetails);
+router.get(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDetailsController.getTransactionDetails);
+router.get(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.getTransactionDetailsById);
+router.put(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
+router.delete(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
 
 router.all('*', errorHandler)
 
