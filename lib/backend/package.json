@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build-schema": "ts-node ./src/db/buildSchema",
-        "dev": "set PORT=3006 && ts-node ./src"
+        "dev": "set PORT=3006 && ts-node ./src",
+        "payment-servic-dev": "ts-node ./src/services/monthlyPayment"
     },
     "dependencies": {
         "@types/xlsx": "^0.0.36",

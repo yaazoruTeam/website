@@ -90,4 +90,5 @@ const sanitizeBodyExisting = (req: any) => {
    }
 }
 
-export { Model, sanitize, sanitizeIdExisting, sanitizeBodyExisting }
+export type { Model };
+export { sanitize, sanitizeIdExisting, sanitizeBodyExisting };
