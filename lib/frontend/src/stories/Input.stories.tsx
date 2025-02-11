@@ -78,7 +78,7 @@ export const IdNumberField = Template.bind({});
 IdNumberField.args = {
   name: "id_number",
   label: "מספר ת.ז",
-  height:96,
+  height:'96px',
   rules: {
     required: "שדה חובה",
     minLength: {

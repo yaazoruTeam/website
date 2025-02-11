@@ -13,7 +13,7 @@ export interface CustomTextFieldProps extends Omit<TextFieldProps, "variant"> {
     rules?: any;
     placeholder?: string;
     icon?: React.ReactNode;
-    height?: 44 | 96;
+    height?: '44px' | '96px';
 }
 
 export const CustomTextField: React.FC<CustomTextFieldProps> = ({
@@ -25,11 +25,11 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
     rules,
     placeholder,
     icon,
-    height = 44,
+    height = '44px',
     sx,
     ...props
 }) => {
-    const isLargeHeight = height === 96;
+    const isLargeHeight = height === '96px';
     return (
         <Box
             sx={{
