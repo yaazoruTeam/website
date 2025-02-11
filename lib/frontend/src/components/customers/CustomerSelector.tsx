@@ -62,7 +62,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
             status: '',
         }
         try {
-            const newCustomer = await createCustomer(customerData);
+            const newCustomer: Customer.Model = await createCustomer(customerData);
             console.log('הלקוח נוסף בהצלחה');
             handleSelectClient(newCustomer);
             handleCloseModel();
