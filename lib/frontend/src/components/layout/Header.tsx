@@ -5,14 +5,12 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { colors } from "../../styles/theme";
-import { Box, Typography } from "@mui/material";
-import logOut from "../../assets/Log-out.svg";
+import { Box } from "@mui/material";
 import { CustomButton } from "../designComponent/Button";
 import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../api/userApi";
-
-
-
+import CustomTypography from "../designComponent/Typography";
+import { ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
 
 const Header: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -67,7 +65,7 @@ const Header: React.FunctionComponent = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginLeft: "20%",
+          // marginLeft: "2%",
           height: "100%",
         }}
       >
@@ -75,9 +73,9 @@ const Header: React.FunctionComponent = () => {
           <CustomButton
             label="התחברות"
             sx={{
-              background: "white",
-              color: "#032B40",
-              border: "1px rgba(11.47, 57.77, 81.74, 0.36) solid",
+              background: colors.neutral.white,
+              color: colors.brand.color_9,
+              border: `1px ${colors.brand.color_12} solid`,
               "&:hover": {
                 background: "#f9fafc",
               },
@@ -87,50 +85,36 @@ const Header: React.FunctionComponent = () => {
         ) : (
           <Box
             sx={{
-              width: '14%',
+              width: '100%',
               height: '100%',
-              justifyContent: 'flex-start',
+              justifyContent: 'start',
               alignItems: 'center',
               display: 'inline-flex',
             }}
           >
-            <Box sx={{ width: 45.5, height: 45.5, position: 'relative' }}>
-              <Box
-                sx={{
-                  width: 45.5,
-                  height: 45.5,
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  backgroundColor: '#E5F2FF',
-                  borderRadius: '9999px',
-                }}
+            <Box sx={{
+              marginLeft: '30px',
+              width: '45.5px',
+              height: '45.5px',
+              position: 'relative',
+              backgroundColor: colors.brand.color_18,
+              borderRadius: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <CustomTypography
+                text={userName ? userName?.charAt(0) : ''}
+                variant="h1"
+                weight="medium"
+                color={colors.brand.color_8}
               />
-              <Typography
-                sx={{
-                  width: 13,
-                  height: 42.62,
-                  position: 'absolute',
-                  left: 17.25,
-                  top: 0.25,
-                  color: '#0A425F',
-                  fontSize: 28,
-                  fontFamily: 'Heebo',
-                  fontWeight: 500,
-                  lineHeight: '33.60px',
-                  wordWrap: 'break-word',
-                }}
-              >
-                {userName?.charAt(0)}
-              </Typography>
             </Box>
             <Box
               sx={{
-                width: 120,
-                pl: 2,
-                pr: 2,
+                marginLeft:'16px',
                 pt: 1,
-                pb: 1, 
+                pb: 1,
                 borderRadius: 1,
                 justifyContent: 'flex-end',
                 alignItems: 'center',
@@ -140,22 +124,13 @@ const Header: React.FunctionComponent = () => {
               }}
               onClick={handleLogout}
             >
-              <Typography
-                sx={{
-                  textAlign: 'right',
-                  color: '#0059BA',
-                  fontSize: 17,
-                  fontFamily: 'Heebo',
-                  fontWeight: 400,
-                  wordWrap: 'break-word',
-                }}
-              >
-                התנתקות
-              </Typography>
-              <Box sx={{ width: 24, height: 24, position: 'relative' }}>
-                <img src={logOut} alt="" />
-
-              </Box>
+              <CustomTypography
+                text="התנתקות"
+                variant="h4"
+                weight="regular"
+                color={colors.brand.color_7}
+              />
+              <ArrowRightStartOnRectangleIcon style={{ width: '24px', height: '24px', color: colors.brand.color_7 }} />
             </Box>
           </Box>
         )}
@@ -165,7 +140,8 @@ const Header: React.FunctionComponent = () => {
           placeholder="הקלד שם לקוח / מספר מכשיר"
           fullWidth
           sx={{
-            width: "60%",
+            marginRight: '15%',
+            width: "50%",
             height: '50px',
             borderRadius: "43px",
             backgroundColor: colors.brand.color_19,
