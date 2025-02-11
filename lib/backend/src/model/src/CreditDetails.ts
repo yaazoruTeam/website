@@ -2,8 +2,10 @@ import { HttpError } from ".";
 
 interface Model {
   credit_id: string;
-  client_id: number;
-  cc_token_id: bigint;
+  client_id: number;//???
+  token: string;
+  expiry_month: string;
+  expiry_year: string;
 }
 
 function sanitize(creditDetails: Model, hasId: boolean): Model {
@@ -21,17 +23,32 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
-  if (!creditDetails.cc_token_id) {
+  if (!creditDetails.token) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "cc_token_id".',
+      message: 'Invalid or missing "token".',
+    };
+    throw error;
+  }
+  if (!creditDetails.expiry_month) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "expiry_month".',
+    };
+    throw error;
+  } if (!creditDetails.expiry_year) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "expiry_year".',
     };
     throw error;
   }
   const newCreditDetails: Model = {
     credit_id: creditDetails.credit_id,
     client_id: creditDetails.client_id,
-    cc_token_id: creditDetails.cc_token_id,
+    token: creditDetails.token,
+    expiry_month: creditDetails.expiry_month,
+    expiry_year: creditDetails.expiry_year,
   };
   return newCreditDetails;
 }
@@ -56,8 +73,8 @@ const sanitizeBodyExisting = (req: any) => {
   }
 };
 
+export type { Model };
 export {
-  Model,
   sanitize,
   sanitizeIdExisting,
   sanitizeBodyExisting,

@@ -50,3 +50,12 @@ ExampleWithImg.args = {
   },
   img: trashIcon,
 };
+
+export const ExampleGrayButton = Template.bind({});
+ExampleGrayButton.args = {
+  label: "אישור",
+  sx: {
+    background: 'rgba(21.45, 53.71, 70.41, 0.37)',
+    color: 'white',
+  },
+};

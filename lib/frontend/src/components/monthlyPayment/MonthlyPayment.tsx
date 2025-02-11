@@ -32,7 +32,7 @@ const MonthlyPayment: React.FC = () => {
         <div>
             <MonthlyPaymentList
                 monthlyPayment={MonthlyPayment.map(
-                    (monthly) => monthly.monthlyAmount + " " + monthly.totalAmount
+                    (monthly) => monthly.amount + " " + monthly.total_sum
                 )}
             />
         </div>

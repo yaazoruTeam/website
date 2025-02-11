@@ -7,7 +7,7 @@ const createCreditDetails = async (CreditDetails: CreditDetails.Model) => {
     const [newCreditDetails] = await knex("yaazoru.creditDetails")
       .insert({
         client_id: CreditDetails.client_id,
-        cc_token_id: CreditDetails.cc_token_id,
+        token: CreditDetails.token,
       })
       .returning("*");
     return newCreditDetails;

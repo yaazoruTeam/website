@@ -10,6 +10,9 @@ import * as branchUserController from '../controller/branchUser';
 import * as excelController from '../controller/excel';
 import * as creditDetailsController from '../controller/creditDetails';
 import * as TransactionDetailsController from '../controller/TransactionDetails';
+
+import * as tranzila from '../controller/ApiTranzila';
+
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
 
@@ -81,6 +84,8 @@ router.get(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDeta
 router.get(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.getTransactionDetailsById);
 router.put(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
 router.delete(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
+
+// router.post(`${ROUTE_PATH}/tranzila`, hasRole('admin'), tranzila.);
 
 router.all('*', errorHandler)
 

@@ -4,7 +4,7 @@ interface Model {
     custom_client_id: string;
     email: string;
     client_name: string;
-    cc_token_id: bigint,
+    token: string,
 }
 
 export {Model}

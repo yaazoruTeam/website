@@ -16,7 +16,7 @@ const createCreditDetailsSchema = async () => {
         .createTable("creditDetails", (table: Knex.TableBuilder) => {
           table.increments("credit_id").primary();
           table.integer("client_id").notNullable(); // האם יש צורך לעשות את זה unique
-          table.bigInteger("cc_token_id").notNullable(); // האם יש צורך לעשות את זה unique
+          table.bigInteger("token").notNullable(); // האם יש צורך לעשות את זה unique
           // האם צריך סטטוס בשביל מחיקה ומה קורה במחיקה
         });
       console.log("creditDetails table created successfully.");

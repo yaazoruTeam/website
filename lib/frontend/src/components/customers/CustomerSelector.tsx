@@ -145,7 +145,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                     <Stack sx={{ gap: 2 }}>
 
                         {customers.map((customer, index) => (
-                            <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} onClick={() => handleSelectClient(customer)} />
+                            <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectClient(customer)} />
                         ))}
                     </Stack>
                 </Box>
