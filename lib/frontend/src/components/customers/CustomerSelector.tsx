@@ -8,7 +8,7 @@ import { CustomButton } from "../designComponent/Button";
 import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
 import { createCustomer } from "../../api/customerApi";
 import CustomTypography from "../designComponent/Typography";
-import { colors } from "../../styles/theme";
+import { colors, theme } from "../../styles/theme";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
@@ -124,8 +124,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         width: "93%",
                         height: "100%",
                         p: 2,
-                        backgroundColor: "white",
-                        boxShadow: "0px 4px 10px rgba(41, 59, 109, 0.04)",
+                        backgroundColor: colors.neutral.white,
+                        boxShadow: theme.shadows[0],
                         borderRadius: 2,
                         overflow: "hidden",
                         display: "flex",
@@ -143,9 +143,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         }}
                         onClick={handleOpenModel}
                     />
-
                     <Stack sx={{ gap: 2 }}>
-
                         {customers.map((customer, index) => (
                             <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectClient(customer)} />
                         ))}
@@ -166,7 +164,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                     sx={{
                         width: 800,
                         padding: 3,
-                        backgroundColor: 'white',
+                        backgroundColor: colors.neutral.white,
                         borderRadius: 2,
                         boxShadow: 24,
                         textAlign: 'center',
@@ -176,7 +174,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         sx={{
                             width: '100%',
                             height: '100%',
-                            backgroundColor: 'white',
+                            backgroundColor: colors.neutral.white,
                             borderRadius: 6,
                             flexDirection: 'column',
                             justifyContent: 'flex-start',

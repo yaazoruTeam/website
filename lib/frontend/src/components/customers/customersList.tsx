@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Button, Box, Typography, useMediaQuery } from "@mui/material";
+import { Button, Box, useMediaQuery } from "@mui/material";
 import AddCustomer from "./AddCustomer";
 import { CustomButton } from "../designComponent/Button";
+import { colors } from "../../styles/theme";
+import CustomTypography from "../designComponent/Typography";
 
 interface CustomersListProps {
   customers: string[];
@@ -52,7 +54,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                   height: 81,
                   paddingLeft: 3,
                   paddingRight: 3,
-                  backgroundColor: "white",
+                  backgroundColor: colors.neutral.white,
                   borderRadius: 1,
                   display: "flex",
                   justifyContent: "flex-end",
@@ -66,19 +68,12 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                   },
                 }}
               >
-                <Typography
-                  sx={{
-                    color: "#0059BA",
-                    fontSize: 28,
-                    fontFamily: "Assistant, sans-serif",
-                    fontWeight: 600,
-                    lineHeight: 1.2,
-                    wordWrap: "break-word",
-                    textAlign: "center",
-                  }}
-                >
-                  {customer}
-                </Typography>
+               <CustomTypography
+               text={customer}
+               variant="h4"
+               weight="regular"
+               color={colors.brand.color_7}
+               />
               </Button>
             ))}
           </Box>

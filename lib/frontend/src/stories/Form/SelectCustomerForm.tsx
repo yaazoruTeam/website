@@ -37,7 +37,7 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                 width: '100%',
                 height: "100%",
                 padding: 3.5,
-                backgroundColor: "white",
+                backgroundColor: colors.neutral.white,
                 borderRadius: 1,
                 display: "inline-flex",
                 flexDirection: "column",
@@ -61,8 +61,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                     display: "inline-flex",
                 }}
             >
-
-
                 {customer && (
                     <>
                         <Box
@@ -81,13 +79,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                                 name="customerEmail"
                                 label="אימייל"
                                 placeholder={customer.email || "אימייל"}
-                                sx={{
-                                    direction: "rtl",
-                                    alignSelf: "stretch",
-                                    padding: 2,
-                                    backgroundColor: "rgba(246, 248, 252, 0.58)",
-                                    borderRadius: 1,
-                                }}
                                 disabled
                             />
                         </Box>
@@ -107,13 +98,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                                 name="customerPhone"
                                 label="טלפון"
                                 placeholder={customer.phone_number || "טלפון"}
-                                sx={{
-                                    direction: "rtl",
-                                    alignSelf: "stretch",
-                                    padding: 2,
-                                    backgroundColor: "rgba(246, 248, 252, 0.58)",
-                                    borderRadius: 1,
-                                }}
                                 disabled
                             />
                         </Box>
@@ -140,13 +124,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                                 ? `${customer.first_name} ${customer.last_name}`
                                 : "הקלד שם לקוח"
                         }
-                        sx={{
-                            direction: "rtl",
-                            alignSelf: "stretch",
-                            padding: 2,
-                            backgroundColor: "rgba(246, 248, 252, 0.58)",
-                            borderRadius: 1,
-                        }}
                         onClick={onNameClick}
                     />
                 </Box>

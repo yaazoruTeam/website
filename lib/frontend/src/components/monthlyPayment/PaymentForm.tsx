@@ -70,7 +70,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 input: {
                     height: '29px',
                     width: '100%',
-                    color: '#032B40'
+                    color: colors.brand.color_9,
                 },
                 select: {
                     height: 'auto',
@@ -182,7 +182,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 width: '100%',
                 height: '100%',
                 padding: 4,
-                backgroundColor: 'white',
+                backgroundColor: colors.neutral.white,
                 borderRadius: 2,
                 display: 'flex',
                 flexDirection: 'column',

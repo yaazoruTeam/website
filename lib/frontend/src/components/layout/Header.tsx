@@ -36,7 +36,7 @@ const Header: React.FunctionComponent = () => {
             width: "60%",
             height: '50px',
             borderRadius: "43px",
-            backgroundColor: "rgba(229, 242, 255, 0.50)",
+            backgroundColor: colors.brand.color_19,
             "& .MuiInput-underline:before": { borderBottom: "none" },
             "& .MuiInput-underline:after": { borderBottom: "none" },
             "& .MuiInputBase-input": {

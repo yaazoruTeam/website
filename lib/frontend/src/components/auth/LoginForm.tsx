@@ -28,7 +28,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             sx={{
                 width: '80%',
                 padding: 6,
-                backgroundColor: 'white',
+                backgroundColor: colors.neutral.white,
                 borderRadius: 2,
                 flexDirection: 'column',
                 justifyContent: 'center',

@@ -88,6 +88,7 @@ import React, { useState } from "react";
 import { Radio, RadioGroup, FormControlLabel, FormControl } from "@mui/material";
 import ChooseIcon from "../../assets/circleForRadioBox.svg";
 import DefaultIcon from "../../assets/circleForRadioBoxDefaulte.svg";
+import { colors } from "../../styles/theme";
 
 export interface RadioBoxProps {
     options: { value: string; label: string }[];  // ✅ שינוי - שימוש במערך אופציות גמיש יותר
@@ -117,8 +118,8 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, status }) => {
                                             height: 16,
                                             position: "relative",
                                             borderRadius: "50%",
-                                            border: status !== "selected" ? "0.67px solid rgba(21.45, 53.71, 70.41, 0.37)" : "none", // ✅ שינוי - קו מסגרת במצב default/hover
-                                            background: status === "selected" ? "#0A425F" : "transparent", // ✅ שינוי - מילוי במצב נבחר
+                                            border: status !== "selected" ? `0.67px solid ${colors.brand.color_2}` : "none", // ✅ שינוי - קו מסגרת במצב default/hover
+                                            background: status === "selected" ? colors.brand.color_8 : "transparent", // ✅ שינוי - מילוי במצב נבחר
                                         }}
                                     ></div>
                                 }
@@ -129,7 +130,7 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, status }) => {
                                             height: 16,
                                             position: "relative",
                                             borderRadius: "50%",
-                                            background: "#0A425F", // ✅ שינוי - מילוי מלא במצב נבחר
+                                            background: colors.brand.color_8, // ✅ שינוי - מילוי מלא במצב נבחר
                                         }}
                                     ></div>
                                 }

@@ -26,7 +26,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                 height: '100%',
                 paddingTop: 2,
                 paddingBottom: 2,
-                backgroundColor: 'white',
+                backgroundColor: colors.neutral.white,
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
