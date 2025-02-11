@@ -32,7 +32,7 @@ import permissionsIconWhite from "../src/assets/permissions-white.svg";
 import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
-import { theme } from "./styles/theme";
+import { colors, theme } from "./styles/theme";
 
 function App() {
 
@@ -97,10 +97,9 @@ function App() {
             ]}
           />
         </ProtectedRoute>
-        <main style={{ flexGrow: 1, padding: "20px" }}>
+        <main style={{ flexGrow: 1, padding: "20px", overflow: 'auto', background: colors.brand.color_14 }}>
           <Routes>
             <Route path="/login" element={<Login />} />
-
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />

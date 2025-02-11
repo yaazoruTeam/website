@@ -31,9 +31,10 @@ const MonthlyPayment: React.FC = () => {
 
     return (
         <Box
-        sx={{
-            width:'100%'
-        }}
+            sx={{
+                paddingLeft: '10%',
+                paddingRight: '15%',
+            }}
         >
             <MonthlyPaymentList
                 monthlyPayment={MonthlyPayment.map(

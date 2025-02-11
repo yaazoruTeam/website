@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 
-import ItemForm from "./AddItemForm";
+import ItemForm from "../../components/monthlyPayment/AddItemForm";
 
 export default {
     title: "Stories/ItemForm",

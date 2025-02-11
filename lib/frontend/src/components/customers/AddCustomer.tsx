@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import AddCustomerForm, { AddCustomerFormInputs } from '../../stories/Form/AddCustomerForm';
+import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm';
 import { createCustomer } from '../../api/customerApi';
 import { Customer } from '../../model/src';
 import CustomTypography from '../designComponent/Typography';
@@ -48,7 +48,7 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
     <Box
       sx={{
         display: 'flex',
-        width: '150%',
+        width: '100%',
         height: '100%',
         // // padding: '2% 0',
         flexDirection: 'column',

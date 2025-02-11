@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, useMediaQuery } from "@mui/material";
-import { CustomTextField } from "../../components/designComponent/Input";
+import { CustomTextField } from "../designComponent/Input";
 import { useForm } from "react-hook-form";
-import { CustomButton } from "../../components/designComponent/Button";
+import { CustomButton } from "../designComponent/Button";
 
 interface AddCustomerFormProps {
     onSubmit: (data: AddCustomerFormInputs) => void;

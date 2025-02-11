@@ -179,7 +179,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
             component="form"
             id="payment_form"
             sx={{
-                width: 1000,
+                width: '100%',
                 height: '100%',
                 padding: 4,
                 backgroundColor: 'white',

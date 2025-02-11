@@ -27,7 +27,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
       sx={{
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 130,
+          width: '130px',
           backgroundColor: colors.brand.color_8,
           color: colors.neutral.white,
           borderRadius: "22px 0px 0px 22px",

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableContainer, Paper } from "@mui/material";
 import CustomTableRow from "../CustomTableRow/CustomTableRow";
-import { getCustomers } from "../../api/customerAPI";
+import { getCustomers } from "../../api/customerApi";
 import { Customer } from "../../model/src";
 
 interface CustomTableProps {

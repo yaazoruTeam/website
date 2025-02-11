@@ -5,7 +5,7 @@ import { Customer } from "../../model/src";
 import SelectCustomerForm from "../../stories/Form/SelectCustomerForm";
 import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
 import { CustomButton } from "../designComponent/Button";
-import AddCustomerForm, { AddCustomerFormInputs } from "../../stories/Form/AddCustomerForm";
+import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
 import { createCustomer } from "../../api/customerApi";
 import CustomTypography from "../designComponent/Typography";
 import { colors } from "../../styles/theme";

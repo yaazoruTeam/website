@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { CustomTextField } from "../../components/designComponent/Input";
-import CustomSelect from "../Select/CustomSelect";
-import { CustomButton } from "../../components/designComponent/Button";
+import { CustomTextField } from "../designComponent/Input";
+import CustomSelect from "../../stories/Select/CustomSelect";
+import { CustomButton } from "../designComponent/Button";
 import trashIcon from '../../assets/trash-can.svg';
 import { ItemForMonthlyPayment } from "../../model/src";
 

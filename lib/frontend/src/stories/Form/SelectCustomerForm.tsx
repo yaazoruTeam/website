@@ -34,7 +34,7 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
     return (
         <Box
             sx={{
-                width: 1000,
+                width: '100%',
                 height: "100%",
                 padding: 3.5,
                 backgroundColor: "white",

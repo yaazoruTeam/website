@@ -1,6 +1,7 @@
 import React from "react";
 import CustomersList from "./customersList";
 import { useFetchCustomers } from "./useFetchCustomers";
+import { Box } from "@mui/system";
 
 const Customers: React.FC = () => {
   const { customers, isLoading, error } = useFetchCustomers();
@@ -9,13 +10,20 @@ const Customers: React.FC = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
-      <CustomersList
-        customers={customers.map(
-          (customer) => customer.first_name + " " + customer.last_name
-        )}
-      />
-    </div>
+    <>
+      <Box
+        sx={{
+          paddingLeft: '10%',
+          paddingRight: '15%',
+        }}
+      >
+        <CustomersList
+          customers={customers.map(
+            (customer) => customer.first_name + " " + customer.last_name
+          )}
+        />
+      </Box>
+    </>
   );
 };
 

@@ -15,7 +15,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
         <>
             <Box
                 sx={{
-                    width: "50%",
+                    width: "100%",
                     height: "50%",
                     // paddingLeft: 10,
                     // paddingRight: 10,
@@ -54,6 +54,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                             onClick={() => setShowAddMonthlyPayment(true)} />
                         <Box
                             sx={{
+                                width: '100%',
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "flex-start",
@@ -65,7 +66,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                 <Button
                                     key={index}
                                     sx={{
-                                        width: 1000,
+                                        width: '100%',
                                         height: 81,
                                         paddingLeft: 3,
                                         paddingRight: 3,

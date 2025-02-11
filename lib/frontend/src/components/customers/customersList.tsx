@@ -14,7 +14,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   return (
     <Box
       sx={{
-        width: "50%",
+        width: "100%",
         height: "50%",
         borderRadius: 2,
         display: "flex",
@@ -36,6 +36,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
             onClick={() => setShowAddCustomer(true)} />
           <Box
             sx={{
+              width:'100%',
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-start",
@@ -47,7 +48,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               <Button
                 key={index}
                 sx={{
-                  width: 1000,
+                  width: '100%',
                   height: 81,
                   paddingLeft: 3,
                   paddingRight: 3,
