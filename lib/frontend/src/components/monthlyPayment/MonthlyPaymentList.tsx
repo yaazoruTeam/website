@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Box, Typography } from "@mui/material";
-import { CustomButton } from "../../stories/Button/Button";
+import { CustomButton } from "../Button/Button";
 import AddMonthlyPayment from "./AddMonthlyPayment";
 
 interface MonthlyPaymentListProps {

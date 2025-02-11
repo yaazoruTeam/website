@@ -3,8 +3,7 @@ import { Box } from "@mui/material";
 import { CustomTextField } from "../Input/Input";
 import { additionalPhoneArgs, addressArgs, cityArgs, emailArgs, firstNameArgs, idNumberArgs, lastNameArgs, phoneNumberArgs } from "../Input/Input.stories";
 import { useForm } from "react-hook-form";
-import { CustomButton } from "../Button/Button";
-import { saveArgs } from "../Button/Button.stories";
+import { CustomButton } from "../../components/Button/Button";
 
 interface AddCustomerFormProps {
     onSubmit: (data: AddCustomerFormInputs) => void;
@@ -172,7 +171,15 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField {...addressArgs} control={control} />
                         </Box>
                     </Box>
-                    <CustomButton {...saveArgs}
+                    <CustomButton
+                        label="שמירה"
+                        sx={{
+                            background: '#FF7F07',
+                            color: "white",
+                            "&:hover": {
+                                background: "#0a425f",
+                            },
+                        }}
                         onClick={handleSubmit(onSubmit)}
                     />
                 </Box>

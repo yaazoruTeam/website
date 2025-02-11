@@ -4,7 +4,7 @@ import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
 import SelectCustomerForm from "../../stories/Form/SelectCustomerForm";
 import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
-import { CustomButton } from "../../stories/Button/Button";
+import { CustomButton } from "../Button/Button";
 import AddCustomerForm, { AddCustomerFormInputs } from "../../stories/Form/AddCustomerForm";
 import { createCustomer } from "../../api/customerApi";
 
@@ -16,8 +16,6 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { customers, isLoading, error } = useFetchCustomers();
     const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(null);
-
-    // סטייט לשליטה במודל
     const [open, setOpen] = useState<boolean>(false);
 
     if (isLoading) return <div>Loading customers...</div>;
@@ -39,12 +37,6 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
 
     const isOpen = Boolean(anchorEl);
 
-
-
-
-
-
-    // פונקציות לפתיחה וסגירה של המודל
     const handleOpenModel = () => setOpen(true);
     const handleCloseModel = () => setOpen(false);
 
@@ -95,12 +87,12 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                 anchorEl={anchorEl}
                 onClose={handleClose}
                 anchorOrigin={{
-                    vertical: "bottom", // ישירות מתחת לשדה שם הלקוח
-                    horizontal: "left", // יישור לשמאל
+                    vertical: "bottom",
+                    horizontal: "left",
                 }}
                 transformOrigin={{
-                    vertical: "top", // מתחיל מהחלק העליון של הרשימה
-                    horizontal: "left", // יישור לשמאל
+                    vertical: "top",
+                    horizontal: "left",
                 }}
                 PaperProps={{
                     sx: {
@@ -108,17 +100,16 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         overflowY: "auto",
                         boxShadow: 3,
                         borderRadius: 2,
-                        padding: 0, // חשוב להסיר padding כדי להימנע מחיתוכים
-                        // הוספנו עיצוב מותאם אישית עבור פס הגלילה
+                        padding: 0,
                         '&::-webkit-scrollbar': {
-                            width: '0px', // פס גלילה דק
+                            width: '0px',
                         },
                         '&::-webkit-scrollbar-thumb': {
-                            backgroundColor: 'rgba(0, 0, 0, 0.2)', // צבע פס הגלילה
+                            backgroundColor: 'rgba(0, 0, 0, 0.2)',
                             borderRadius: '4px',
                         },
                         '&::-webkit-scrollbar-track': {
-                            backgroundColor: 'transparent', // שקיפות לפס הגלילה
+                            backgroundColor: 'transparent',
                         }
                     },
                 }}
@@ -138,8 +129,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         gap: 3,
                     }}
                 >
-                    {/* כותרת */}
-                    <CustomButton label="הוספת לקוח חדש"
+                    <CustomButton
+                        label="הוספת לקוח חדש"
                         sx={{
                             background: "white",
                             color: "#032B40",
@@ -151,7 +142,6 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         onClick={handleOpenModel}
                     />
 
-                    {/* רשימת לקוחות */}
                     <Stack sx={{ gap: 2 }}>
 
                         {customers.map((customer, index) => (
@@ -160,28 +150,6 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                     </Stack>
                 </Box>
             </Popover >
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            {/* Modal עם שקיפות */}
             <Modal
                 open={open}
                 onClose={handleCloseModel}
@@ -189,7 +157,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backdropFilter: 'blur(4px)', // הוספת אפקט של טשטוש לשקיפות
+                    backdropFilter: 'blur(4px)',
                 }}
             >
                 <Box
@@ -224,8 +192,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         }}>
                             הוספת לקוח
                         </Typography>
-                        <AddCustomerForm onSubmit={addCustomer} />                    </Box>
-
+                        <AddCustomerForm onSubmit={addCustomer} />
+                    </Box>
                 </Box>
             </Modal>
         </>
