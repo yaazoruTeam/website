@@ -2,6 +2,7 @@ import React from 'react';
 import { FormControl, Select, MenuItem, InputAdornment } from '@mui/material';
 import { Controller } from 'react-hook-form';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { colors } from '../../styles/theme';
 
 interface CustomSelectProps {
     name: string;
@@ -23,14 +24,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                         onChange={(e) => field.onChange(e.target.value)}
                         sx={{
                             direction: "rtl",
-                            backgroundColor: "rgba(246, 248, 252, 0.58)",
+                            backgroundColor: colors.brand.color_11,
                             border: 'none',
                             boxShadow: 'none', 
                             '.MuiOutlinedInput-notchedOutline': { border: 'none' }, 
                             '& .MuiSelect-icon': {
                                 display: 'none',
                             },
-                            color: "#032B40",
+                            color: colors.brand.color_9,
                             fontSize: 20,
                             fontFamily: "Heebo",
                             fontWeight: 400,
@@ -47,7 +48,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                                     left: 10, 
                                     top: '50%',
                                     transform: 'translateY(-50%)', 
-                                    color: "#0A425F",
+                                    color: colors.brand.color_8,
                                     fontSize: 24
                                 }} />
                             </InputAdornment>
@@ -55,7 +56,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                     >
                         {options.map((option) => (
                             <MenuItem key={option.value} value={option.value} sx={{
-                                color: "#032B40",
+                                color: colors.brand.color_9,
                                 fontSize: 20,
                                 fontFamily: "Heebo",
                                 fontWeight: 400,

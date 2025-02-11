@@ -1,5 +1,6 @@
 import React from "react";
 import { TableHead, TableRow, TableCell } from "@mui/material";
+import { colors } from "../../styles/theme";
 
 interface CustomTableHeadProps {
   headers: string[];
@@ -14,7 +15,7 @@ const CustomTableHead: React.FC<CustomTableHeadProps> = ({ headers }) => {
             key={index}
             sx={{
               textAlign: "right",
-              color: "#032B40",
+              color: colors.brand.color_9,
               fontSize: 17,
               fontFamily: "Heebo",
               fontWeight: "500",

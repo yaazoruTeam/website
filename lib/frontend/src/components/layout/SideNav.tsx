@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Box, Drawer, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Drawer, List, ListItem } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import logoIcon from "../../assets/logoIcon.svg";
+import { colors } from "../../styles/theme";
+import CustomTypography from "../designComponent/Typography";
 
 interface SideNavProps {
   listItems: Array<{
@@ -23,13 +25,14 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
   return (
     <Drawer
       sx={{
-        width: 240,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 150,
-          backgroundColor: "#0a425f",
-          color: "white",
-          borderRadius: "22px 0px 0px 22px"
+          width: '130px',
+          backgroundColor: colors.brand.color_8,
+          color: colors.neutral.white,
+          borderRadius: "22px 0px 0px 22px",
+          display: "flex",
+          flexDirection: "column",
         },
       }}
       variant="permanent"
@@ -48,8 +51,8 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
           src={logoIcon}
           alt="Logo"
           style={{
-            width: "80px",
-            height: "auto",
+            width: "67px",
+            height: "64px",
           }}
         />
       </Box>
@@ -62,24 +65,43 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
             to={li.link}
             onClick={() => handleLinkClick(li.link)}
             sx={{
-              color: selectedLink === li.link ? "#80E4FF" : "white",
+              color: selectedLink === li.link ? colors.brand.color_3 : colors.neutral.white,
               textAlign: "center",
               flexDirection: "column",
               alignItems: "center",
-              paddingY: 2,
+              gap: 4,
               transition: "color 0.3s ease",
+              display: "inline-flex", 
+              height: 66,
+              marginTop:'10px'
             }}
           >
-            <img
-              src={selectedLink === li.link ? li.iconBlue : li.iconWhite}
-              alt={`${li.text} icon`}
-              style={{
-                width: "40px",
-                height: "40px",
-                marginRight: "10px",
+            <Box
+              sx={{
+                position: "relative",
+                width: "32px",
+                height: "32px",
               }}
+            >
+              <img
+                src={selectedLink === li.link ? li.iconBlue : li.iconWhite}
+                alt={`${li.text} icon`}
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  position: "absolute",
+                  top: "0",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                }}
+              />
+            </Box>
+            <CustomTypography
+              text={li.text}
+              variant="h4"
+              weight="regular"
+              color={selectedLink === li.link ? colors.brand.color_3 : colors.neutral.white}
             />
-            <ListItemText primary={li.text} />
           </ListItem>
         ))}
       </List>

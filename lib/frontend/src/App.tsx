@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";
 import SideNav from "./components/layout/SideNav";
@@ -32,17 +32,7 @@ import permissionsIconWhite from "../src/assets/permissions-white.svg";
 import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
-
-
-
-const theme = createTheme({
-  typography: {
-    fontSize: 16,
-    fontFamily: 'Heebo',
-    // fontWeight: '400',
-    // wordWrap: 'break-word'
-  },
-});
+import { colors, theme } from "./styles/theme";
 
 function App() {
 
@@ -55,12 +45,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <ProtectedRoute>
-        <Header
-          placeholderText="הקלד שם לקוח / מספר מכשיר"
-          searchIconColor="#7d97c5"
-          backgroundColor="white"
-          textFieldColor="var(--Color-21, rgba(229, 242, 255, 0.50))"
-        />
+        <Header />
       </ProtectedRoute>
 
       <div style={{ display: "flex" }}>
@@ -112,10 +97,9 @@ function App() {
             ]}
           />
         </ProtectedRoute>
-        <main style={{ flexGrow: 1, padding: "20px" }}>
+        <main style={{ flexGrow: 1, padding: "20px", overflow: 'auto', background: colors.brand.color_14 }}>
           <Routes>
             <Route path="/login" element={<Login />} />
-
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />

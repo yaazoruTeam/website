@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Box, Modal, Popover, Stack, Typography } from "@mui/material";
+import { Box, Modal, Popover, Stack, useMediaQuery } from "@mui/material";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
 import SelectCustomerForm from "../../stories/Form/SelectCustomerForm";
 import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
-import { CustomButton } from "../Button/Button";
-import AddCustomerForm, { AddCustomerFormInputs } from "../../stories/Form/AddCustomerForm";
+import { CustomButton } from "../designComponent/Button";
+import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
 import { createCustomer } from "../../api/customerApi";
+import CustomTypography from "../designComponent/Typography";
+import { colors, theme } from "../../styles/theme";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
@@ -17,6 +19,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
     const { customers, isLoading, error } = useFetchCustomers();
     const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(null);
     const [open, setOpen] = useState<boolean>(false);
+    const isMobile = useMediaQuery('(max-width:600px)');
+
 
     if (isLoading) return <div>Loading customers...</div>;
     if (error) return <div>{error}</div>;
@@ -120,8 +124,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         width: "93%",
                         height: "100%",
                         p: 2,
-                        backgroundColor: "white",
-                        boxShadow: "0px 4px 10px rgba(41, 59, 109, 0.04)",
+                        backgroundColor: colors.neutral.white,
+                        boxShadow: theme.shadows[0],
                         borderRadius: 2,
                         overflow: "hidden",
                         display: "flex",
@@ -131,19 +135,15 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                 >
                     <CustomButton
                         label="הוספת לקוח חדש"
+                        size={isMobile ? 'small' : 'large'}
+                        state="default"
+                        buttonType="third"
                         sx={{
-                            background: "white",
-                            color: "#032B40",
-                            border: "1px rgba(11.47, 57.77, 81.74, 0.36) solid",
-                            "&:hover": {
-                                background: "#f9fafc",
-                            },
+                            justifyContent: 'center'
                         }}
                         onClick={handleOpenModel}
                     />
-
                     <Stack sx={{ gap: 2 }}>
-
                         {customers.map((customer, index) => (
                             <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectClient(customer)} />
                         ))}
@@ -164,7 +164,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                     sx={{
                         width: 800,
                         padding: 3,
-                        backgroundColor: 'white',
+                        backgroundColor: colors.neutral.white,
                         borderRadius: 2,
                         boxShadow: 24,
                         textAlign: 'center',
@@ -174,7 +174,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         sx={{
                             width: '100%',
                             height: '100%',
-                            backgroundColor: 'white',
+                            backgroundColor: colors.neutral.white,
                             borderRadius: 6,
                             flexDirection: 'column',
                             justifyContent: 'flex-start',
@@ -182,16 +182,12 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                             display: 'inline-flex',
                         }}
                     >
-                        <Typography variant="h6" sx={{
-                            marginBottom: 2,
-                            color: '#0059BA',
-                            fontSize: 28,
-                            fontFamily: 'Heebo',
-                            fontWeight: '700',
-                            wordWrap: 'break-word',
-                        }}>
-                            הוספת לקוח
-                        </Typography>
+                        <CustomTypography
+                            text='הוספת לקוח'
+                            variant='h1'
+                            weight='bold'
+                            color={colors.brand.color_7}
+                        />
                         <AddCustomerForm onSubmit={addCustomer} />
                     </Box>
                 </Box>

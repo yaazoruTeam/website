@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, useMediaQuery } from "@mui/material";
 import AddCustomer from "./AddCustomer";
-import { CustomButton } from "../Button/Button";
+import { CustomButton } from "../designComponent/Button";
+import { colors } from "../../styles/theme";
+import CustomTypography from "../designComponent/Typography";
 
 interface CustomersListProps {
   customers: string[];
@@ -9,11 +11,12 @@ interface CustomersListProps {
 
 const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   return (
     <Box
       sx={{
-        width: "50%",
+        width: "100%",
         height: "50%",
         borderRadius: 2,
         display: "flex",
@@ -29,16 +32,13 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
         <>
           <CustomButton
             label="הוספת לקוח חדש"
-            sx={{
-              background: "#FF7F07",
-              color: "white",
-              "&:hover": {
-                background: "#0a425f",
-              },
-            }}
+            size={isMobile ? 'small' : 'large'}
+            state="default"
+            buttonType="first"
             onClick={() => setShowAddCustomer(true)} />
           <Box
             sx={{
+              width:'100%',
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-start",
@@ -50,11 +50,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               <Button
                 key={index}
                 sx={{
-                  width: 1000,
+                  width: '100%',
                   height: 81,
                   paddingLeft: 3,
                   paddingRight: 3,
-                  backgroundColor: "white",
+                  backgroundColor: colors.neutral.white,
                   borderRadius: 1,
                   display: "flex",
                   justifyContent: "flex-end",
@@ -68,19 +68,12 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                   },
                 }}
               >
-                <Typography
-                  sx={{
-                    color: "#0059BA",
-                    fontSize: 28,
-                    fontFamily: "Assistant, sans-serif",
-                    fontWeight: 600,
-                    lineHeight: 1.2,
-                    wordWrap: "break-word",
-                    textAlign: "center",
-                  }}
-                >
-                  {customer}
-                </Typography>
+               <CustomTypography
+               text={customer}
+               variant="h4"
+               weight="regular"
+               color={colors.brand.color_7}
+               />
               </Button>
             ))}
           </Box>

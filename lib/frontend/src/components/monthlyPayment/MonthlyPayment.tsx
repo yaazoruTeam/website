@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TransactionDetails } from "../../model/src";
 import MonthlyPaymentList from "./MonthlyPaymentList";
 import { getMonthlyPayment } from "../../api/monhlyPaymentApi";
+import { Box } from "@mui/system";
 
 const MonthlyPayment: React.FC = () => {
     const [MonthlyPayment, setMonthlyPayment] = useState<TransactionDetails.Model[]>([]);
@@ -29,13 +30,18 @@ const MonthlyPayment: React.FC = () => {
     if (error) return <div>{error}</div>;
 
     return (
-        <div>
+        <Box
+            sx={{
+                paddingLeft: '10%',
+                paddingRight: '15%',
+            }}
+        >
             <MonthlyPaymentList
                 monthlyPayment={MonthlyPayment.map(
                     (monthly) => monthly.amount + " " + monthly.total_sum
                 )}
             />
-        </div>
+        </Box>
     );
 };
 

@@ -1,11 +1,12 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import { CustomButton } from "../../components/Button/Button";
-import { CustomTextField } from "../Input/Input";
+import { Box, useMediaQuery } from "@mui/material";
+import { CustomButton } from "../designComponent/Button";
+import { CustomTextField } from "../designComponent/Input";
 import { useForm } from "react-hook-form";
-import { passwordArgs, userNameArgs } from "../Input/Input.stories";
 import logo1 from '../../assets/logo1.svg';
 import logo2 from '../../assets/logo2.svg';
+import CustomTypography from "../designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 interface LoginFormProps {
     onSubmit: (data: LoginFormInputs) => void;
@@ -20,13 +21,14 @@ interface LoginFormInputs {
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
     const { control, handleSubmit } = useForm<LoginFormInputs>();
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
         <Box
             sx={{
                 width: '80%',
                 padding: 6,
-                backgroundColor: 'white',
+                backgroundColor: colors.neutral.white,
                 borderRadius: 2,
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -66,38 +68,46 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 }}
             >
                 <CustomTextField
-                    {...userNameArgs}
                     control={control}
+                    name="userName"
+                    label="שם משתמש"
+                    // helperText: "Please enter your email",
+                    rules={{
+                        required: "שדה חובה"
+                    }}
                 />
                 <CustomTextField
-                    {...passwordArgs}
                     control={control}
+                    name="password"
+                    label="סיסמה"
+                    type="password"
+                    // helperText: "Please enter your email",
+                    rules={{
+                        required: "שדה חובה",
+                        // minLength: {
+                        //   value: 6,
+                        //   message: "הסיסמה חייבת להיות לפחות 6 תווים"
+                        // }
+                    }}
                 />
-
-
-                <Typography
+                <CustomTypography
+                    text='?שכחתי סיסמה'
+                    variant='h3'
+                    weight='medium'
+                    color={colors.brand.color_9}
                     sx={{
                         textAlign: "right",
-                        color: "#032B40",
-                        fontSize: 18,
                         textDecoration: "underline",
                         cursor: "pointer",
                     }}
-                >
-                    ?שכחתי סיסמה
-                </Typography>
+                />
             </Box>
 
             <CustomButton
                 label="התחברות למערכת"
-                sx={{
-                    background: "#FF7F07",
-                    color: "white",
-                    "&:hover": {
-                        background: "#0a425f",
-                    },
-                }}
-
+                size={isMobile ? 'small' : 'large'}
+                state="default"
+                buttonType="first"
                 onClick={handleSubmit(onSubmit)}
             />
         </Box>

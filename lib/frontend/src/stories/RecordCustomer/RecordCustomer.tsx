@@ -1,5 +1,7 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import CustomTypography from "../../components/designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 interface RecordCustomerProps {
     name: string;
@@ -24,11 +26,11 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                 height: '100%',
                 paddingTop: 2,
                 paddingBottom: 2,
-                backgroundColor: 'white',
+                backgroundColor: colors.neutral.white,
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                gap: 3,
+                gap: 1.625,
                 display: 'inline-flex',
                 cursor: 'pointer',
             }}
@@ -40,55 +42,49 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                     flexDirection: 'column',
                     justifyContent: 'flex-start',
                     alignItems: 'flex-start',
-                    gap: 1,
+                    gap: 1.5,
                     display: 'flex',
                 }}
             >
-                <Typography
+                <CustomTypography
+                    text={name}
+                    variant='h3'
+                    weight='regular'
+                    color={colors.brand.color_10}
                     sx={{
                         alignSelf: 'stretch',
                         textAlign: 'right',
-                        color: '#1F1F1F',
-                        fontSize: 18,
-                        fontFamily: 'Heebo',
-                        fontWeight: 400,
                         wordWrap: 'break-word',
                     }}
-                >
-                    {name}
-                </Typography>
+                />
                 <Box
                     sx={{
                         alignSelf: 'stretch',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
                         display: 'inline-flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
                     }}
                 >
-                    <Typography
+                    <CustomTypography
+                        text={email}
+                        variant='h3'
+                        weight='regular'
+                        color={colors.brand.color_10}
                         sx={{
+                            wordWrap: 'break-word',
                             width: 211.2,
-                            color: '#1F1F1F',
-                            fontSize: 18,
-                            fontFamily: 'Heebo',
-                            fontWeight: 400,
-                            wordWrap: 'break-word',
                         }}
-                    >
-                        {email}
-                    </Typography>
-                    <Typography
+                    />
+                    <CustomTypography
+                        text={phone}
+                        variant='h3'
+                        weight='regular'
+                        color={colors.brand.color_10}
                         sx={{
-                            textAlign: 'right',
-                            color: '#1F1F1F',
-                            fontSize: 18,
-                            fontFamily: 'Heebo',
-                            fontWeight: 400,
                             wordWrap: 'break-word',
+                            textAlign: 'right', flexBasis: '50%',  // הטלפון תופס חצי מרחב של הקופסה
                         }}
-                    >
-                        {phone}
-                    </Typography>
+                    />
                 </Box>
             </Box>
         </Box>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Box, Typography } from '@mui/material';
-import { CustomTextField } from '../../stories/Input/Input';
+import { CustomTextField } from '../designComponent/Input';
 import { useForm } from 'react-hook-form';
+import CustomTypography from '../designComponent/Typography';
+import { colors } from '../../styles/theme';
 interface PaymentFormInput {
     name: string;
     mustEvery: string;
@@ -68,7 +70,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 input: {
                     height: '29px',
                     width: '100%',
-                    color: '#032B40'
+                    color: colors.brand.color_9,
                 },
                 select: {
                     height: 'auto',
@@ -159,7 +161,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
     useEffect(() => {
         const subscription = watch((value) => {
             const { name, mustEvery, Payments, startDate } = value;
-            console.log("timeData update:", { name, mustEvery, Payments, startDate });            
+            console.log("timeData update:", { name, mustEvery, Payments, startDate });
             OnTimeChange({
                 name: name,
                 mustEvery: mustEvery,
@@ -167,7 +169,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 startDate: startDate
             });
         });
-    
+
         return () => subscription.unsubscribe();
     }, [watch, OnTimeChange]); // דאג שלא יקרה שיבוש בצפייה
 
@@ -177,10 +179,10 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
             component="form"
             id="payment_form"
             sx={{
-                width: 1000,
+                width: '100%',
                 height: '100%',
                 padding: 4,
-                backgroundColor: 'white',
+                backgroundColor: colors.neutral.white,
                 borderRadius: 2,
                 display: 'flex',
                 flexDirection: 'column',
@@ -188,9 +190,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 alignItems: 'flex-end',
             }}
         >
-            <Typography variant="h6" sx={{ textAlign: 'center', color: '#0A425F', fontSize: 22, fontWeight: '500' }}>
-                פרטי תשלום
-            </Typography>
+            <CustomTypography
+                text='פרטי תשלום'
+                variant='h2'
+                weight='medium'
+                color={colors.brand.color_8}
+            />
             <Box
                 sx={{
                     alignSelf: 'stretch',
@@ -206,9 +211,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     name='name'
                     label='שם בעל הכרטיס'
                     placeholder='שם בעל הכרטיס'
-                    sx={{
-                        direction: 'rtl'
-                    }}
                 />
                 <Box
                     sx={{
@@ -220,20 +222,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         display: 'inline-flex',
                     }}
                 >
-                    <Typography
-                        sx={{
-                            color: "var(--Color-11, #032B40)",
-                            textAlign: "right",
-                            fontSize: "18px",
-                            fontFamily: "Heebo",
-                            fontWeight: 400,
-                            lineHeight: "normal",
-                            wordWrap: 'break-word',
-                        }}
-                    >
-                        מס' ת.ז
-                    </Typography>
-
+                    <CustomTypography
+                        text='מספר ת.ז'
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
                     <Box
                         sx={{
                             alignSelf: 'stretch',
@@ -264,20 +258,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         display: 'inline-flex',
                     }}
                 >
-                    <Typography
-                        sx={{
-                            color: "var(--Color-11, #032B40)",
-                            textAlign: "right",
-                            fontSize: "18px",
-                            fontFamily: "Heebo",
-                            fontWeight: 400,
-                            lineHeight: "normal",
-                            wordWrap: 'break-word',
-                        }}
-                    >
-                        cvv
-                    </Typography>
-
+                      <CustomTypography
+                        text='cvv'
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
                     <Box
                         sx={{
                             alignSelf: 'stretch',
@@ -308,20 +294,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         display: 'inline-flex',
                     }}
                 >
-                    <Typography
-                        sx={{
-                            color: "var(--Color-11, #032B40)",
-                            textAlign: "right",
-                            fontSize: "18px",
-                            fontFamily: "Heebo",
-                            fontWeight: 400,
-                            lineHeight: "normal",
-                            wordWrap: 'break-word',
-                        }}
-                    >
-                        תוקף
-                    </Typography>
-
+                       <CustomTypography
+                        text='תוקף'
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
                     <Box
                         sx={{
                             alignSelf: 'stretch',
@@ -352,20 +330,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         display: 'inline-flex',
                     }}
                 >
-                    <Typography
-                        sx={{
-                            color: "var(--Color-11, #032B40)",
-                            textAlign: "right",
-                            fontSize: "18px",
-                            fontFamily: "Heebo",
-                            fontWeight: 400,
-                            lineHeight: "normal",
-                            wordWrap: 'break-word',
-                        }}
-                    >
-                        מס' כרטיס
-                    </Typography>
-
+                      <CustomTypography
+                        text='מספר כרטיס'
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
                     <Box
                         sx={{
                             alignSelf: 'stretch',
@@ -389,20 +359,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
 
 
 
-            <Typography
-                sx={{
-                    textAlign: 'center',
-                    color: '#0A425F',
-                    fontSize: 22,
-                    fontFamily: 'Heebo',
-                    fontWeight: 500,
-                    lineHeight: '26.4px',
-                    wordWrap: 'break-word',
-                }}
-            >
-                תאריך חיוב
-            </Typography>
-
+            <CustomTypography
+                        text='תאריך חיוב'
+                        variant='h2'
+                        weight='medium'
+                        color={colors.brand.color_8}
+                    />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '75%' }}>
                 <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
@@ -410,7 +372,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         label='חייב כל'
                         name='mustEvery'
                         placeholder='1 חודשיים'
-                        sx={{ direction: 'rtl' }}
                     />
                 </Box>
 
@@ -420,7 +381,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         label='תשלומים'
                         name='Payments'
                         placeholder='0'
-                        sx={{ direction: 'rtl' }}
                     />
                 </Box>
 

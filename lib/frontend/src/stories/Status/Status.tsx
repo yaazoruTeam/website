@@ -1,6 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import CustomTypography from "../../components/designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 interface StatusProps {
   status: string;
@@ -32,17 +33,15 @@ const Status: React.FC<StatusProps> = ({ status }) => {
         alignItems: "center",
       }}
     >
-      <Typography
-        sx={{
-          textAlign: "right",
-          color: "#032B40",
-          fontSize: 16,
-          fontFamily: "Heebo",
-          fontWeight: 400,
-        }}
-      >
-        {status}
-      </Typography>
+      <CustomTypography
+        text={status}
+        variant="h4"
+        weight="regular"
+        color={colors.brand.color_9}
+      sx={{
+        textAlign: "right",
+      }}
+      />
     </Box>
   );
 };

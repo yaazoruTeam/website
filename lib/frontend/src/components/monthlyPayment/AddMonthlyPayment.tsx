@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import CustomerSelector from '../customers/CustomerSelector';
 import PaymentForm from './PaymentForm';
 import FormToAddItems from './FormToAddItems';
-import { CustomButton } from '../Button/Button';
+import { CustomButton } from '../designComponent/Button';
 import { CreditDetails, ItemForMonthlyPayment, TransactionDetails } from '../../model/src';
 import { createTransactionDetails } from '../../api/TransactionDetails';
 import { createCreditDetails } from '../../api/creditDetails';
+import { useMediaQuery } from '@mui/material';
 
 interface Props {
     onBack: () => void;
@@ -20,9 +21,8 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     const [itemsData, setItemsData] = useState<ItemForMonthlyPayment.Model[]>([]); // נתוני פריטים
     const [paymentData, setPaymentData] = useState<any>(null); // נתוני תשלום
     const [timeData, setTimeData] = useState<any>(null); // נתוני זמן ההוראת קבע
-
     const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
-
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     useEffect(() => {
         if (paymentData) {
@@ -125,6 +125,7 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         }
         await createTransactionDetails(transaction)
     }
+
     return (
         <>
             <CustomerSelector onCustomerSelect={setCustomerData} />
@@ -132,13 +133,9 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             <PaymentForm ref={paymentFormRef} onPaymentChange={setPaymentData} OnTimeChange={setTimeData} />
             <CustomButton
                 label="שמירה"
-                sx={{
-                    background: "#FF7F07",
-                    color: "white",
-                    "&:hover": {
-                        background: "#0a425f",
-                    },
-                }}
+                size={isMobile ? 'small' : 'large'}
+                state='default'
+                buttonType='first'
                 onClick={charge}
             />
         </>

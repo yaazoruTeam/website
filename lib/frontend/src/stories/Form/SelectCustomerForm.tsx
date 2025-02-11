@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { CustomTextField } from "../Input/Input";
+import { CustomTextField } from "../../components/designComponent/Input";
 import { Customer } from "../../model/src";
+import CustomTypography from "../../components/designComponent/Typography";
+import { colors } from "../../styles/theme";
 
 interface SelectCustomerFormInputs {
     full_name: string;
@@ -32,10 +34,10 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
     return (
         <Box
             sx={{
-                width: 1000,
+                width: '100%',
                 height: "100%",
                 padding: 3.5,
-                backgroundColor: "white",
+                backgroundColor: colors.neutral.white,
                 borderRadius: 1,
                 display: "inline-flex",
                 flexDirection: "column",
@@ -44,19 +46,12 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                 gap: 3.5,
             }}
         >
-            <Typography
-                sx={{
-                    textAlign: "center",
-                    color: "#0A425F",
-                    fontSize: 24,
-                    fontFamily: "Heebo",
-                    fontWeight: 500,
-                    lineHeight: "1.2",
-                    wordWrap: "break-word",
-                }}
-            >
-                פרטי לקוח
-            </Typography>
+            <CustomTypography
+                text='פרטי לקוח'
+                variant='h2'
+                weight='medium'
+                color={colors.brand.color_8}
+            />
             <Box
                 sx={{
                     alignSelf: "stretch",
@@ -66,8 +61,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                     display: "inline-flex",
                 }}
             >
-
-
                 {customer && (
                     <>
                         <Box
@@ -86,13 +79,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                                 name="customerEmail"
                                 label="אימייל"
                                 placeholder={customer.email || "אימייל"}
-                                sx={{
-                                    direction: "rtl",
-                                    alignSelf: "stretch",
-                                    padding: 2,
-                                    backgroundColor: "rgba(246, 248, 252, 0.58)",
-                                    borderRadius: 1,
-                                }}
                                 disabled
                             />
                         </Box>
@@ -112,13 +98,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                                 name="customerPhone"
                                 label="טלפון"
                                 placeholder={customer.phone_number || "טלפון"}
-                                sx={{
-                                    direction: "rtl",
-                                    alignSelf: "stretch",
-                                    padding: 2,
-                                    backgroundColor: "rgba(246, 248, 252, 0.58)",
-                                    borderRadius: 1,
-                                }}
                                 disabled
                             />
                         </Box>
@@ -145,13 +124,6 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                                 ? `${customer.first_name} ${customer.last_name}`
                                 : "הקלד שם לקוח"
                         }
-                        sx={{
-                            direction: "rtl",
-                            alignSelf: "stretch",
-                            padding: 2,
-                            backgroundColor: "rgba(246, 248, 252, 0.58)",
-                            borderRadius: 1,
-                        }}
                         onClick={onNameClick}
                     />
                 </Box>

@@ -1,9 +1,10 @@
 import React from "react";
 import loginImage from '../../assets/loginImage.svg';
-import LoginForm from "../../stories/Form/LoginForm";
+import LoginForm from "./LoginForm";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/authApi";
+import { colors } from "../../styles/theme";
 
 interface LoginFormInputs {
     username: string;
@@ -37,7 +38,7 @@ const Login2222: React.FC = () => {
                 flexDirection: 'row',
                 height: '100vh',
                 width: '100%', 
-                backgroundColor: '#0A425F', 
+                backgroundColor: colors.brand.color_8, 
                 overflow: 'hidden',
                 margin: 0,
                 padding: 0,
@@ -57,7 +58,7 @@ const Login2222: React.FC = () => {
                     width: '70%',
                     height: '100%',
                     position: 'relative',
-                    backgroundColor: '#F5F6FA',
+                    backgroundColor: colors.brand.color_14,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -69,7 +70,7 @@ const Login2222: React.FC = () => {
                         position: 'absolute',
                         top: '8%',
                         right: '10%',
-                        color: '#032B40',
+                        color: colors.brand.color_9,
                         fontSize: '28px',
                         fontFamily: 'Heebo',
                         fontWeight: '700',

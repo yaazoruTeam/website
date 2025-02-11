@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Button, Box, Typography } from "@mui/material";
-import { CustomButton } from "../Button/Button";
+import { Button, Box, useMediaQuery } from "@mui/material";
+import { CustomButton } from "../designComponent/Button";
 import AddMonthlyPayment from "./AddMonthlyPayment";
+import { colors } from "../../styles/theme";
+import CustomTypography from "../designComponent/Typography";
 
 interface MonthlyPaymentListProps {
     monthlyPayment: string[];
@@ -9,12 +11,13 @@ interface MonthlyPaymentListProps {
 
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment }) => {
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
         <>
             <Box
                 sx={{
-                    width: "50%",
+                    width: "100%",
                     height: "50%",
                     // paddingLeft: 10,
                     // paddingRight: 10,
@@ -35,7 +38,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                         <Box
                             sx={{
                                 textAlign: 'center',
-                                color: '#032B40',
+                                color: colors.brand.color_9,
                                 fontSize: 28,
                                 fontFamily: 'Heebo',
                                 fontWeight: 700,
@@ -47,10 +50,13 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                         </Box>
                         <CustomButton
                             label="הוראת קבע חדש"
-                            sx={{ background: "#FF7F07", color: "white", "&:hover": { background: "#0a425f" } }}
+                            size={isMobile ? 'small' : 'large'}
+                            state="default"
+                            buttonType="first"
                             onClick={() => setShowAddMonthlyPayment(true)} />
                         <Box
                             sx={{
+                                width: '100%',
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "flex-start",
@@ -62,11 +68,11 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                 <Button
                                     key={index}
                                     sx={{
-                                        width: 1000,
+                                        width: '100%',
                                         height: 81,
                                         paddingLeft: 3,
                                         paddingRight: 3,
-                                        backgroundColor: "white",
+                                        backgroundColor: colors.neutral.white,
                                         borderRadius: 1,
                                         display: "flex",
                                         justifyContent: "flex-end",
@@ -80,19 +86,12 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                         },
                                     }}
                                 >
-                                    <Typography
-                                        sx={{
-                                            color: "#0059BA",
-                                            fontSize: 28,
-                                            fontFamily: "Assistant, sans-serif",
-                                            fontWeight: 600,
-                                            lineHeight: 1.2,
-                                            wordWrap: "break-word",
-                                            textAlign: "center",
-                                        }}
-                                    >
-                                        {monthlyPayment}
-                                    </Typography>
+                                    <CustomTypography
+                                        text={monthlyPayment}
+                                        variant="h4"
+                                        weight="regular"
+                                        color={colors.brand.color_7}
+                                    />
                                 </Button>
                             ))}
                         </Box>

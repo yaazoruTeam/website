@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 
-import LoginForm from "./LoginForm";
+import LoginForm from "../../components/auth/LoginForm";
 
 export default {
   title: "Stories/LoginForm",

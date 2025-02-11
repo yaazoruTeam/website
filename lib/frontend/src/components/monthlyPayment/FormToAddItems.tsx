@@ -1,6 +1,6 @@
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import ItemForm from "../../stories/Form/AddItemForm";
+import ItemForm from "./AddItemForm";
 import trashIcon from '../../assets/trash-can.svg';
 import edited from '../../assets/edited.svg';
 import { ItemForMonthlyPayment } from "../../model/src";
@@ -42,7 +42,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
   }, [items]);
 
   return <>
-    <Box style={{ width: 1000, height: '100%', padding: 28, background: 'white', borderRadius: 6, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-end', gap: 28, display: 'inline-flex' }}>
+    <Box style={{ width: '100%', height: '100%', padding: 28, background: 'white', borderRadius: 6, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-end', gap: 28, display: 'inline-flex' }}>
       <TableContainer >
         <Table>
           <TableHead>
