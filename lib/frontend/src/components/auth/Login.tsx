@@ -5,6 +5,8 @@ import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/authApi";
 import { colors } from "../../styles/theme";
+import CustomTypography from "../designComponent/Typography";
+import { useTranslation } from 'react-i18next';
 
 interface LoginFormInputs {
     username: string;
@@ -12,6 +14,7 @@ interface LoginFormInputs {
 }
 
 const Login2222: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const handleLogin = async (data: LoginFormInputs) => {
         console.log("Form Data:", data);
@@ -30,7 +33,7 @@ const Login2222: React.FC = () => {
             alert("Login failed. Please try again.");
         }
     };
-
+    
     return (
         <Box
             sx={{
@@ -52,7 +55,6 @@ const Login2222: React.FC = () => {
                     flex: 1,
                 }}
             />
-
             <Box
                 sx={{
                     width: '70%',
@@ -65,24 +67,17 @@ const Login2222: React.FC = () => {
                     padding: '4%', 
                 }}
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '8%',
-                        right: '10%',
-                        color: colors.brand.color_9,
-                        fontSize: '28px',
-                        fontFamily: 'Heebo',
-                        fontWeight: '700',
-                        lineHeight: '3.5vw',
-                        wordWrap: 'break-word',
-                        textAlign: 'right',
-                        width: '90%',
-                    }}
-                >
-                    התחברות למערכת
-                </Box>
-
+                <CustomTypography
+                text={t('loginSystem')}
+                variant="h1"
+                weight="bold"
+                color={colors.brand.color_9}
+                sx={{
+                    position: 'absolute',
+                    top: '8%',
+                    right: '10%',
+                }}
+                />
                 <Box
                     sx={{
                         position: 'absolute',
@@ -110,7 +105,7 @@ const Login2222: React.FC = () => {
             >
                 <img
                     src={loginImage}
-                    alt="תמונה"
+                    alt="img"
                     style={{
                         width: '100%',
                         height: 'auto',

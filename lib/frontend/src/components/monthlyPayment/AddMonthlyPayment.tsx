@@ -7,6 +7,7 @@ import { CreditDetails, ItemForMonthlyPayment, TransactionDetails } from '../../
 import { createTransactionDetails } from '../../api/TransactionDetails';
 import { createCreditDetails } from '../../api/creditDetails';
 import { useMediaQuery } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     onBack: () => void;
@@ -17,6 +18,7 @@ export interface AddMonthlyPaymentFormInputs {
 }
 
 const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
+    const { t } = useTranslation();
     const [customerData, setCustomerData] = useState<any>(null); // נתוני לקוח
     const [itemsData, setItemsData] = useState<ItemForMonthlyPayment.Model[]>([]); // נתוני פריטים
     const [paymentData, setPaymentData] = useState<any>(null); // נתוני תשלום
@@ -132,7 +134,7 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             <FormToAddItems onItemsChange={setItemsData} />
             <PaymentForm ref={paymentFormRef} onPaymentChange={setPaymentData} OnTimeChange={setTimeData} />
             <CustomButton
-                label="שמירה"
+                label={t('saving')}
                 size={isMobile ? 'small' : 'large'}
                 state='default'
                 buttonType='first'

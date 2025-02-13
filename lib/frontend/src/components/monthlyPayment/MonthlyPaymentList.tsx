@@ -4,12 +4,14 @@ import { CustomButton } from "../designComponent/Button";
 import AddMonthlyPayment from "./AddMonthlyPayment";
 import { colors } from "../../styles/theme";
 import CustomTypography from "../designComponent/Typography";
+import { useTranslation } from "react-i18next";
 
 interface MonthlyPaymentListProps {
     monthlyPayment: string[];
 }
 
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment }) => {
+      const { t } = useTranslation();
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -35,21 +37,14 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                     <AddMonthlyPayment onBack={() => setShowAddMonthlyPayment(false)} />
                 ) : (
                     <>
-                        <Box
-                            sx={{
-                                textAlign: 'center',
-                                color: colors.brand.color_9,
-                                fontSize: 28,
-                                fontFamily: 'Heebo',
-                                fontWeight: 700,
-                                lineHeight: '33.6px',
-                                wordWrap: 'break-word',
-                            }}
-                        >
-                            הוראות קבע
-                        </Box>
+                        <CustomTypography
+                            text={t('standingOrders')}
+                            variant="h1"
+                            weight="bold"
+                            color={colors.brand.color_9}
+                        />
                         <CustomButton
-                            label="הוראת קבע חדש"
+                            label={t('newStandingOrder')}
                             size={isMobile ? 'small' : 'large'}
                             state="default"
                             buttonType="first"
