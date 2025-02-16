@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
 import { TransactionDetails, HttpError } from "../model";
+import { chargeTokenTranzila } from "./ApiTranzila";
 
 const createTransactionDetails = async (
     req: Request,
@@ -10,7 +11,9 @@ const createTransactionDetails = async (
     try {
         TransactionDetails.sanitizeBodyExisting(req);
         const transactionDetailsrData = req.body;
-        const sanitized = TransactionDetails.sanitize(transactionDetailsrData, false);
+        const sanitized:TransactionDetails.Model = TransactionDetails.sanitize(transactionDetailsrData, false);
+        //
+       // chargeTokenTranzila();
         const transactionDetails = await db.TransactionDetails.createTransactionDetails(sanitized);
         res.status(201).json(transactionDetails);
     } catch (error: any) {

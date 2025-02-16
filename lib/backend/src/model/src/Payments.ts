@@ -1,94 +1,76 @@
 import { HttpError } from ".";
 
 interface Model {
-    item_id: string;
+    payments_id: string;
     monthlyPayment_id: string;
-    description: string;
-    quantity: number | string;
-    price: number | string;
-    total: number | string;
-    paymentType: string;
-    created_at: Date;
-    update_at: Date;
+    amount: number;
+    date: Date;
+    status: 'failed' | 'sucess'//...
+    created_at:Date;
+    update_at:Date;
 }
 
 
-function sanitize(item: Model, hasId: boolean): Model {
-    if (hasId && !item.item_id) {
+function sanitize(payments: Model, hasId: boolean): Model {
+    if (hasId && !payments.payments_id) {
         const error: HttpError.Model = {
             status: 400,
-            message: 'Invalid or missing "item_id".',
+            message: 'Invalid or missing "payments_id".',
         };
         throw error;
     }
-    if (!item.monthlyPayment_id) {
+    if (!payments.monthlyPayment_id) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "monthlyPayment_id".',
         };
         throw error;
     }
-    if (!item.description) {
+    if (!payments.amount) {
         const error: HttpError.Model = {
             status: 400,
-            message: 'Invalid or missing "description".',
+            message: 'Invalid or missing "amount".',
         };
         throw error;
     }
-    if (!item.quantity) {
+    if (!payments.date) {
         const error: HttpError.Model = {
             status: 400,
-            message: 'Invalid or missing "quantity".',
+            message: 'Invalid or missing "date".',
         };
         throw error;
     }
-    if (!item.price) {
+    if (!payments.status) {
         const error: HttpError.Model = {
             status: 400,
-            message: 'Invalid or missing "price".',
+            message: 'Invalid or missing "status".',
         };
         throw error;
     }
-    if (!item.total) {
-        const error: HttpError.Model = {
-            status: 400,
-            message: 'Invalid or missing "total".',
-        };
-        throw error;
-    }
-    if (!item.paymentType) {
-        const error: HttpError.Model = {
-            status: 400,
-            message: 'Invalid or missing "paymentType".',
-        };
-        throw error;
-    }
-    if (!item.created_at) {
+    if (!payments.created_at) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "created_at".',
         };
         throw error;
     }
-    if (!item.update_at) {
+    if (!payments.update_at) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "update_at".',
         };
         throw error;
     }
-    const newItem: Model = {
-        item_id: item.item_id,
-        monthlyPayment_id: item.monthlyPayment_id,
-        description: item.description,
-        quantity: item.quantity,
-        price: item.price,
-        total: item.total,
-        paymentType: item.paymentType,
-        created_at: item.created_at,
-        update_at: item.update_at,
+    const newPayments: Model = {
+        payments_id:payments.payments_id,
+        monthlyPayment_id: payments.monthlyPayment_id,
+        amount: payments.amount,
+        date: payments.date,
+        status: payments.status,
+        created_at: payments.created_at,
+        update_at: payments.update_at,
     };
-    return newItem;
+    return newPayments;
 }
 
 const sanitizeIdExisting = (id: any) => {

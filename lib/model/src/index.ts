@@ -11,6 +11,8 @@ import * as CustomerDeviceExcel from "./CustomerDeviceExcel";
 import * as CreditDetails from "./CreditDetails";
 import * as TransactionDetails from "./TransactionDetails";
 import * as  ItemForMonthlyPayment from "./ItemForMonthlyPayment";
+import * as  MonthlyPayment from "./MonthlyPayment";
+import * as  Payments from "./Payments";
 
 export {
   Customer,
@@ -25,5 +27,7 @@ export {
   CustomerDeviceExcel,
   CreditDetails,
   TransactionDetails,
-  ItemForMonthlyPayment
+  ItemForMonthlyPayment,
+  MonthlyPayment,
+  Payments
 };

@@ -1,4 +1,4 @@
-import { HttpError } from ".";
+import { Device, HttpError } from ".";
 
 interface Model {
     first_name: string;
@@ -199,5 +199,4 @@ function sanitize(customerDeviceExcel: Model, isCustomer: boolean): Model {
     }
 }
 
-export type { Model };
-export { sanitize };
+export { Model, sanitize }
