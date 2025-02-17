@@ -1,13 +1,17 @@
 import { CreditDetails, HttpError } from "../model";
 import getConnection from "./connection";
 
-const createCreditDetails = async (CreditDetails: CreditDetails.Model) => {
+const createCreditDetails = async (creditDetails: CreditDetails.Model) => {
   const knex = getConnection();
   try {
     const [newCreditDetails] = await knex("yaazoru.creditDetails")
       .insert({
-        client_id: CreditDetails.client_id,
-        token: CreditDetails.token,
+        customer_id:creditDetails.customer_id,
+        token:creditDetails.token,
+        expiry_month: creditDetails.expiry_month,
+        expiry_year: creditDetails.expiry_year,
+        created_at: creditDetails.created_at,
+        update_at: creditDetails.update_at,
       })
       .returning("*");
     return newCreditDetails;

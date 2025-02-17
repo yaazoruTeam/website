@@ -13,6 +13,7 @@ import * as TransactionDetails from "./TransactionDetails";
 import * as  ItemForMonthlyPayment from "./ItemForMonthlyPayment";
 import * as  MonthlyPayment from "./MonthlyPayment";
 import * as  Payments from "./Payments";
+import * as  PaymentCreditLink from "./PaymentCreditLink";
 
 export {
   Customer,
@@ -29,5 +30,6 @@ export {
   TransactionDetails,
   ItemForMonthlyPayment,
   MonthlyPayment,
-  Payments
+  Payments,
+  PaymentCreditLink,
 };

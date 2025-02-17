@@ -2,7 +2,7 @@ import { HttpError } from ".";
 
 interface Model {
   credit_id: string;
-  customer_id: number;
+  customer_id: string;
   token: string;
   expiry_month: string;
   expiry_year: string;
