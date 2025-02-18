@@ -41,6 +41,16 @@ const getPaymentsId = async (payments_id: string) => {
     };
 };
 
+const getPaymentsByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.payments').where({ monthlyPayment_id });
+    } catch (err) {
+        throw err;
+    };
+};
+
+
 const updatePayments = async (payments_id: string, payments: Payments.Model) => {
     const knex = getConnection();
     try {
@@ -114,5 +124,5 @@ const doesPaymentsExist = async (payments_id: string): Promise<boolean> => {
 };
 
 export {
-    createPayments, getPayments, getPaymentsId, updatePayments, deletePayments,/* findCustomer,*/ doesPaymentsExist
+    createPayments, getPayments, getPaymentsId, getPaymentsByMonthlyPaymentId, updatePayments, deletePayments,/* findCustomer,*/ doesPaymentsExist
 };

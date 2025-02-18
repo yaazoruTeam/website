@@ -4,8 +4,8 @@ interface Model {
   credit_id: string;
   customer_id: string;
   token: string;
-  expiry_month: string;
-  expiry_year: string;
+  expiry_month: number;
+  expiry_year: number;
   created_at: Date;
   update_at: Date;
 }
@@ -18,7 +18,7 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
-  if (!creditDetails.credit_id) {
+  if (!creditDetails.customer_id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',

@@ -99,12 +99,14 @@ router.delete(`${ROUTE_PATH}/monthlyPayment/:id`,  monthlypaymentController.dele
 router.post(`${ROUTE_PATH}/payments`, paymentsController.createPayments);
 router.get(`${ROUTE_PATH}/payments`,  paymentsController.getAllPayments);
 router.get(`${ROUTE_PATH}/payments/:id`, paymentsController.getPaymentsId);
+router.get(`${ROUTE_PATH}/payments/monthlyPayment/:id`, paymentsController.getPaymentsByMonthlyPaymentId);
 router.put(`${ROUTE_PATH}/payments/:id`, paymentsController.updatePayments);
 router.delete(`${ROUTE_PATH}/payments/:id`,  paymentsController.deletePayments);
 
 router.post(`${ROUTE_PATH}/item`, itemController.createItem);
 router.get(`${ROUTE_PATH}/item`,  itemController.getItems);
 router.get(`${ROUTE_PATH}/item/:id`, itemController.getItemId);
+router.get(`${ROUTE_PATH}/item/monthlyPayment/:id`, itemController.getAllItemsByMonthlyPaymentId);
 router.put(`${ROUTE_PATH}/item/:id`, itemController.updateItem);
 router.delete(`${ROUTE_PATH}/item/:id`,  itemController.deleteItem);
 

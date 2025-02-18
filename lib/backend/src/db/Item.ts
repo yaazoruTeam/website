@@ -43,6 +43,15 @@ const getItemId = async (item_id: string) => {
     };
 };
 
+const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.item').where({ monthlyPayment_id });
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model) => {
     const knex = getConnection();
     try {
@@ -116,5 +125,5 @@ const doesItemExist = async (item_id: string): Promise<boolean> => {
 };
 
 export {
-    createItem, getItems, getItemId, updateItem, deleteItem,/* findCustomer,*/ doesItemExist
+    createItem, getItems, getItemId, getAllItemByMonthlyPaymentId, updateItem, deleteItem,/* findCustomer,*/ doesItemExist
 };

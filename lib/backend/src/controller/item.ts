@@ -1,12 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpError, ItemForMonthlyPayment } from "../model";
-import db from "src/db";
+import db from "../db";
 
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
         ItemForMonthlyPayment.sanitizeBodyExisting(req);
         const itemData = req.body;
         const sanitized = ItemForMonthlyPayment.sanitize(itemData, false);
+        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
+        if (!existMonthlyPayment) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'monthly payment dose not exist'
+            }
+            throw erroe;
+        }
         const item = await db.Item.createItem(sanitized);
         res.status(201).json(item);
     } catch (error: any) {
@@ -42,11 +50,40 @@ const getItemId = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+
+const getAllItemsByMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        ItemForMonthlyPayment.sanitizeIdExisting(req);
+        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
+            req.params.id
+        );
+        if (!existMonthlyPayment) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: "monthlyPayment does not exist.",
+            };
+            throw error;
+        }
+        const items = await db.Item.getAllItemByMonthlyPaymentId(req.params.id);
+        res.status(200).json(items);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const updateItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
         ItemForMonthlyPayment.sanitizeIdExisting(req);
         ItemForMonthlyPayment.sanitizeBodyExisting(req);
         const sanitized = ItemForMonthlyPayment.sanitize(req.body, true);
+        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
+        if (!existMonthlyPayment) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'monthly payment dose not exist'
+            }
+            throw erroe;
+        }
         const updateItem = await db.Item.updateItem(
             req.params.id,
             sanitized
@@ -74,4 +111,4 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
-export { createItem, getItems, getItemId, updateItem, deleteItem }
+export { createItem, getItems, getItemId, getAllItemsByMonthlyPaymentId, updateItem, deleteItem }

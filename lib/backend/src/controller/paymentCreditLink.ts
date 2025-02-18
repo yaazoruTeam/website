@@ -1,12 +1,36 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpError, PaymentCreditLink } from "../model";
-import db from "src/db";
+import db from "../db";
 
 const createPaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
     try {
         PaymentCreditLink.sanitizeBodyExisting(req);
         const paymentCreditLinkData = req.body;
         const sanitized = PaymentCreditLink.sanitize(paymentCreditLinkData, false);
+        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
+        if (!existMonthlyPayment) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'monthlyPayment dose not exist'
+            }
+            throw erroe;
+        }
+        const existCreditDetails = await db.CreditDetails.doesCreditDetailsExist(sanitized.creditDetails_id);
+        if (!existCreditDetails) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'creditDetails dose not exist'
+            }
+            throw erroe;
+        }
+        const existMonthlyPaymentInPaymentCreditLink = await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(sanitized.monthlyPayment_id);
+        if (!existCreditDetails) {
+            const erroe: HttpError.Model = {
+                status: 409,
+                message: 'monthly paymemnt already exists'
+            }
+            throw erroe;
+        }
         const paymentCreditLink = await db.PaymentCreditLink.createPaymentCreditLink(sanitized);
         res.status(201).json(paymentCreditLink);
     } catch (error: any) {
@@ -47,6 +71,30 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
         PaymentCreditLink.sanitizeIdExisting(req);
         PaymentCreditLink.sanitizeBodyExisting(req);
         const sanitized = PaymentCreditLink.sanitize(req.body, true);
+        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
+        if (!existMonthlyPayment) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'monthlyPayment dose not exist'
+            }
+            throw erroe;
+        }
+        const existCreditDetails = await db.CreditDetails.doesCreditDetailsExist(sanitized.creditDetails_id);
+        if (!existCreditDetails) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'creditDetails dose not exist'
+            }
+            throw erroe;
+        }
+        const existMonthlyPaymentInPaymentCreditLink = await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(sanitized.monthlyPayment_id);
+        if (!existCreditDetails) {
+            const erroe: HttpError.Model = {
+                status: 409,
+                message: 'monthly paymemnt already exists'
+            }
+            throw erroe;
+        }
         const updatePaymentCreditLink = await db.PaymentCreditLink.updatePaymentCreditLink(
             req.params.id,
             sanitized

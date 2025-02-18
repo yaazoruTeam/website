@@ -2,7 +2,7 @@ import { HttpError, ItemForMonthlyPayment } from ".";
 
 interface Model {
   transaction_id: string;
-  // credit_id: string;
+  credit_id: string;
   customer_name: string;//שם לקוח
   dates: string;//תאריכים
   amount: number;//(חודשי)סכום
@@ -137,7 +137,7 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
   }
   const newTransactionDetails: Model = {
     transaction_id: transactionDetails.transaction_id,
-    //  credit_id: transactionDetails.credit_id,
+     credit_id: transactionDetails.credit_id,
     customer_name: transactionDetails.customer_name,
     dates: transactionDetails.dates,
     amount: transactionDetails.amount,

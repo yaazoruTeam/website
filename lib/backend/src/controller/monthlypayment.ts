@@ -1,12 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpError, MonthlyPayment } from "../model";
-import db from "src/db";
+import db from "../db";
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         MonthlyPayment.sanitizeBodyExisting(req);
         const monthlyPaymentData = req.body;
         const sanitized = MonthlyPayment.sanitize(monthlyPaymentData, false);
+        const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id);
+        if (!existCustomer) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'customer dose not exist'
+            }
+            throw erroe;
+        }
         const monthlyPayment = await db.MonthlyPayment.createMonthlyPayment(sanitized);
         res.status(201).json(monthlyPayment);
     } catch (error: any) {
@@ -47,6 +55,14 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
         MonthlyPayment.sanitizeIdExisting(req);
         MonthlyPayment.sanitizeBodyExisting(req);
         const sanitized = MonthlyPayment.sanitize(req.body, true);
+        const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id);
+        if (!existCustomer) {
+            const erroe: HttpError.Model = {
+                status: 404,
+                message: 'customer dose not exist'
+            }
+            throw erroe;
+        }
         const updateMonthlyPayment = await db.MonthlyPayment.updateMonthlyPayment(
             req.params.id,
             sanitized
@@ -57,6 +73,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+//לשים ❤️ שכאשר אני מוחקת כרטיס אשראי אני צריכה למחוק גם מהטבלת קשרים ולבדוק מה עם ההוראת קבע
 const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         MonthlyPayment.sanitizeIdExisting(req);

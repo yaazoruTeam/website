@@ -111,6 +111,19 @@ const doesPaymentCreditLinkExist = async (paymentCreditLink_id: string): Promise
     }
 };
 
+const doesMonthlyPaimentExistInPaymentCreditLink = async (monthlyPayment_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.paymentCreditLink')
+            .select('monthlyPayment_id')
+            .where({ monthlyPayment_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
+
 export {
-    createPaymentCreditLink, getPaymentCreditLink, getPaymentCreditLinkId, updatePaymentCreditLink, deletePaymentCreditLink,/* findCustomer,*/ doesPaymentCreditLinkExist
+    createPaymentCreditLink, getPaymentCreditLink, getPaymentCreditLinkId, updatePaymentCreditLink, deletePaymentCreditLink,/* findCustomer,*/ doesPaymentCreditLinkExist, doesMonthlyPaimentExistInPaymentCreditLink
 };

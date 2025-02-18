@@ -4,8 +4,8 @@ interface Model {
   credit_id: string;
   customer_id: string;
   token: string;
-  expiry_month: string;
-  expiry_year: string;
+  expiry_month: number;
+  expiry_year: number;
   created_at: Date;
   update_at: Date;
 }
