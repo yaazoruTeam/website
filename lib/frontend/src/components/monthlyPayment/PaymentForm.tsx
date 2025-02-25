@@ -4,6 +4,7 @@ import { CustomTextField } from '../designComponent/Input';
 import { useForm } from 'react-hook-form';
 import CustomTypography from '../designComponent/Typography';
 import { colors } from '../../styles/theme';
+import { useTranslation } from 'react-i18next';
 interface PaymentFormInput {
     name: string;
     mustEvery: string;
@@ -20,6 +21,7 @@ declare global {
 let fields: any = null;
 
 const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => void, OnTimeChange: (timeData: any) => void }, ref) => {
+    const { t } = useTranslation();
     const { onPaymentChange } = props;
     const { OnTimeChange } = props;
     const [errors, setErrors] = useState<string[]>([]);
@@ -48,7 +50,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
             fields: {
                 credit_card_number: {
                     selector: '#credit_card_number',
-                    placeholder: 'מספר כרטיס אשראי',
+                    placeholder: t('creditcardNumber'),
                     tabindex: 1
                 },
                 cvv: {
@@ -63,7 +65,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 },
                 identity_number: {
                     selector: '#identity_number',
-                    placeholder: 'מספר תעודת זהות',
+                    placeholder: t('IdNumber'),
                     tabindex: 4,
                 }
             },
@@ -154,7 +156,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
         });
 
         return () => subscription.unsubscribe();
-    }, [watch, OnTimeChange]); // דאג שלא יקרה שיבוש בצפייה
+    }, [watch, OnTimeChange]);
 
 
     return (
@@ -174,7 +176,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
             }}
         >
             <CustomTypography
-                text='פרטי תשלום'
+                text={t('paymentDetails')}
                 variant='h2'
                 weight='medium'
                 color={colors.brand.color_8}
@@ -192,8 +194,8 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 <CustomTextField
                     control={control}
                     name='name'
-                    label='שם בעל הכרטיס'
-                    placeholder='שם בעל הכרטיס'
+                    label={t('cardholderName')}
+                    placeholder={t('cardholderName')}
                 />
                 <Box
                     sx={{
@@ -206,7 +208,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     }}
                 >
                     <CustomTypography
-                        text='מספר ת.ז'
+                        text={t('IdNumber')}
                         variant='h4'
                         weight='regular'
                         color={colors.brand.color_9}
@@ -278,7 +280,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     }}
                 >
                     <CustomTypography
-                        text='תוקף'
+                        text={t('expiry')}
                         variant='h4'
                         weight='regular'
                         color={colors.brand.color_9}
@@ -314,7 +316,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     }}
                 >
                     <CustomTypography
-                        text='מספר כרטיס'
+                        text={t('creditcardNumber')}
                         variant='h4'
                         weight='regular'
                         color={colors.brand.color_9}
@@ -343,7 +345,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
 
 
             <CustomTypography
-                text='תאריך חיוב'
+                text={t('billingDate')}
                 variant='h2'
                 weight='medium'
                 color={colors.brand.color_8}
@@ -360,16 +362,16 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
-                        label='חייב כל'
+                        label={t('mustEvery')}
                         name='mustEvery'
-                        placeholder='1 חודשיים'
+                        placeholder={t('numberMonths')}
                     />
                 </Box>
 
                 <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
-                        label='תשלומים'
+                        label={t('payments')}
                         name='Payments'
                         placeholder='0'
                     />
@@ -378,7 +380,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
-                        label='תאריך התחלה'
+                        label={t('startDate')}
                         placeholder='20/12/24'
                         name='startDate'
                         type='date'

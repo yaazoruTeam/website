@@ -11,8 +11,10 @@ import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../api/userApi";
 import CustomTypography from "../designComponent/Typography";
 import { ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from "react-i18next";
 
 const Header: React.FunctionComponent = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [token, setToken] = useState<string>('');
   const [userName, setUserName] = useState<string | null>(null);
@@ -71,7 +73,7 @@ const Header: React.FunctionComponent = () => {
       >
         {!token ? (
           <CustomButton
-            label="התחברות"
+            label={t('login')}
             sx={{
               background: colors.neutral.white,
               color: colors.brand.color_9,
@@ -112,7 +114,7 @@ const Header: React.FunctionComponent = () => {
             </Box>
             <Box
               sx={{
-                marginLeft:'16px',
+                marginLeft: '16px',
                 pt: 1,
                 pb: 1,
                 borderRadius: 1,
@@ -125,7 +127,7 @@ const Header: React.FunctionComponent = () => {
               onClick={handleLogout}
             >
               <CustomTypography
-                text="התנתקות"
+                text={t('logout')}
                 variant="h4"
                 weight="regular"
                 color={colors.brand.color_7}
@@ -137,7 +139,7 @@ const Header: React.FunctionComponent = () => {
 
         <TextField
           variant="standard"
-          placeholder="הקלד שם לקוח / מספר מכשיר"
+          placeholder={t('topNavigation-Search')}
           fullWidth
           sx={{
             marginRight: '15%',

@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 
-import SelectCustomerForm from "../../stories/Form/SelectCustomerForm";
+import SelectCustomerForm from "./Form/SelectCustomerForm";
 
 export default {
   title: "Stories/SelectCustomerForm",

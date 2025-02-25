@@ -6,6 +6,7 @@ import CustomSelect from "../designComponent/CustomSelect";
 import { CustomButton } from "../designComponent/Button";
 import trashIcon from '../../assets/trash-can.svg';
 import { ItemForMonthlyPayment } from "../../model/src";
+import { useTranslation } from "react-i18next";
 
 interface ItemFormProps {
     onSubmit: (data: ItemForMonthlyPayment.Model) => void;
@@ -13,6 +14,7 @@ interface ItemFormProps {
 }
 
 const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
+      const { t } = useTranslation();
     const isMobile = useMediaQuery('(max-width:600px)');
     const { control, handleSubmit, reset, watch, setValue } = useForm<ItemForMonthlyPayment.Model>({
         defaultValues: {
@@ -68,7 +70,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
                     <img src={trashIcon} alt="delete" onClick={() => deleteForm()} style={{ cursor: 'pointer' }} />
                 </Box>
                 <CustomButton
-                    label="אישור"
+                    label={t('approval')}
                     size={isMobile ? 'small' : 'large'}
                     state="hover"
                     buttonType="first"
@@ -77,34 +79,34 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
             </Box>
             {/* שדות הטופס */}
             <CustomTextField
-                label="סך הכל"
+                label={t('total')}
                 name="total"
                 control={control}
                 placeholder="₪ 0.00"
             />
             <CustomTextField
-                label="מחיר"
+                label={t('price')}
                 name="price"
                 control={control}
-                placeholder="מחיר"
+                placeholder={t('price')}
             />
             <CustomTextField
-                label="כמות"
+                label={t('amount')}
                 name="quantity"
                 control={control}
-                placeholder="יש להזין כמות"
+                placeholder={t('InstructionForAmount')}
             />
             <CustomTextField
-                label="תיאור"
+                label={t('description')}
                 name="description"
                 control={control}
-                placeholder="כאן יהיה תיאור"
+                placeholder={t('InstructionForDescription')}
             />
             <CustomSelect
-                label="סוג תשלום"
+                label={t('paymentType')}
                 name="paymentType"
                 control={control}
-                options={[{ label: 'הוראת קבע', value: 'הוראת קבע' }, { label: 'תשלום חד פעמי', value: 'תשלום חד פעמי' }]}
+                options={[{ label: t('standingOrder'), value: t('standingOrder') }, { label: t('oneTimePayment'), value: t('oneTimePayment') }]}
             />
         </Box>
     );

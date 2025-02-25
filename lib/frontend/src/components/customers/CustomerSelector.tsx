@@ -9,12 +9,14 @@ import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
 import { createCustomer } from "../../api/customerApi";
 import CustomTypography from "../designComponent/Typography";
 import { colors, theme } from "../../styles/theme";
+import { useTranslation } from "react-i18next";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
 }
 
 const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect }) => {
+    const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { customers, isLoading, error } = useFetchCustomers();
     const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(null);
@@ -134,7 +136,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                     }}
                 >
                     <CustomButton
-                        label="הוספת לקוח חדש"
+                        label={t('addingNewCustomer')}
                         size={isMobile ? 'small' : 'large'}
                         state="default"
                         buttonType="third"
@@ -183,7 +185,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         }}
                     >
                         <CustomTypography
-                            text='הוספת לקוח'
+                            text={t('addCustomer')}
                             variant='h1'
                             weight='bold'
                             color={colors.brand.color_7}

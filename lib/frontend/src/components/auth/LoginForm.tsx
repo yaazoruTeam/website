@@ -7,6 +7,7 @@ import logo1 from '../../assets/logo1.svg';
 import logo2 from '../../assets/logo2.svg';
 import CustomTypography from "../designComponent/Typography";
 import { colors } from "../../styles/theme";
+import { useTranslation } from "react-i18next";
 
 interface LoginFormProps {
     onSubmit: (data: LoginFormInputs) => void;
@@ -19,7 +20,7 @@ interface LoginFormInputs {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-
+    const { t } = useTranslation();
     const { control, handleSubmit } = useForm<LoginFormInputs>();
     const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -70,20 +71,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 <CustomTextField
                     control={control}
                     name="userName"
-                    label="שם משתמש"
+                    label={t('userName')}
                     // helperText: "Please enter your email",
                     rules={{
-                        required: "שדה חובה"
+                        required: t('requiredField'),
                     }}
                 />
                 <CustomTextField
                     control={control}
                     name="password"
-                    label="סיסמה"
+                    label={t('password')}
                     type="password"
                     // helperText: "Please enter your email",
                     rules={{
-                        required: "שדה חובה",
+                        required: t('requiredField'),
                         // minLength: {
                         //   value: 6,
                         //   message: "הסיסמה חייבת להיות לפחות 6 תווים"
@@ -91,7 +92,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                     }}
                 />
                 <CustomTypography
-                    text='?שכחתי סיסמה'
+                    text={t('forgotPassword?')}
                     variant='h3'
                     weight='medium'
                     color={colors.brand.color_9}
@@ -104,7 +105,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             </Box>
 
             <CustomButton
-                label="התחברות למערכת"
+                label={t('loginSystem')}
                 size={isMobile ? 'small' : 'large'}
                 state="default"
                 buttonType="first"

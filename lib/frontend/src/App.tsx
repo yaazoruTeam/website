@@ -33,9 +33,10 @@ import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 import { colors, theme } from "./styles/theme";
+import { useTranslation } from "react-i18next";
 
 function App() {
-
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,43 +57,43 @@ function App() {
                 iconWhite: dashboardIconWhite,
                 iconBlue: dashboardIconBlue,
                 link: "../dashboard",
-                text: "דאשבורד",
+                text: t('dashboard'),
               },
               {
                 iconWhite: customerIconWhite,
                 iconBlue: customerIconBlue,
                 link: "../customers",
-                text: "לקוחות",
+                text: t('customers'),
               },
               {
                 iconWhite: devicesIconWhite,
                 iconBlue: devicesIconBlue,
                 link: "../devices",
-                text: "מכשירים",
+                text: t('devices'),
               },
               {
                 iconWhite: ordersIconWhite,
                 iconBlue: ordersIconBlue,
                 link: "../orders",
-                text: "הזמנות",
+                text: t('orders'),
               },
               {
                 iconWhite: branchesIconWhite,
                 iconBlue: branchesIconBlue,
                 link: "../branches",
-                text: "סניפים",
+                text: t('branches'),
               },
               {
                 iconWhite: monthlyPaymentIconWhite,
                 iconBlue: monthlyPaymentIconBlue,
                 link: "../monthlyPayment",
-                text: "הוראת קבע",
+                text: t('standingOrder'),
               },
               {
                 iconWhite: permissionsIconWhite,
                 iconBlue: permissionsIconBlue,
                 link: "../permissions",
-                text: "הרשאות",
+                text: t('permissions'),
               },
             ]}
           />

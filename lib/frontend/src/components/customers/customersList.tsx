@@ -4,12 +4,14 @@ import AddCustomer from "./AddCustomer";
 import { CustomButton } from "../designComponent/Button";
 import { colors } from "../../styles/theme";
 import CustomTypography from "../designComponent/Typography";
+import { useTranslation } from "react-i18next";
 
 interface CustomersListProps {
   customers: string[];
 }
 
 const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
+  const { t } = useTranslation();
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -31,14 +33,14 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
       ) : (
         <>
           <CustomButton
-            label="הוספת לקוח חדש"
+            label={t('addingNewCustomer')}
             size={isMobile ? 'small' : 'large'}
             state="default"
             buttonType="first"
             onClick={() => setShowAddCustomer(true)} />
           <Box
             sx={{
-              width:'100%',
+              width: '100%',
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-start",
@@ -68,12 +70,12 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                   },
                 }}
               >
-               <CustomTypography
-               text={customer}
-               variant="h4"
-               weight="regular"
-               color={colors.brand.color_7}
-               />
+                <CustomTypography
+                  text={customer}
+                  variant="h4"
+                  weight="regular"
+                  color={colors.brand.color_7}
+                />
               </Button>
             ))}
           </Box>
