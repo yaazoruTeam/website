@@ -22,7 +22,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
             quantity: '',
             price: '',
             total: '',
-            paymentType: 'הוראת קבע'
+            paymentType: t('standingOrder')
         }
     });
     const quantity = watch("quantity");
@@ -48,7 +48,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
             quantity: '',
             price: '',
             total: '',
-            paymentType: 'הוראת קבע'
+            paymentType: t('standingOrder')
         });
     };
     const deleteForm = () => {

@@ -97,9 +97,9 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         let amount = 0;
         let oneTimePayment = 0;
         itemsData.forEach(item => {
-            if (item.paymentType === 'הוראת קבע')
+            if (item.paymentType === t('standingOrder'))
                 amount += parseFloat(item.total.toString())
-            if (item.paymentType === 'תשלום חד פעמי')
+            if (item.paymentType === t('oneTimePayment'))
                 oneTimePayment += parseFloat(item.total.toString())
         });
 
