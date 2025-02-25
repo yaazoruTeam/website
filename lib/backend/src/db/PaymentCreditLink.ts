@@ -3,12 +3,12 @@ import getConnection from "./connection";
 
 
 
-const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model) => {
+const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newPaymentCreditLink] = await knex('yaazoru.paymentCreditLink')
+        const query = trx ? trx('yaazoru.paymentCreditLink') : knex('yaazoru.paymentCreditLink');
+        const [newPaymentCreditLink] = await query
             .insert({
-                paymentCreditLink_id: paymentCreditLink.paymentCreditLink_id,
                 monthlyPayment_id: paymentCreditLink.monthlyPayment_id,
                 creditDetails_id: paymentCreditLink.creditDetails_id,
                 status: 'active',

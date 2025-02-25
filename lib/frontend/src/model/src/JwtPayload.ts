@@ -3,4 +3,4 @@ interface Model {
     role: 'admin' | 'branch';
 }
 
-export { Model }
+export type { Model }

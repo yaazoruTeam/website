@@ -21,6 +21,16 @@ const createCreditDetails = async (
       }
       throw erroe;
     }
+    const existToken = await db.CreditDetails.doesTokenExist(sanitized.token);
+    console.log('token: ', existToken);
+    
+    if (existToken) {
+      const erroe: HttpError.Model = {
+        status: 490,
+        message: 'token already exist'
+      }
+      throw erroe;
+    }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized);
     res.status(201).json(creditDetails);
   } catch (error: any) {

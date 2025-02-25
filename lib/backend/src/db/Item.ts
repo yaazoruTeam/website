@@ -3,10 +3,11 @@ import getConnection from "./connection";
 
 
 
-const createItem = async (item: ItemForMonthlyPayment.Model) => {
+const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newItem] = await knex('yaazoru.item')
+        const query = trx ? trx('yaazoru.item') : knex('yaazoru.item');
+        const [newItem] = await query
             .insert({
                 monthlyPayment_id: item.monthlyPayment_id,
                 description: item.description,

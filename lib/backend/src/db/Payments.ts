@@ -3,10 +3,11 @@ import getConnection from "./connection";
 
 
 
-const createPayments = async (payments: Payments.Model) => {
+const createPayments = async (payments: Payments.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newPayments] = await knex('yaazoru.payments')
+        const query = trx ? trx('yaazoru.payments') : knex('yaazoru.payments');
+        const [newPayments] = await query
             .insert({
                 monthlyPayment_id: payments.monthlyPayment_id,
                 amount: payments.amount,

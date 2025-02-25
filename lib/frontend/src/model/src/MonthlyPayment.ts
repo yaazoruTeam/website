@@ -3,10 +3,15 @@ import { HttpError } from ".";
 interface Model {
     monthlyPayment_id: string;
     customer_id: string;
+    belongsOrganization: string;
     start_date: Date;
+    amount: number;
     total_amount: number;
+    oneTimePayment: number;
     status: 'active' | 'inactive';
     frequency: string;
+    amountOfCharges: number;
+    dayOfTheMonth: string;
     next_charge: Date;
     last_attempt: Date;
     last_sucsse: Date;
@@ -29,10 +34,24 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!monthlyPayment.belongsOrganization) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "belongs organization".',
+        };
+        throw error;
+    }
     if (!monthlyPayment.start_date) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "start_date".',
+        };
+        throw error;
+    }
+    if (!monthlyPayment.amount) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "amount".',
         };
         throw error;
     }
@@ -43,10 +62,31 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!monthlyPayment.oneTimePayment) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "oneTimePayment".',
+        };
+        throw error;
+    }
     if (!monthlyPayment.frequency) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "frequency".',
+        };
+        throw error;
+    }
+    if (!monthlyPayment.amountOfCharges) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "amount of charges".',
+        };
+        throw error;
+    }
+    if (!monthlyPayment.dayOfTheMonth) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "day of the month".',
         };
         throw error;
     }
@@ -88,10 +128,15 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
     const newMonthlyPayment: Model = {
         monthlyPayment_id: monthlyPayment.monthlyPayment_id,
         customer_id: monthlyPayment.customer_id,
+        belongsOrganization: monthlyPayment.belongsOrganization,
         start_date: monthlyPayment.start_date,
+        amount: monthlyPayment.amount,
         total_amount: monthlyPayment.total_amount,
+        oneTimePayment: monthlyPayment.oneTimePayment,
         status: monthlyPayment.status || 'active',
         frequency: monthlyPayment.frequency,
+        amountOfCharges: monthlyPayment.amountOfCharges,
+        dayOfTheMonth: monthlyPayment.dayOfTheMonth,
         next_charge: monthlyPayment.next_charge,
         last_attempt: monthlyPayment.last_attempt,
         last_sucsse: monthlyPayment.last_sucsse,

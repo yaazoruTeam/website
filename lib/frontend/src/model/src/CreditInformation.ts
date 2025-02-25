@@ -7,4 +7,4 @@ interface Model {
     token: string,
 }
 
-export {Model}
+export type { Model }

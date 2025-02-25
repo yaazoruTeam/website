@@ -3,15 +3,21 @@ import getConnection from "./connection";
 
 
 
-const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model) => {
+const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newMonthlyPayment] = await knex('yaazoru.monthlyPayment')
+        const query = trx ? trx('yaazoru.monthlyPayment') : knex('yaazoru.monthlyPayment');
+        const [newMonthlyPayment] = await query
             .insert({
                 customer_id: monthlyPayment.customer_id,
+                belongsOrganization: monthlyPayment.belongsOrganization,
                 start_date: monthlyPayment.start_date,
+                amount: monthlyPayment.amount,
                 total_amount: monthlyPayment.total_amount,
+                oneTimePayment: monthlyPayment.oneTimePayment,
                 frequency: monthlyPayment.frequency,
+                amountOfCharges: monthlyPayment.amountOfCharges,
+                dayOfTheMonth: monthlyPayment.frequency,
                 next_charge: monthlyPayment.next_charge,
                 last_attempt: monthlyPayment.last_attempt,
                 last_sucsse: monthlyPayment.last_sucsse,
@@ -60,7 +66,7 @@ const updateMonthlyPayment = async (monthlyPayment_id: string, monthlyPayment: M
     };
 };
 
-const deleteMonthlyPayment= async (monthlyPayment_id: string) => {
+const deleteMonthlyPayment = async (monthlyPayment_id: string) => {
     const knex = getConnection();
     try {
         const updateMonthlyPayment = await knex('yaazoru.monthlyPayment')

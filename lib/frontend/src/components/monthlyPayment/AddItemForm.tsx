@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { CustomTextField } from "../designComponent/Input";
-import CustomSelect from "../../stories/Select/CustomSelect";
+import CustomSelect from "../designComponent/CustomSelect";
 import { CustomButton } from "../designComponent/Button";
 import trashIcon from '../../assets/trash-can.svg';
 import { ItemForMonthlyPayment } from "../../model/src";
@@ -20,7 +20,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
             quantity: '',
             price: '',
             total: '',
-            paymentType: ''
+            paymentType: 'הוראת קבע'
         }
     });
     const quantity = watch("quantity");
@@ -46,7 +46,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues }) => {
             quantity: '',
             price: '',
             total: '',
-            paymentType: ''
+            paymentType: 'הוראת קבע'
         });
     };
     const deleteForm = () => {

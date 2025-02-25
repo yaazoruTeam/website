@@ -3,10 +3,10 @@ import CustomerSelector from '../customers/CustomerSelector';
 import PaymentForm from './PaymentForm';
 import FormToAddItems from './FormToAddItems';
 import { CustomButton } from '../designComponent/Button';
-import { CreditDetails, ItemForMonthlyPayment, TransactionDetails } from '../../model/src';
-import { createTransactionDetails } from '../../api/TransactionDetails';
-import { createCreditDetails } from '../../api/creditDetails';
+import { ItemForMonthlyPayment, MonthlyPaymentManagement } from '../../model/src';
 import { useMediaQuery } from '@mui/material';
+import { createMonthlyPayment } from '../../api/monthlyPayment';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
     onBack: () => void;
@@ -23,6 +23,7 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     const [timeData, setTimeData] = useState<any>(null); // נתוני זמן ההוראת קבע
     const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (paymentData) {
@@ -66,14 +67,6 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         return `${formattedStartDate}-${endDate}`;
     };
 
-    const getAmount = () => {
-        let sum: number = 0;
-        itemsData.forEach((item) => {
-            sum += parseFloat(item.total.toString());  // מוסיף את הערך של item.total לסכום
-        });
-        return sum;  // מחזיר את הסכום הכולל
-    };
-
     const charge = async () => {
         console.log('Adding monthly payment:', {
             customerData,
@@ -99,31 +92,76 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             paymentData,
             timeData,
         });
-        const credit: CreditDetails.Model = {
-            credit_id: '',
-            client_id: customerData.customer_id,
-            token: paymentData.token,
-            expiry_month: paymentData.expiry_month,
-            expiry_year: paymentData.expiry_year,
+        let amount = 0;
+        let oneTimePayment = 0;
+        itemsData.forEach(item => {
+            if (item.paymentType === 'הוראת קבע')
+                amount += parseFloat(item.total.toString())
+            if (item.paymentType === 'תשלום חד פעמי')
+                oneTimePayment += parseFloat(item.total.toString())
+        });
+
+        const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
+            customer_id: customerData.customer_id,
+            monthlyPayment: {
+                monthlyPayment_id: '',
+                customer_id: customerData.customer_id,
+                belongsOrganization: 'יעזורו',
+                start_date: timeData.startDate,
+                amount: amount,
+                total_amount: amount * timeData.payments,
+                oneTimePayment: oneTimePayment,
+                frequency: timeData.mustEvery,
+                amountOfCharges: timeData.payments,
+                dayOfTheMonth: timeData.dayOfTheMonth,
+                next_charge: timeData.startDate,
+                last_attempt: new Date('01-01-2000'),
+                last_sucsse: new Date('01-01-2000'),
+                created_at: new Date(Date.now()),
+                update_at: new Date(Date.now()),
+                status: 'active',
+            },
+            creditDetails: {
+                credit_id: '',
+                customer_id: customerData.customer_id,
+                token: paymentData.token,
+                expiry_month: paymentData.expiry_month,
+                expiry_year: paymentData.expiry_year,
+                created_at: new Date(Date.now()),
+                update_at: new Date(Date.now()),
+            },
+            paymentCreditLink: {
+                paymentCreditLink_id: '',
+                creditDetails_id: '000',
+                monthlyPayment_id: '000',
+                status: 'active',
+            },
+            payments: [],
+            items: itemsData.map(item => {
+                return {
+                    item_id: '', // תוכל להשאיר את זה ריק אם זה נתון אוטומטי שיתמלא במסד נתונים
+                    monthlyPayment_id: '10000', // שים את ה-ID של monthlyPayment כאן ברגע שיתקבל
+                    description: item.description,
+                    paymentType: item.paymentType,
+                    price: item.price,  // מחיר לפי הנתונים שמגיעים מ- itemData
+                    quantity: item.quantity,  // כמות לפי הנתונים
+                    total: item.total,  // סכום כולל לפי הנתונים
+                    created_at: new Date(Date.now()),  // תאריך יצירה
+                    update_at: new Date(Date.now())   // תאריך עדכון
+                };
+            }),
         }
-        const creditDetails = await createCreditDetails(credit);
-        const transaction: TransactionDetails.Model = {
-            transaction_id: '',
-            credit_id: creditDetails.credit_id,
-            customer_name: customerData.first_name + ' ' + customerData.last_name,
-            dates: getTheRangeOfMonths(),
-            amount: getAmount(),
-            total_sum: getAmount() * timeData.payments,
-            belongs_to_organization: '',
-            last_attempt: new Date(),
-            last_success: new Date(),
-            next_charge: new Date(),
-            update: new Date(),
-            items: itemsData,
-            status: 'active',
-            //קודם כל קריאת שרת בשביל לשמור את הפרטי אשראי ואז אחר כך קריאת שרת כדי לשמור את הפרטי עיסקה ואז אני יוכל לעדכן גם את הכרטיס שמקושר לעיסקה
+
+        try {
+            const api = await createMonthlyPayment(monthlyPaymentManagement);
+            console.log('i after create monthly paymet, this is return:');
+            console.log(api);
+            alert('ההוראת קבע נוספה בהצלחה!');
+            navigate('/monthlyPayment');
+
+        } catch (error) {
+            console.error('Error creating monthly payment:', error)
         }
-        await createTransactionDetails(transaction)
     }
 
     return (

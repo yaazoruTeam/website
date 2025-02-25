@@ -60,13 +60,13 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                 control={control}
                 render={({ field, fieldState }) => (
                     <Box
-                    sx={{
-                        width: '100%',
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "flex-end",
-                    }}
+                        sx={{
+                            width: '100%',
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "flex-end",
+                        }}
                     >
                         <TextField
                             {...field}
@@ -80,8 +80,10 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                                     disableUnderline: true,
                                     sx: {
                                         color: colors.brand.color_9,
-                                        fontSize: 20,
-                                        fontFamily: "Heebo",
+                                        fontSize: '16px',
+                                        fontFeatureSettings: "'liga' off, 'clig' off",
+                                        lineHeight: '120%',
+                                        fontStyle: 'normal',
                                         fontWeight: 400,
                                         wordWrap: "break-word",
                                     },
@@ -105,16 +107,16 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                                     alignItems: "center",
                                 },
                                 ...sx,
-                               "@media (max-width: 600px)": { 
-                                width: "100%", 
-                                padding: "8px",
-                                gap: "8px",
-                            },
-                            "@media (min-width: 600px)": { 
-                                width: "100%",
-                                padding: "10px", 
-                                height: height,
-                            },
+                                "@media (max-width: 600px)": {
+                                    width: "100%",
+                                    padding: "8px",
+                                    gap: "8px",
+                                },
+                                "@media (min-width: 600px)": {
+                                    width: "100%",
+                                    padding: "10px",
+                                    height: height,
+                                },
                             }}
                             value={field.value || ""}
                         />

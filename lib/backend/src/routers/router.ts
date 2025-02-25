@@ -11,10 +11,11 @@ import * as excelController from '../controller/excel';
 import * as creditDetailsController from '../controller/creditDetails';
 import * as TransactionDetailsController from '../controller/TransactionDetails';
 import * as ApiTranzila from '../controller/ApiTranzila';
-import * as monthlypaymentController from '../controller/monthlypayment';
+import * as monthlyPaymentController from '../controller/monthlyPayment';
 import * as paymentsController from '../controller/payments';
 import * as itemController from '../controller/item';
 import * as paymentCreditLinkController from '../controller/paymentCreditLink';
+import * as MonthlyPaymentManagementController from '../controller/MonthlyPaymentManagement';
 
 // import * as tranzila from '../controller/ApiTranzila';
 
@@ -90,11 +91,11 @@ router.get(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), Transaction
 router.put(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
 router.delete(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
 
-router.post(`${ROUTE_PATH}/monthlyPayment`, monthlypaymentController.createMonthlyPayment);
-router.get(`${ROUTE_PATH}/monthlyPayment`,  monthlypaymentController.getMonthlyPayments);
-router.get(`${ROUTE_PATH}/monthlyPayment/:id`, monthlypaymentController.getMonthlyPaymentId);
-router.put(`${ROUTE_PATH}/monthlyPayment/:id`, monthlypaymentController.updateMonthlyPayment);
-router.delete(`${ROUTE_PATH}/monthlyPayment/:id`,  monthlypaymentController.deleteMonthlyPayment);
+router.post(`${ROUTE_PATH}/monthlyPayment`, monthlyPaymentController.createMonthlyPayment);
+router.get(`${ROUTE_PATH}/monthlyPayment`,  monthlyPaymentController.getMonthlyPayments);
+router.get(`${ROUTE_PATH}/monthlyPayment/:id`, monthlyPaymentController.getMonthlyPaymentId);
+router.put(`${ROUTE_PATH}/monthlyPayment/:id`, monthlyPaymentController.updateMonthlyPayment);
+router.delete(`${ROUTE_PATH}/monthlyPayment/:id`,  monthlyPaymentController.deleteMonthlyPayment);
 
 router.post(`${ROUTE_PATH}/payments`, paymentsController.createPayments);
 router.get(`${ROUTE_PATH}/payments`,  paymentsController.getAllPayments);
@@ -115,6 +116,8 @@ router.get(`${ROUTE_PATH}/paymentCreditLink`,  paymentCreditLinkController.getPa
 router.get(`${ROUTE_PATH}/paymentCreditLink/:id`, paymentCreditLinkController.getPaymentCreditLinkId);
 router.put(`${ROUTE_PATH}/paymentCreditLink/:id`, paymentCreditLinkController.updatePaymentCreditLink);
 router.delete(`${ROUTE_PATH}/paymentCreditLink/:id`,  paymentCreditLinkController.deletePaymentCreditLink);
+
+router.post(`${ROUTE_PATH}/addMonthlyPayment`,  MonthlyPaymentManagementController.createMonthlyPayment);
 
 router.post(`${ROUTE_PATH}/charge`, ApiTranzila.chargeTokenTranzila);
 
