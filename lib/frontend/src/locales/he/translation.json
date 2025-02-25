@@ -48,9 +48,10 @@
     "mustEvery": "חייב כל",
     "numberMonths": "מס' חודשים",
     "payments": "תשלומים",
-    "startDate":"תאריך התחלה",
-    "approval":"אישור",
-    "InstructionForAmount":"יש להזין כמות",
-    "InstructionForDescription":"כאן יהיה תיאור",
-    "oneTimePayment":"תשלום חד פעמי"
+    "startDate": "תאריך התחלה",
+    "approval": "אישור",
+    "InstructionForAmount": "יש להזין כמות",
+    "InstructionForDescription": "כאן יהיה תיאור",
+    "oneTimePayment": "תשלום חד פעמי",
+    "dayOfTheMonth": "יום בחודש"
 }

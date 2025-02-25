@@ -52,5 +52,6 @@
     "approval": "approval",
     "InstructionForAmount": "Quantity must be entered.",
     "InstructionForDescription": "Here will be a description",
-    "oneTimePayment": "One-time payment"
+    "oneTimePayment": "One-time payment",
+    "dayOfTheMonth": "day of the month"
 }

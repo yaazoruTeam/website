@@ -354,7 +354,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
             <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
                     <CustomTextField
                         control={control}
-                        label='יום בחודש'
+                        label={t('dayOfTheMonth')}
                         name='dayOfTheMonth'
                         placeholder='10'
                     />
