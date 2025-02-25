@@ -40,8 +40,8 @@ const nonce = makeid(80);
 //לשים ❤️ לא להעלות את זה לגיט
 //לשים ❤️ לא להעלות את זה לגיט
 
-const key = 'HMgKoXN8gBnNQUarMOl3viBISu9CSSCszzVy0B8thseuoEwCAQrG231E9AfObNTc51Y0yVnnEX4';  // המפתח הציבורי שלך
-const privateKey = 'TfxLHTDkIn';  // המפתח הסודי שלך
+const key = '';  // המפתח הציבורי שלך
+const privateKey = '';  // המפתח הסודי שלך
 
 // יצירת ה-hash עבור ה-access-token
 const hash = CryptoJS.HmacSHA256(key + privateKey + time + nonce, privateKey).toString(CryptoJS.enc.Hex);

@@ -4,8 +4,10 @@ import ItemForm from "./AddItemForm";
 import trashIcon from '../../assets/trash-can.svg';
 import edited from '../../assets/edited.svg';
 import { ItemForMonthlyPayment } from "../../model/src";
+import { useTranslation } from "react-i18next";
 
 const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Model[]) => void }> = ({ onItemsChange }) => {
+  const { t } = useTranslation();
   const [items, setItems] = useState<ItemForMonthlyPayment.Model[]>([]);
   const [editingItem, setEditingItem] = useState<ItemForMonthlyPayment.Model | null>(null);
 
@@ -49,11 +51,11 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
             <TableRow>
               <TableCell></TableCell>
               <TableCell></TableCell>
-              <TableCell>סה"כ</TableCell>
-              <TableCell>מחיר</TableCell>
-              <TableCell>כמות</TableCell>
-              <TableCell>תיאור</TableCell>
-              <TableCell>סוג תשלום</TableCell>
+              <TableCell>{t('total')}</TableCell>
+              <TableCell>{t('price')}</TableCell>
+              <TableCell>{t('amount')}</TableCell>
+              <TableCell>{t('description')}</TableCell>
+              <TableCell>{t('paymentType')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -71,7 +73,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} style={{ textAlign: 'center' }}>אין פריטים להציג</TableCell>
+                <TableCell colSpan={7} style={{ textAlign: 'center' }}>{t('noItemToDisplay')}</TableCell>
               </TableRow>
             )}
           </TableBody>

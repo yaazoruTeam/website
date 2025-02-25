@@ -3,6 +3,7 @@ import { Box, useMediaQuery } from "@mui/material";
 import { CustomTextField } from "../designComponent/Input";
 import { useForm } from "react-hook-form";
 import { CustomButton } from "../designComponent/Button";
+import { useTranslation } from "react-i18next";
 
 interface AddCustomerFormProps {
     onSubmit: (data: AddCustomerFormInputs) => void;
@@ -20,7 +21,7 @@ export interface AddCustomerFormInputs {
 }
 
 const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
-
+    const { t } = useTranslation();
     const { control, handleSubmit } = useForm<AddCustomerFormInputs>();
     const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -78,16 +79,16 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="id_number"
-                                label="מספר ת.ז"
+                                label={t('IdNumber')}
                                 rules={{
-                                    required: "שדה חובה",
+                                    required: t('requiredField'),
                                     minLength: {
                                         value: 9,
-                                        message: "מספר ת.ז צריך להיות 9 ספרות"
+                                        message: t('errorIdNumber'),
                                     },
                                     maxLength: {
                                         value: 9,
-                                        message: "מספר ת.ז צריך להיות 9 ספרות",
+                                        message: t('errorIdNumber'),
                                     },
                                 }}
                             />
@@ -104,9 +105,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="last_name"
-                                label="שם משפחה"
+                                label={t('lastName')}
                                 rules={{
-                                    required: "שדה חובה",
+                                    required: t('requiredField'),
                                 }}
                             />
                         </Box>
@@ -121,9 +122,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                         }}>
                             <CustomTextField
                                 name="first_name"
-                                label="שם פרטי"
+                                label={t('firstName')}
                                 rules={{
-                                    required: "שדה חובה",
+                                    required: t('requiredField'),
                                 }}
                                 control={control}
                             />
@@ -148,13 +149,13 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="email"
-                                label="אימייל"
+                                label={t('email')}
                                 type="email"
                                 rules={{
-                                    required: "אימייל הוא שדה חובה",
+                                    required: t('warningEmail'),
                                     pattern: {
                                         value: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
-                                        message: "כתובת אימייל לא תקינה"
+                                        message: t('errorEmail')
                                     }
                                 }}
                             />
@@ -171,19 +172,19 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="additional_phone"
-                                label="מספר נוסף"
+                                label={t('additionalPhone')}
                                 rules={{
                                     minLength: {
                                         value: 9,
-                                        message: 'מספר טלפון צריך להיות לפחות 9 ספרות',
+                                        message: t('warningPhone'),
                                     },
                                     maxLength: {
                                         value: 15,
-                                        message: 'מספר טלפון לא יכול להיות יותר מ-15 ספרות',
+                                        message: t('errorPhone'),
                                     },
                                     pattern: {
                                         value: /^\d+$/,
-                                        message: 'מספר הטלפון חייב להכיל רק ספרות',
+                                        message: t('errorPhoneDigit'),
                                     },
                                 }}
                             />
@@ -200,20 +201,20 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="phone_number"
-                                label="טלפון"
+                                label={t('phone')}
                                 rules={{
-                                    required: "שדה חובה",
+                                    required: t('requiredField'),
                                     minLength: {
                                         value: 9,
-                                        message: 'מספר טלפון צריך להיות לפחות 9 ספרות',
+                                        message: t('warningPhone'),
                                     },
                                     maxLength: {
                                         value: 15,
-                                        message: 'מספר טלפון לא יכול להיות יותר מ-15 ספרות',
+                                        message: t('errorPhone'),
                                     },
                                     pattern: {
                                         value: /^\d+$/,
-                                        message: 'מספר הטלפון חייב להכיל רק ספרות',
+                                        message: t('errorPhoneDigit'),
                                     },
                                 }}
                             />
@@ -238,9 +239,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="city"
-                                label="עיר"
+                                label={t('city')}
                                 rules={{
-                                    required: "שדה חובה",
+                                    required: t('requiredField'),
                                 }}
                             />
                         </Box>
@@ -256,9 +257,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit }) => {
                             <CustomTextField
                                 control={control}
                                 name="address"
-                                label="כתובת"
+                                label={t('address')}
                                 rules={{
-                                    required: "שדה חובה",
+                                    required: t('requiredField'),
                                 }}
                             />
                         </Box>

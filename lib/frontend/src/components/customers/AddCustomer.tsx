@@ -5,13 +5,14 @@ import { createCustomer } from '../../api/customerApi';
 import { Customer } from '../../model/src';
 import CustomTypography from '../designComponent/Typography';
 import { colors } from '../../styles/theme';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onBack: () => void;
 }
 
 const AddCustomer: React.FC<Props> = ({ onBack }) => {
-
+  const { t } = useTranslation();
   const addCustomer = async (data: AddCustomerFormInputs) => {
     console.log('add customer');
     console.log(data);
@@ -76,7 +77,7 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
           }}
         >
           <CustomTypography
-            text='הוספת לקוח'
+            text={t('addCustomer')}
             variant='h1'
             weight='bold'
             color={colors.brand.color_7}
