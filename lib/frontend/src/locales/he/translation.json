@@ -53,5 +53,7 @@
     "InstructionForAmount": "יש להזין כמות",
     "InstructionForDescription": "כאן יהיה תיאור",
     "oneTimePayment": "תשלום חד פעמי",
-    "dayOfTheMonth": "יום בחודש"
+    "dayOfTheMonth": "יום בחודש",
+    "addItem": "הוספת פריט",
+    "items": "פריטים"
 }

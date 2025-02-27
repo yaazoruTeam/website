@@ -16,9 +16,11 @@ interface CustomSelectProps {
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, label }) => {
     const [open, setOpen] = useState(false);
+
     const handleIconClick = () => {
         setOpen(prevState => !prevState);
     };
+
     return (
         <FormControl sx={{ width: '100%' }}>
             <Controller
@@ -35,7 +37,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                                 color={colors.brand.color_9}
                             />
                         }
-                        onChange={(e) => field.onChange(e.target.value)}
                         open={open}
                         onOpen={() => setOpen(true)}
                         onClose={() => setOpen(false)}
@@ -56,8 +57,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                             }
                         }}
                         value={field.value || ''}
-                        startAdornment={
-                            <InputAdornment position="start" onClick={handleIconClick}>
+                        endAdornment={
+                            <InputAdornment position="end" onClick={handleIconClick}>
                                 <ChevronDownIcon style={{ width: '21.5px', height: '16px', color: colors.brand.color_8 }} />
                             </InputAdornment>
                         }

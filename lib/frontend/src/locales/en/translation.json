@@ -53,5 +53,7 @@
     "InstructionForAmount": "Quantity must be entered.",
     "InstructionForDescription": "Here will be a description",
     "oneTimePayment": "One-time payment",
-    "dayOfTheMonth": "day of the month"
+    "dayOfTheMonth": "day of the month",
+    "addItem": "add item",
+    "items": "items"
 }
