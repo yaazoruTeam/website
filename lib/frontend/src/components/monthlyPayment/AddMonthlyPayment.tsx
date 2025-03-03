@@ -8,6 +8,7 @@ import { useMediaQuery } from '@mui/material';
 import { createMonthlyPayment } from '../../api/monthlyPayment';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/system';
 
 interface Props {
     onBack: () => void;
@@ -171,13 +172,18 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             <CustomerSelector onCustomerSelect={setCustomerData} />
             <FormToAddItems onItemsChange={setItemsData} />
             <PaymentForm ref={paymentFormRef} onPaymentChange={setPaymentData} OnTimeChange={setTimeData} />
-            <CustomButton
-                label={t('saving')}
-                size={isMobile ? 'small' : 'large'}
-                state='default'
-                buttonType='first'
-                onClick={charge}
-            />
+            <Box sx={{
+                direction: 'ltr',
+                width: '100%',
+            }}>
+                <CustomButton
+                    label={t('saving')}
+                    size={isMobile ? 'small' : 'large'}
+                    state='default'
+                    buttonType='first'
+                    onClick={charge}
+                />
+            </Box>
         </>
     );
 };

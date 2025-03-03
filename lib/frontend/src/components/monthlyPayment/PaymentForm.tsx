@@ -173,14 +173,21 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 flexDirection: 'column',
                 gap: 4,
                 alignItems: 'flex-end',
+                direction: 'rtl'
             }}
         >
-            <CustomTypography
-                text={t('paymentDetails')}
-                variant='h2'
-                weight='medium'
-                color={colors.brand.color_8}
-            />
+            <Box
+                sx={{
+                    width: "100%",
+                    direction: 'rtl'
+                }}>
+                <CustomTypography
+                    text={t('paymentDetails')}
+                    variant='h2'
+                    weight='medium'
+                    color={colors.brand.color_8}
+                />
+            </Box>
             <Box
                 sx={{
                     alignSelf: 'stretch',
@@ -191,110 +198,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     display: 'inline-flex',
                 }}
             >
-                <CustomTextField
-                    control={control}
-                    name='name'
-                    label={t('cardholderName')}
-                    placeholder={t('cardholderName')}
-                />
-                <Box
-                    sx={{
-                        width: '100%',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        gap: 1,
-                        display: 'inline-flex',
-                    }}
-                >
-                    <CustomTypography
-                        text={t('IdNumber')}
-                        variant='h4'
-                        weight='regular'
-                        color={colors.brand.color_9}
-                    />
-                    <Box
-                        sx={{
-                            alignSelf: 'stretch',
-                            padding: 1,
-                            background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1,
-                        }}
-                    >
-                        <div
-                            id="identity_number"
-                            style={{ width: '100%', height: '44px' }}
-                        >
-                        </div>
-                    </Box>
-                </Box>
-
-                {/* CVV */}
-                <Box
-                    sx={{
-                        width: '100%',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        gap: 1, // המרחק בין האלמנטים (8px, כי 1rem = 8px)
-                        display: 'inline-flex',
-                    }}
-                >
-                    <CustomTypography
-                        text='cvv'
-                        variant='h4'
-                        weight='regular'
-                        color={colors.brand.color_9}
-                    />
-                    <Box
-                        sx={{
-                            alignSelf: 'stretch',
-                            padding: 1, // 10px
-                            background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1, // 6px
-                        }}
-                    >
-                        <div
-                            id="cvv"
-                            style={{ width: '100%', height: '44px' }}
-                        >
-                        </div>
-                    </Box>
-                </Box>
-
-                {/* תוקף */}
-                <Box
-                    sx={{
-                        width: '100%',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        gap: 1,
-                        display: 'inline-flex',
-                    }}
-                >
-                    <CustomTypography
-                        text={t('expiry')}
-                        variant='h4'
-                        weight='regular'
-                        color={colors.brand.color_9}
-                    />
-                    <Box
-                        sx={{
-                            alignSelf: 'stretch',
-                            padding: 1,
-                            background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1,
-                        }}
-                    >
-                        <div
-                            id="expiry"
-                            style={{ width: '100%', height: '44px' }}
-                        >
-                        </div>
-                    </Box>
-                </Box>
-
                 {/* מס' כרטיס*/}
                 <Box
                     sx={{
@@ -327,21 +230,135 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         </div>
                     </Box>
                 </Box>
+                {/* תוקף */}
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1,
+                        display: 'inline-flex',
+                    }}
+                >
+                    <CustomTypography
+                        text={t('expiry')}
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1,
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1,
+                        }}
+                    >
+                        <div
+                            id="expiry"
+                            style={{ width: '100%', height: '44px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
+                {/* CVV */}
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1, // המרחק בין האלמנטים (8px, כי 1rem = 8px)
+                        display: 'inline-flex',
+                    }}
+                >
+                    <CustomTypography
+                        text='cvv'
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1, // 10px
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1, // 6px
+                        }}
+                    >
+                        <div
+                            id="cvv"
+                            style={{ width: '100%', height: '44px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1,
+                        display: 'inline-flex',
+                    }}
+                >
+                    <CustomTypography
+                        text={t('IdNumber')}
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1,
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1,
+                        }}
+                    >
+                        <div
+                            id="identity_number"
+                            style={{ width: '100%', height: '44px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
+                <CustomTextField
+                    control={control}
+                    name='name'
+                    label={t('cardholderName')}
+                    placeholder={t('cardholderName')}
+                />
             </Box>
-
-            <CustomTypography
-                text={t('billingDate')}
-                variant='h2'
-                weight='medium'
-                color={colors.brand.color_8}
-            />
+            <Box sx={{
+                direction: 'rtl',
+                width: '100%'
+            }}>
+                <CustomTypography
+                    text={t('billingDate')}
+                    variant='h2'
+                    weight='medium'
+                    color={colors.brand.color_8}
+                />
+            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                 <Box >
                     <CustomTextField
                         control={control}
-                        label={t('dayOfTheMonth')}
-                        name='dayOfTheMonth'
-                        placeholder='10'
+                        label={t('startDate')}
+                        placeholder='20/12/24'
+                        name='startDate'
+                        type='date'
+                    />
+                </Box>
+                <Box >
+                    <CustomTextField
+                        control={control}
+                        label={t('payments')}
+                        name='Payments'
+                        placeholder='0'
                     />
                 </Box>
                 <Box >
@@ -352,23 +369,12 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         placeholder={t('numberMonths')}
                     />
                 </Box>
-
                 <Box >
                     <CustomTextField
                         control={control}
-                        label={t('payments')}
-                        name='Payments'
-                        placeholder='0'
-                    />
-                </Box>
-
-                <Box >
-                    <CustomTextField
-                        control={control}
-                        label={t('startDate')}
-                        placeholder='20/12/24'
-                        name='startDate'
-                        type='date'
+                        label={t('dayOfTheMonth')}
+                        name='dayOfTheMonth'
+                        placeholder='10'
                     />
                 </Box>
             </Box>

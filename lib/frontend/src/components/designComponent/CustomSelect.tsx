@@ -23,20 +23,19 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
 
     return (
         <FormControl sx={{ width: '100%' }}>
+                <CustomTypography
+                text={label}
+                variant='h4'
+                weight='regular'
+                color={colors.brand.color_9}
+                sx={{ marginBottom: '5px' }}
+            />
             <Controller
                 name={name}
                 control={control}
                 render={({ field }) => (
                     <Select
                         {...field}
-                        label={
-                            <CustomTypography
-                                text={label}
-                                variant='h4'
-                                weight='regular'
-                                color={colors.brand.color_9}
-                            />
-                        }
                         open={open}
                         onOpen={() => setOpen(true)}
                         onClose={() => setOpen(false)}

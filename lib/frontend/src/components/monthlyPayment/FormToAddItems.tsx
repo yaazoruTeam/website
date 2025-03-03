@@ -291,7 +291,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
         </Table>
       </TableContainer>
       {formAddItem ?
-        <ItemForm onSubmit={/*editingItem ? saveEditedItem :*/ addItem}/* initialValues={editingItem}*/ setFormAddItem={setFormAddItem} />
+        <ItemForm onSubmit={ addItem} setFormAddItem={setFormAddItem} />
         : ''
       }
       <CustomButton
