@@ -10,7 +10,7 @@ import Customers from "./components/customers/customers";
 import Devices from "./components/devices/devices";
 import Header from "./components/layout/Header";
 import Login from "./components/auth/Login";
-import MonthlyPayment from "./components/monthlyPayment/MonthlyPayment";
+import MonthlyPaymentComponen from "./components/monthlyPayment/MonthlyPayment";
 import Orders from "./components/orders/Orders";
 import Branches from "./components/branches/Branches";
 import Permissions from "./components/Permissions/Permissions";
@@ -128,7 +128,7 @@ function App() {
             } />
             <Route path="/monthlyPayment" element={
               <ProtectedRoute>
-                <MonthlyPayment />
+                <MonthlyPaymentComponen />
               </ProtectedRoute>
             } />
             <Route path="/permissions" element={

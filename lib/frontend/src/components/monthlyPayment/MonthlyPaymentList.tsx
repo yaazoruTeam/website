@@ -11,10 +11,13 @@ interface MonthlyPaymentListProps {
 }
 
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment }) => {
-      const { t } = useTranslation();
+    const { t } = useTranslation();
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const onClickMonthlyPayment = (monthlyPayment: any) => {
+        console.log(monthlyPayment);
 
+    }
     return (
         <>
             <Box
@@ -31,24 +34,35 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                     justifyContent: "flex-start",
                     alignItems: "flex-start",
                     gap: 4,
+                    direction:'rtl'
                 }}
             >
                 {showAddMonthlyPayment ? (
                     <AddMonthlyPayment onBack={() => setShowAddMonthlyPayment(false)} />
                 ) : (
                     <>
-                        <CustomTypography
-                            text={t('standingOrders')}
-                            variant="h1"
-                            weight="bold"
-                            color={colors.brand.color_9}
-                        />
-                        <CustomButton
-                            label={t('newStandingOrder')}
-                            size={isMobile ? 'small' : 'large'}
-                            state="default"
-                            buttonType="first"
-                            onClick={() => setShowAddMonthlyPayment(true)} />
+                        <Box sx={{
+                            direction: 'rtl',
+                            width: '100%',
+                            display:'flex',
+                            justifyContent:'space-between',
+                             alignItems:'center'
+                        }}>
+                            <CustomTypography
+                                text={t('standingOrders')}
+                                variant="h1"
+                                weight="bold"
+                                color={colors.brand.color_9}
+                            />
+                            <CustomButton
+                                label={t('newStandingOrder')}
+                                size={isMobile ? 'small' : 'large'}
+                                state="default"
+                                buttonType="first"
+                                onClick={() => setShowAddMonthlyPayment(true)}
+                            />
+                        </Box>
+
                         <Box
                             sx={{
                                 width: '100%',
@@ -80,6 +94,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                             backgroundColor: "#f1f1f1",
                                         },
                                     }}
+                                    onClick={() => onClickMonthlyPayment(monthlyPayment)}
                                 >
                                     <CustomTypography
                                         text={monthlyPayment}

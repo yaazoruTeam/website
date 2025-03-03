@@ -67,87 +67,98 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                 justifyContent: "flex-start",
                 alignItems: "flex-end",
                 gap: 3.5,
+                direction: 'rtl'
             }}
         >
-            <CustomTypography
-                text={t('customerDetails')}
-                variant='h2'
-                weight='medium'
-                color={colors.brand.color_8}
-            />
-            <Box
-                sx={{
-                    alignSelf: "stretch",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-start",
-                    gap: 3.5,
-                    display: "inline-flex",
-                }}
-            >
-                {customer && (
-                    <>
-                        <Box
-                            sx={{
-                                width: 393.33,
-                                height: 90,
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "flex-end",
-                                gap: 1,
-                                display: "inline-flex",
-                            }}
-                        >
-                            <CustomTextField
-                                control={control}
-                                name="customerEmail"
-                                label={t('email')}
-                                placeholder={customer.email || t('email')}
-                                disabled
-                            />
-                        </Box>
-                        <Box
-                            sx={{
-                                width: 393.33,
-                                height: 90,
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "flex-end",
-                                gap: 1,
-                                display: "inline-flex",
-                            }}
-                        >
-                            <CustomTextField
-                                control={control}
-                                name="customerPhone"
-                                label={t('phone')}
-                                placeholder={customer.phone_number || t('phone')}
-                                disabled
-                            />
-                        </Box>
-                    </>
-                )}
+            <Box sx={{
+                direction: 'rtl',
+                width: '100%'
+            }}>
+                <CustomTypography
+                    text={t('customerDetails')}
+                    variant='h2'
+                    weight='medium'
+                    color={colors.brand.color_8}
+                />
+
                 <Box
                     sx={{
-                        width: 393.33,
-                        height: 90,
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "flex-end",
-                        gap: 1,
+                        width: '100%',
+                        alignSelf: "stretch",
+                        justifyContent: "flex-end",
+                        alignItems: "flex-start",
+                        gap: 3.5,
                         display: "inline-flex",
                     }}
                 >
-                    <CustomTextField
-                        control={control}
-                        name="full_name"
-                        label={t('selectCustomer')}
-                        placeholder={t('typeCustomerName')}
-                        icon={customer ? <PencilSquareIcon/> : <PlusCircleIcon/>}
-                        onClick={onNameClick}
-                        onChange={handleNameChange}
-                    />
+                    <Box
+                        sx={{
+                            width: 393.33,
+                            height: 90,
+                            flexDirection: "column",
+                            alignItems: "flex-end",
+                            gap: 1,
+                            display: "flex",
+                            justifyContent: 'flex-end',
+                            textAlign: 'right',
+                            direction: 'rtl'
+                        }}
+                    >
+                        <CustomTextField
+                            control={control}
+                            name="full_name"
+                            label={t('selectCustomer')}
+                            placeholder={t('typeCustomerName')}
+                            icon={customer ? <PencilSquareIcon /> : <PlusCircleIcon />}
+                            onClick={onNameClick}
+                            onChange={handleNameChange}
+                            sx={{
+                                textAlign: 'right', 
+                                direction: 'rtl',
+                            }}
+                        />
+                    </Box>
+                    <Box
+                        sx={{
+                            width: 393.33,
+                            height: 90,
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "flex-end",
+                            gap: 1,
+                            display: "inline-flex",
+                            visibility: customer ? 'visible' : 'hidden',
+                        }}
+                    >
+                        <CustomTextField
+                            control={control}
+                            name="customerPhone"
+                            label={t('phone')}
+                            placeholder={customer?.phone_number || t('phone')}
+                            disabled
+                        />
+                    </Box>
+                    <Box
+                        sx={{
+                            width: 393.33,
+                            height: 90,
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "flex-end",
+                            gap: 1,
+                            display: "inline-flex",
+                            visibility: customer ? 'visible' : 'hidden',
+                        }}
+                    >
+                        <CustomTextField
+                            control={control}
+                            name="customerEmail"
+                            label={t('email')}
+                            placeholder={customer?.email || t('email')}
+                            disabled
+                        />
+                    </Box>
                 </Box>
-
             </Box>
         </Box>
     );
