@@ -55,5 +55,8 @@
     "oneTimePayment": "תשלום חד פעמי",
     "dayOfTheMonth": "יום בחודש",
     "addItem": "הוספת פריט",
-    "items": "פריטים"
+    "items": "פריטים",
+    "customerDetails": "פרטי לקוח",
+    "typeCustomerName": "הקלד שם לקוח",
+    "selectCustomer": "בחר לקוח"
 }

@@ -55,5 +55,8 @@
     "oneTimePayment": "One-time payment",
     "dayOfTheMonth": "day of the month",
     "addItem": "add item",
-    "items": "items"
+    "items": "items",
+    "customerDetails": "customer details",
+    "typeCustomerName": "type a customer name",
+    "selectCustomer": "Select a customer"
 }

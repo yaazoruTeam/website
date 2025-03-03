@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Box, Modal, Popover, Stack, useMediaQuery } from "@mui/material";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
-import SelectCustomerForm from "../../stories/Form/SelectCustomerForm";
+import SelectCustomerForm from "./SelectCustomerForm";
 import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
 import { CustomButton } from "../designComponent/Button";
 import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
@@ -22,12 +22,19 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
     const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(null);
     const [open, setOpen] = useState<boolean>(false);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const [searchTerm, setSearchTerm] = useState("");
 
+    const filteredCustomer = useMemo(() => {
+        return customers.filter((customer) =>
+            customer.first_name.includes(searchTerm?.toLowerCase()) ||
+            customer.last_name.includes(searchTerm?.toLowerCase())
+        );
+    }, [searchTerm, customers]);
 
     if (isLoading) return <div>Loading customers...</div>;
     if (error) return <div>{error}</div>;
 
-    const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpen = (event: React.MouseEvent<HTMLElement> | React.ChangeEvent<HTMLInputElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -35,7 +42,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
         setAnchorEl(null);
     };
 
-    const handleSelectClient = (customer: Customer.Model) => {
+    const handleSelectCustomer = (customer: Customer.Model) => {
         setSelectedCustomer(customer);
         onCustomerSelect(customer);
         handleClose();
@@ -66,7 +73,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
         try {
             const newCustomer: Customer.Model = await createCustomer(customerData);
             console.log('הלקוח נוסף בהצלחה');
-            handleSelectClient(newCustomer);
+            handleSelectCustomer(newCustomer);
             handleCloseModel();
         }
         catch (err: any) {
@@ -86,12 +93,18 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
 
     return (
         <>
-            <SelectCustomerForm customer={selectedCustomer} onNameClick={handleOpen} />
+            <SelectCustomerForm
+                customer={selectedCustomer}
+                onNameClick={handleOpen}
+                onNameChange={setSearchTerm}
+            />
 
             <Popover
                 open={isOpen}
                 anchorEl={anchorEl}
                 onClose={handleClose}
+                disableAutoFocus
+                disableEnforceFocus
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "left",
@@ -119,7 +132,6 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         }
                     },
                 }}
-
             >
                 <Box
                     sx={{
@@ -146,8 +158,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         onClick={handleOpenModel}
                     />
                     <Stack sx={{ gap: 2 }}>
-                        {customers.map((customer, index) => (
-                            <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectClient(customer)} />
+                        {filteredCustomer.map((customer, index) => (
+                            <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectCustomer(customer)} />
                         ))}
                     </Stack>
                 </Box>
