@@ -114,10 +114,13 @@ router.delete(`${ROUTE_PATH}/item/:id`,  itemController.deleteItem);
 router.post(`${ROUTE_PATH}/paymentCreditLink`, paymentCreditLinkController.createPaymentCreditLink);
 router.get(`${ROUTE_PATH}/paymentCreditLink`,  paymentCreditLinkController.getPaymentCreditLinks);
 router.get(`${ROUTE_PATH}/paymentCreditLink/:id`, paymentCreditLinkController.getPaymentCreditLinkId);
+router.get(`${ROUTE_PATH}/paymentCreditLink/monthlyPayment/:id`, paymentCreditLinkController.getPaymentCreditLinkByMonthlyPaymentId);
+router.get(`${ROUTE_PATH}/paymentCreditLink/creditDetails/:id`, paymentCreditLinkController.getPaymentCreditLinkByCreditDetailsId);
 router.put(`${ROUTE_PATH}/paymentCreditLink/:id`, paymentCreditLinkController.updatePaymentCreditLink);
 router.delete(`${ROUTE_PATH}/paymentCreditLink/:id`,  paymentCreditLinkController.deletePaymentCreditLink);
 
 router.post(`${ROUTE_PATH}/addMonthlyPayment`,  MonthlyPaymentManagementController.createMonthlyPayment);
+router.put(`${ROUTE_PATH}/updateMonthlyPayment/:id`,  MonthlyPaymentManagementController.updateMonthlyPayment);
 
 router.post(`${ROUTE_PATH}/charge`, ApiTranzila.chargeTokenTranzila);
 

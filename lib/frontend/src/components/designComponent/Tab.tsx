@@ -5,7 +5,7 @@ import CustomTypography from "./Typography";
 
 const TabPanel: React.FC<{ value: number; index: number; children: React.ReactNode }> = ({ value, index, children }) => {
     return (
-        <div role="tabpanel" hidden={value !== index}>
+        <div role="tabpanel" style={{ display: value === index ? 'block' : 'none' }}/*hidden={value !== index}*/>
             {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
         </div>
     );
@@ -23,8 +23,8 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs }) => {
     };
 
     return (
-        <Box sx={{ width: "100%", direction: "rtl" }}>
-            <Tabs value={activeTab} onChange={handleChange} aria-label="custom styled tabs">
+        <Box sx={{ width: "100%", direction: "rtl", overflow: "hidden" }}>
+            <Tabs value={activeTab} onChange={handleChange} aria-label="custom styled tabs" sx={{ display: 'flex', overflowX: 'auto' }}>
                 {tabs.map((tab, index) => (
                     <Tab
                         label={
@@ -52,7 +52,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs }) => {
                                 backgroundColor: colors.brand.color_15,
                             },
                             transition: 'background-color 0.3s',
-                            marginRight: '5px'
+                            marginRight: '5px',
                         }}
                     />
                 ))}

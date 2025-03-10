@@ -12,13 +12,20 @@ import { useForm } from "react-hook-form";
 import CustomSelect from "../designComponent/CustomSelect";
 import CustomTypography from "../designComponent/Typography";
 
-const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Model[]) => void }> = ({ onItemsChange }) => {
+const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Model[]) => void, initialItems?: ItemForMonthlyPayment.Model[] }> = ({ onItemsChange, initialItems }) => {
   const { t } = useTranslation();
   const isMobile = useMediaQuery('(max-width:600px)');
-  const [items, setItems] = useState<ItemForMonthlyPayment.Model[]>([]);
+  const [items, setItems] = useState<ItemForMonthlyPayment.Model[]>(initialItems || []);
   const [formAddItem, setFormAddItem] = useState<boolean>(false);
   const [editingItem, setEditingItem] = useState<number | null>(null);
   const { control, handleSubmit, watch, setValue } = useForm<ItemForMonthlyPayment.Model>();
+
+
+  useEffect(() => {
+    if (initialItems && JSON.stringify(initialItems) !== JSON.stringify(items)) {
+      setItems(initialItems);
+    }
+  }, [initialItems]);
 
   useEffect(() => {
     if (editingItem !== null) {
@@ -28,6 +35,10 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
       setValue("price", itemToEdit.price);
       setValue("total", itemToEdit.total);
       setValue("paymentType", itemToEdit.paymentType);
+      setValue("item_id", itemToEdit.item_id);
+      setValue("created_at", itemToEdit.created_at);
+      setValue("update_at", itemToEdit.update_at);
+
     }
   }, [editingItem, items, setValue]);
 
@@ -59,7 +70,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
 
   const saveEditedItem = (data: ItemForMonthlyPayment.Model) => {
     setItems(prevItems =>
-      prevItems.map((item, i) => (i === editingItem ? data : item)));
+      prevItems.map((item, i) => (i === editingItem ?  { ...item, ...data }  : item)));
     setEditingItem(null);
   }
 
@@ -67,9 +78,6 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
     onItemsChange(items);
   }, [items, onItemsChange]);
 
-  useEffect(() => {
-    console.log("פריטים מעודכנים:", items);
-  }, [items]);
 
   return (
     <Box style={{
@@ -108,8 +116,8 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
             }
           }}
         >
-          <TableHead style={{direction:'rtl'}}>
-            <TableRow style={{direction:'rtl'}}>
+          <TableHead style={{ direction: 'rtl' }}>
+            <TableRow style={{ direction: 'rtl' }}>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
                 <CustomTypography
                   text={t('paymentType')}
@@ -154,7 +162,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}></TableCell>
             </TableRow>
           </TableHead>
-          <TableBody style={{direction:'rtl'}}>
+          <TableBody style={{ direction: 'rtl' }}>
             {items.length > 0 ? (
               items.map((item, index) => (
                 <TableRow key={index}>
@@ -291,7 +299,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
         </Table>
       </TableContainer>
       {formAddItem ?
-        <ItemForm onSubmit={ addItem} setFormAddItem={setFormAddItem} />
+        <ItemForm onSubmit={addItem} setFormAddItem={setFormAddItem} />
         : ''
       }
       <CustomButton

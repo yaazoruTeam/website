@@ -9,11 +9,11 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
         const sanitized = ItemForMonthlyPayment.sanitize(itemData, false);
         const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
         if (!existMonthlyPayment) {
-            const erroe: HttpError.Model = {
+            const error: HttpError.Model = {
                 status: 404,
                 message: 'monthly payment dose not exist'
             }
-            throw erroe;
+            throw error;
         }
         const item = await db.Item.createItem(sanitized);
         res.status(201).json(item);
@@ -78,11 +78,11 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
         const sanitized = ItemForMonthlyPayment.sanitize(req.body, true);
         const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
         if (!existMonthlyPayment) {
-            const erroe: HttpError.Model = {
+            const error: HttpError.Model = {
                 status: 404,
                 message: 'monthly payment dose not exist'
             }
-            throw erroe;
+            throw error;
         }
         const updateItem = await db.Item.updateItem(
             req.params.id,
@@ -93,6 +93,31 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+
+const updateItems = async (existingItems: ItemForMonthlyPayment.Model[], updatedItems: ItemForMonthlyPayment.Model[], trx: any) => {
+    // 1. חפש פריטים שנמחקו - פריטים קיימים שלא נמצאים במערך החדש
+    const deletedItems = existingItems.filter(existingItem =>
+        !updatedItems.some(updatedItem => updatedItem.item_id === existingItem.item_id)
+    );
+
+    // 2. מחוק את הפריטים שנמחקו
+    for (const deletedItem of deletedItems) {
+        await db.Item.deleteItem(deletedItem.item_id, trx);
+    }
+
+    // 3. עדכן פריטים קיימים או הוסף חדשים
+    for (const updatedItem of updatedItems) {
+        const existingItem = existingItems.find(existingItem => existingItem.item_id === updatedItem.item_id);
+        if (existingItem) {
+            // אם הפריט קיים, עדכן אותו
+            await db.Item.updateItem(updatedItem.item_id, updatedItem, trx);
+        } else {
+            // אם זה פריט חדש, צור אותו
+            await db.Item.createItem(updatedItem, trx);
+        }
+    }
+};
+
 
 const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -111,4 +136,4 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
-export { createItem, getItems, getItemId, getAllItemsByMonthlyPaymentId, updateItem, deleteItem }
+export { createItem, getItems, getItemId, getAllItemsByMonthlyPaymentId, updateItem, updateItems, deleteItem }

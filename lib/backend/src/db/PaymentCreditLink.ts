@@ -39,6 +39,24 @@ const getPaymentCreditLinkId = async (paymentCreditLink_id: string) => {
     };
 };
 
+const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.paymentCreditLink').where({ monthlyPayment_id }).first();
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getPaymentCreditLinkByCreditDetailsId = async (credit_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.paymentCreditLink').where({ credit_id }).first();
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updatePaymentCreditLink = async (paymentCreditLink_id: string, paymentCreditLink: PaymentCreditLink.Model) => {
     const knex = getConnection();
     try {
@@ -123,7 +141,19 @@ const doesMonthlyPaimentExistInPaymentCreditLink = async (monthlyPayment_id: str
         throw err;
     }
 };
+const doesCreditDetailsExistInPaymentCreditLink = async (credit_id: string): Promise<boolean> => {
+    const knex = getConnection();
+    try {
+        const result = await knex('yaazoru.paymentCreditLink')
+            .select('credit_id')
+            .where({ credit_id })
+            .first();
+        return !!result;
+    } catch (err) {
+        throw err;
+    }
+};
 
 export {
-    createPaymentCreditLink, getPaymentCreditLink, getPaymentCreditLinkId, updatePaymentCreditLink, deletePaymentCreditLink,/* findCustomer,*/ doesPaymentCreditLinkExist, doesMonthlyPaimentExistInPaymentCreditLink
+    createPaymentCreditLink, getPaymentCreditLink, getPaymentCreditLinkId, getPaymentCreditLinkByCreditDetailsId, getPaymentCreditLinkByMonthlyPaymentId, updatePaymentCreditLink, deletePaymentCreditLink,/* findCustomer,*/ doesPaymentCreditLinkExist, doesMonthlyPaimentExistInPaymentCreditLink,doesCreditDetailsExistInPaymentCreditLink
 };

@@ -34,6 +34,7 @@ import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 import { colors, theme } from "./styles/theme";
 import { useTranslation } from "react-i18next";
+import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
 
 function App() {
   const { t } = useTranslation();
@@ -129,6 +130,11 @@ function App() {
             <Route path="/monthlyPayment" element={
               <ProtectedRoute>
                 <MonthlyPaymentComponen />
+              </ProtectedRoute>
+            } />
+            <Route path="/monthlyPayment/edit/:id" element={
+              <ProtectedRoute>
+                <EditMonthlyPayment />
               </ProtectedRoute>
             } />
             <Route path="/permissions" element={

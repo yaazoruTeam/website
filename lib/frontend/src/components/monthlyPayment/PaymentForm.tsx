@@ -9,7 +9,7 @@ interface PaymentFormInput {
     name: string;
     mustEvery: string;
     Payments: string;
-    startDate: string;
+    startDate: Date;
     dayOfTheMonth: string;
 }
 declare global {
@@ -20,16 +20,23 @@ declare global {
 }
 let fields: any = null;
 
-const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => void, OnTimeChange: (timeData: any) => void }, ref) => {
+const PaymentForm = forwardRef((props: {
+    onPaymentChange: (paymentData: any) => void,
+    OnTimeChange: (timeData: any) => void,
+    defaultValues?: PaymentFormInput,
+}, ref) => {
     const { t } = useTranslation();
     const { onPaymentChange } = props;
     const { OnTimeChange } = props;
+    const { defaultValues } = props;
+
     const [errors, setErrors] = useState<string[]>([]);
     const [fieldsInitialized, setFieldsInitialized] = useState<boolean>(false);
     // const terminalName = process.env.TRANZILA_TERMINAL_NAME;
 
-    const { control, watch } = useForm<PaymentFormInput>();
-
+const { control, watch, setValue } = useForm<PaymentFormInput>({
+        defaultValues 
+    });
     useImperativeHandle(ref, () => ({
         chargeCcData, // חושפים את הפונקציה החיונית
     }));
@@ -142,22 +149,32 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
         setErrors(errorMessages);
     };
 
+    // useEffect(() => {
+    //     const subscription = watch((value) => {
+    //         const { name, mustEvery, Payments, startDate, dayOfTheMonth } = value;
+    //         console.log("timeData update:", { name, mustEvery, Payments, startDate, dayOfTheMonth });
+    //         OnTimeChange({
+    //             name: name,
+    //             mustEvery: mustEvery,
+    //             payments: Payments,
+    //             startDate: startDate,
+    //             dayOfTheMonth: dayOfTheMonth
+    //         });
+    //     });
+
+    //     return () => subscription.unsubscribe();
+    // }, [watch, OnTimeChange]);
+
+
     useEffect(() => {
-        const subscription = watch((value) => {
-            const { name, mustEvery, Payments, startDate, dayOfTheMonth } = value;
-            console.log("timeData update:", { name, mustEvery, Payments, startDate, dayOfTheMonth });
-            OnTimeChange({
-                name: name,
-                mustEvery: mustEvery,
-                payments: Payments,
-                startDate: startDate,
-                dayOfTheMonth: dayOfTheMonth
-            });
-        });
-
-        return () => subscription.unsubscribe();
-    }, [watch, OnTimeChange]);
-
+        if (defaultValues) {
+            setValue('name', defaultValues.name);
+            setValue('mustEvery', defaultValues.mustEvery);
+            setValue('Payments', defaultValues.Payments);
+            setValue('startDate', defaultValues.startDate);
+            setValue('dayOfTheMonth', defaultValues.dayOfTheMonth);
+        }
+    }, [defaultValues, setValue]);
 
     return (
         <Box

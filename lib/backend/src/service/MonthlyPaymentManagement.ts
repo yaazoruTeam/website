@@ -8,11 +8,11 @@ const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentMana
     try {
         const existCustomer = await db.Customer.doesCustomerExist(monthlyPayment.customer_id);
         if (!existCustomer) {
-            const erroe: HttpError.Model = {
+            const error: HttpError.Model = {
                 status: 404,
                 message: 'customer dose not exist'
             }
-            throw erroe;
+            throw error;
         }
         const sanitized = MonthlyPaymentManagement.sanitize(monthlyPayment);
         const monthlyPaymentData: MonthlyPayment.Model = await db.MonthlyPayment.createMonthlyPayment(sanitized.monthlyPayment);

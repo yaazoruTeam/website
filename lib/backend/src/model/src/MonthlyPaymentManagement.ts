@@ -22,9 +22,9 @@ function sanitize(monthlyPaymentManagement: Model): Model {
     }
     const newMonthlyPaymentManagement: Model = {
         customer_id: monthlyPaymentManagement.customer_id,
-        monthlyPayment: MonthlyPayment.sanitize(monthlyPaymentManagement.monthlyPayment, false),
+        monthlyPayment: MonthlyPayment.sanitize(monthlyPaymentManagement.monthlyPayment, true),
         creditDetails: CreditDetails.sanitize(monthlyPaymentManagement.creditDetails, false),
-        paymentCreditLink: PaymentCreditLink.sanitize(monthlyPaymentManagement.paymentCreditLink, false),
+        paymentCreditLink: {} as PaymentCreditLink.Model,//PaymentCreditLink.sanitize(monthlyPaymentManagement.paymentCreditLink, false),
         payments: monthlyPaymentManagement.payments.map(payment =>
             Payments.sanitize(payment, false)
         ),
@@ -35,5 +35,25 @@ function sanitize(monthlyPaymentManagement: Model): Model {
     return newMonthlyPaymentManagement;
 }
 
+const sanitizeIdExisting = (id: any) => {
+    if (!id.params.id) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: "No ID provided",
+        };
+        throw error;
+    }
+};
+
+const sanitizeBodyExisting = (req: any) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: "No body provaider",
+        };
+        throw error;
+    }
+};
+
 export type { Model }
-export { sanitize }
+export { sanitize, sanitizeBodyExisting, sanitizeIdExisting }

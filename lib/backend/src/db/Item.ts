@@ -53,10 +53,11 @@ const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string) => {
     };
 };
 
-const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model) => {
+const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model,trx?:any) => {
     const knex = getConnection();
     try {
-        const updateItem = await knex('yaazoru.item')
+        const query = trx ? trx('yaazoru.item') : knex('yaazoru.item');
+        const updateItem = await query
             .where({ item_id })
             .update(item)
             .returning('*');
@@ -69,24 +70,25 @@ const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model) =>
     };
 };
 
-const deleteItem = async (item_id: string) => {
-    // const knex = getConnection();
-    // try {
-    //     const updateMonthlyPayment = await knex('yaazoru.item')
-    //         .where({ monthlyPayment_id })
-    //         .update({ status: 'inactive' })
-    //         .returning('*');
-    //     if (updateMonthlyPayment.length === 0) {
-    //         const error: HttpError.Model = {
-    //             status: 404,
-    //             message: 'monthlyPaytment not found'
-    //         }
-    //         throw error;
-    //     }
-    //     return updateMonthlyPayment[0];
-    // } catch (err) {
-    //     throw err;
-    // }
+const deleteItem = async (item_id: string,trx?:any) => {
+    const knex = getConnection();
+    try {
+        const query = trx ? trx('yaazoru.item') : knex('yaazoru.item');
+        const deleteItem = await query
+            .where({item_id})
+            .del()
+            .returning('*');
+        if (deleteItem.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'item not found'
+            }
+            throw error;
+        }
+        return deleteItem[0];
+    } catch (err) {
+        throw err;
+    }
 };
 
 // const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {

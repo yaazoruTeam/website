@@ -15,21 +15,21 @@ const createCreditDetails = async (
 
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id);
     if (!existCustomer) {
-      const erroe: HttpError.Model = {
+      const error: HttpError.Model = {
         status: 404,
         message: 'customer dose not exist'
       }
-      throw erroe;
+      throw error;
     }
     const existToken = await db.CreditDetails.doesTokenExist(sanitized.token);
     console.log('token: ', existToken);
     
     if (existToken) {
-      const erroe: HttpError.Model = {
+      const error: HttpError.Model = {
         status: 490,
         message: 'token already exist'
       }
-      throw erroe;
+      throw error;
     }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized);
     res.status(201).json(creditDetails);
@@ -88,11 +88,11 @@ const updateCreditDetails = async (
     const sanitized = CreditDetails.sanitize(req.body, true);    
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id);
     if (!existCustomer) {
-      const erroe: HttpError.Model = {
+      const error: HttpError.Model = {
         status: 404,
         message: 'customer dose not exist'
       }
-      throw erroe;
+      throw error;
     }
     const updateCreditDetails = await db.CreditDetails.updateCreditDetails(
       req.params.id,

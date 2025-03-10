@@ -9,11 +9,11 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
         const sanitized = Payments.sanitize(paymentsData, false);
         const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
         if (!existMonthlyPayment) {
-            const erroe: HttpError.Model = {
+            const error: HttpError.Model = {
                 status: 404,
                 message: 'monthly payment dose not exist'
             }
-            throw erroe;
+            throw error;
         }
         const payments = await db.Payments.createPayments(sanitized);
         res.status(201).json(payments);
@@ -74,11 +74,11 @@ const updatePayments = async (req: Request, res: Response, next: NextFunction) =
         const sanitized = Payments.sanitize(req.body, true);
         const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(sanitized.monthlyPayment_id);
         if (!existMonthlyPayment) {
-            const erroe: HttpError.Model = {
+            const error: HttpError.Model = {
                 status: 404,
                 message: 'monthly payment dose not exist'
             }
-            throw erroe;
+            throw error;
         }
         const updatePayments = await db.Payments.updatePayments(
             req.params.id,

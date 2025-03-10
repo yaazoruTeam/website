@@ -5,7 +5,7 @@ import FormToAddItems from './FormToAddItems';
 import { CustomButton } from '../designComponent/Button';
 import { ItemForMonthlyPayment, MonthlyPaymentManagement } from '../../model/src';
 import { useMediaQuery } from '@mui/material';
-import { createMonthlyPayment } from '../../api/monthlyPayment';
+import { createMonthlyPayment } from '../../api/monthlyPaymentManagement';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/system';
@@ -156,9 +156,8 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         }
 
         try {
-            const api = await createMonthlyPayment(monthlyPaymentManagement);
-            console.log('i after create monthly paymet, this is return:');
-            console.log(api);
+            const createNewMonthlyPayment = await createMonthlyPayment(monthlyPaymentManagement);
+            console.log(createNewMonthlyPayment);
             alert('ההוראת קבע נוספה בהצלחה!');
             navigate('/monthlyPayment');
 

@@ -58,5 +58,12 @@
     "items": "items",
     "customerDetails": "customer details",
     "typeCustomerName": "type a customer name",
-    "selectCustomer": "Select a customer"
+    "selectCustomer": "Select a customer",
+    "editingStandingOrder": "Editing a standing order",
+    "recentPayments": "recent payments",
+    "errorInvalidId": "error invalid id",
+    "errorPaymentNotFound": "error payment not found",
+    "errorCustomerNotFound": "error customer not found",
+    "backToHome": "back to home",
+    "cancellation": "cancellation"
 }

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import {  MonthlyPaymentManagement } from '../model';
+import {  MonthlyPaymentManagement } from '../model/src';
 import { handleTokenRefresh } from './token';
 
 
@@ -30,6 +30,36 @@ export const createMonthlyPayment = async (monthlyPayment: MonthlyPaymentManagem
         return response.data;
     } catch (error) {
         console.error("Error creating monthly payment", error);
+        throw error;
+    }
+};
+
+// PUT
+export const updateMonthlyPayment = async (monthlyPayment: MonthlyPaymentManagement.Model,monthlyPayment_id:string): Promise<AxiosResponse> => {
+    try {
+        console.log('update monthly payment in frontend');
+        
+        // const newToken = await handleTokenRefresh();
+        // if (!newToken) {
+        //     return {} as MonthlyPaymentManagement.Model;
+        // }
+        // const token = localStorage.getItem('token');
+        // if (!token) {
+        //     throw new Error('No token found!');
+        // }
+        const baseUrl = `http://localhost:3006/controller/updateMonthlyPayment/${monthlyPayment_id}`;
+
+        const response: AxiosResponse<MonthlyPaymentManagement.Model> = await axios.put(baseUrl, monthlyPayment, 
+        //     {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         Authorization: `Bearer ${token}`,
+        //     },
+        // }
+    );
+        return response;
+    } catch (error) {
+        console.error("Error update monthly payment", error);
         throw error;
     }
 };

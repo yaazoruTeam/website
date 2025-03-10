@@ -1,24 +1,23 @@
 import axios, { AxiosResponse } from 'axios';
-import { CreditDetails } from '../model';
+import { ItemForMonthlyPayment } from '../model/src';
 import { handleTokenRefresh } from './token';
 
 
-// const baseUrl = `${process.env.BASE_URL}/creditDetails`;
-const baseUrl = 'http://localhost:3006/controller/creditDetails';
+// const baseUrl = `${process.env.BASE_URL}/customer`;
+const baseUrl = 'http://localhost:3006/controller/item';
 
-
-// POST
-export const createCreditDetails = async (creditDetails: CreditDetails.Model): Promise<CreditDetails.Model> => {
+// GET
+export const getItems = async (): Promise<ItemForMonthlyPayment.Model[]> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return {} as CreditDetails.Model;
+            return [];
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<CreditDetails.Model> = await axios.post(baseUrl, creditDetails, {
+        const response: AxiosResponse<ItemForMonthlyPayment.Model[]> = await axios.get(baseUrl, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -26,23 +25,23 @@ export const createCreditDetails = async (creditDetails: CreditDetails.Model): P
         });
         return response.data;
     } catch (error) {
-        console.error("Error creating customer", error);
+        console.error("Error fetching monthly payment", error);
         throw error;
     }
 };
 
-// GET id
-export const getCreditDetailsById = async (creditDetails_id: string): Promise<CreditDetails.Model> => {
+// GET
+export const getItemsByMonthlyPaymentId = async (monthlyPayment_id:string): Promise<ItemForMonthlyPayment.Model[]> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return {} as CreditDetails.Model;
+            return [];
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<CreditDetails.Model> = await axios.get(`${baseUrl}/${creditDetails_id}`, {
+        const response: AxiosResponse<ItemForMonthlyPayment.Model[]> = await axios.get(`${baseUrl}/monthlyPayment/${monthlyPayment_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -50,7 +49,8 @@ export const getCreditDetailsById = async (creditDetails_id: string): Promise<Cr
         });
         return response.data;
     } catch (error) {
-        console.error("Error get cedit deatails by id.", error);
+        console.error("Error fetching monthly payment", error);
         throw error;
     }
 };
+

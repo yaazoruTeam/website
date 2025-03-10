@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Modal, Popover, Stack, useMediaQuery } from "@mui/material";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
@@ -13,13 +13,14 @@ import { useTranslation } from "react-i18next";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
+    initialCustomer?: Customer.Model; 
 }
 
-const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect }) => {
+const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect,initialCustomer }) => {
     const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { customers, isLoading, error } = useFetchCustomers();
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(null);
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer||null);
     const [open, setOpen] = useState<boolean>(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +31,15 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
             customer.last_name.includes(searchTerm?.toLowerCase())
         );
     }, [searchTerm, customers]);
+
+    useEffect(() => {
+        setSelectedCustomer(prev => {
+            if (!initialCustomer || prev?.customer_id === initialCustomer.customer_id) {
+                return prev;
+            }
+            return initialCustomer;
+        });
+    }, [initialCustomer]);
 
     if (isLoading) return <div>Loading customers...</div>;
     if (error) return <div>{error}</div>;

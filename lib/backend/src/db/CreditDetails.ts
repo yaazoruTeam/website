@@ -41,11 +41,13 @@ const getCreditDetailsById = async (credit_id: string) => {
 
 const updateCreditDetails = async (
   credit_id: string,
-  creditDetails: CreditDetails.Model
+  creditDetails: CreditDetails.Model,
+  trx?: any
 ) => {
   const knex = getConnection();
   try {
-    const updateCreditDetails = await knex("yaazoru.creditDetails")
+    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
+    const updateCreditDetails = await query
       .where({ credit_id })
       .update(creditDetails)
       .returning("*");

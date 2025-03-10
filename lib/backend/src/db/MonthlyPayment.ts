@@ -50,10 +50,11 @@ const getMonthlyPaymentId = async (monthlyPayment_id: string) => {
     };
 };
 
-const updateMonthlyPayment = async (monthlyPayment_id: string, monthlyPayment: MonthlyPayment.Model) => {
+const updateMonthlyPayment = async (monthlyPayment_id: string, monthlyPayment: MonthlyPayment.Model,trx?:any) => {
     const knex = getConnection();
     try {
-        const updateMonthlyPayment = await knex('yaazoru.monthlyPayment')
+        const query = trx ? trx('yaazoru.monthlyPayment') : knex('yaazoru.monthlyPayment');
+        const updateMonthlyPayment = await query
             .where({ monthlyPayment_id })
             .update(monthlyPayment)
             .returning('*');

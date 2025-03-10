@@ -5,18 +5,21 @@ import AddMonthlyPayment from "./AddMonthlyPayment";
 import { colors } from "../../styles/theme";
 import CustomTypography from "../designComponent/Typography";
 import { useTranslation } from "react-i18next";
+import { MonthlyPayment } from "../../model/src";
+import { useNavigate } from "react-router-dom";
 
 interface MonthlyPaymentListProps {
-    monthlyPayment: string[];
+    monthlyPayment: MonthlyPayment.Model[];
 }
 
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment }) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
-    const onClickMonthlyPayment = (monthlyPayment: any) => {
+    const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
         console.log(monthlyPayment);
-
+        navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`)
     }
     return (
         <>
@@ -34,7 +37,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                     justifyContent: "flex-start",
                     alignItems: "flex-start",
                     gap: 4,
-                    direction:'rtl'
+                    direction: 'rtl'
                 }}
             >
                 {showAddMonthlyPayment ? (
@@ -44,9 +47,9 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                         <Box sx={{
                             direction: 'rtl',
                             width: '100%',
-                            display:'flex',
-                            justifyContent:'space-between',
-                             alignItems:'center'
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                         }}>
                             <CustomTypography
                                 text={t('standingOrders')}
@@ -97,7 +100,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                     onClick={() => onClickMonthlyPayment(monthlyPayment)}
                                 >
                                     <CustomTypography
-                                        text={monthlyPayment}
+                                        text={monthlyPayment.monthlyPayment_id}
                                         variant="h4"
                                         weight="regular"
                                         color={colors.brand.color_7}

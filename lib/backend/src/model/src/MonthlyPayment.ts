@@ -62,13 +62,13 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!monthlyPayment.oneTimePayment) {
-        const error: HttpError.Model = {
-            status: 400,
-            message: 'Invalid or missing "oneTimePayment".',
-        };
-        throw error;
-    }
+    // if (!monthlyPayment.oneTimePayment) {
+    //     const error: HttpError.Model = {
+    //         status: 400,
+    //         message: 'Invalid or missing "oneTimePayment".',
+    //     };
+    //     throw error;
+    // }
     if (!monthlyPayment.frequency) {
         const error: HttpError.Model = {
             status: 400,

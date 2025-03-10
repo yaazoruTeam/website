@@ -37,9 +37,7 @@ const MonthlyPaymentComponen: React.FC = () => {
             }}
         >
             <MonthlyPaymentList
-                monthlyPayment={MonthlyPayment.map(
-                    (monthly) => monthly.amount + " " + monthly.created_at
-                )}
+                monthlyPayment={MonthlyPayment}
             />
         </Box>
     );

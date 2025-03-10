@@ -58,5 +58,12 @@
     "items": "פריטים",
     "customerDetails": "פרטי לקוח",
     "typeCustomerName": "הקלד שם לקוח",
-    "selectCustomer": "בחר לקוח"
+    "selectCustomer": "בחר לקוח",
+    "editingStandingOrder": "עריכת הוראת קבע",
+    "recentPayments": "תשלומים אחרונים",
+    "errorInvalidId": "שגיאה מזהה הוראת קבע לא נכון",
+    "errorPaymentNotFound": "שגיאה הוראת קבע לא נמצאה",
+    "errorCustomerNotFound": "שגיאה לקוח לא נמצא",
+    "backToHome": "חזרה לעמוד הבית",
+    "cancellation": "ביטול"
 }

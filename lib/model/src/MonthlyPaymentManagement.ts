@@ -9,7 +9,10 @@ interface Model {
     items: ItemForMonthlyPayment.Model[];
 }
 
+
 function sanitize(monthlyPaymentManagement: Model): Model {
+    console.log('sanitize monthly payment management');
+
     if (!monthlyPaymentManagement.customer_id) {
         const error: HttpError.Model = {
             status: 400,
@@ -23,7 +26,7 @@ function sanitize(monthlyPaymentManagement: Model): Model {
         creditDetails: CreditDetails.sanitize(monthlyPaymentManagement.creditDetails, false),
         paymentCreditLink: PaymentCreditLink.sanitize(monthlyPaymentManagement.paymentCreditLink, false),
         payments: monthlyPaymentManagement.payments.map(payment =>
-            Payments.sanitize(payment, false) 
+            Payments.sanitize(payment, false)
         ),
         items: monthlyPaymentManagement.items.map(item =>
             ItemForMonthlyPayment.sanitize(item, false)
@@ -32,5 +35,25 @@ function sanitize(monthlyPaymentManagement: Model): Model {
     return newMonthlyPaymentManagement;
 }
 
+const sanitizeIdExisting = (id: any) => {
+    if (!id.params.id) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: "No ID provided",
+        };
+        throw error;
+    }
+};
+
+const sanitizeBodyExisting = (req: any) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: "No body provaider",
+        };
+        throw error;
+    }
+};
+
 export type { Model }
-export { sanitize }
+export { sanitize, sanitizeBodyExisting, sanitizeIdExisting }
