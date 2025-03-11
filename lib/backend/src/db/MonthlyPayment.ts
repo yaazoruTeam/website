@@ -12,6 +12,7 @@ const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: 
                 customer_id: monthlyPayment.customer_id,
                 belongsOrganization: monthlyPayment.belongsOrganization,
                 start_date: monthlyPayment.start_date,
+                end_date: monthlyPayment.end_date,
                 amount: monthlyPayment.amount,
                 total_amount: monthlyPayment.total_amount,
                 oneTimePayment: monthlyPayment.oneTimePayment,

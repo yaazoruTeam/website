@@ -14,6 +14,7 @@ const createMonthlyPayment = async () => {
                 table.string("customer_id").notNullable();
                 table.string("belongsOrganization").notNullable();
                 table.date("start_date").notNullable();
+                table.date("end_date").notNullable();
                 table.decimal("amount").notNullable();
                 table.decimal("total_amount").notNullable();
                 table.decimal("oneTimePayment").notNullable();

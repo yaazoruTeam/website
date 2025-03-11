@@ -94,6 +94,12 @@ const EditMonthlyPayment: React.FC = () => {
         }
     };
 
+    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
+        let endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
+        return endDate;
+    };
+
     const update = async () => {
         if (!customer || !monthlyPayment || !creditDetails) {
             setError('Missing customer or monthly payment or credit details data');
@@ -163,6 +169,7 @@ const EditMonthlyPayment: React.FC = () => {
                 customer_id: customer?.customer_id,
                 belongsOrganization: 'יעזורו',
                 start_date: monthlyPayment?.start_date,
+                end_date: calculateEndDate(timeData.startDate, timeData?.payments, parseInt(timeData?.mustEvery)),
                 amount: amount,
                 total_amount: amount * monthlyPayment.amountOfCharges !== timeData?.payments ? timeData.payments : monthlyPayment.amountOfCharges,
                 oneTimePayment: oneTimePayment,

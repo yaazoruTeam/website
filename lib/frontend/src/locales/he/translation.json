@@ -65,5 +65,7 @@
     "errorPaymentNotFound": "שגיאה הוראת קבע לא נמצאה",
     "errorCustomerNotFound": "שגיאה לקוח לא נמצא",
     "backToHome": "חזרה לעמוד הבית",
-    "cancellation": "ביטול"
+    "cancellation": "ביטול",
+    "dataNotAvailable": "נתון לא זמין",
+    "noDataToDisplay": "אין נתונים להצגה"
 }

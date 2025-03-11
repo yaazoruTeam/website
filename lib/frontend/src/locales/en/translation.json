@@ -65,5 +65,7 @@
     "errorPaymentNotFound": "error payment not found",
     "errorCustomerNotFound": "error customer not found",
     "backToHome": "back to home",
-    "cancellation": "cancellation"
+    "cancellation": "cancellation",
+    "dataNotAvailable": "data not available",
+    "noDataToDisplay": "no data to display"
 }

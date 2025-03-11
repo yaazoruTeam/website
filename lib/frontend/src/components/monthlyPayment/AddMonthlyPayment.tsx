@@ -47,27 +47,10 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     }, [timeData]);
 
 
-    // פונקציה לחישוב התאריך האחרון
-    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number) => {
-        // התאריך הסופי התחלתי הוא תאריך ההתחלה
+    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
         let endDate = new Date(startDate);
-
-        // מוסיפים את החודשים הנדרשים לכל חיוב
         endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
-
-        // מחזירים את התאריך האחרון בפורמט dd/mm/yy
-        const formattedEndDate = `${String(endDate.getDate()).padStart(2, '0')}/${String(endDate.getMonth() + 1).padStart(2, '0')}/${endDate.getFullYear().toString().slice(2)}`;
-
-        return formattedEndDate;
-    };
-
-    // פונקציה להחזרת התוצאה הסופית
-    const getTheRangeOfMonths = () => {
-        const formattedStartDate = `${String(timeData.startDate.getDate()).padStart(2, '0')}/${String(timeData.startDate.getMonth() + 1).padStart(2, '0')}/${timeData.startDate.getFullYear().toString().slice(2)}`;
-
-        const endDate = calculateEndDate(timeData.startDate, timeData.payments, timeData.mustEvery);
-
-        return `${formattedStartDate}-${endDate}`;
+        return endDate;
     };
 
     const charge = async () => {
@@ -111,6 +94,7 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
                 customer_id: customerData.customer_id,
                 belongsOrganization: 'יעזורו',
                 start_date: timeData.startDate,
+                end_date: calculateEndDate(timeData.startDate, parseInt(timeData.payments), parseInt(timeData.mustEvery)),
                 amount: amount,
                 total_amount: amount * timeData.payments,
                 oneTimePayment: oneTimePayment,

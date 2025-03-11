@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { Button, Box, useMediaQuery } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, useMediaQuery } from "@mui/material";
 import { CustomButton } from "../designComponent/Button";
 import AddMonthlyPayment from "./AddMonthlyPayment";
 import { colors } from "../../styles/theme";
 import CustomTypography from "../designComponent/Typography";
 import { useTranslation } from "react-i18next";
 import { MonthlyPayment } from "../../model/src";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import CustomTable from "../designComponent/CustomTable";
+import { getCustomerById } from "../../api/customerApi";
 
 interface MonthlyPaymentListProps {
     monthlyPayment: MonthlyPayment.Model[];
@@ -17,16 +19,78 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
     const navigate = useNavigate();
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const [customerNames, setCustomerNames] = useState<{ [key: string]: string }>({});
+
+    useEffect(() => {
+        const fetchCustomerNames = async () => {
+            const names: { [key: string]: string } = {};
+            for (const payment of monthlyPayment) {
+                const customer = await getCustomerById(payment.customer_id);
+                names[payment.customer_id] = `${customer.first_name} ${customer.last_name}`;
+            }
+            setCustomerNames(names);
+        };
+
+        fetchCustomerNames();
+    }, [monthlyPayment]);
+
     const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
         console.log(monthlyPayment);
         navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`)
     }
+
+    const formatDate = (date: Date | string): string => {
+        const parsedDate = new Date(date);
+        if (isNaN(parsedDate.getTime()) || parsedDate.getFullYear() === 1999) {
+            return '?';
+        }
+        const day = String(parsedDate.getDate()).padStart(2, '0');
+        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+        const year = parsedDate.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    };
+
+    const columns = [
+        { label: 'שם לקוח', key: 'customer_name' },
+        { label: 'תאריכים', key: 'dates' },
+        { label: 'סכום', key: 'amount' },
+        { label: 'סה"כ', key: 'total_amount' },
+        { label: 'שייך לארגון', key: 'belongsOrganization' },
+        { label: 'נסיון אחרון', key: 'last_attempt' },
+        { label: 'הצלחה אחרונה', key: 'last_sucsse' },
+        { label: 'בחיוב הבא', key: 'next_charge' },
+        { label: 'עדכון', key: 'update_at' },
+    ];
+    const tableData = monthlyPayment.map(payment => ({
+        monthlyPayment_id: payment.monthlyPayment_id,
+        customer_name: (
+            <Link
+                to={`/customer/${payment.customer_id}`}
+                style={{
+                    color: colors.brand.color_7,
+                    cursor: 'pointer',
+                }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                {customerNames[payment.customer_id] || 'טוען...'}
+            </Link>
+        ),
+        dates: `${formatDate(payment.start_date)} - ${formatDate(payment.end_date)}`,
+        amount: payment.amount,
+        total_amount: payment.total_amount,
+        belongsOrganization: payment.belongsOrganization,
+        last_attempt: formatDate(payment.last_attempt),
+        last_sucsse: formatDate(payment.last_sucsse),
+        next_charge: formatDate(payment.next_charge),
+        update_at: formatDate(payment.update_at),
+    }));
     return (
         <>
             <Box
                 sx={{
                     width: "100%",
-                    height: "50%",
+                    height: "100%",
                     // paddingLeft: 10,
                     // paddingRight: 10,
                     // paddingTop: 15,
@@ -76,37 +140,12 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                 gap: 3,
                             }}
                         >
-                            {monthlyPayment.map((monthlyPayment, index) => (
-                                <Button
-                                    key={index}
-                                    sx={{
-                                        width: '100%',
-                                        height: 81,
-                                        paddingLeft: 3,
-                                        paddingRight: 3,
-                                        backgroundColor: colors.neutral.white,
-                                        borderRadius: 1,
-                                        display: "flex",
-                                        justifyContent: "flex-end",
-                                        alignItems: "center",
-                                        cursor: "pointer",
-                                        gap: 3,
-                                        textTransform: "none",
-                                        border: "none",
-                                        "&:hover": {
-                                            backgroundColor: "#f1f1f1",
-                                        },
-                                    }}
-                                    onClick={() => onClickMonthlyPayment(monthlyPayment)}
-                                >
-                                    <CustomTypography
-                                        text={monthlyPayment.monthlyPayment_id}
-                                        variant="h4"
-                                        weight="regular"
-                                        color={colors.brand.color_7}
-                                    />
-                                </Button>
-                            ))}
+
+                            <CustomTable
+                                columns={columns}
+                                data={tableData}
+                                onRowClick={onClickMonthlyPayment}
+                            />
                         </Box>
                     </>
                 )}

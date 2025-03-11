@@ -149,21 +149,21 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
         setErrors(errorMessages);
     };
 
-    // useEffect(() => {
-    //     const subscription = watch((value) => {
-    //         const { name, mustEvery, Payments, startDate, dayOfTheMonth } = value;
-    //         console.log("timeData update:", { name, mustEvery, Payments, startDate, dayOfTheMonth });
-    //         OnTimeChange({
-    //             name: name,
-    //             mustEvery: mustEvery,
-    //             payments: Payments,
-    //             startDate: startDate,
-    //             dayOfTheMonth: dayOfTheMonth
-    //         });
-    //     });
+    useEffect(() => {
+        const subscription = watch((value) => {
+            const { name, mustEvery, Payments, startDate, dayOfTheMonth } = value;
+            console.log("timeData update:", { name, mustEvery, Payments, startDate, dayOfTheMonth });
+            OnTimeChange({
+                name: name,
+                mustEvery: mustEvery,
+                payments: Payments,
+                startDate: startDate,
+                dayOfTheMonth: dayOfTheMonth
+            });
+        });
 
-    //     return () => subscription.unsubscribe();
-    // }, [watch, OnTimeChange]);
+        return () => subscription.unsubscribe();
+    }, [watch, OnTimeChange]);
 
 
     useEffect(() => {

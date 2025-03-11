@@ -22,7 +22,7 @@ function sanitize(monthlyPaymentManagement: Model): Model {
     }
     const newMonthlyPaymentManagement: Model = {
         customer_id: monthlyPaymentManagement.customer_id,
-        monthlyPayment: MonthlyPayment.sanitize(monthlyPaymentManagement.monthlyPayment, true),
+        monthlyPayment: MonthlyPayment.sanitize(monthlyPaymentManagement.monthlyPayment, false),
         creditDetails: CreditDetails.sanitize(monthlyPaymentManagement.creditDetails, false),
         paymentCreditLink: {} as PaymentCreditLink.Model,//PaymentCreditLink.sanitize(monthlyPaymentManagement.paymentCreditLink, false),
         payments: monthlyPaymentManagement.payments.map(payment =>

@@ -5,6 +5,7 @@ interface Model {
     customer_id: string;
     belongsOrganization: string;
     start_date: Date;
+    end_date: Date,
     amount: number;
     total_amount: number;
     oneTimePayment: number;
@@ -48,6 +49,13 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!monthlyPayment.end_date) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "end_date".',
+        };
+        throw error;
+    }
     if (!monthlyPayment.amount) {
         const error: HttpError.Model = {
             status: 400,
@@ -62,13 +70,13 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!monthlyPayment.oneTimePayment) {
-        const error: HttpError.Model = {
-            status: 400,
-            message: 'Invalid or missing "oneTimePayment".',
-        };
-        throw error;
-    }
+    // if (!monthlyPayment.oneTimePayment) {
+    //     const error: HttpError.Model = {
+    //         status: 400,
+    //         message: 'Invalid or missing "oneTimePayment".',
+    //     };
+    //     throw error;
+    // }
     if (!monthlyPayment.frequency) {
         const error: HttpError.Model = {
             status: 400,
@@ -130,6 +138,7 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         customer_id: monthlyPayment.customer_id,
         belongsOrganization: monthlyPayment.belongsOrganization,
         start_date: monthlyPayment.start_date,
+        end_date: monthlyPayment.end_date,
         amount: monthlyPayment.amount,
         total_amount: monthlyPayment.total_amount,
         oneTimePayment: monthlyPayment.oneTimePayment,
