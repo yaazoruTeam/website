@@ -52,15 +52,15 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
     };
 
     const columns = [
-        { label: 'שם לקוח', key: 'customer_name' },
-        { label: 'תאריכים', key: 'dates' },
-        { label: 'סכום', key: 'amount' },
-        { label: 'סה"כ', key: 'total_amount' },
-        { label: 'שייך לארגון', key: 'belongsOrganization' },
-        { label: 'נסיון אחרון', key: 'last_attempt' },
-        { label: 'הצלחה אחרונה', key: 'last_sucsse' },
-        { label: 'בחיוב הבא', key: 'next_charge' },
-        { label: 'עדכון', key: 'update_at' },
+        { label: t('customerName'), key: 'customer_name' },
+        { label: t('dates'), key: 'dates' },
+        { label: t('sum'), key: 'amount' },
+        { label: t('total'), key: 'total_amount' },
+        { label: t('belongsToAnOrganization'), key: 'belongsOrganization' },
+        { label: t('lastAttempt'), key: 'last_attempt' },
+        { label: t('lastSuccess'), key: 'last_sucsse' },
+        { label: t('nextCharge'), key: 'next_charge' },
+        { label: t('update'), key: 'update_at' },
     ];
     const tableData = monthlyPayment.map(payment => ({
         monthlyPayment_id: payment.monthlyPayment_id,
@@ -73,7 +73,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {customerNames[payment.customer_id] || 'טוען...'}
+                {customerNames[payment.customer_id] || t('loading')}
             </Link>
         ),
         dates: `${formatDate(payment.start_date)} - ${formatDate(payment.end_date)}`,

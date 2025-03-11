@@ -67,5 +67,14 @@
     "backToHome": "חזרה לעמוד הבית",
     "cancellation": "ביטול",
     "dataNotAvailable": "נתון לא זמין",
-    "noDataToDisplay": "אין נתונים להצגה"
+    "noDataToDisplay": "אין נתונים להצגה",
+    "customerName": "שם לקוח",
+    "dates": "תאריכים",
+    "sum": "סכום",
+    "belongsToAnOrganization": "שייך לארגון",
+    "lastAttempt": "נסיון אחרון",
+    "lastSuccess": "הצלחה אחרונה",
+    "nextCharge": "החיוב הבא",
+    "update": "עדכון",
+    "loading": "טוען"
 }

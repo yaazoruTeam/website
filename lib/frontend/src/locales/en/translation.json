@@ -67,5 +67,14 @@
     "backToHome": "back to home",
     "cancellation": "cancellation",
     "dataNotAvailable": "data not available",
-    "noDataToDisplay": "no data to display"
+    "noDataToDisplay": "no data to display",
+    "customerName": "customer name",
+    "dates": "dates",
+    "sum": "sum",
+    "belongsToAnOrganization": "belongs to an organization",
+    "lastAttempt": "last attempt",
+    "lastSuccess": "last success",
+    "nextCharge": "next charge",
+    "update": "update",
+    "loading": "loading"
 }
