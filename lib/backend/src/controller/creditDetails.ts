@@ -11,6 +11,26 @@ const createCreditDetails = async (
     CreditDetails.sanitizeBodyExisting(req);
     const creditDetailsrData = req.body;
     const sanitized = CreditDetails.sanitize(creditDetailsrData, false);
+    console.log(sanitized);
+
+    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id);
+    if (!existCustomer) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'customer dose not exist'
+      }
+      throw error;
+    }
+    const existToken = await db.CreditDetails.doesTokenExist(sanitized.token);
+    console.log('token: ', existToken);
+    
+    if (existToken) {
+      const error: HttpError.Model = {
+        status: 490,
+        message: 'token already exist'
+      }
+      throw error;
+    }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized);
     res.status(201).json(creditDetails);
   } catch (error: any) {
@@ -65,7 +85,15 @@ const updateCreditDetails = async (
   try {
     CreditDetails.sanitizeIdExisting(req);
     CreditDetails.sanitizeBodyExisting(req);
-    const sanitized = CreditDetails.sanitize(req.body, true);
+    const sanitized = CreditDetails.sanitize(req.body, true);    
+    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id);
+    if (!existCustomer) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'customer dose not exist'
+      }
+      throw error;
+    }
     const updateCreditDetails = await db.CreditDetails.updateCreditDetails(
       req.params.id,
       sanitized
@@ -76,6 +104,7 @@ const updateCreditDetails = async (
   }
 };
 
+//לשים ❤️ שכאשר אני מוחקת כרטיס אשראי אני צריכה למחוק גם מהטבלת קשרים ולבדוק מה עם ההוראת קבע
 // const deleteCreditDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 //     try {
 //         CreditDetails.sanitizeIdExisting(req);

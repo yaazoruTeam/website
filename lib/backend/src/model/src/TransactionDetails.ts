@@ -13,6 +13,12 @@ interface Model {
   next_charge: Date;//החיוב הבא
   update: Date;//עידכון
   items: ItemForMonthlyPayment.Model[];//פריטים
+  credit: {
+    token: string;
+    expiry_month: string;
+    expiry_year: string;
+    cvv: string;
+  }
   status: "active" | "inactive";
 }
 
@@ -24,13 +30,13 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
-  if (!transactionDetails.credit_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "credit_id".',
-    };
-    throw error;
-  }
+  // if (!transactionDetails.credit_id) {
+  //   const error: HttpError.Model = {
+  //     status: 400,
+  //     message: 'Invalid or missing "credit_id".',
+  //   };
+  //   throw error;
+  // }
   if (!transactionDetails.customer_name) {
     const error: HttpError.Model = {
       status: 400,
@@ -101,9 +107,37 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
+  if (!transactionDetails.credit) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "credit".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.credit.token) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "credit-token".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.credit.expiry_year || transactionDetails.credit.expiry_month) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "credit-date".',
+    };
+    throw error;
+  }
+  if (!transactionDetails.credit.cvv) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "credit-cvv".',
+    };
+    throw error;
+  }
   const newTransactionDetails: Model = {
     transaction_id: transactionDetails.transaction_id,
-    credit_id: transactionDetails.credit_id,
+     credit_id: transactionDetails.credit_id,
     customer_name: transactionDetails.customer_name,
     dates: transactionDetails.dates,
     amount: transactionDetails.amount,
@@ -114,6 +148,12 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     next_charge: transactionDetails.next_charge,
     update: transactionDetails.update,
     items: transactionDetails.items,
+    credit: {
+      cvv: transactionDetails.credit.cvv,
+      expiry_month: transactionDetails.credit.expiry_month,
+      expiry_year: transactionDetails.credit.expiry_year,
+      token: transactionDetails.credit.token
+    },
     status: transactionDetails.status || 'active',
   };
   return newTransactionDetails;

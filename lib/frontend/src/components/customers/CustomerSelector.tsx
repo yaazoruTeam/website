@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Modal, Popover, Stack, useMediaQuery } from "@mui/material";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
-import SelectCustomerForm from "../../stories/Form/SelectCustomerForm";
+import SelectCustomerForm from "./SelectCustomerForm";
 import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
 import { CustomButton } from "../designComponent/Button";
 import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
@@ -13,21 +13,38 @@ import { useTranslation } from "react-i18next";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
+    initialCustomer?: Customer.Model; 
 }
 
-const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect }) => {
+const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect,initialCustomer }) => {
     const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { customers, isLoading, error } = useFetchCustomers();
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(null);
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer||null);
     const [open, setOpen] = useState<boolean>(false);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const [searchTerm, setSearchTerm] = useState("");
 
+    const filteredCustomer = useMemo(() => {
+        return customers.filter((customer) =>
+            customer.first_name.includes(searchTerm?.toLowerCase()) ||
+            customer.last_name.includes(searchTerm?.toLowerCase())
+        );
+    }, [searchTerm, customers]);
+
+    useEffect(() => {
+        setSelectedCustomer(prev => {
+            if (!initialCustomer || prev?.customer_id === initialCustomer.customer_id) {
+                return prev;
+            }
+            return initialCustomer;
+        });
+    }, [initialCustomer]);
 
     if (isLoading) return <div>Loading customers...</div>;
     if (error) return <div>{error}</div>;
 
-    const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpen = (event: React.MouseEvent<HTMLElement> | React.ChangeEvent<HTMLInputElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -35,7 +52,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
         setAnchorEl(null);
     };
 
-    const handleSelectClient = (customer: Customer.Model) => {
+    const handleSelectCustomer = (customer: Customer.Model) => {
         setSelectedCustomer(customer);
         onCustomerSelect(customer);
         handleClose();
@@ -66,7 +83,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
         try {
             const newCustomer: Customer.Model = await createCustomer(customerData);
             console.log('הלקוח נוסף בהצלחה');
-            handleSelectClient(newCustomer);
+            handleSelectCustomer(newCustomer);
             handleCloseModel();
         }
         catch (err: any) {
@@ -86,12 +103,18 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
 
     return (
         <>
-            <SelectCustomerForm customer={selectedCustomer} onNameClick={handleOpen} />
+            <SelectCustomerForm
+                customer={selectedCustomer}
+                onNameClick={handleOpen}
+                onNameChange={setSearchTerm}
+            />
 
             <Popover
                 open={isOpen}
                 anchorEl={anchorEl}
                 onClose={handleClose}
+                disableAutoFocus
+                disableEnforceFocus
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "left",
@@ -119,7 +142,6 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         }
                     },
                 }}
-
             >
                 <Box
                     sx={{
@@ -146,8 +168,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect })
                         onClick={handleOpenModel}
                     />
                     <Stack sx={{ gap: 2 }}>
-                        {customers.map((customer, index) => (
-                            <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectClient(customer)} />
+                        {filteredCustomer.map((customer, index) => (
+                            <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectCustomer(customer)} />
                         ))}
                     </Stack>
                 </Box>

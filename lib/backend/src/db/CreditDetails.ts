@@ -1,13 +1,18 @@
 import { CreditDetails, HttpError } from "../model";
 import getConnection from "./connection";
 
-const createCreditDetails = async (CreditDetails: CreditDetails.Model) => {
+const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
   const knex = getConnection();
   try {
-    const [newCreditDetails] = await knex("yaazoru.creditDetails")
+    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
+    const [newCreditDetails] = await query
       .insert({
-        client_id: CreditDetails.client_id,
-        token: CreditDetails.token,
+        customer_id: creditDetails.customer_id,
+        token: creditDetails.token,
+        expiry_month: creditDetails.expiry_month,
+        expiry_year: creditDetails.expiry_year,
+        created_at: creditDetails.created_at,
+        update_at: creditDetails.update_at,
       })
       .returning("*");
     return newCreditDetails;
@@ -36,11 +41,13 @@ const getCreditDetailsById = async (credit_id: string) => {
 
 const updateCreditDetails = async (
   credit_id: string,
-  creditDetails: CreditDetails.Model
+  creditDetails: CreditDetails.Model,
+  trx?: any
 ) => {
   const knex = getConnection();
   try {
-    const updateCreditDetails = await knex("yaazoru.creditDetails")
+    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
+    const updateCreditDetails = await query
       .where({ credit_id })
       .update(creditDetails)
       .returning("*");
@@ -86,11 +93,25 @@ const doesCreditDetailsExist = async (credit_id: string): Promise<boolean> => {
   }
 };
 
+const doesTokenExist = async (token: string): Promise<boolean> => {
+  const knex = getConnection();
+  try {
+    const result = await knex("yaazoru.creditDetails")
+      .select("token")
+      .where({ token })
+      .first();
+    return !!result;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export {
   createCreditDetails,
   getCreditDetails,
   getCreditDetailsById,
   updateCreditDetails,
-//   deleteCrCreditDetails,
+  //   deleteCrCreditDetails,
   doesCreditDetailsExist,
+  doesTokenExist,
 };

@@ -10,8 +10,14 @@ import * as branchUserController from '../controller/branchUser';
 import * as excelController from '../controller/excel';
 import * as creditDetailsController from '../controller/creditDetails';
 import * as TransactionDetailsController from '../controller/TransactionDetails';
+import * as ApiTranzila from '../controller/ApiTranzila';
+import * as monthlyPaymentController from '../controller/monthlyPayment';
+import * as paymentsController from '../controller/payments';
+import * as itemController from '../controller/item';
+import * as paymentCreditLinkController from '../controller/paymentCreditLink';
+import * as MonthlyPaymentManagementController from '../controller/MonthlyPaymentManagement';
 
-import * as tranzila from '../controller/ApiTranzila';
+// import * as tranzila from '../controller/ApiTranzila';
 
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
@@ -84,6 +90,39 @@ router.get(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDeta
 router.get(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.getTransactionDetailsById);
 router.put(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
 router.delete(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
+
+router.post(`${ROUTE_PATH}/monthlyPayment`, monthlyPaymentController.createMonthlyPayment);
+router.get(`${ROUTE_PATH}/monthlyPayment`,  monthlyPaymentController.getMonthlyPayments);
+router.get(`${ROUTE_PATH}/monthlyPayment/:id`, monthlyPaymentController.getMonthlyPaymentId);
+router.put(`${ROUTE_PATH}/monthlyPayment/:id`, monthlyPaymentController.updateMonthlyPayment);
+router.delete(`${ROUTE_PATH}/monthlyPayment/:id`,  monthlyPaymentController.deleteMonthlyPayment);
+
+router.post(`${ROUTE_PATH}/payments`, paymentsController.createPayments);
+router.get(`${ROUTE_PATH}/payments`,  paymentsController.getAllPayments);
+router.get(`${ROUTE_PATH}/payments/:id`, paymentsController.getPaymentsId);
+router.get(`${ROUTE_PATH}/payments/monthlyPayment/:id`, paymentsController.getPaymentsByMonthlyPaymentId);
+router.put(`${ROUTE_PATH}/payments/:id`, paymentsController.updatePayments);
+router.delete(`${ROUTE_PATH}/payments/:id`,  paymentsController.deletePayments);
+
+router.post(`${ROUTE_PATH}/item`, itemController.createItem);
+router.get(`${ROUTE_PATH}/item`,  itemController.getItems);
+router.get(`${ROUTE_PATH}/item/:id`, itemController.getItemId);
+router.get(`${ROUTE_PATH}/item/monthlyPayment/:id`, itemController.getAllItemsByMonthlyPaymentId);
+router.put(`${ROUTE_PATH}/item/:id`, itemController.updateItem);
+router.delete(`${ROUTE_PATH}/item/:id`,  itemController.deleteItem);
+
+router.post(`${ROUTE_PATH}/paymentCreditLink`, paymentCreditLinkController.createPaymentCreditLink);
+router.get(`${ROUTE_PATH}/paymentCreditLink`,  paymentCreditLinkController.getPaymentCreditLinks);
+router.get(`${ROUTE_PATH}/paymentCreditLink/:id`, paymentCreditLinkController.getPaymentCreditLinkId);
+router.get(`${ROUTE_PATH}/paymentCreditLink/monthlyPayment/:id`, paymentCreditLinkController.getPaymentCreditLinkByMonthlyPaymentId);
+router.get(`${ROUTE_PATH}/paymentCreditLink/creditDetails/:id`, paymentCreditLinkController.getPaymentCreditLinkByCreditDetailsId);
+router.put(`${ROUTE_PATH}/paymentCreditLink/:id`, paymentCreditLinkController.updatePaymentCreditLink);
+router.delete(`${ROUTE_PATH}/paymentCreditLink/:id`,  paymentCreditLinkController.deletePaymentCreditLink);
+
+router.post(`${ROUTE_PATH}/addMonthlyPayment`,  MonthlyPaymentManagementController.createMonthlyPayment);
+router.put(`${ROUTE_PATH}/updateMonthlyPayment/:id`,  MonthlyPaymentManagementController.updateMonthlyPayment);
+
+router.post(`${ROUTE_PATH}/charge`, ApiTranzila.chargeTokenTranzila);
 
 // router.post(`${ROUTE_PATH}/tranzila`, hasRole('admin'), tranzila.);
 

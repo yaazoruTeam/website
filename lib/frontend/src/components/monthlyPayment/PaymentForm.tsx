@@ -9,7 +9,8 @@ interface PaymentFormInput {
     name: string;
     mustEvery: string;
     Payments: string;
-    startDate: string;
+    startDate: Date;
+    dayOfTheMonth: string;
 }
 declare global {
     interface Window {
@@ -19,16 +20,23 @@ declare global {
 }
 let fields: any = null;
 
-const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => void, OnTimeChange: (timeData: any) => void }, ref) => {
+const PaymentForm = forwardRef((props: {
+    onPaymentChange: (paymentData: any) => void,
+    OnTimeChange: (timeData: any) => void,
+    defaultValues?: PaymentFormInput,
+}, ref) => {
     const { t } = useTranslation();
     const { onPaymentChange } = props;
     const { OnTimeChange } = props;
+    const { defaultValues } = props;
+
     const [errors, setErrors] = useState<string[]>([]);
     const [fieldsInitialized, setFieldsInitialized] = useState<boolean>(false);
     // const terminalName = process.env.TRANZILA_TERMINAL_NAME;
 
-    const { control, watch } = useForm<PaymentFormInput>();
-
+const { control, watch, setValue } = useForm<PaymentFormInput>({
+        defaultValues 
+    });
     useImperativeHandle(ref, () => ({
         chargeCcData, // חושפים את הפונקציה החיונית
     }));
@@ -59,7 +67,7 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 },
                 expiry: {
                     selector: '#expiry',
-                    placeholder: 'MM/YYYY',
+                    placeholder: 'MM/YY',
                     version: '1'
                 },
                 identity_number: {
@@ -141,40 +149,32 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
         setErrors(errorMessages);
     };
 
-    // const parseResponse = (response: any) => {
-    //     console.log('העיסקה הצליחה!!');
-    //     console.log('פרטי עיסקה:', response);
-
-    //     if (response.errors) {
-    //         const errorMessages = response.errors.map((error: any) => error.message);
-    //         setErrors(errorMessages);
-    //     } else {
-    //         if (response.transaction_response.success) {
-    //             //העיסקה הצליחה? זה אומר שהאימות עבר בהצלחה אז מה צריך לעשות עכשיו:
-    //             //1. שמירה של הטוקן הDB ע"י קריאת שרת
-    //             //2. לעדכן את כל הנתונים 
-    //             onPaymentChange(response.transaction_response.success);
-    //         } else {
-    //             setErrors([response.transaction_response.error]);
-    //         }
-    //     }
-    // };
-
     useEffect(() => {
         const subscription = watch((value) => {
-            const { name, mustEvery, Payments, startDate } = value;
-            console.log("timeData update:", { name, mustEvery, Payments, startDate });
+            const { name, mustEvery, Payments, startDate, dayOfTheMonth } = value;
+            console.log("timeData update:", { name, mustEvery, Payments, startDate, dayOfTheMonth });
             OnTimeChange({
                 name: name,
                 mustEvery: mustEvery,
                 payments: Payments,
-                startDate: startDate
+                startDate: startDate,
+                dayOfTheMonth: dayOfTheMonth
             });
         });
 
         return () => subscription.unsubscribe();
     }, [watch, OnTimeChange]);
 
+
+    useEffect(() => {
+        if (defaultValues) {
+            setValue('name', defaultValues.name);
+            setValue('mustEvery', defaultValues.mustEvery);
+            setValue('Payments', defaultValues.Payments);
+            setValue('startDate', defaultValues.startDate);
+            setValue('dayOfTheMonth', defaultValues.dayOfTheMonth);
+        }
+    }, [defaultValues, setValue]);
 
     return (
         <Box
@@ -190,14 +190,21 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                 flexDirection: 'column',
                 gap: 4,
                 alignItems: 'flex-end',
+                direction: 'rtl'
             }}
         >
-            <CustomTypography
-                text={t('paymentDetails')}
-                variant='h2'
-                weight='medium'
-                color={colors.brand.color_8}
-            />
+            <Box
+                sx={{
+                    width: "100%",
+                    direction: 'rtl'
+                }}>
+                <CustomTypography
+                    text={t('paymentDetails')}
+                    variant='h2'
+                    weight='medium'
+                    color={colors.brand.color_8}
+                />
+            </Box>
             <Box
                 sx={{
                     alignSelf: 'stretch',
@@ -208,119 +215,6 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                     display: 'inline-flex',
                 }}
             >
-                <CustomTextField
-                    control={control}
-                    name='name'
-                    label={t('cardholderName')}
-                    placeholder={t('cardholderName')}
-                />
-                <Box
-                    sx={{
-                        width: '100%',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        gap: 1,
-                        display: 'inline-flex',
-                    }}
-                >
-                    <CustomTypography
-                        text={t('IdNumber')}
-                        variant='h4'
-                        weight='regular'
-                        color={colors.brand.color_9}
-                    />
-                    <Box
-                        sx={{
-                            alignSelf: 'stretch',
-                            padding: 1,
-                            background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1,
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            display: 'inline-flex',
-                        }}
-                    >
-                        <div
-                            id="identity_number"
-                            style={{ width: '100%', height: '29px' }}
-                        >
-                        </div>
-                    </Box>
-                </Box>
-
-                {/* CVV */}
-                <Box
-                    sx={{
-                        width: '100%',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        gap: 1, // המרחק בין האלמנטים (8px, כי 1rem = 8px)
-                        display: 'inline-flex',
-                    }}
-                >
-                    <CustomTypography
-                        text='cvv'
-                        variant='h4'
-                        weight='regular'
-                        color={colors.brand.color_9}
-                    />
-                    <Box
-                        sx={{
-                            alignSelf: 'stretch',
-                            padding: 1, // 10px
-                            background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1, // 6px
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            display: 'inline-flex',
-                        }}
-                    >
-                        <div
-                            id="cvv"
-                            style={{ width: '100%', height: '29px' }}
-                        >
-                        </div>
-                    </Box>
-                </Box>
-
-                {/* תוקף */}
-                <Box
-                    sx={{
-                        width: '100%',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        gap: 1,
-                        display: 'inline-flex',
-                    }}
-                >
-                    <CustomTypography
-                        text={t('expiry')}
-                        variant='h4'
-                        weight='regular'
-                        color={colors.brand.color_9}
-                    />
-                    <Box
-                        sx={{
-                            alignSelf: 'stretch',
-                            padding: 1,
-                            background: 'rgba(246, 248, 252, 0.58)',
-                            borderRadius: 1,
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            display: 'inline-flex',
-                        }}
-                    >
-                        <div
-                            id="expiry"
-                            style={{ width: '100%', height: '29px' }}
-                        >
-                        </div>
-                    </Box>
-                </Box>
-
                 {/* מס' כרטיס*/}
                 <Box
                     sx={{
@@ -344,40 +238,139 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                             padding: 1,
                             background: 'rgba(246, 248, 252, 0.58)',
                             borderRadius: 1,
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            display: 'inline-flex',
                         }}
                     >
                         <div
                             id="credit_card_number"
-                            style={{ width: '100%', height: '29px' }}
+                            style={{ width: '100%', height: '44px' }}
                         >
                         </div>
                     </Box>
                 </Box>
+                {/* תוקף */}
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1,
+                        display: 'inline-flex',
+                    }}
+                >
+                    <CustomTypography
+                        text={t('expiry')}
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1,
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1,
+                        }}
+                    >
+                        <div
+                            id="expiry"
+                            style={{ width: '100%', height: '44px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
+                {/* CVV */}
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1, // המרחק בין האלמנטים (8px, כי 1rem = 8px)
+                        display: 'inline-flex',
+                    }}
+                >
+                    <CustomTypography
+                        text='cvv'
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1, // 10px
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1, // 6px
+                        }}
+                    >
+                        <div
+                            id="cvv"
+                            style={{ width: '100%', height: '44px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        width: '100%',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        gap: 1,
+                        display: 'inline-flex',
+                    }}
+                >
+                    <CustomTypography
+                        text={t('IdNumber')}
+                        variant='h4'
+                        weight='regular'
+                        color={colors.brand.color_9}
+                    />
+                    <Box
+                        sx={{
+                            alignSelf: 'stretch',
+                            padding: 1,
+                            background: 'rgba(246, 248, 252, 0.58)',
+                            borderRadius: 1,
+                        }}
+                    >
+                        <div
+                            id="identity_number"
+                            style={{ width: '100%', height: '44px' }}
+                        >
+                        </div>
+                    </Box>
+                </Box>
+                <CustomTextField
+                    control={control}
+                    name='name'
+                    label={t('cardholderName')}
+                    placeholder={t('cardholderName')}
+                />
             </Box>
-
-
-
-
-            <CustomTypography
-                text={t('billingDate')}
-                variant='h2'
-                weight='medium'
-                color={colors.brand.color_8}
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '75%' }}>
-                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
+            <Box sx={{
+                direction: 'rtl',
+                width: '100%'
+            }}>
+                <CustomTypography
+                    text={t('billingDate')}
+                    variant='h2'
+                    weight='medium'
+                    color={colors.brand.color_8}
+                />
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                <Box >
                     <CustomTextField
                         control={control}
-                        label={t('mustEvery')}
-                        name='mustEvery'
-                        placeholder={t('numberMonths')}
+                        label={t('startDate')}
+                        placeholder='20/12/24'
+                        name='startDate'
+                        type='date'
                     />
                 </Box>
-
-                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
+                <Box >
                     <CustomTextField
                         control={control}
                         label={t('payments')}
@@ -385,14 +378,20 @@ const PaymentForm = forwardRef((props: { onPaymentChange: (paymentData: any) => 
                         placeholder='0'
                     />
                 </Box>
-
-                <Box sx={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1, paddingLeft: '50px' }}>
+                <Box >
                     <CustomTextField
                         control={control}
-                        label={t('startDate')}
-                        placeholder='20/12/24'
-                        name='startDate'
-                        type='date'
+                        label={t('mustEvery')}
+                        name='mustEvery'
+                        placeholder={t('numberMonths')}
+                    />
+                </Box>
+                <Box >
+                    <CustomTextField
+                        control={control}
+                        label={t('dayOfTheMonth')}
+                        name='dayOfTheMonth'
+                        placeholder='10'
                     />
                 </Box>
             </Box>

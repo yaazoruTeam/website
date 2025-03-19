@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import CustomSelect from "./CustomSelect";
+import CustomSelect from "../../components/designComponent/CustomSelect";
 import { useForm } from "react-hook-form";
 
 export default {

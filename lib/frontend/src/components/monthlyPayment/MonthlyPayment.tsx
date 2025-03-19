@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { TransactionDetails } from "../../model/src";
+import { MonthlyPayment } from "../../model/src";
 import MonthlyPaymentList from "./MonthlyPaymentList";
 import { getMonthlyPayment } from "../../api/monhlyPaymentApi";
 import { Box } from "@mui/system";
 
-const MonthlyPayment: React.FC = () => {
-    const [MonthlyPayment, setMonthlyPayment] = useState<TransactionDetails.Model[]>([]);
+const MonthlyPaymentComponen: React.FC = () => {
+    const [MonthlyPayment, setMonthlyPayment] = useState<MonthlyPayment.Model[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ const MonthlyPayment: React.FC = () => {
             }
         };
 
-        fetchMonthlyPayment();
+     fetchMonthlyPayment();     
     }, []);
 
     if (isLoading) return <div>Loading monthly payment...</div>;
@@ -37,12 +37,10 @@ const MonthlyPayment: React.FC = () => {
             }}
         >
             <MonthlyPaymentList
-                monthlyPayment={MonthlyPayment.map(
-                    (monthly) => monthly.amount + " " + monthly.total_sum
-                )}
+                monthlyPayment={MonthlyPayment}
             />
         </Box>
     );
 };
 
-export default MonthlyPayment;
+export default MonthlyPaymentComponen;

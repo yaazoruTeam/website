@@ -144,7 +144,7 @@ const sanitizeIdExisting = (id: any) => {
 }
 
 const sanitizeBodyExisting = (req: any) => {
-    if (!req.body ||  Object.keys(req.body).length === 0) {
+    if (!req.body || Object.keys(req.body).length === 0) {
         const error: HttpError.Model = {
             status: 400,
             message: 'No body provaider'
@@ -153,5 +153,5 @@ const sanitizeBodyExisting = (req: any) => {
     }
 }
 
-export type { Model };
-export { sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting };
+export type { Model }
+export { sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }

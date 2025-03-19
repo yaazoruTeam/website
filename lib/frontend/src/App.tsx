@@ -10,7 +10,7 @@ import Customers from "./components/customers/customers";
 import Devices from "./components/devices/devices";
 import Header from "./components/layout/Header";
 import Login from "./components/auth/Login";
-import MonthlyPayment from "./components/monthlyPayment/MonthlyPayment";
+import MonthlyPaymentComponen from "./components/monthlyPayment/MonthlyPayment";
 import Orders from "./components/orders/Orders";
 import Branches from "./components/branches/Branches";
 import Permissions from "./components/Permissions/Permissions";
@@ -34,6 +34,7 @@ import permissionsIconBlue from "../src/assets/permissions-blue.svg";
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 import { colors, theme } from "./styles/theme";
 import { useTranslation } from "react-i18next";
+import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
 
 function App() {
   const { t } = useTranslation();
@@ -128,7 +129,12 @@ function App() {
             } />
             <Route path="/monthlyPayment" element={
               <ProtectedRoute>
-                <MonthlyPayment />
+                <MonthlyPaymentComponen />
+              </ProtectedRoute>
+            } />
+            <Route path="/monthlyPayment/edit/:id" element={
+              <ProtectedRoute>
+                <EditMonthlyPayment />
               </ProtectedRoute>
             } />
             <Route path="/permissions" element={

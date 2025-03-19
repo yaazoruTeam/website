@@ -3,11 +3,12 @@ import CustomerSelector from '../customers/CustomerSelector';
 import PaymentForm from './PaymentForm';
 import FormToAddItems from './FormToAddItems';
 import { CustomButton } from '../designComponent/Button';
-import { CreditDetails, ItemForMonthlyPayment, TransactionDetails } from '../../model/src';
-import { createTransactionDetails } from '../../api/TransactionDetails';
-import { createCreditDetails } from '../../api/creditDetails';
+import { ItemForMonthlyPayment, MonthlyPaymentManagement } from '../../model/src';
 import { useMediaQuery } from '@mui/material';
+import { createMonthlyPayment } from '../../api/monthlyPaymentManagement';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/system';
 
 interface Props {
     onBack: () => void;
@@ -25,6 +26,7 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     const [timeData, setTimeData] = useState<any>(null); // נתוני זמן ההוראת קבע
     const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (paymentData) {
@@ -45,35 +47,10 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     }, [timeData]);
 
 
-    // פונקציה לחישוב התאריך האחרון
-    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number) => {
-        // התאריך הסופי התחלתי הוא תאריך ההתחלה
+    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
         let endDate = new Date(startDate);
-
-        // מוסיפים את החודשים הנדרשים לכל חיוב
         endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
-
-        // מחזירים את התאריך האחרון בפורמט dd/mm/yy
-        const formattedEndDate = `${String(endDate.getDate()).padStart(2, '0')}/${String(endDate.getMonth() + 1).padStart(2, '0')}/${endDate.getFullYear().toString().slice(2)}`;
-
-        return formattedEndDate;
-    };
-
-    // פונקציה להחזרת התוצאה הסופית
-    const getTheRangeOfMonths = () => {
-        const formattedStartDate = `${String(timeData.startDate.getDate()).padStart(2, '0')}/${String(timeData.startDate.getMonth() + 1).padStart(2, '0')}/${timeData.startDate.getFullYear().toString().slice(2)}`;
-
-        const endDate = calculateEndDate(timeData.startDate, timeData.payments, timeData.mustEvery);
-
-        return `${formattedStartDate}-${endDate}`;
-    };
-
-    const getAmount = () => {
-        let sum: number = 0;
-        itemsData.forEach((item) => {
-            sum += parseFloat(item.total.toString());  // מוסיף את הערך של item.total לסכום
-        });
-        return sum;  // מחזיר את הסכום הכולל
+        return endDate;
     };
 
     const charge = async () => {
@@ -84,7 +61,7 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             timeData,
         });
         try {
-            const responsePyment: any = await paymentFormRef.current?.chargeCcData(); // תחכה עד שהפעולה תושלם
+            const responsePyment: any = await paymentFormRef.current?.chargeCcData();
             console.log('Payment completed');
             console.log(responsePyment);
             console.log('pymentData:', paymentData);
@@ -101,31 +78,76 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             paymentData,
             timeData,
         });
-        const credit: CreditDetails.Model = {
-            credit_id: '',
-            client_id: customerData.customer_id,
-            token: paymentData.token,
-            expiry_month: paymentData.expiry_month,
-            expiry_year: paymentData.expiry_year,
+        let amount = 0;
+        let oneTimePayment = 0;
+        itemsData.forEach(item => {
+            if (item.paymentType === t('standingOrder'))
+                amount += parseFloat(item.total.toString())
+            if (item.paymentType === t('oneTimePayment'))
+                oneTimePayment += parseFloat(item.total.toString())
+        });
+
+        const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
+            customer_id: customerData.customer_id,
+            monthlyPayment: {
+                monthlyPayment_id: '',
+                customer_id: customerData.customer_id,
+                belongsOrganization: 'יעזורו',
+                start_date: timeData.startDate,
+                end_date: calculateEndDate(timeData.startDate, parseInt(timeData.payments), parseInt(timeData.mustEvery)),
+                amount: amount,
+                total_amount: amount * timeData.payments,
+                oneTimePayment: oneTimePayment,
+                frequency: timeData.mustEvery,
+                amountOfCharges: timeData.payments,
+                dayOfTheMonth: timeData.dayOfTheMonth,
+                next_charge: timeData.startDate,
+                last_attempt: new Date('01-01-2000'),
+                last_sucsse: new Date('01-01-2000'),
+                created_at: new Date(Date.now()),
+                update_at: new Date(Date.now()),
+                status: 'active',
+            },
+            creditDetails: {
+                credit_id: '',
+                customer_id: customerData.customer_id,
+                token: paymentData.token,
+                expiry_month: paymentData.expiry_month,
+                expiry_year: paymentData.expiry_year,
+                created_at: new Date(Date.now()),
+                update_at: new Date(Date.now()),
+            },
+            paymentCreditLink: {
+                paymentCreditLink_id: '',
+                creditDetails_id: '000',
+                monthlyPayment_id: '000',
+                status: 'active',
+            },
+            payments: [],
+            items: itemsData.map(item => {
+                return {
+                    item_id: '', // תוכל להשאיר את זה ריק אם זה נתון אוטומטי שיתמלא במסד נתונים
+                    monthlyPayment_id: '10000', // שים את ה-ID של monthlyPayment כאן ברגע שיתקבל
+                    description: item.description,
+                    paymentType: item.paymentType,
+                    price: item.price,  // מחיר לפי הנתונים שמגיעים מ- itemData
+                    quantity: item.quantity,  // כמות לפי הנתונים
+                    total: item.total,  // סכום כולל לפי הנתונים
+                    created_at: new Date(Date.now()),  // תאריך יצירה
+                    update_at: new Date(Date.now())   // תאריך עדכון
+                };
+            }),
         }
-        const creditDetails = await createCreditDetails(credit);
-        const transaction: TransactionDetails.Model = {
-            transaction_id: '',
-            credit_id: creditDetails.credit_id,
-            customer_name: customerData.first_name + ' ' + customerData.last_name,
-            dates: getTheRangeOfMonths(),
-            amount: getAmount(),
-            total_sum: getAmount() * timeData.payments,
-            belongs_to_organization: '',
-            last_attempt: new Date(),
-            last_success: new Date(),
-            next_charge: new Date(),
-            update: new Date(),
-            items: itemsData,
-            status: 'active',
-            //קודם כל קריאת שרת בשביל לשמור את הפרטי אשראי ואז אחר כך קריאת שרת כדי לשמור את הפרטי עיסקה ואז אני יוכל לעדכן גם את הכרטיס שמקושר לעיסקה
+
+        try {
+            const createNewMonthlyPayment = await createMonthlyPayment(monthlyPaymentManagement);
+            console.log(createNewMonthlyPayment);
+            alert('ההוראת קבע נוספה בהצלחה!');
+            navigate('/monthlyPayment');
+
+        } catch (error) {
+            console.error('Error creating monthly payment:', error)
         }
-        await createTransactionDetails(transaction)
     }
 
     return (
@@ -133,13 +155,18 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
             <CustomerSelector onCustomerSelect={setCustomerData} />
             <FormToAddItems onItemsChange={setItemsData} />
             <PaymentForm ref={paymentFormRef} onPaymentChange={setPaymentData} OnTimeChange={setTimeData} />
-            <CustomButton
-                label={t('saving')}
-                size={isMobile ? 'small' : 'large'}
-                state='default'
-                buttonType='first'
-                onClick={charge}
-            />
+            <Box sx={{
+                direction: 'ltr',
+                width: '100%',
+            }}>
+                <CustomButton
+                    label={t('saving')}
+                    size={isMobile ? 'small' : 'large'}
+                    state='default'
+                    buttonType='first'
+                    onClick={charge}
+                />
+            </Box>
         </>
     );
 };

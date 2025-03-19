@@ -2,10 +2,12 @@ import { HttpError } from ".";
 
 interface Model {
   credit_id: string;
-  client_id: number;//???
+  customer_id: number;
   token: string;
-  expiry_month: string;
-  expiry_year: string;
+  expiry_month: number;
+  expiry_year: number;
+  created_at: Date;
+  update_at: Date;
 }
 
 function sanitize(creditDetails: Model, hasId: boolean): Model {
@@ -16,10 +18,10 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
-  if (!creditDetails.client_id) {
+  if (!creditDetails.credit_id) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "client_id".',
+      message: 'Invalid or missing "customer_id".',
     };
     throw error;
   }
@@ -36,19 +38,36 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
       message: 'Invalid or missing "expiry_month".',
     };
     throw error;
-  } if (!creditDetails.expiry_year) {
+  }
+  if (!creditDetails.expiry_year) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "expiry_year".',
     };
     throw error;
   }
+  if (!creditDetails.created_at) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "created_at".',
+    };
+    throw error;
+  }
+  if (!creditDetails.update_at) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "update_at".',
+    };
+    throw error;
+  }
   const newCreditDetails: Model = {
     credit_id: creditDetails.credit_id,
-    client_id: creditDetails.client_id,
+    customer_id: creditDetails.customer_id,
     token: creditDetails.token,
     expiry_month: creditDetails.expiry_month,
     expiry_year: creditDetails.expiry_year,
+    created_at: creditDetails.created_at,
+    update_at: creditDetails.update_at,
   };
   return newCreditDetails;
 }
