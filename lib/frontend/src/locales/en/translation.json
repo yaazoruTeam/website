@@ -76,5 +76,11 @@
     "lastSuccess": "last success",
     "nextCharge": "next charge",
     "update": "update",
-    "loading": "loading"
+    "loading": "loading",
+    "date": "date",
+    "status": "status",
+    "actions": "actions",
+    "sendToEmail": "send to email",
+    "view": "view",
+    "download": "download"
 }

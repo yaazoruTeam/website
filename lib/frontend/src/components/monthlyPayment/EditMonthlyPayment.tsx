@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/system';
-import { CreditDetails, Customer, ItemForMonthlyPayment, MonthlyPayment, MonthlyPaymentManagement, PaymentCreditLink } from '../../model/src';
+import { CreditDetails, Customer, ItemForMonthlyPayment, MonthlyPayment, MonthlyPaymentManagement, PaymentCreditLink, Payments } from '../../model/src';
 import CustomTypography from '../designComponent/Typography';
 import { colors } from '../../styles/theme';
 import { getCustomerById } from '../../api/customerApi';
@@ -17,10 +17,15 @@ import PaymentForm from './PaymentForm';
 import { updateMonthlyPayment } from '../../api/monthlyPaymentManagement';
 import { getCreditDetailsById } from '../../api/creditDetails';
 import { getPaymentCreditLinkByMonthlyPaymentId } from '../../api/paymentCreditLink';
+import CustomTable from '../designComponent/CustomTable';
+import { getAllPaymentsByMonthlyPaymentId, getPayments } from '../../api/payments';
+import { EnvelopeIcon } from '@heroicons/react/24/outline'
+import { EyeIcon } from '@heroicons/react/24/outline'
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 
 const EditMonthlyPayment: React.FC = () => {
-    const { id } = useParams(); // קבלת ה-id מה-URL
-    const navigate = useNavigate(); // לנווט במקרה של שגיאה
+    const { id } = useParams();
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const isMobile = useMediaQuery('(max-width:600px)');
     const [customer, setCustomer] = useState<Customer.Model>();
@@ -36,6 +41,8 @@ const EditMonthlyPayment: React.FC = () => {
     const [creditDetails, setCreditDetails] = useState<CreditDetails.Model>();
     const [error, setError] = useState<string | null>(null);
     const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
+    const [payments, setPayments] = useState<Payments.Model[]>([]);
+
 
 
     const fetchMonthlyPaymentData = useCallback(async (id: string) => {
@@ -57,10 +64,12 @@ const EditMonthlyPayment: React.FC = () => {
 
             const paymentCreditLink: PaymentCreditLink.Model = await getPaymentCreditLinkByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
             const creditData: CreditDetails.Model = await getCreditDetailsById(paymentCreditLink.creditDetails_id);
+            const historyPaymentsDataByMonthlyPayment: Payments.Model[] = await getAllPaymentsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
 
             setCustomer(customerData);
             setItems(itemsData);
             setCreditDetails(creditData);
+            setPayments(historyPaymentsDataByMonthlyPayment);
         } catch (err) {
             setError((err as Error).message);
         }
@@ -70,7 +79,7 @@ const EditMonthlyPayment: React.FC = () => {
         if (monthlyPayment) {
             setTimeData({
                 ...timeData,
-                mustEvery: monthlyPayment.frequency || '',  // עדכון mustEvery עם הערך של frequency
+                mustEvery: monthlyPayment.frequency || '',
                 dayOfTheMonth: monthlyPayment.dayOfTheMonth || ''
             });
         }
@@ -130,7 +139,7 @@ const EditMonthlyPayment: React.FC = () => {
         //await charge();
         const itemsBeforeChange: ItemForMonthlyPayment.Model[] = await getItemsByMonthlyPaymentId(monthlyPayment?.monthlyPayment_id || '');
 
-        const updatedItems = items?.map((item, index) => {
+        const updatedItems = items?.map((item) => {
             const previousItem = itemsBeforeChange.find(i => i.item_id === item.item_id);
             const isNewItem = !previousItem;
             const hasChanges = previousItem && (
@@ -221,6 +230,85 @@ const EditMonthlyPayment: React.FC = () => {
         navigate('/monthlyPayment');
     }
 
+    const formatDate = (date: Date | string): string => {
+        const parsedDate = new Date(date);
+        if (isNaN(parsedDate.getTime()) || parsedDate.getFullYear() === 1999) {
+            return '?';
+        }
+        const day = String(parsedDate.getDate()).padStart(2, '0');
+        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+        const year = parsedDate.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    };
+
+    const sendToEmail = () => {
+        console.log('send to email');
+    }
+
+    const view = () => {
+        console.log('view');
+    }
+
+    const download = () => {
+        console.log('download');
+    }
+
+    const paymentHistoryColumns = [
+        { label: t('date'), key: 'date' },
+        { label: t('sum'), key: 'sum' },
+        { label: t('status'), key: 'status' },
+        { label: t('actions'), key: 'actions' },
+    ];
+
+    const tableDataPayments = (payments || []).map(payment => ({
+        date: formatDate(payment.date),
+        sum: payment.amount,
+        status: payment.status,
+        actions: <>
+            <Box sx={{
+                display: 'flex',
+                gap: '20px',
+            }}>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                }}
+                    onClick={() => sendToEmail()}
+                >
+                    <EnvelopeIcon style={{ width: "24px", height: "24px", color: colors.brand.color_8 }} />
+                    {t('sendToEmail')}
+                </Box>
+
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                }}
+                    onClick={() => view()}
+                >
+                    <EyeIcon style={{ width: "24px", height: "24px", color: colors.brand.color_8 }} />
+                    {t('view')}
+                </Box>
+
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                }}
+                    onClick={() => download()}
+                >
+                    <ArrowDownTrayIcon style={{ width: "24px", height: "24px", color: colors.brand.color_8 }} />
+                    {t('download')}
+                </Box>
+            </Box>
+        </>,
+    }));
+
     if (error) {
         return (
             <Box sx={{ textAlign: 'center', mt: 4 }}>
@@ -284,8 +372,21 @@ const EditMonthlyPayment: React.FC = () => {
                                     </Box>
                             },
                             {
-                                label: t('recentPayments'), content: <Box>
-
+                                label: t('recentPayments'), content: <Box sx={{
+                                    backgroundColor: colors.neutral.white,
+                                    width: "100%",
+                                    padding: '28px'
+                                }}>
+                                    <CustomTypography
+                                        text={t('recentPayments')}
+                                        variant='h2'
+                                        weight='medium'
+                                        color={colors.brand.color_8}
+                                    />
+                                    <CustomTable
+                                        columns={paymentHistoryColumns}
+                                        data={tableDataPayments}
+                                    />
                                 </Box>
                             },
                         ]

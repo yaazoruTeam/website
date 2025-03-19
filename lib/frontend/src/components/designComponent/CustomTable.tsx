@@ -59,7 +59,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick }) 
                   paddingBottom: 16,
                   background: colors.neutral.white,
                   borderBottom: `1px ${colors.brand.color_14} solid`,
-                  cursor: 'pointer'
+                  cursor: onRowClick ? 'pointer' : 'auto'
                 }}
               >
                 {columns.map((column, colIndex) => {

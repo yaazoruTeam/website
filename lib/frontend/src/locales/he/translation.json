@@ -76,5 +76,11 @@
     "lastSuccess": "הצלחה אחרונה",
     "nextCharge": "החיוב הבא",
     "update": "עדכון",
-    "loading": "טוען"
+    "loading": "טוען",
+    "date": "תאריך",
+    "status": "סטטוס",
+    "actions": "פעולות",
+    "sendToEmail": "שליחה למייל",
+    "view": "צפיה",
+    "download": "הורדה"
 }
