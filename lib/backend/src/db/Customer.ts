@@ -29,7 +29,9 @@ const createCustomer = async (customer: Customer.Model) => {
 const getCustomers = async (): Promise<Customer.Model[]> => {
     const knex = getConnection();
     try {
-        return await knex.select().table('yaazoru.customers');
+        return await knex.select()
+        .table('yaazoru.customers')
+        .orderBy('customer_id');
     }
     catch (err) {
         throw err;

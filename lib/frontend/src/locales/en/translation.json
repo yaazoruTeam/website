@@ -82,5 +82,20 @@
     "actions": "actions",
     "sendToEmail": "send to email",
     "view": "view",
-    "download": "download"
+    "download": "download",
+    "customerManagement": "customer management",
+    "registrationDate": "registration date",
+    "active": "active",
+    "inactive": "inactive",
+    "blocked": "blocked",
+    "cancelledLine": "cancelled line",
+    "lockedWithImeiLock": "locked with imei lock",
+    "unknown": "unknown",
+    "addedOn": "added on",
+    "savingChanges": "saving changes",
+    "deletingCustomer": "deleting a customer",
+    "devicesAndQuestions": "devices and questions",
+    "associatedContacts": "associated contacts",
+    "associatedAccounts": "associated accounts",
+    "customerDeletionWarning": "Are you sure you want to delete this customer? This is an irreversible action."
 }

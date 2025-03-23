@@ -33,6 +33,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs }) => {
                                 variant="h4"
                                 weight={activeTab === index ? "medium" : "regular"}
                                 color={activeTab === index?colors.brand.color_10:colors.brand.color_12}
+                                sx={{ textAlign: "right", width: "100%", display: "block" }}
                             />
                         }
                         key={index}
@@ -45,7 +46,6 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs }) => {
                             borderBottom: `1px ${colors.brand.color_12} solid`,
                             display: 'inline-flex',
                             justifyContent: 'flex-end',
-                            alignItems: 'center',
                             gap: 2,
                             backgroundColor: 'transparent',
                             '&:hover': {

@@ -91,9 +91,23 @@ export const updateCustomer = async (customerId: number, customerData: Customer.
 };
 
 // DELETE
-export const deleteCustomer = async (customerId: number): Promise<void> => {
+export const deleteCustomer = async (customerId: number): Promise<Customer.Model> => {
     try {
-        await axios.delete(`${baseUrl}/${customerId}`);
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model;
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model> = await axios.delete(`${baseUrl}/${customerId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
     } catch (error) {
         console.error("Error deleting customer", error);
         throw error;

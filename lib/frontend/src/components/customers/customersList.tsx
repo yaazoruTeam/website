@@ -1,19 +1,44 @@
 import React, { useState } from "react";
-import { Button, Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import AddCustomer from "./AddCustomer";
 import { CustomButton } from "../designComponent/Button";
 import { colors } from "../../styles/theme";
 import CustomTypography from "../designComponent/Typography";
 import { useTranslation } from "react-i18next";
+import { Customer } from "../../model/src";
+import CustomTable from "../designComponent/CustomTable";
+import StatusTag from "../designComponent/Status";
+import { useNavigate } from "react-router-dom";
 
 interface CustomersListProps {
-  customers: string[];
+  customers: Customer.Model[];
 }
 
 const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const { t } = useTranslation();
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
+  const navigate = useNavigate();
+
+  const columns = [
+    { label: t('customerName'), key: 'customer_name' },
+    { label: t('registrationDate'), key: 'registration_date' },
+    { label: t('city'), key: 'city' },
+    { label: '', key: 'status' },
+  ];
+
+  const tableData = customers.map(customer => ({
+    customer_id: customer.customer_id,
+    customer_name: `${customer.first_name} ${customer.last_name}`,
+    registrationDate:/*customer.*/new Date(Date.now()),
+    city: customer.city,
+    status: customer.status === 'active' ? <StatusTag status="active" /> : <StatusTag status="inactive" />
+  }));
+
+  const onClickCustomer = (customer: any) => {
+    console.log(customer.customer_id);
+    navigate(`/customer/card/${customer.customer_id}`)
+  }
 
   return (
     <Box
@@ -32,12 +57,26 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
         <AddCustomer onBack={() => setShowAddCustomer(false)} />
       ) : (
         <>
-          <CustomButton
-            label={t('addingNewCustomer')}
-            size={isMobile ? 'small' : 'large'}
-            state="default"
-            buttonType="first"
-            onClick={() => setShowAddCustomer(true)} />
+          <Box sx={{
+            direction: 'rtl',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <CustomTypography
+              text={t('customerManagement')}
+              variant="h1"
+              weight="bold"
+              color={colors.brand.color_9}
+            />
+            <CustomButton
+              label={t('addingNewCustomer')}
+              size={isMobile ? 'small' : 'large'}
+              state="default"
+              buttonType="first"
+              onClick={() => setShowAddCustomer(true)} />
+          </Box>
           <Box
             sx={{
               width: '100%',
@@ -48,36 +87,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               gap: 3,
             }}
           >
-            {customers.map((customer, index) => (
-              <Button
-                key={index}
-                sx={{
-                  width: '100%',
-                  height: 81,
-                  paddingLeft: 3,
-                  paddingRight: 3,
-                  backgroundColor: colors.neutral.white,
-                  borderRadius: 1,
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  gap: 3,
-                  textTransform: "none",
-                  border: "none",
-                  "&:hover": {
-                    backgroundColor: "#f1f1f1",
-                  },
-                }}
-              >
-                <CustomTypography
-                  text={customer}
-                  variant="h4"
-                  weight="regular"
-                  color={colors.brand.color_7}
-                />
-              </Button>
-            ))}
+            <CustomTable
+              columns={columns}
+              data={tableData}
+              onRowClick={onClickCustomer}
+            />
           </Box>
         </>
       )}
