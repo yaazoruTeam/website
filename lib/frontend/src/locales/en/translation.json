@@ -97,5 +97,8 @@
     "devicesAndQuestions": "devices and questions",
     "associatedContacts": "associated contacts",
     "associatedAccounts": "associated accounts",
-    "customerDeletionWarning": "Are you sure you want to delete this customer? This is an irreversible action."
+    "customerDeletionWarning": "Are you sure you want to delete this customer? This is an irreversible action.",
+    "to": "to",
+    "of": "of",
+    "page": "page"
 }

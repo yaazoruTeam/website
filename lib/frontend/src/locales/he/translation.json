@@ -97,5 +97,8 @@
     "devicesAndQuestions": "מכשירים והשאלות",
     "associatedContacts": "אנשי קשר משויכים",
     "associatedAccounts": "חשבונות משויכים",
-    "customerDeletionWarning": "האם אתם בטוחים שאתם רוצים למחוק לקוח זה? זוהי פעולה בלתי הפיכה."
+    "customerDeletionWarning": "האם אתם בטוחים שאתם רוצים למחוק לקוח זה? זוהי פעולה בלתי הפיכה.",
+    "to": "עד",
+    "of": "מתוך",
+    "page": "עמוד"
 }

@@ -92,6 +92,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               columns={columns}
               data={tableData}
               onRowClick={onClickCustomer}
+              showSummary={true}
             />
           </Box>
         </>

@@ -134,6 +134,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                 columns={columns}
                                 data={tableData}
                                 onRowClick={onClickMonthlyPayment}
+                                showSummary={true}
                             />
                         </Box>
                     </>

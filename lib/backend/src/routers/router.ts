@@ -19,8 +19,8 @@ import * as MonthlyPaymentManagementController from '../controller/MonthlyPaymen
 
 // import * as tranzila from '../controller/ApiTranzila';
 
-import { errorHandler } from '../Middleware/errorHandler';
-import { hasRole } from '../Middleware/auth';
+import { errorHandler } from '../middleware/errorHandler'
+import { hasRole } from '../middleware/auth';
 
 const router = Router();
 const ROUTE_PATH = '/controller';
