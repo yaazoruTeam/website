@@ -6,10 +6,10 @@ import SelectCustomerForm from "./SelectCustomerForm";
 import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
 import { CustomButton } from "../designComponent/Button";
 import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
-import { createCustomer } from "../../api/customerApi";
 import CustomTypography from "../designComponent/Typography";
 import { colors, theme } from "../../styles/theme";
 import { useTranslation } from "react-i18next";
+import { addCustomer } from "./addCustomerLogic";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
@@ -63,44 +63,15 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
     const handleOpenModel = () => setOpen(true);
     const handleCloseModel = () => setOpen(false);
 
-    const addCustomer = async (data: AddCustomerFormInputs) => {
-        console.log('add customer');
-        console.log(data);
-        const customerData: Customer.Model = {
-            customer_id: '',
-            first_name: data.first_name,
-            last_name: data.last_name,
-            id_number: data.id_number,
-            email: data.email,
-            phone_number: data.phone_number,
-            additional_phone: data.additional_phone,
-            city: data.city,
-            address1: data.address,
-            address2: '',
-            zipCode: '2222',
-            status: '',
-            created_at: new Date(Date.now()),
-            updated_at: new Date(Date.now()),
-        }
+    const addNewCustomer = async (data: AddCustomerFormInputs) => {
         try {
-            const newCustomer: Customer.Model = await createCustomer(customerData);
-            console.log('הלקוח נוסף בהצלחה');
+            const newCustomer = await addCustomer(data);
             handleSelectCustomer(newCustomer);
             handleCloseModel();
-        }
-        catch (err: any) {
-            if (err.status === 409) {
-                alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`);
-                //לטפל בזה שזה ישלוף ישר את המשתמש לפי הנתונים שיש לי
-                handleCloseModel();
-
-            }
+        } catch (err) {
             alert(`שגיאה: ${err}`);
             handleCloseModel();
-
-            //שיהיה הודעה מסודרת ואז שהמודל יסגר...
         }
-
     };
 
     return (
@@ -214,7 +185,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                             weight='bold'
                             color={colors.brand.color_7}
                         />
-                        <AddCustomerForm onSubmit={addCustomer} />
+                        <AddCustomerForm onSubmit={addNewCustomer} />
                     </Box>
                 </Box>
             </Modal>
