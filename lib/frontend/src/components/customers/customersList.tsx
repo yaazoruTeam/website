@@ -9,6 +9,7 @@ import { Customer } from "../../model/src";
 import CustomTable from "../designComponent/CustomTable";
 import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
+import FormatDate from "../designComponent/FormatDate";
 
 interface CustomersListProps {
   customers: Customer.Model[];
@@ -30,7 +31,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const tableData = customers.map(customer => ({
     customer_id: customer.customer_id,
     customer_name: `${customer.first_name} ${customer.last_name}`,
-    registrationDate:/*customer.*/new Date(Date.now()),
+    registration_date: <FormatDate date={customer.created_at} />,
     city: customer.city,
     status: customer.status === 'active' ? <StatusTag status="active" /> : <StatusTag status="inactive" />
   }));

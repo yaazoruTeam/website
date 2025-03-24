@@ -18,6 +18,8 @@ const createCustomer = async (customer: Customer.Model) => {
                 address1: customer.address1,
                 address2: customer.address2,
                 zipCode: customer.zipCode,
+                created_at: customer.created_at,
+                updated_at:customer.updated_at
             }).returning('*');
         return newCustomer;
     }
@@ -50,6 +52,7 @@ const getCustomerById = async (customer_id: string) => {
 const updateCustomer = async (customer_id: string, customer: Customer.Model) => {
     const knex = getConnection();
     try {
+        customer.updated_at = new Date(Date.now());
         const updateCustomer = await knex('yaazoru.customers')
             .where({ customer_id })
             .update(customer)

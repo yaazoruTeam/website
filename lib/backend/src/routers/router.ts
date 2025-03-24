@@ -11,7 +11,7 @@ import * as excelController from '../controller/excel';
 import * as creditDetailsController from '../controller/creditDetails';
 import * as TransactionDetailsController from '../controller/TransactionDetails';
 import * as ApiTranzila from '../controller/ApiTranzila';
-import * as monthlyPaymentController from '../controller/monthlyPayment';
+import * as monthlyPaymentController from '../controller/monthlypayment';
 import * as paymentsController from '../controller/payments';
 import * as itemController from '../controller/item';
 import * as paymentCreditLinkController from '../controller/paymentCreditLink';
@@ -19,8 +19,8 @@ import * as MonthlyPaymentManagementController from '../controller/MonthlyPaymen
 
 // import * as tranzila from '../controller/ApiTranzila';
 
-import { errorHandler } from '../middleware/errorHandler';
-import { hasRole } from '../middleware/auth';
+import { errorHandler } from '../Middleware/errorHandler';
+import { hasRole } from '../Middleware/auth';
 
 const router = Router();
 const ROUTE_PATH = '/controller';

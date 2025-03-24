@@ -29,6 +29,8 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
       address2: '',
       zipCode: '2222',
       status: '',
+      created_at: new Date(Date.now()),
+      updated_at: new Date(Date.now()),
     }
     try {
       await createCustomer(customerData);

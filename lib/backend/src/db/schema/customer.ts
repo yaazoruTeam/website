@@ -22,6 +22,8 @@ const createCustomerSchema = async () => {
                 table.string("address2").nullable();
                 table.string("zipCode").notNullable();
                 table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active');
+                table.date("created_at").notNullable();
+                table.date("updated_at").notNullable();
                 // table.text("customer_notes");
             });
             console.log('Customer table created successfully.');

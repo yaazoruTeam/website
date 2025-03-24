@@ -138,6 +138,8 @@ const extractCustomer = (CustomerDeviceExcel: CustomerDeviceExcel.Model): Custom
         address2: "",
         zipCode: "",
         status: "active",
+        created_at: new Date(Date.now()),
+        updated_at: new Date(Date.now())
     };
 
     return customer;

@@ -13,14 +13,14 @@ import { useTranslation } from "react-i18next";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
-    initialCustomer?: Customer.Model; 
+    initialCustomer?: Customer.Model;
 }
 
-const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect,initialCustomer }) => {
+const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, initialCustomer }) => {
     const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { customers, isLoading, error } = useFetchCustomers();
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer||null);
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer || null);
     const [open, setOpen] = useState<boolean>(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [searchTerm, setSearchTerm] = useState("");
@@ -79,6 +79,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect,in
             address2: '',
             zipCode: '2222',
             status: '',
+            created_at: new Date(Date.now()),
+            updated_at: new Date(Date.now()),
         }
         try {
             const newCustomer: Customer.Model = await createCustomer(customerData);
