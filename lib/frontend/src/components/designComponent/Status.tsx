@@ -14,7 +14,7 @@ const StatusTag: React.FC<StatusTagProps> = ({ status }) => {
   const statusMap: Record<StatusTagProps["status"], { label: string; color: string }> = {
     active: { label: t("active"), color: colors.status.success.light },
     inactive: { label: t("inactive"), color: colors.status.error.light },
-    blocked: { label: t("blocked"), color: 'rgba(255, 253, 184, 0.74)' },
+    blocked: { label: t("blocked"), color: colors.status.yellow },
     canceled: { label: t("canceled"), color: colors.brand.color_20 },
     imei_locked: { label: t("imei_locked"), color: colors.brand.color_18 },
   };
