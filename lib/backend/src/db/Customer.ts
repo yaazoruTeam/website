@@ -73,6 +73,18 @@ const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Cust
     };
 };
 
+const getCustomersByDateRange = async (startDate: string, endDate: string): Promise<Customer.Model[]> => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.customers')
+            .select('*')
+            .whereBetween('created_at', [startDate, endDate])
+            .orderBy('customer_id');
+    } catch (err) {
+        throw err;
+    }
+};
+
 const updateCustomer = async (customer_id: string, customer: Customer.Model) => {
     const knex = getConnection();
     try {
@@ -155,5 +167,6 @@ export {
     findCustomer,
     doesCustomerExist,
     getCustomersByCity,
-    getCustomersByStatus
+    getCustomersByStatus,
+    getCustomersByDateRange
 }

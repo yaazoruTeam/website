@@ -83,6 +83,32 @@ const getCustomersByStatus = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+const getCustomersByDateRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { startDate, endDate } = req.query;
+
+        if (!startDate || !endDate) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: 'Both startDate and endDate parameters are required.'
+            };
+            throw error;
+        }
+
+        const customers = await db.Customer.getCustomersByDateRange(startDate as string, endDate as string);
+        if (!customers.length) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: `No customers found between ${startDate} and ${endDate}`
+            };
+            throw error;
+        }
+
+        res.status(200).json(customers);
+    } catch (error: any) {
+        next(error);
+    }
+};
 
 const updateCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -144,5 +170,12 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
 
 
 export {
-    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, getCustomersByCity, getCustomersByStatus
+    createCustomer,
+    getCustomers,
+    getCustomerById,
+    updateCustomer,
+    deleteCustomer,
+    getCustomersByCity,
+    getCustomersByStatus,
+    getCustomersByDateRange
 }

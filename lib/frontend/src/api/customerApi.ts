@@ -103,6 +103,31 @@ export const getCustomersByStatus = async (status: 'active' | 'inactive'): Promi
     }
 };
 
+//GET(dates)
+export const getCustomersByDateRange = async (startDate: Date, endDate: Date): Promise<Customer.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/dates?startDate=${startDate}&endDate=${endDate}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching customers by dates", error);
+        throw error;
+    }
+};
+
+
 // POST
 export const createCustomer = async (customerData: Customer.Model): Promise<Customer.Model> => {
     try {
