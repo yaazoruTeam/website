@@ -29,6 +29,7 @@ router.post(`${ROUTE_PATH}/customer`, hasRole('admin', 'branch'), customersContr
 router.get(`${ROUTE_PATH}/customer`, hasRole('admin'), customersController.getCustomers);
 router.get(`${ROUTE_PATH}/customer/:id`, hasRole('admin'), customersController.getCustomerById);
 router.get(`${ROUTE_PATH}/customer/city/:city`, hasRole('admin'), customersController.getCustomersByCity);
+router.get(`${ROUTE_PATH}/customer/status/:status`, hasRole('admin'), customersController.getCustomersByStatus);
 router.put(`${ROUTE_PATH}/customer/:id`, hasRole('admin', 'branch'), customersController.updateCustomer);
 router.delete(`${ROUTE_PATH}/customer/:id`, hasRole('admin'), customersController.deleteCustomer);
 

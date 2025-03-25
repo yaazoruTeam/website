@@ -66,6 +66,24 @@ const getCustomersByCity = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+const getCustomersByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { status } = req.params;
+        if (status !== 'active' && status !== 'inactive') {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid status. Allowed values: 'active' or 'inactive'."
+            };
+            throw error;
+        }
+        const customers = await db.Customer.getCustomersByStatus(status);
+        res.status(200).json(customers);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+
 const updateCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         Customer.sanitizeIdExisting(req);
@@ -126,5 +144,5 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
 
 
 export {
-    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, getCustomersByCity
+    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, getCustomersByCity, getCustomersByStatus
 }

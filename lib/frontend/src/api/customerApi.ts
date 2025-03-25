@@ -55,7 +55,7 @@ export const getCustomerById = async (cusomer_id: string): Promise<Customer.Mode
     }
 };
 
-//GET(id)
+//GET(city)
 export const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
     try {
         const newToken = await handleTokenRefresh();
@@ -75,6 +75,30 @@ export const getCustomersByCity = async (city: string): Promise<Customer.Model[]
         return response.data;
     } catch (error) {
         console.error("Error fetching customers by city", error);
+        throw error;
+    }
+};
+
+//GET(status)
+export const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/status/${status}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching customers by status", error);
         throw error;
     }
 };

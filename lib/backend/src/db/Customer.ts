@@ -61,6 +61,18 @@ const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
     };
 };
 
+const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.customers')
+            .select('*')
+            .where({ status })
+            .orderBy('customer_id');
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateCustomer = async (customer_id: string, customer: Customer.Model) => {
     const knex = getConnection();
     try {
@@ -135,5 +147,13 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
 };
 
 export {
-    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, findCustomer, doesCustomerExist, getCustomersByCity
+    createCustomer,
+    getCustomers,
+    getCustomerById,
+    updateCustomer,
+    deleteCustomer,
+    findCustomer,
+    doesCustomerExist,
+    getCustomersByCity,
+    getCustomersByStatus
 }
