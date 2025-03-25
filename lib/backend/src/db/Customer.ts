@@ -19,7 +19,7 @@ const createCustomer = async (customer: Customer.Model) => {
                 address2: customer.address2,
                 zipCode: customer.zipCode,
                 created_at: customer.created_at,
-                updated_at:customer.updated_at
+                updated_at: customer.updated_at
             }).returning('*');
         return newCustomer;
     }
@@ -32,8 +32,8 @@ const getCustomers = async (): Promise<Customer.Model[]> => {
     const knex = getConnection();
     try {
         return await knex.select()
-        .table('yaazoru.customers')
-        .orderBy('customer_id');
+            .table('yaazoru.customers')
+            .orderBy('customer_id');
     }
     catch (err) {
         throw err;
@@ -42,8 +42,20 @@ const getCustomers = async (): Promise<Customer.Model[]> => {
 
 const getCustomerById = async (customer_id: string) => {
     const knex = getConnection();
-    try {        
+    try {
         return await knex('yaazoru.customers').where({ customer_id }).first();
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.customers')
+            .select('*')
+            .where({ city })
+            .orderBy('customer_id');
     } catch (err) {
         throw err;
     };
@@ -68,22 +80,22 @@ const updateCustomer = async (customer_id: string, customer: Customer.Model) => 
 
 const deleteCustomer = async (customer_id: string) => {
     const knex = getConnection();
-       try {
-            const updateCustomer = await knex('yaazoru.customers')
-                .where({ customer_id })
-                .update({ status: 'inactive' })
-                .returning('*');
-            if (updateCustomer.length === 0) {
-                const error: HttpError.Model = {
-                    status: 404,
-                    message: 'customer not found'
-                }
-                throw error;
+    try {
+        const updateCustomer = await knex('yaazoru.customers')
+            .where({ customer_id })
+            .update({ status: 'inactive' })
+            .returning('*');
+        if (updateCustomer.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'customer not found'
             }
-            return updateCustomer[0];
-        } catch (err) {
-            throw err;
+            throw error;
         }
+        return updateCustomer[0];
+    } catch (err) {
+        throw err;
+    }
 };
 
 const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
@@ -111,7 +123,7 @@ const findCustomer = async (criteria: { customer_id?: string; email?: string; id
 
 const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
     const knex = getConnection();
-    try {   
+    try {
         const result = await knex('yaazoru.customers')
             .select('customer_id')
             .where({ customer_id })
@@ -123,5 +135,5 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
 };
 
 export {
-    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, findCustomer, doesCustomerExist
+    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, findCustomer, doesCustomerExist, getCustomersByCity
 }

@@ -28,6 +28,7 @@ const ROUTE_PATH = '/controller';
 router.post(`${ROUTE_PATH}/customer`, hasRole('admin', 'branch'), customersController.createCustomer);
 router.get(`${ROUTE_PATH}/customer`, hasRole('admin'), customersController.getCustomers);
 router.get(`${ROUTE_PATH}/customer/:id`, hasRole('admin'), customersController.getCustomerById);
+router.get(`${ROUTE_PATH}/customer/city/:city`, hasRole('admin'), customersController.getCustomersByCity);
 router.put(`${ROUTE_PATH}/customer/:id`, hasRole('admin', 'branch'), customersController.updateCustomer);
 router.delete(`${ROUTE_PATH}/customer/:id`, hasRole('admin'), customersController.deleteCustomer);
 

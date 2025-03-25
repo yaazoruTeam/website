@@ -42,6 +42,30 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     }
 };
 
+const getCustomersByCity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { city } = req.params;
+        if (!city) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: 'City parameter is required.'
+            };
+            throw error;
+        }
+        const customers = await db.Customer.getCustomersByCity(city);
+        if (!customers.length) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: `No customers found in city: ${city}`
+            };
+            throw error;
+        }
+        res.status(200).json(customers);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const updateCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         Customer.sanitizeIdExisting(req);
@@ -102,5 +126,5 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
 
 
 export {
-    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer,
+    createCustomer, getCustomers, getCustomerById, updateCustomer, deleteCustomer, getCustomersByCity
 }
