@@ -12,9 +12,10 @@ interface CustomTableProps {
   data: { [key: string]: any }[];
   onRowClick?: (rowData: any) => void;
   showSummary?: boolean;
+  alignLastColumnLeft?: boolean;
 }
 
-const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary }) => {
+const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft }) => {
   const { t } = useTranslation();
 
   const rowsPerPage = 15;
@@ -46,7 +47,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
               <TableCell
                 key={index}
                 sx={{
-                  textAlign: "right",
+                  textAlign: alignLastColumnLeft && index === columns.length - 1 ? "left" : "right",
                   padding: "16px 20px",
                   backgroundColor: 'transparent',
                   borderBottom: 'none',
@@ -93,7 +94,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                     <TableCell
                       key={colIndex}
                       sx={{
-                        textAlign: "right",
+                        textAlign: alignLastColumnLeft && colIndex === columns.length - 1 ? "left" : "right",
                         padding: "10px 20px",
                         backgroundColor: colors.neutral.white,
                         whiteSpace: key === 'dates' ? 'nowrap' : 'normal',
@@ -181,6 +182,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                         color: colors.brand.color_9,
                         pointerEvents: currentPage === 1 ? 'none' : 'auto',
                         opacity: currentPage === 1 ? 0.5 : 1,
+                        cursor: 'pointer',
                       }}
                       onClick={() => {
                         if (currentPage > 1) {
@@ -219,6 +221,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                         color: colors.brand.color_9,
                         pointerEvents: currentPage === totalPages ? 'none' : 'auto',
                         opacity: currentPage === totalPages ? 0.5 : 1,
+                        cursor: 'pointer',
                       }}
                       onClick={() => {
                         if (currentPage < totalPages) {
