@@ -9,6 +9,7 @@ import { MonthlyPayment } from "../../model/src";
 import { Link, useNavigate } from "react-router-dom";
 import CustomTable from "../designComponent/CustomTable";
 import { getCustomerById } from "../../api/customerApi";
+import FormatDate from "../designComponent/FormatDate";
 
 interface MonthlyPaymentListProps {
     monthlyPayment: MonthlyPayment.Model[];
@@ -39,18 +40,6 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
         navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`)
     }
 
-    const formatDate = (date: Date | string): string => {
-        const parsedDate = new Date(date);
-        if (isNaN(parsedDate.getTime()) || parsedDate.getFullYear() === 1999) {
-            return '?';
-        }
-        const day = String(parsedDate.getDate()).padStart(2, '0');
-        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-        const year = parsedDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    };
-
     const columns = [
         { label: t('customerName'), key: 'customer_name' },
         { label: t('dates'), key: 'dates' },
@@ -76,14 +65,14 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                 {customerNames[payment.customer_id] || t('loading')}
             </Link>
         ),
-        dates: `${formatDate(payment.start_date)} - ${formatDate(payment.end_date)}`,
+        dates: <>{FormatDate({ date: payment.start_date })} - {FormatDate({ date: payment.end_date })}</>,
         amount: payment.amount,
         total_amount: payment.total_amount,
         belongsOrganization: payment.belongsOrganization,
-        last_attempt: formatDate(payment.last_attempt),
-        last_sucsse: formatDate(payment.last_sucsse),
-        next_charge: formatDate(payment.next_charge),
-        update_at: formatDate(payment.update_at),
+        last_attempt: <FormatDate date={payment.last_attempt} />,
+        last_sucsse: <FormatDate date={payment.last_sucsse} />,
+        next_charge: <FormatDate date={payment.next_charge} />,
+        update_at: <FormatDate date={payment.update_at} />,
     }));
     return (
         <>
@@ -145,6 +134,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                 columns={columns}
                                 data={tableData}
                                 onRowClick={onClickMonthlyPayment}
+                                showSummary={true}
                             />
                         </Box>
                     </>

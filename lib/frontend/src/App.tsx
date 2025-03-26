@@ -35,6 +35,7 @@ import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 import { colors, theme } from "./styles/theme";
 import { useTranslation } from "react-i18next";
 import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
+import CardCustomer from "./components/customers/cardCustomer";
 
 function App() {
   const { t } = useTranslation();
@@ -110,6 +111,11 @@ function App() {
             <Route path="/customers" element={
               <ProtectedRoute>
                 <Customers />
+              </ProtectedRoute>
+            } />
+              <Route path="/customer/card/:id" element={
+              <ProtectedRoute>
+                <CardCustomer />
               </ProtectedRoute>
             } />
             <Route path="/devices" element={

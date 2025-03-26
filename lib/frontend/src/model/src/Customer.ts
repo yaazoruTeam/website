@@ -13,6 +13,8 @@ interface Model {
     address2: string;
     zipCode: string;
     status: string;
+    created_at: Date;
+    updated_at: Date;
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
@@ -99,6 +101,20 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!customer.created_at) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "created_at".'
+        };
+        throw error;
+    }
+    if (!customer.updated_at) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "updated_at".'
+        };
+        throw error;
+    }
     const newCustomer: Model = {
         customer_id: customer.customer_id,
         first_name: customer.first_name.trim(),
@@ -112,6 +128,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
         address2: customer.address2,
         zipCode: customer.zipCode,
         status: customer.status || 'active',
+        created_at: customer.created_at,
+        updated_at: customer.updated_at,
     };
     return newCustomer;
 }

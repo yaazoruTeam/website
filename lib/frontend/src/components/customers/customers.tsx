@@ -18,9 +18,7 @@ const Customers: React.FC = () => {
         }}
       >
         <CustomersList
-          customers={customers.map(
-            (customer) => customer.first_name + " " + customer.last_name
-          )}
+          customers={customers}
         />
       </Box>
     </>

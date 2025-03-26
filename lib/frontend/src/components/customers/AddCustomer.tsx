@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm';
-import { createCustomer } from '../../api/customerApi';
-import { Customer } from '../../model/src';
 import CustomTypography from '../designComponent/Typography';
 import { colors } from '../../styles/theme';
 import { useTranslation } from 'react-i18next';
+import { addCustomer } from './addCustomerLogic';
 
 interface Props {
   onBack: () => void;
@@ -13,37 +12,21 @@ interface Props {
 
 const AddCustomer: React.FC<Props> = ({ onBack }) => {
   const { t } = useTranslation();
-  const addCustomer = async (data: AddCustomerFormInputs) => {
-    console.log('add customer');
-    console.log(data);
-    const customerData: Customer.Model = {
-      customer_id: '',
-      first_name: data.first_name,
-      last_name: data.last_name,
-      id_number: data.id_number,
-      email: data.email,
-      phone_number: data.phone_number,
-      additional_phone: data.additional_phone,
-      city: data.city,
-      address1: data.address,
-      address2: '',
-      zipCode: '2222',
-      status: '',
-    }
+
+  const handleAddCustomer = async (data: AddCustomerFormInputs) => {
     try {
-      await createCustomer(customerData);
+      const newCustomer = await addCustomer(data);
       alert('הלקוח נוסף בהצלחה');
+      console.log(newCustomer);
       window.location.reload();
-    }
-    catch (err: any) {
+    } catch (err: any) {
       if (err.status === 409) {
         alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`);
-
       }
       alert(`שגיאה: ${err}`);
     }
-
   };
+
 
   return (
     <Box
@@ -84,7 +67,7 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
           />
         </Box>
       </Box>
-      <AddCustomerForm onSubmit={addCustomer} />
+      <AddCustomerForm onSubmit={handleAddCustomer} />
     </Box>
   );
 };

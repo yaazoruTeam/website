@@ -18,10 +18,11 @@ import { updateMonthlyPayment } from '../../api/monthlyPaymentManagement';
 import { getCreditDetailsById } from '../../api/creditDetails';
 import { getPaymentCreditLinkByMonthlyPaymentId } from '../../api/paymentCreditLink';
 import CustomTable from '../designComponent/CustomTable';
-import { getAllPaymentsByMonthlyPaymentId, getPayments } from '../../api/payments';
+import { getAllPaymentsByMonthlyPaymentId } from '../../api/payments';
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
 import { EyeIcon } from '@heroicons/react/24/outline'
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
+import FormatDate from '../designComponent/FormatDate';
 
 const EditMonthlyPayment: React.FC = () => {
     const { id } = useParams();
@@ -230,18 +231,6 @@ const EditMonthlyPayment: React.FC = () => {
         navigate('/monthlyPayment');
     }
 
-    const formatDate = (date: Date | string): string => {
-        const parsedDate = new Date(date);
-        if (isNaN(parsedDate.getTime()) || parsedDate.getFullYear() === 1999) {
-            return '?';
-        }
-        const day = String(parsedDate.getDate()).padStart(2, '0');
-        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-        const year = parsedDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    };
-
     const sendToEmail = () => {
         console.log('send to email');
     }
@@ -262,7 +251,7 @@ const EditMonthlyPayment: React.FC = () => {
     ];
 
     const tableDataPayments = (payments || []).map(payment => ({
-        date: formatDate(payment.date),
+        date: <FormatDate date={payment.date} />,
         sum: payment.amount,
         status: payment.status,
         actions: <>

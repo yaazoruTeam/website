@@ -55,6 +55,79 @@ export const getCustomerById = async (cusomer_id: string): Promise<Customer.Mode
     }
 };
 
+//GET(city)
+export const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/city/${city}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching customers by city", error);
+        throw error;
+    }
+};
+
+//GET(status)
+export const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/status/${status}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching customers by status", error);
+        throw error;
+    }
+};
+
+//GET(dates)
+export const getCustomersByDateRange = async (startDate: Date, endDate: Date): Promise<Customer.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/dates?startDate=${startDate}&endDate=${endDate}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching customers by dates", error);
+        throw error;
+    }
+};
+
+
 // POST
 export const createCustomer = async (customerData: Customer.Model): Promise<Customer.Model> => {
     try {
@@ -91,9 +164,23 @@ export const updateCustomer = async (customerId: number, customerData: Customer.
 };
 
 // DELETE
-export const deleteCustomer = async (customerId: number): Promise<void> => {
+export const deleteCustomer = async (customerId: number): Promise<Customer.Model> => {
     try {
-        await axios.delete(`${baseUrl}/${customerId}`);
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as Customer.Model;
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<Customer.Model> = await axios.delete(`${baseUrl}/${customerId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
     } catch (error) {
         console.error("Error deleting customer", error);
         throw error;

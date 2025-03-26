@@ -50,6 +50,7 @@ const colors = {
       light: 'rgba(253, 209, 220, 0.74)',
       dark: '#D83232',
     },
+    yellow: 'rgba(255, 253, 202, 1)'
   },
 };
 
