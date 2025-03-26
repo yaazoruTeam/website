@@ -20,20 +20,44 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
     const navigate = useNavigate();
     const [showAddMonthlyPayment, setShowAddMonthlyPayment] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
-    const [customerNames, setCustomerNames] = useState<{ [key: string]: string }>({});
+    const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({});
+    const [searchCustomer, setSearchCustomer] = useState<string>('');
+    const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment);
 
     useEffect(() => {
         const fetchCustomerNames = async () => {
-            const names: { [key: string]: string } = {};
+            const data: { [key: string]: { name: string, id: string } } = {};
             for (const payment of monthlyPayment) {
                 const customer = await getCustomerById(payment.customer_id);
-                names[payment.customer_id] = `${customer.first_name} ${customer.last_name}`;
+                data[payment.customer_id] = {
+                    name: `${customer.first_name} ${customer.last_name}`,
+                    id: customer.id_number,
+                };
             }
-            setCustomerNames(names);
+            setCustomerData(data);
         };
 
         fetchCustomerNames();
     }, [monthlyPayment]);
+
+    useEffect(() => {
+        const lowerSearch = searchCustomer.toLowerCase().trim();
+        if (!lowerSearch) {
+            setFilteredPayments(monthlyPayment);
+            return;
+        }
+
+        const filtered = monthlyPayment.filter(payment => {
+            const customer = customerData[payment.customer_id];
+            if (!customer) return false;
+            return (
+                customer.name.toLowerCase().includes(lowerSearch) ||
+                (typeof customer.id === "string" && customer.id.includes(lowerSearch))
+            );
+        });
+
+        setFilteredPayments(filtered);
+    }, [searchCustomer, monthlyPayment, customerData]);
 
     const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
         console.log(monthlyPayment);
@@ -51,29 +75,34 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
         { label: t('nextCharge'), key: 'next_charge' },
         { label: t('update'), key: 'update_at' },
     ];
-    const tableData = monthlyPayment.map(payment => ({
-        monthlyPayment_id: payment.monthlyPayment_id,
-        customer_name: (
-            <Link
-                to={`/customer/${payment.customer_id}`}
-                style={{
-                    color: colors.brand.color_7,
-                    cursor: 'pointer',
-                }}
-                onClick={(e) => e.stopPropagation()}
-            >
-                {customerNames[payment.customer_id] || t('loading')}
-            </Link>
-        ),
-        dates: <>{FormatDate({ date: payment.start_date })} - {FormatDate({ date: payment.end_date })}</>,
-        amount: payment.amount,
-        total_amount: payment.total_amount,
-        belongsOrganization: payment.belongsOrganization,
-        last_attempt: <FormatDate date={payment.last_attempt} />,
-        last_sucsse: <FormatDate date={payment.last_sucsse} />,
-        next_charge: <FormatDate date={payment.next_charge} />,
-        update_at: <FormatDate date={payment.update_at} />,
-    }));
+
+    const tableData = filteredPayments.map(payment => {
+        const customer = customerData[payment.customer_id];
+        return {
+            monthlyPayment_id: payment.monthlyPayment_id,
+            customer_name: (
+                <Link
+                    to={`/customer/${payment.customer_id}`}
+                    style={{
+                        color: colors.brand.color_7,
+                        cursor: 'pointer',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {customer && customer.name ? customer.name : t('customerNotFound')} {/* אם הלקוח קיים, הצג את שמו, אחרת הצג הודעת שגיאה */}
+                </Link>
+            ),
+            dates: <>{FormatDate({ date: payment.start_date })} - {FormatDate({ date: payment.end_date })}</>,
+            amount: payment.amount,
+            total_amount: payment.total_amount,
+            belongsOrganization: payment.belongsOrganization,
+            last_attempt: <FormatDate date={payment.last_attempt} />,
+            last_sucsse: <FormatDate date={payment.last_sucsse} />,
+            next_charge: <FormatDate date={payment.next_charge} />,
+            update_at: <FormatDate date={payment.update_at} />,
+        }
+    });
+
     return (
         <>
             <Box
@@ -129,7 +158,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment 
                                 gap: 3,
                             }}
                         >
-
+                            <input onChange={(e) => setSearchCustomer(e.target.value)} />
                             <CustomTable
                                 columns={columns}
                                 data={tableData}
