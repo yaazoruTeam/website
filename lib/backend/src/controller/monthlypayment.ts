@@ -68,6 +68,32 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
     }
 };
 
+const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { organization } = req.params;
+        console.log(organization);
+        
+        if (!organization) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid organization.",
+            };
+            throw error;
+        }
+        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByOrganization(organization);
+        if (monthlyPayments.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: `organization ${organization} not found`,
+            };
+            throw error;
+        }
+        res.status(200).json(monthlyPayments);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         MonthlyPayment.sanitizeIdExisting(req);
@@ -116,4 +142,5 @@ export {
     updateMonthlyPayment,
     deleteMonthlyPayment,
     getMonthlyPaymentsByStatus,
+    getMonthlyPaymentByOrganization,
 }

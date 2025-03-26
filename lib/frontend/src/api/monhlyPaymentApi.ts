@@ -54,3 +54,51 @@ export const getMonthlyPaymentById = async (monthlyPayment_id: string): Promise<
     }
 };
 
+// GET(status)
+export const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive'): Promise<MonthlyPayment.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as MonthlyPayment.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<MonthlyPayment.Model[]> = await axios.get(`${baseUrl}/status/${status}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching monthly payments by status", error);
+        throw error;
+    }
+};
+
+// GET(organization)
+export const getMonthlyPaymentByOrganization = async (organization: string): Promise<MonthlyPayment.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return {} as MonthlyPayment.Model[];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<MonthlyPayment.Model[]> = await axios.get(`${baseUrl}/organization/${organization}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching monthly payments by organization", error);
+        throw error;
+    }
+};
+

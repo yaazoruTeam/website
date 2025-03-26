@@ -62,6 +62,17 @@ const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive') => {
     };
 };
 
+const getMonthlyPaymentByOrganization = async (belongsOrganization: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.monthlyPayment')
+            .select()
+            .where({ belongsOrganization });
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateMonthlyPayment = async (monthlyPayment_id: string, monthlyPayment: MonthlyPayment.Model, trx?: any) => {
     const knex = getConnection();
     try {
@@ -144,4 +155,5 @@ export {
     /* findCustomer,*/
     doesMonthlyPaymentExist,
     getMonthlyPaymentByStatus,
+    getMonthlyPaymentByOrganization,
 };
