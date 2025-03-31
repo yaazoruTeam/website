@@ -16,6 +16,7 @@ const createBranchSchema = async () => {
                 table.string("manager_name", 20).notNullable();
                 table.string("phone_number", 20).notNullable();
                 table.string("additional_phone", 20).nullable();
+                table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active');
             });
             console.log('branch table created successfully.');
         }

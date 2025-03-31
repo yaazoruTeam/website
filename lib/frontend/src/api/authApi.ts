@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
-import { User } from '@yaazoru/model';
+import { User } from '../model';
 
-const baseUrl = 'http://localhost:3006/controller';
+const baseUrl = 'http://localhost:3006/controller/auth';
 
 // POST
 export const register = async (userData: User.Model): Promise<User.Model> => {
@@ -32,7 +32,7 @@ export const refresh = async (): Promise<string> => {
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<string> = await axios.post(`${baseUrl}/auth/refresh`, {}, {
+        const response: AxiosResponse<string> = await axios.post(`${baseUrl}/refresh`, {}, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,

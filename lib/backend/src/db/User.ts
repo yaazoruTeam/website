@@ -1,4 +1,4 @@
-import { User } from "@yaazoru/model";
+import { HttpError, User } from "../model";
 import getConnection from "./connection";
 
 
@@ -67,14 +67,21 @@ const updateUser = async (user_id: string, user: User.Model) => {
 const deleteUser = async (user_id: string) => {
     const knex = getConnection();
     try {
-        const deleteUser = await knex('yaazoru.users').where({ user_id }).del().returning('*');
-        if (deleteUser.length === 0) {
-            throw { status: 404, message: 'user not found' };
+        const updateUser = await knex('yaazoru.users')
+            .where({ user_id })
+            .update({ status: 'inactive' })
+            .returning('*');
+        if (updateUser.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'User not found'
+            }
+            throw error;
         }
-        return deleteUser[0];
+        return updateUser[0];
     } catch (err) {
         throw err;
-    };
+    }
 };
 
 const findUser = async (criteria: { user_id?: string; email?: string; id_number?: string; password?: string; user_name?: string; }) => {

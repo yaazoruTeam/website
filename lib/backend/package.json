@@ -6,23 +6,38 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build-schema": "ts-node ./src/db/buildSchema",
-        "dev": "set PORT=3006 && ts-node ./src"
+        "dev": "set PORT=3006 && ts-node ./src",
+        "payment-servic-dev": "ts-node ./src/services/monthlyPayment"
     },
     "dependencies": {
-        "cors": "^2.8.5",
+        "@types/xlsx": "^0.0.36",
+        "axios": "^1.7.9",
         "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "crypto-js": "^4.2.0",
+        "dotenv": "^16.4.7",
         "express": "^4.21.1",
+        "ipaddr.js": "^2.2.0",
         "jsonwebtoken": "^9.0.2",
         "knex": "^3.1.0",
-        "pg": "^8.13.1",
-        "ts-node": "^10.9.2"
+        "media-typer": "^1.1.0",
+        "pg": "^8.13.3",
+        "pg-hstore": "^2.3.4",
+        "safer-buffer": "^2.1.2",
+        "sequelize": "^6.37.5",
+        "ts-node": "^10.9.2",
+        "xlsx": "^0.18.5"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "@types/bcryptjs": "^2.4.6",
+        "@types/crypto-js": "^4.2.2",
         "@types/express": "^5.0.0",
         "@types/jsonwebtoken": "^9.0.7",
-        "@types/knex": "^0.16.1"
+        "@types/knex": "^0.16.1",
+        "@types/node": "^22.13.14",
+        "@types/pg": "^8.11.11",
+        "@types/sequelize": "^4.28.20"
     }
 }

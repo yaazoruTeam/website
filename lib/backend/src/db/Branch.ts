@@ -1,4 +1,4 @@
-import { Branch } from "@yaazoru/model";
+import { Branch, HttpError } from "../model";
 import getConnection from "./connection";
 
 
@@ -59,14 +59,21 @@ const updateBranch = async (branch_id: string, branch: Branch.Model) => {
 const deleteBranch = async (branch_id: string) => {
     const knex = getConnection();
     try {
-        const deleteBranch = await knex('yaazoru.branches').where({ branch_id }).del().returning('*');
-        if (deleteBranch.length === 0) {
-            throw { status: 404, message: 'Branch not found' };
+        const updateBranch = await knex('yaazoru.branches')
+            .where({ branch_id })
+            .update({ status: 'inactive' })
+            .returning('*');
+        if (updateBranch.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Branch not found'
+            }
+            throw error;
         }
-        return deleteBranch[0];
+        return updateBranch[0];
     } catch (err) {
         throw err;
-    };
+    }
 };
 
 const doesBranchExist = async (branch_id: string): Promise<boolean> => {

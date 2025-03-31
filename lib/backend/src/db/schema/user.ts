@@ -1,4 +1,4 @@
-import { User } from "@yaazoru/model";
+import { User } from "../../model";
 import getConnection from "../connection";
 import { Knex } from "knex"
 
@@ -26,6 +26,7 @@ const createUserSchema = async () => {
                 table.string("password").notNullable().unique();
                 table.string("user_name").notNullable().unique();
                 table.enu("role", roles).notNullable();
+                table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active');
             });
             console.log('User table created successfully.');
         }

@@ -6,7 +6,8 @@ services:
     volumes:
       - ./lib/backend/src:/app/src
       - ./lib/backend/package.json:/app/package.json
-      - ./lib/backend/tsconfig.json:/app/tsconfig.json
+      - ./lib/backend/tsconfig.json:/app/tsconfig.json 
+      - C:/dev/yaazoru/lib:/app/lib
     ports:
       - "3006:3006"
     command: sh -c "npm install && npm run build-schema && PORT=3006 npm run dev"

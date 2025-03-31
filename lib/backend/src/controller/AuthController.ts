@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { HttpError, User } from '@yaazoru/model';
+import { HttpError, User } from '../model';
 import db from '../db';
 import { generateToken, verifyToken } from '../utils/jwt';
 import { comparePasswords } from '../utils/password';

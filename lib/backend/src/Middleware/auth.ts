@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { HttpError, User,JwtPayload } from '@yaazoru/model';
+import { HttpError, User,JwtPayload } from '../model';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 

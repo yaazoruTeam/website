@@ -1,4 +1,4 @@
-import { Device } from "@yaazoru/model";
+import { Device, HttpError } from "../model";
 import getConnection from "./connection";
 
 
@@ -11,7 +11,8 @@ const createDevice = async (device: Device.Model) => {
                 SIM_number: device.SIM_number,
                 IMEI_1: device.IMEI_1,
                 mehalcha_number: device.mehalcha_number,
-                model: device.model
+                model: device.model,
+                device_number: device.device_number,
             }).returning('*');
         return newDevice;
     }
@@ -58,17 +59,24 @@ const updateDevice = async (device_id: string, device: Device.Model) => {
 const deleteDevice = async (device_id: string) => {
     const knex = getConnection();
     try {
-        const deleteDevice = await knex('yaazoru.devices').where({ device_id }).del().returning('*');
-        if (deleteDevice.length === 0) {
-            throw { status: 404, message: 'Device not found' };
+        const updateDevice = await knex('yaazoru.devices')
+            .where({ device_id })
+            .update({ status: 'inactive' })
+            .returning('*');
+        if (updateDevice.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Device not found'
+            }
+            throw error;
         }
-        return deleteDevice[0];
+        return updateDevice[0];
     } catch (err) {
         throw err;
-    };
+    }
 };
 
-const findDevice = async (criteria: { device_id?: string; SIM_number?: number; IMEI_1?: number; mehalcha_number?: number }) => {
+const findDevice = async (criteria: { device_id?: string; SIM_number?: string; IMEI_1?: string; mehalcha_number?: string; device_number: string; }) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.devices')
@@ -81,6 +89,9 @@ const findDevice = async (criteria: { device_id?: string; SIM_number?: number; I
                 }
                 if (criteria.mehalcha_number) {
                     this.orWhere({ mehalcha_number: criteria.mehalcha_number });
+                }
+                if (criteria.device_number) {
+                    this.orWhere({ device_number: criteria.device_number });
                 }
             })
             .andWhere(function () {
@@ -96,7 +107,7 @@ const findDevice = async (criteria: { device_id?: string; SIM_number?: number; I
 
 const doesDeviceExist = async (device_id: string): Promise<boolean> => {
     const knex = getConnection();
-    try {        
+    try {
         const result = await knex('yaazoru.devices')
             .select('device_id')
             .where({ device_id })

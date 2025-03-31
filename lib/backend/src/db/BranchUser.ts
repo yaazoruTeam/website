@@ -1,4 +1,4 @@
-import { BranchUser } from "@yaazoru/model";
+import { BranchUser } from "../model";
 import getConnection from "./connection";
 
 
