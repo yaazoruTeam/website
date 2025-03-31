@@ -40,6 +40,17 @@ const getDeviceById = async (device_id: string) => {
     };
 };
 
+const getDevicesByStatus = async (status: 'active' | 'inactive') => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.devices')
+            .select()
+            .where({ status });
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateDevice = async (device_id: string, device: Device.Model) => {
     const knex = getConnection();
     try {
@@ -119,5 +130,12 @@ const doesDeviceExist = async (device_id: string): Promise<boolean> => {
 };
 
 export {
-    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice, findDevice, doesDeviceExist
+    createDevice,
+    getDevices,
+    getDeviceById,
+    getDevicesByStatus,
+    updateDevice,
+    deleteDevice,
+    findDevice,
+    doesDeviceExist
 }
