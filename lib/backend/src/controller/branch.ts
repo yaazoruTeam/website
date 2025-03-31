@@ -41,6 +41,33 @@ const getBranchById = async (req: Request, res: Response, next: NextFunction): P
     }
 };
 
+const getBranchesByCity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { city } = req.params;
+        if (!city) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid city."
+            };
+            throw error;
+        }
+        const branches = await db.Branch.getBranchesByCity(city);
+        if (branches.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: `No branches found in the city: ${city}`
+            }
+            throw error;
+        }
+        res.status(200).json(branches);
+    }
+    catch (error: any) {
+        next(error)
+    }
+
+
+}
+
 const updateBranch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         Branch.sanitizeIdExisting(req);
@@ -71,4 +98,11 @@ const deleteBranch = async (req: Request, res: Response, next: NextFunction): Pr
     }
 };
 
-export { createBranch, getBranches, getBranchById, updateBranch, deleteBranch }
+export {
+    createBranch,
+    getBranches,
+    getBranchById,
+    getBranchesByCity,
+    updateBranch,
+    deleteBranch
+}
