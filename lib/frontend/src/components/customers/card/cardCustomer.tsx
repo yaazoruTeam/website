@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Customer } from "../../model/src";
-import { deleteCustomer, getCustomerById } from "../../api/customerApi";
-import CustomTypography from "../designComponent/Typography";
-import { colors } from "../../styles/theme";
+import { Customer } from "../../../model/src";
+import { deleteCustomer, getCustomerById } from "../../../api/customerApi";
+import CustomTypography from "../../designComponent/Typography";
+import { colors } from "../../../styles/theme";
 import { Box, useMediaQuery } from "@mui/system";
-import FormatDate from "../designComponent/FormatDate";
-import { CustomButton } from "../designComponent/Button";
+import FormatDate from "../../designComponent/FormatDate";
+import { CustomButton } from "../../designComponent/Button";
 import { TrashIcon } from '@heroicons/react/24/outline'
-import CustomTabs from "../designComponent/Tab";
+import CustomTabs from "../../designComponent/Tab";
 import { Modal } from "@mui/material";
+import CustomerDetails, { CustomerDetailsRef } from "./customerDetails";
 
 
 const CardCustomer: React.FC = () => {
@@ -18,8 +19,8 @@ const CardCustomer: React.FC = () => {
     const { t } = useTranslation();
     const [customer, setCustomer] = useState<Customer.Model>();
     const isMobile = useMediaQuery('(max-width:600px)');
-    const [openModal, setOpenModal] = useState(false); // ניהול מצב החלונית
-
+    const [openModal, setOpenModal] = useState(false); 
+    const formRef = useRef<CustomerDetailsRef>(null);
 
     useEffect(() => {
         const getCustomer = async (id: string) => {
@@ -33,7 +34,15 @@ const CardCustomer: React.FC = () => {
 
     }, [id]);
 
-    const savingChanges = () => { }
+    const savingChanges = () => {
+        if (formRef.current) {
+            formRef.current.submitForm();
+            setTimeout(() => {
+                const updatedCustomer = formRef.current?.getCustomerData();
+                //כאן ניתן לשלוח את הנתונים לשרת
+            }, 200);
+        }
+    };
 
     const deletingCustomer = async () => {
         console.log('delete customer: ', customer?.customer_id);
@@ -97,7 +106,6 @@ const CardCustomer: React.FC = () => {
                         state="default"
                         buttonType="first"
                         onClick={savingChanges}
-
                     />
                 </Box>
             </Box>
@@ -108,19 +116,13 @@ const CardCustomer: React.FC = () => {
                     tabs={
                         [
                             {
-                                label: t('customerDetails'), content: ''
+                                label: t('customerDetails'), content: customer ? <CustomerDetails ref={formRef} customer={customer} /> : ''
                             },
                             {
                                 label: t('devicesAndQuestions'), content: ''
                             },
                             {
                                 label: t('standingOrders'), content: ''
-                            },
-                            {
-                                label: t('associatedContacts'), content: ''
-                            },
-                            {
-                                label: t('associatedAccounts'), content: ''
                             },
                         ]
                     }

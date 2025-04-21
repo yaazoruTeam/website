@@ -70,7 +70,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             >
                 <CustomTextField
                     control={control}
-                    name="userName"
+                    name="username"
                     label={t('userName')}
                     // helperText: "Please enter your email",
                     rules={{

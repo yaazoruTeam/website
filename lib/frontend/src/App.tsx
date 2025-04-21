@@ -35,7 +35,7 @@ import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 import { colors, theme } from "./styles/theme";
 import { useTranslation } from "react-i18next";
 import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
-import CardCustomer from "./components/customers/cardCustomer";
+import CardCustomer from "./components/customers/card/cardCustomer";
 
 function App() {
   const { t } = useTranslation();
