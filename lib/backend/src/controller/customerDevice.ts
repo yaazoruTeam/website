@@ -54,19 +54,14 @@ const getAllDevicesByCustomerId = async (req: Request, res: Response, next: Next
             throw error;
         }
         const allCustomerDevice: CustomerDevice.Model[] = await db.CustomerDevice.getCustomerDeviceByCustomerId(req.params.id);
-        let devices: any = [];
-        for (const customerDevice of allCustomerDevice) {
-            devices.push(await db.Device.getDeviceById(customerDevice.device_id));
-        }
-        if (devices.length === 0) {
+        if (allCustomerDevice.length === 0) {
             const error: HttpError.Model = {
                 status: 404,
                 message: 'This customer has no devices.'
             };
             throw error;
         }
-
-        res.status(200).json(devices);
+        res.status(200).json(allCustomerDevice);
     } catch (error: any) {
         next(error);
     }
