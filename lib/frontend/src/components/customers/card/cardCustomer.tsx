@@ -12,6 +12,7 @@ import { TrashIcon } from '@heroicons/react/24/outline'
 import CustomTabs from "../../designComponent/Tab";
 import { Modal } from "@mui/material";
 import CustomerDetails, { CustomerDetailsRef } from "./customerDetails";
+import DeviceDetails from "./deviceDetails";
 
 
 const CardCustomer: React.FC = () => {
@@ -19,7 +20,7 @@ const CardCustomer: React.FC = () => {
     const { t } = useTranslation();
     const [customer, setCustomer] = useState<Customer.Model>();
     const isMobile = useMediaQuery('(max-width:600px)');
-    const [openModal, setOpenModal] = useState(false); 
+    const [openModal, setOpenModal] = useState(false);
     const formRef = useRef<CustomerDetailsRef>(null);
 
     useEffect(() => {
@@ -119,7 +120,7 @@ const CardCustomer: React.FC = () => {
                                 label: t('customerDetails'), content: customer ? <CustomerDetails ref={formRef} customer={customer} /> : ''
                             },
                             {
-                                label: t('devicesAndQuestions'), content: ''
+                                label: t('devicesAndQuestions'), content: customer ? <DeviceDetails customer={customer} /> : ''
                             },
                             {
                                 label: t('standingOrders'), content: ''
