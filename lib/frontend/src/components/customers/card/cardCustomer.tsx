@@ -13,7 +13,7 @@ import CustomTabs from "../../designComponent/Tab";
 import { Modal } from "@mui/material";
 import CustomerDetails, { CustomerDetailsRef } from "./customerDetails";
 import DeviceDetails from "./deviceDetails";
-
+import MonthlyPaymentDetails from "./monthlyPaymentDetails";
 
 const CardCustomer: React.FC = () => {
     const { id } = useParams();
@@ -111,7 +111,7 @@ const CardCustomer: React.FC = () => {
                 </Box>
             </Box>
             <Box sx={{
-                marginTop: '28px'
+                my: '28px'
             }}>
                 <CustomTabs
                     tabs={
@@ -123,7 +123,7 @@ const CardCustomer: React.FC = () => {
                                 label: t('devicesAndQuestions'), content: customer ? <DeviceDetails customer={customer} /> : ''
                             },
                             {
-                                label: t('standingOrders'), content: ''
+                                label: t('standingOrders'), content: customer ? <MonthlyPaymentDetails customer={customer} /> : ''
                             },
                         ]
                     }

@@ -59,7 +59,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     const trx = await knex.transaction();
     try {
         MonthlyPaymentManagement.sanitizeIdExisting(req);
-        MonthlyPaymentManagement.sanitizeBodyExisting(req);        
+        MonthlyPaymentManagement.sanitizeBodyExisting(req);
 
         const sanitized = MonthlyPaymentManagement.sanitize(req.body);
         const { customer_id, monthlyPayment, creditDetails, items } = sanitized;
@@ -74,7 +74,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
             throw error;
         };
 
-        const existingMonthlyPayment = await db.MonthlyPayment.getMonthlyPaymentId(id);
+        const existingMonthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(id);
         if (!existingMonthlyPayment) {
             const error: HttpError.Model = {
                 status: 404,

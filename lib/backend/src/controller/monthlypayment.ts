@@ -44,12 +44,38 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
             };
             throw error;
         }
-        const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentId(req.params.id);
+        const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(req.params.id);
         res.status(200).json(monthlyPayment);
     } catch (error: any) {
         next(error);
     }
 };
+
+const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        MonthlyPayment.sanitizeIdExisting(req);
+        const existCustomer = await db.Customer.doesCustomerExist(req.params.id);
+        if (!existCustomer) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: "customer does not exist.",
+            };
+            throw error;
+        }
+        const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentByCustomerId(req.params.id);
+        if (!monthlyPayment) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: "There is no monthly payment for this customer.",
+            };
+            throw error;
+        }
+        res.status(200).json(monthlyPayment);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         MonthlyPayment.sanitizeIdExisting(req);
@@ -91,4 +117,11 @@ const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 };
-export { createMonthlyPayment, getMonthlyPayments, getMonthlyPaymentId, updateMonthlyPayment, deleteMonthlyPayment }
+export {
+    createMonthlyPayment,
+    getMonthlyPayments,
+    getMonthlyPaymentId,
+    getMonthlyPaymentByCustomerId,
+    updateMonthlyPayment,
+    deleteMonthlyPayment
+}
