@@ -6,7 +6,7 @@ import { deleteCustomer, getCustomerById } from "../../../api/customerApi";
 import CustomTypography from "../../designComponent/Typography";
 import { colors } from "../../../styles/theme";
 import { Box, useMediaQuery } from "@mui/system";
-import FormatDate from "../../designComponent/FormatDate";
+import { formatDateToString } from "../../designComponent/FormatDate";
 import { CustomButton } from "../../designComponent/Button";
 import { TrashIcon } from '@heroicons/react/24/outline'
 import CustomTabs from "../../designComponent/Tab";
@@ -81,7 +81,7 @@ const CardCustomer: React.FC = () => {
                         color={colors.brand.color_9}
                     />
                     <CustomTypography
-                        text={customer ? `${t('addedOn')} ${FormatDate({ date: new Date(Date.now()) })}` : ''}
+                        text={customer ? `${t('addedOn')} ${formatDateToString(new Date(Date.now()))}` : ''}
                         variant="h3"
                         weight="regular"
                         color={colors.brand.color_9}
