@@ -11,7 +11,7 @@ import CustomerSelector from '../customers/CustomerSelector';
 import FormToAddItems from './FormToAddItems';
 import { CustomButton } from '../designComponent/Button';
 import { getItemsByMonthlyPaymentId } from '../../api/itemsApi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getMonthlyPaymentById } from '../../api/monhlyPaymentApi';
 import PaymentForm from './PaymentForm';
 import { updateMonthlyPayment } from '../../api/monthlyPaymentManagement';
@@ -26,7 +26,9 @@ import FormatDate from '../designComponent/FormatDate';
 
 const EditMonthlyPayment: React.FC = () => {
     const { id } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
+    const { fromCustomerCard, customerId } = location.state || {};
     const { t } = useTranslation();
     const isMobile = useMediaQuery('(max-width:600px)');
     const [customer, setCustomer] = useState<Customer.Model>();
@@ -215,7 +217,11 @@ const EditMonthlyPayment: React.FC = () => {
         try {
             const response = await updateMonthlyPayment(monthlyPaymentManagement, monthlyPayment?.monthlyPayment_id || '');
             if (response.status === 200) {
-                navigate('/monthlyPayment')
+                if (fromCustomerCard && customerId) {
+                    navigate(`/customer/${customerId}`);
+                } else {
+                    navigate('/monthlyPayment');
+                }
             } else {
                 setError('Error updating monthly payment');
             }
@@ -228,7 +234,11 @@ const EditMonthlyPayment: React.FC = () => {
 
 
     const cancel = () => {
-        navigate('/monthlyPayment');
+        if (fromCustomerCard && customerId) {
+            navigate(`/customer/card/${customerId}`);
+        } else {
+            navigate('/monthlyPayment');
+        }
     }
 
     const sendToEmail = () => {

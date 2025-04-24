@@ -54,3 +54,27 @@ export const getMonthlyPaymentById = async (monthlyPayment_id: string): Promise<
     }
 };
 
+// GET(customer_id)
+export const getMonthlyPaymentByCustomerId = async (customer_id: string): Promise<MonthlyPayment.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return [];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<MonthlyPayment.Model[]> = await axios.get(`${baseUrl}/customer/${customer_id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all monthly payments by customer id", error);
+        throw error;
+    }
+};
+
