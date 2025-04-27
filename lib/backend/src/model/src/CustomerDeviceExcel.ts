@@ -16,7 +16,7 @@ interface Model {
     mehalcha_number: string;
     model: string;
 
-    date: number;
+    receivedAt: number;
 }
 
 function sanitize(customerDeviceExcel: Model, isCustomer: boolean): Model {
@@ -96,12 +96,12 @@ function sanitize(customerDeviceExcel: Model, isCustomer: boolean): Model {
             throw error;
         }
 
-        if (!customerDeviceExcel.date) {
-            console.log('i failed in date: ', customerDeviceExcel.date);
+        if (!customerDeviceExcel.receivedAt) {
+            console.log('i failed in date: ', customerDeviceExcel.receivedAt);
 
             const error: HttpError.Model = {
                 status: 400,
-                message: 'Invalid or missing "date".'
+                message: 'Invalid or missing "receivedAt".'
             };
             throw error;
         }
@@ -174,7 +174,7 @@ function sanitize(customerDeviceExcel: Model, isCustomer: boolean): Model {
             SIM_number: customerDeviceExcel.SIM_number,
             mehalcha_number: customerDeviceExcel.mehalcha_number,
             model: customerDeviceExcel.model,
-            date: customerDeviceExcel.date,
+            receivedAt: customerDeviceExcel.receivedAt,
         };
         return newCustomerDeviceExcel;
 
@@ -193,7 +193,7 @@ function sanitize(customerDeviceExcel: Model, isCustomer: boolean): Model {
             SIM_number: customerDeviceExcel.SIM_number,
             mehalcha_number: customerDeviceExcel.mehalcha_number,
             model: customerDeviceExcel.model,
-            date: 0,
+            receivedAt: 0,
         };
         return newCustomerDeviceExcel;
     }

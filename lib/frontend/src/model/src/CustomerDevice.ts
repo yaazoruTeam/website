@@ -4,7 +4,10 @@ interface Model {
     customerDevice_id: string;
     customer_id: string;
     device_id: string;
-    date: Date;
+    receivedAt: Date;
+    planEndDate?: Date;
+    filterVersion?: '1.7' | '1.8';
+    deviceProgram?: '0' | '2';
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
@@ -31,13 +34,24 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
         };
         throw error;
     }
+    if (!customerDevice.receivedAt) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "receivedAt".'
+        };
+        throw error;
+    }
 
     const newCustomerDevice: Model = {
         customerDevice_id: customerDevice.customerDevice_id,
         customer_id: customerDevice.customer_id,
         device_id: customerDevice.device_id,
-        date: customerDevice.date,
+        receivedAt: customerDevice.receivedAt,
+        planEndDate: customerDevice.planEndDate,
+        filterVersion: customerDevice.filterVersion,
+        deviceProgram: customerDevice.deviceProgram
     };
+
     return newCustomerDevice;
 }
 

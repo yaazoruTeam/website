@@ -78,13 +78,18 @@ const processExcelData = async (data: any[]): Promise<void> => {
                 }
 
                 if (!existCustomerDevice) {
-                    const date: Date = convertExcelDateToJSDate(sanitized.date);
+                    const date: Date = convertExcelDateToJSDate(sanitized.receivedAt);
+                    const planEndDate = new Date(date);
+                    planEndDate.setFullYear(planEndDate.getFullYear() + 5);
                     try {
                         await db.CustomerDevice.createCustomerDevice({
                             customerDevice_id: "",
                             customer_id: existCustomer.customer_id,
                             device_id: existDevice.device_id,
-                            date: date,
+                            receivedAt: date,
+                            planEndDate: planEndDate,
+                            filterVersion: '1.7',
+                            deviceProgram: '0'
                         });
                         console.log('CustomerDevice created');
 
