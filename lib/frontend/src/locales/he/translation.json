@@ -100,5 +100,8 @@
     "customerDeletionWarning": "האם אתם בטוחים שאתם רוצים למחוק לקוח זה? זוהי פעולה בלתי הפיכה.",
     "to": "עד",
     "of": "מתוך",
-    "page": "עמוד"
+    "page": "עמוד",
+    "CustomerCity": "עיר לקוח",
+    "DateInRange": "תאריך בטווח",
+    "customerStatus": "סטטוס לקוח"
 }
