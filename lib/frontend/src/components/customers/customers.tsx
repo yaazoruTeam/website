@@ -2,6 +2,7 @@ import React from "react";
 import CustomersList from "./customersList";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Box } from "@mui/system";
+import CustomComponent from "../designComponent/CstomComponent";
 
 const Customers: React.FC = () => {
   const { customers, isLoading, error } = useFetchCustomers();
@@ -21,6 +22,7 @@ const Customers: React.FC = () => {
           customers={customers}
         />
       </Box>
+      <CustomComponent />
     </>
   );
 };
