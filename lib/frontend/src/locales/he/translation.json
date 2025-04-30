@@ -123,5 +123,8 @@
     "One-TimeCancellationOfIMEILocks": "ביטול חד פעמי של נעילות IMEI",
     "disconnectingAllAntennas": "ביטול חיבור מכל האנטנות",
     "canceLine": "ביטול קו",
-    "resetNetworkSettings": "איפוס הגדרות רשת"
+    "resetNetworkSettings": "איפוס הגדרות רשת",
+    "CustomerCity": "עיר לקוח",
+    "DateInRange": "תאריך בטווח",
+    "customerStatus": "סטטוס לקוח"
 }
