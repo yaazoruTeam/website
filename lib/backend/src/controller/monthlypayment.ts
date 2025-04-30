@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError, MonthlyPayment } from "../model";
+import { HttpError, MonthlyPayment } from "../model/src";
 import db from "../db";
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
@@ -50,6 +50,50 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
         next(error);
     }
 };
+
+const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { status } = req.params;
+        if (status !== 'active' && status !== 'inactive') {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid status. Allowed values: 'active', 'inactive'.",
+            };
+            throw error;
+        }
+        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByStatus(status);
+        res.status(200).json(monthlyPayments);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { organization } = req.params;
+        console.log(organization);
+        
+        if (!organization) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid organization.",
+            };
+            throw error;
+        }
+        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByOrganization(organization);
+        if (monthlyPayments.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: `organization ${organization} not found`,
+            };
+            throw error;
+        }
+        res.status(200).json(monthlyPayments);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         MonthlyPayment.sanitizeIdExisting(req);
@@ -91,4 +135,12 @@ const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 };
-export { createMonthlyPayment, getMonthlyPayments, getMonthlyPaymentId, updateMonthlyPayment, deleteMonthlyPayment }
+export {
+    createMonthlyPayment,
+    getMonthlyPayments,
+    getMonthlyPaymentId,
+    updateMonthlyPayment,
+    deleteMonthlyPayment,
+    getMonthlyPaymentsByStatus,
+    getMonthlyPaymentByOrganization,
+}
