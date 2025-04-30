@@ -203,7 +203,7 @@ interface CustomSearchSelectProps {
   placeholder?: string;
   searchType: "city" | "date" | "status";
   onCitySelect?: (city: string) => void;
-  onDateRangeSelect?: (start: string, end: string) => void;
+  onDateRangeSelect?: (start: Date, end: Date) => void;
 }
 
 const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
@@ -217,8 +217,8 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{
-    start: string;
-    end: string;
+    start: Date;
+    end: Date;
   } | null>(null);
 
   const selectRef = useRef<HTMLDivElement | null>(null);
@@ -254,13 +254,13 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     }
   };
 
-  const fetchCustomersByDateRange = async (start: string, end: string) => {
+  const fetchCustomersByDateRange = async (start: Date, end: Date) => {
     try {
       const filteredCustomers = await getCustomersByDateRange(start, end);
       onDateRangeSelect?.(start, end); // נשלח את התוצאה להורה
     } catch (error) {
       console.error("Error fetching customers by date range:", error);
-      onDateRangeSelect?.("", ""); // במקרה של שגיאה, נשלח מערך ריק
+      onDateRangeSelect?.(new Date(""), new Date("")); // במקרה של שגיאה, נשלח מערך ריק
     }
   };
 
@@ -277,7 +277,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     onCitySelect?.(city);
   };
 
-  const handleDateRangeSelect = (start: string, end: string) => {
+  const handleDateRangeSelect = (start: Date, end: Date) => {
     setDateRange({ start, end }); // עדכון מצב ה-TodateRange
     setOpen(false);
   };

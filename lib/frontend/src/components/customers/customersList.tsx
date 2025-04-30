@@ -29,8 +29,8 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const [filteredCustomers, setFilteredCustomers] =
     useState<Customer.Model[]>(customers);
   const [dateRange, setDateRange] = useState<{
-    start: string;
-    end: string;
+    start: Date;
+    end: Date;
   } | null>(null); // חדש - מכיל את טווח התאריכים
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
     }
   };
 
-  const handleDateRangeSelect = (start: string, end: string) => {
+  const handleDateRangeSelect = (start: Date, end: Date) => {
     setDateRange({ start, end }); // עדכון מצב ה-TodateRange
     fetchCustomersByDateRange(start, end); // הפעלת הפונקציה כדי לחפש לפי טווח תאריכים
   };
@@ -81,7 +81,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
     setFilteredCustomers(filtered);
   };
 
-  const fetchCustomersByDateRange = async (start: string, end: string) => {
+  const fetchCustomersByDateRange = async (start: Date, end: Date) => {
     try {
       const customersInRange = await getCustomersByDateRange(start, end);
       setFilteredCustomers(customersInRange); // עדכון הלקוחות שהתקבלו בטווח התאריכים
