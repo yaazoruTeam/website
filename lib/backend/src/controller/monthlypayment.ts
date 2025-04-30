@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError, MonthlyPayment } from "../model";
+import { HttpError, MonthlyPayment } from "../model/src";
 import db from "../db";
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
@@ -71,6 +71,50 @@ const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: 
             throw error;
         }
         res.status(200).json(monthlyPayment);
+    }
+    catch (error: any) {
+        next(error);
+    }
+}
+
+const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { status } = req.params;
+        if (status !== 'active' && status !== 'inactive') {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid status. Allowed values: 'active', 'inactive'.",
+            };
+            throw error;
+        }
+        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByStatus(status);
+        res.status(200).json(monthlyPayments);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { organization } = req.params;
+        console.log(organization);
+
+        if (!organization) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid organization.",
+            };
+            throw error;
+        }
+        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByOrganization(organization);
+        if (monthlyPayments.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: `organization ${organization} not found`,
+            };
+            throw error;
+        }
+        res.status(200).json(monthlyPayments);
     } catch (error: any) {
         next(error);
     }
@@ -123,5 +167,7 @@ export {
     getMonthlyPaymentId,
     getMonthlyPaymentByCustomerId,
     updateMonthlyPayment,
-    deleteMonthlyPayment
+    deleteMonthlyPayment,
+    getMonthlyPaymentsByStatus,
+    getMonthlyPaymentByOrganization,
 }

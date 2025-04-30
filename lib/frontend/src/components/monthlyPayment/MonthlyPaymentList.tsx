@@ -18,19 +18,44 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [customerNames, setCustomerNames] = useState<{ [key: string]: string }>({});
+    const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({});
+    const [searchCustomer, setSearchCustomer] = useState<string>('');
+    const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment);
 
     useEffect(() => {
         const fetchCustomerNames = async () => {
-            const names: { [key: string]: string } = {};
+            const data: { [key: string]: { name: string, id: string } } = {};
             for (const payment of monthlyPayment) {
                 const customer = await getCustomerById(payment.customer_id);
-                names[payment.customer_id] = `${customer.first_name} ${customer.last_name}`;
+                data[payment.customer_id] = {
+                    name: `${customer.first_name} ${customer.last_name}`,
+                    id: customer.id_number,
+                };
             }
-            setCustomerNames(names);
+            setCustomerData(data);
         };
 
         fetchCustomerNames();
     }, [monthlyPayment]);
+
+    useEffect(() => {
+        const lowerSearch = searchCustomer.toLowerCase().trim();
+        if (!lowerSearch) {
+            setFilteredPayments(monthlyPayment);
+            return;
+        }
+
+        const filtered = monthlyPayment.filter(payment => {
+            const customer = customerData[payment.customer_id];
+            if (!customer) return false;
+            return (
+                customer.name.toLowerCase().includes(lowerSearch) ||
+                (typeof customer.id === "string" && customer.id.includes(lowerSearch))
+            );
+        });
+
+        setFilteredPayments(filtered);
+    }, [searchCustomer, monthlyPayment, customerData]);
 
     const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
         navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`, {

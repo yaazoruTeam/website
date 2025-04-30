@@ -54,7 +54,31 @@ const getMonthlyPaymentById = async (monthlyPayment_id: string) => {
 const getMonthlyPaymentByCustomerId = async (customer_id: string) => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.monthlyPayment').select().where({ customer_id });
+        return await knex('yaazoru.monthlyPayment')
+            .select()
+            .where({ customer_id });
+    } catch (err) {
+        throw err;
+    }
+}
+
+const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive') => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.monthlyPayment')
+            .select()
+            .where({ status });
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getMonthlyPaymentByOrganization = async (belongsOrganization: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.monthlyPayment')
+            .select()
+            .where({ belongsOrganization });
     } catch (err) {
         throw err;
     };
@@ -141,5 +165,7 @@ export {
     updateMonthlyPayment,
     deleteMonthlyPayment,
     /* findCustomer,*/
-    doesMonthlyPaymentExist
+    doesMonthlyPaymentExist,
+    getMonthlyPaymentByStatus,
+    getMonthlyPaymentByOrganization,
 };
