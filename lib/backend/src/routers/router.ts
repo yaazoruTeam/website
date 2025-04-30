@@ -16,8 +16,7 @@ import paymentsRouter from './payments';
 import itemRouter from './item'
 import paymentCreditLinkRouter from './paymentCreditLink'
 import authRouter from './auth'
-
-import { errorHandler } from '../middleware/errorHandler'
+import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
 
 const router = Router();

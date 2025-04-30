@@ -40,6 +40,17 @@ const getBranchById = async (branch_id: string) => {
     };
 };
 
+const getBranchesByCity = async (city: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.branches')
+            .select()
+            .where({ city });
+    } catch (err) {
+        throw err;
+    };
+};
+
 const updateBranch = async (branch_id: string, branch: Branch.Model) => {
     const knex = getConnection();
     try {
@@ -90,5 +101,11 @@ const doesBranchExist = async (branch_id: string): Promise<boolean> => {
 };
 
 export {
-    createBranch, getBranches, getBranchById, updateBranch, deleteBranch, doesBranchExist
+    createBranch,
+    getBranches,
+    getBranchById,
+    getBranchesByCity,
+    updateBranch,
+    deleteBranch,
+    doesBranchExist
 }
