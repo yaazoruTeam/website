@@ -34,12 +34,9 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
         display: 'flex',
         width: '100%',
         height: '100%',
-        // // padding: '2% 0',
         flexDirection: 'column',
         alignItems: 'flex-start',
         gap: '28px',
-        // left: 0,
-        // flexShrink: 0,
       }}
     >
       <Box
@@ -47,16 +44,18 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
           alignSelf: 'stretch',
           justifyContent: 'flex-end',
           alignItems: 'flex-start',
-          gap: 28,
-          display: 'inline-flex',
+          gap: 3.5,
+          display: 'flex',
+          width: '100%'
         }}
       >
         <Box
           sx={{
             justifyContent: 'flex-end',
             alignItems: 'center',
-            gap: 28,
+            gap: 3.5,
             display: 'flex',
+            width: '100%'
           }}
         >
           <CustomTypography

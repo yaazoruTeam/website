@@ -45,7 +45,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!isString(customer.id_number) || customer.id_number.trim() === '') {
+    if (!customer.id_number) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "id_number".'
@@ -119,7 +119,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         customer_id: customer.customer_id,
         first_name: customer.first_name.trim(),
         last_name: customer.last_name.trim(),
-        id_number: customer.id_number.trim(),
+        id_number: customer.id_number,
         phone_number: customer.phone_number.trim(),
         additional_phone: customer.additional_phone,
         email: customer.email.trim().toLowerCase(),
@@ -165,7 +165,7 @@ const sanitizeBodyExisting = (req: any) => {
     if (!req.body || Object.keys(req.body).length === 0) {
         const error: HttpError.Model = {
             status: 400,
-            message: 'No body provaider'
+            message: 'No body provided'
         };
         throw error;
     }

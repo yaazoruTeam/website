@@ -1,12 +1,11 @@
 import { Device, HttpError } from "../model";
 import getConnection from "./connection";
 
-
-
-const createDevice = async (device: Device.Model) => {
+const createDevice = async (device: Device.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newDevice] = await knex('yaazoru.devices')
+        const query = trx ? trx('yaazoru.devices') : knex('yaazoru.devices');
+        const [newDevice] = await query
             .insert({
                 SIM_number: device.SIM_number,
                 IMEI_1: device.IMEI_1,
@@ -35,6 +34,17 @@ const getDeviceById = async (device_id: string) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.devices').where({ device_id }).first();
+    } catch (err) {
+        throw err;
+    };
+};
+
+const getDevicesByStatus = async (status: 'active' | 'inactive') => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.devices')
+            .select()
+            .where({ status });
     } catch (err) {
         throw err;
     };
@@ -119,5 +129,12 @@ const doesDeviceExist = async (device_id: string): Promise<boolean> => {
 };
 
 export {
-    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice, findDevice, doesDeviceExist
+    createDevice,
+    getDevices,
+    getDeviceById,
+    getDevicesByStatus,
+    updateDevice,
+    deleteDevice,
+    findDevice,
+    doesDeviceExist
 }

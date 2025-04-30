@@ -25,7 +25,7 @@ export const getMonthlyPayment = async (): Promise<MonthlyPayment.Model[]> => {
         });
         return response.data;
     } catch (error) {
-        console.error("Error fetching monthly payment", error);
+        console.error("Error fetching monthly payments", error);
         throw error;
     }
 };
@@ -49,10 +49,34 @@ export const getMonthlyPaymentById = async (monthlyPayment_id: string): Promise<
         });
         return response.data;
     } catch (error) {
-        console.error("Error fetching monthly payment", error);
+        console.error("Error fetching monthly payment id", error);
         throw error;
     }
 };
+
+// GET(customer_id)
+export const getMonthlyPaymentByCustomerId = async (customer_id: string): Promise<MonthlyPayment.Model[]> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return [];
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<MonthlyPayment.Model[]> = await axios.get(`${baseUrl}/customer/${customer_id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all monthly payments by customer id", error);
+        throw error;
+    }
+}
 
 // GET(status)
 export const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive'): Promise<MonthlyPayment.Model[]> => {

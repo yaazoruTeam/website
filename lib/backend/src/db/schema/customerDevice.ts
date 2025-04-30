@@ -13,7 +13,10 @@ const createCustomerDeviceSchema = async () => {
                 table.increments("customerDevice_id").primary();
                 table.string("customer_id").notNullable();
                 table.string("device_id").notNullable().unique();
-                table.date("date").notNullable();
+                table.date('receivedAt').nullable();
+                table.date('planEndDate').nullable();
+                table.enu('filterVersion', ['1.7', '1.8']).nullable();
+                table.enu('deviceProgram', ['0', '2']).nullable();
             });
             console.log('CustomerDevice table created successfully.');
         }

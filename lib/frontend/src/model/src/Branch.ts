@@ -84,7 +84,7 @@ const sanitizeBodyExisting = (req: any) => {
    if (!req.body || Object.keys(req.body).length === 0) {
       const error: HttpError.Model = {
          status: 400,
-         message: 'No body provaider'
+         message: 'No body provided'
       };
       throw error;
    }

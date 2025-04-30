@@ -42,6 +42,23 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
     }
 };
 
+const getDevicesByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { status } = req.params;
+        if (status !== 'active' && status !== 'inactive') {
+            const error: HttpError.Model = {
+                status: 400,
+                message: "Invalid status. Allowed values: 'active' or 'inactive'."
+            };
+            throw error;
+        }
+        const devices = await db.Device.getDevicesByStatus(status);
+        res.status(200).json(devices);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const updateDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         Device.sanitizeIdExisting(req);
@@ -56,7 +73,7 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
 };
 
 const deleteDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try{
+    try {
         Device.sanitizeIdExisting(req);
         const existDevice = await db.Device.doesDeviceExist(req.params.id);
         if (!existDevice) {
@@ -105,5 +122,10 @@ const existingDevice = async (device: Device.Model, hasId: boolean) => {
 };
 
 export {
-    createDevice, getDevices, getDeviceById, updateDevice, deleteDevice,
+    createDevice,
+    getDevices,
+    getDeviceById,
+    getDevicesByStatus,
+    updateDevice,
+    deleteDevice,
 }

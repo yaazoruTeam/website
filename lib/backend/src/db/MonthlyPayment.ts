@@ -42,7 +42,7 @@ const getMonthlyPayment = async (): Promise<MonthlyPayment.Model[]> => {
     };
 }
 
-const getMonthlyPaymentId = async (monthlyPayment_id: string) => {
+const getMonthlyPaymentById = async (monthlyPayment_id: string) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.monthlyPayment').where({ monthlyPayment_id }).first();
@@ -50,6 +50,17 @@ const getMonthlyPaymentId = async (monthlyPayment_id: string) => {
         throw err;
     };
 };
+
+const getMonthlyPaymentByCustomerId = async (customer_id: string) => {
+    const knex = getConnection();
+    try {
+        return await knex('yaazoru.monthlyPayment')
+            .select()
+            .where({ customer_id });
+    } catch (err) {
+        throw err;
+    }
+}
 
 const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive') => {
     const knex = getConnection();
@@ -149,7 +160,8 @@ const doesMonthlyPaymentExist = async (monthlyPayment_id: string): Promise<boole
 export {
     createMonthlyPayment,
     getMonthlyPayment,
-    getMonthlyPaymentId,
+    getMonthlyPaymentById,
+    getMonthlyPaymentByCustomerId,
     updateMonthlyPayment,
     deleteMonthlyPayment,
     /* findCustomer,*/

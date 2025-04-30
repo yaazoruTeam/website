@@ -13,7 +13,7 @@ interface Model {
 
 
 function sanitize(device: Model, hasId: boolean): Model {
-
+    
     if (hasId && (!device.device_id)) {
         const error: HttpError.Model = {
             status: 400,
@@ -57,7 +57,6 @@ function sanitize(device: Model, hasId: boolean): Model {
         throw error;
     }
 
-
     const newDevice: Model = {
         device_id: device.device_id,
         device_number: device.device_number,
@@ -71,7 +70,6 @@ function sanitize(device: Model, hasId: boolean): Model {
 
     return newDevice;
 }
-
 
 const sanitizeExistingDevice = (deviceExis: Model, device: Model) => {
     if (deviceExis.SIM_number === device.SIM_number) {
@@ -111,7 +109,7 @@ const sanitizeBodyExisting = (req: any) => {
     if (!req.body || Object.keys(req.body).length === 0) {
         const error: HttpError.Model = {
             status: 400,
-            message: 'No body provaider'
+            message: 'No body provided'
         };
         throw error;
     }
