@@ -6,10 +6,11 @@ import { colors } from "../../styles/theme";
 import CustomTypography from "../designComponent/Typography";
 import StatusTag from "../designComponent/Status";
 import { formatDateToString } from "../designComponent/FormatDate";
-import { Device } from "../../model/src";
+import { CustomerDevice, Device } from "../../model/src";
 
 interface Props {
     device: Device.Model;
+    customerDevice: CustomerDevice.Model;
     isOpen?: boolean;
     onClick?: () => void;
     showForm?: boolean;
@@ -23,7 +24,7 @@ const statusMap: Record<string, 'active' | 'inactive' | 'blocked' | 'canceled' |
     imei_locked: 'imei_locked'
 };
 
-const DeviceRow: React.FC<Props> = ({ device, isOpen = false, onClick, showForm = false }) => {
+const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, onClick, showForm = false }) => {
     return (
         <Box>
             <Box
@@ -65,10 +66,10 @@ const DeviceRow: React.FC<Props> = ({ device, isOpen = false, onClick, showForm 
                         IMEI_1: device.IMEI_1,
                         mehalcha_number: device.mehalcha_number,
                         model: device.model,
-                        received_at: formatDateToString(new Date(Date.now())),
-                        planEndDate: formatDateToString(new Date(Date.now())),
-                        filterVersion: '111',
-                        deviceProgram: 'gh',
+                        received_at: formatDateToString(customerDevice.receivedAt),
+                        planEndDate: formatDateToString(customerDevice.planEndDate ? customerDevice.planEndDate : ''),
+                        filterVersion: customerDevice.filterVersion ? customerDevice.filterVersion : '',
+                        deviceProgram: customerDevice.deviceProgram ? customerDevice.deviceProgram : '',
                         notes: ''
                     }}
                 />

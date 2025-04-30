@@ -1,12 +1,11 @@
 import { CustomerDevice } from "../model";
 import getConnection from "./connection";
 
-
-
-const createCustomerDevice = async (customerDevice: CustomerDevice.Model) => {
+const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newCustomerDevice] = await knex('yaazoru.customerDevice')
+        const query = trx ? trx('yaazoru.customerDevice') : knex('yaazoru.customerDevice');
+        const [newCustomerDevice] = await query
             .insert({
                 customer_id: customerDevice.customer_id,
                 device_id: customerDevice.device_id,

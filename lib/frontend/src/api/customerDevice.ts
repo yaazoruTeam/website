@@ -1,13 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 import { handleTokenRefresh } from './token';
-import { CustomerDevice, Device } from '../model';
-import { getDeviceById } from './device';
+import { CustomerDevice } from '../model';
 
 // const baseUrl = `${process.env.BASE_URL}/customer`;
 const baseUrl = 'http://localhost:3006/controller/customerDevice';
 
 // GET
-export const getAllDevicesByCustomerId = async (customer_id: string): Promise<Device.Model[]> => {
+export const getAllCustomerDevicesByCustomerId = async (customer_id: string): Promise<CustomerDevice.Model[]> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
@@ -24,11 +23,11 @@ export const getAllDevicesByCustomerId = async (customer_id: string): Promise<De
             },
         });
         const customerDevices: CustomerDevice.Model[] = response.data;
-        let devices: Device.Model[] = [];
-        for (const customerDevice of customerDevices) {
-            devices.push(await getDeviceById(customerDevice.device_id));
-        }
-        return devices;
+        // let devices: Device.Model[] = [];
+        // for (const customerDevice of customerDevices) {
+        //     devices.push(await getDeviceById(customerDevice.device_id));
+        // }
+        return customerDevices;
     } catch (error) {
         console.error("Error fetching device by customer id", error);
         throw error;

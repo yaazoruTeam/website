@@ -46,7 +46,7 @@ function sanitize(user: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!isString(user.id_number) || user.id_number.trim() === '') {
+    if (!user.id_number) {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "id_number".'
@@ -127,7 +127,7 @@ function sanitize(user: Model, hasId: boolean): Model {
         user_id: user.user_id,
         first_name: user.first_name.trim(),
         last_name: user.last_name.trim(),
-        id_number: user.id_number.trim(),
+        id_number: user.id_number,
         phone_number: user.phone_number.trim(),
         additional_phone: user.additional_phone,
         email: user.email.trim().toLowerCase(),

@@ -1,12 +1,13 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import AddCustomerForm from "../AddCustomerForm";
-import { Customer, Device } from "../../../model/src";
+import { Customer, Device,CustomerDevice } from "../../../model/src";
 import { Box } from "@mui/system";
-import { getAllDevicesByCustomerId } from "../../../api/customerDevice";
 import DeviceRow from "../../devices/deviceCard";
 import CustomTypography from "../../designComponent/Typography";
 import { colors } from "../../../styles/theme";
 import { useTranslation } from "react-i18next";
+import { getAllCustomerDevicesByCustomerId } from "../../../api/customerDevice";
+import { getDeviceById } from "../../../api/device";
 
 export interface CustomerDetailsRef {
     getCustomerData: () => Partial<Customer.Model>;
@@ -17,7 +18,7 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, { customer: Customer.Mode
     ({ customer }, ref) => {
         const formValuesRef = useRef<Partial<Customer.Model>>({});
         const formSubmitRef = useRef<() => void>(() => { });
-        const [devices, setDevices] = useState<Device.Model[]>([]);
+        const [devices, setDevices] = useState<(Device.Model & { customerDevice?: CustomerDevice.Model })[]>([]);
         const [openedDeviceId, setOpenedDeviceId] = useState<string | null>(null);
         const { t } = useTranslation();
 
@@ -32,13 +33,24 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, { customer: Customer.Mode
             }
         }));
 
-        useEffect(() => {
-            const getDevicesByCustomerId = async (customer_id: string) => {
-                const devicesData: Device.Model[] = await getAllDevicesByCustomerId(customer_id);
-                setDevices(devicesData);
-            };
-            getDevicesByCustomerId(customer.customer_id);
-        }, [customer]);
+            useEffect(() => {
+                const getDevicesByCustomerId = async () => {
+                    // שולף את כל ה- customerDevices של הלקוח
+                    const customerDevices: CustomerDevice.Model[] = await getAllCustomerDevicesByCustomerId(customer.customer_id);
+                    
+                    // שולף את המכשירים וממזג אותם עם המידע של ה- customerDevice
+                    const devicesData = await Promise.all(
+                        customerDevices.map(async (customerDevice) => {
+                            const device = await getDeviceById(customerDevice.device_id);
+                            return { ...device, customerDevice }; // מחבר את המידע של המכשיר עם ה- customerDevice
+                        })
+                    );
+        
+                    setDevices(devicesData);
+                };
+        
+                getDevicesByCustomerId();
+            }, [customer.customer_id]);
 
         const handleRowClick = (deviceId: string) => {
             setOpenedDeviceId((prev) => (prev === deviceId ? null : deviceId));
@@ -76,12 +88,13 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, { customer: Customer.Mode
                         color={colors.brand.color_9}
                     />
                 </Box>
-                {devices.map((d) => (
+                {devices.map((device) => (
                     <DeviceRow
-                        key={d.device_id}
-                        device={d}
-                        isOpen={openedDeviceId === d.device_id}
-                        onClick={() => handleRowClick(d.device_id)}
+                        key={device.device_id}
+                        device={device}
+                        customerDevice={device.customerDevice!}
+                        isOpen={openedDeviceId === device.device_id}
+                        onClick={() => handleRowClick(device.device_id)}
                         showForm={true}
                     />
                 ))}

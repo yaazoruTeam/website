@@ -3,10 +3,11 @@ import getConnection from "./connection";
 
 
 
-const createCustomer = async (customer: Customer.Model) => {
+const createCustomer = async (customer: Customer.Model, trx?: any) => {
     const knex = getConnection();
     try {
-        const [newCustomer] = await knex('yaazoru.customers')
+        const query = trx ? trx('yaazoru.customers') : knex('yaazoru.customers');
+        const [newCustomer] = await query
             .insert({
                 first_name: customer.first_name,
                 last_name: customer.last_name,
@@ -128,15 +129,15 @@ const findCustomer = async (criteria: { customer_id?: string; email?: string; id
         return await knex('yaazoru.customers')
             .where(function () {
                 if (criteria.email) {
-                    this.orWhere({ email: criteria.email });
+                    this.where({ email: criteria.email });
                 }
                 if (criteria.id_number) {
-                    this.orWhere({ id_number: criteria.id_number });
+                    this.andWhere({ id_number: criteria.id_number });
                 }
             })
-            .andWhere(function () {
+            .modify((query) => {
                 if (criteria.customer_id) {
-                    this.whereNot({ customer_id: criteria.customer_id });
+                    query.whereNot({ customer_id: criteria.customer_id });
                 }
             })
             .first();
