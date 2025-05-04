@@ -31,7 +31,7 @@ export const Default: Story = {
       setAnchorEl(null);
     };
 
-    const handleSelectRange = (startDate: string, endDate: string) => {
+    const handleSelectRange = (startDate: Date, endDate: Date) => {
       // המרה לאובייקטים של Date
       const start = new Date(startDate);
       const end = new Date(endDate);

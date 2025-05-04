@@ -186,7 +186,7 @@ import "dayjs/locale/he";
 
 interface DateRangeSelectorProps {
   anchorEl: HTMLElement | null;
-  onDateRangeSelect: (startDate: string, endDate: string) => void;
+  onDateRangeSelect: (startDate: Date, endDate: Date) => void;
   onClose: () => void;
 }
 
@@ -197,8 +197,8 @@ const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
 
   const handleApply = () => {
     if (dateRange[0] && dateRange[1]) {
-      const start = dateRange[0].format("DD-MM-YYYY");
-      const end = dateRange[1].format("DD-MM-YYYY");
+      const start = dateRange[0].toDate();//"DD-MM-YYYY"
+      const end = dateRange[1].toDate();//format("DD-MM-YYYY");
       onDateRangeSelect(start, end);
     }
   };
