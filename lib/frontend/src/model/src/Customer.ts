@@ -25,12 +25,12 @@ function sanitize(customer: Model, hasId: boolean): Model {
         const phoneStr = String(phone); // המרה למחרוזת
         const cleaned = phoneStr.replace(/[\s-]/g, ''); // מסיר מקפים ורווחים
         const normalized = cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
-      
-        return /^\d{9,10}$/.test(normalized);
-      };
-      
 
-    console.log('customer sanitaized: ',customer);
+        return /^\d{9,10}$/.test(normalized);
+    };
+
+
+    console.log('customer sanitaized: ', customer);
 
     if (hasId && !customer.customer_id) {
         const error: HttpError.Model = {
@@ -66,7 +66,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!customer.phone_number|| !isValidPhoneNumber(customer.phone_number)) {
+    if (!customer.phone_number || !isValidPhoneNumber(customer.phone_number)) {
         console.log('faild phone number: ', customer.phone_number);
 
         const error: HttpError.Model = {
@@ -120,7 +120,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
- 
+
     const newCustomer: Model = {
         customer_id: customer.customer_id,
         first_name: customer.first_name.trim(),
@@ -177,4 +177,5 @@ const sanitizeBodyExisting = (req: any) => {
     }
 }
 
-export { Model, sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }
+export type { Model }
+export { sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }
