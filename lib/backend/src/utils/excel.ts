@@ -1,7 +1,6 @@
 import * as XLSX from 'xlsx';
 import * as path from 'path';
 
-
 const readExcelFile = (/*filePath: string*/) => {
     try {
         console.log('read excel file');
@@ -38,4 +37,19 @@ const readExcelFile = (/*filePath: string*/) => {
     }
 };
 
-export { readExcelFile }
+const writeErrorsToExcel = async (errors: any[]): Promise<void> => {
+    try {
+        const ws = XLSX.utils.json_to_sheet(errors);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Errors");
+
+        const errorFilePath = path.resolve(__dirname, '../../lib/errors_output.xlsx');
+        XLSX.writeFile(wb, errorFilePath);
+        console.log(`❌ Errors written to: ${errorFilePath}`);
+    } catch (err) {
+        console.error("Failed to write errors to Excel:", err);
+        throw err;
+    }
+};
+
+export { readExcelFile, writeErrorsToExcel };

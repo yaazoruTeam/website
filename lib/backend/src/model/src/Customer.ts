@@ -84,7 +84,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!isString(customer.email) || !isValidEmail(customer.email)) {
+    if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
         console.log('faild email: ', customer.email);
 
         const error: HttpError.Model = {
@@ -120,35 +120,13 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    // if (!isString(customer.zipCode) || customer.zipCode.trim() === '') {
-    //     console.log('faild zipCode: ', customer.zipCode);
-
-    //     const error: HttpError.Model = {
-    //         status: 400,
-    //         message: 'Invalid or missing "zipCode".'
-    //     };
-    //     throw error;
-    // }
-    // if (!customer.created_at) {
-    //     const error: HttpError.Model = {
-    //         status: 400,
-    //         message: 'Invalid or missing "created_at".'
-    //     };
-    //     throw error;
-    // }
-    // if (!customer.updated_at) {
-    //     const error: HttpError.Model = {
-    //         status: 400,
-    //         message: 'Invalid or missing "updated_at".'
-    //     };
-    //     throw error;
-    // }
+ 
     const newCustomer: Model = {
         customer_id: customer.customer_id,
         first_name: customer.first_name.trim(),
         last_name: customer.last_name.trim(),
         id_number: customer.id_number,
-        phone_number: customer.phone_number.trim(),
+        phone_number: customer.phone_number,
         additional_phone: customer.additional_phone,
         email: customer.email.trim().toLowerCase(),
         city: customer.city.trim(),
