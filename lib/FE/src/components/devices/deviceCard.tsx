@@ -24,7 +24,7 @@ const statusMap: Record<string, 'active' | 'inactive' | 'blocked' | 'canceled' |
     imei_locked: 'imei_locked'
 };
 
-const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, onClick, showForm = false }) => {
+const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, onClick }) => {
     return (
         <Box>
             <Box
@@ -59,7 +59,7 @@ const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, on
                 </Box>
             </Box>
 
-            {isOpen && showForm && (
+            {isOpen && (
                 <DeviceForm
                     initialValues={{
                         SIM_number: device.SIM_number,

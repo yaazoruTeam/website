@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { colors } from '../../styles/theme';
 
 interface CustomTypographyProps {
     weight: 'regular' | 'medium' | 'bold';
@@ -10,7 +11,7 @@ interface CustomTypographyProps {
     sx?: any;
 }
 
-const CustomTypography: React.FC<CustomTypographyProps> = ({ weight, text, variant, color, sx }) => {
+const CustomTypography: React.FC<CustomTypographyProps> = ({ weight, text, variant, color = colors.brand.color_9, sx }) => {
     const theme = useTheme();
 
     // קביעת המשקל לפי הערך שנבחר

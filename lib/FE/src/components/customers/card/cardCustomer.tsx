@@ -40,6 +40,7 @@ const CardCustomer: React.FC = () => {
             formRef.current.submitForm();
             setTimeout(() => {
                 const updatedCustomer = formRef.current?.getCustomerData();
+                console.log(updatedCustomer);//הוספתי לוג כדי שלא תהייה שגיאה
                 //כאן ניתן לשלוח את הנתונים לשרת
             }, 200);
         }
@@ -49,7 +50,6 @@ const CardCustomer: React.FC = () => {
         console.log('delete customer: ', customer?.customer_id);
         if (customer)
             await deleteCustomer(parseInt(customer.customer_id))
-
         setOpenModal(false);
     }
 
@@ -81,7 +81,7 @@ const CardCustomer: React.FC = () => {
                         color={colors.brand.color_9}
                     />
                     <CustomTypography
-                        text={customer ? `${t('addedOn')} ${formatDateToString(new Date(Date.now()))}` : ''}
+                        text={customer ? `${t('addedOn')} ${formatDateToString(customer.created_at)}` : ''}
                         variant="h3"
                         weight="regular"
                         color={colors.brand.color_9}
