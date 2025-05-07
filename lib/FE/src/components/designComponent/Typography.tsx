@@ -10,7 +10,7 @@ interface CustomTypographyProps {
     sx?: SxProps;
 }
 
-const CustomTypography: React.FC<CustomTypographyProps> = ({ weight, text, variant, color = colors.brand.color_9, sx }) => {
+const CustomTypography: React.FC<CustomTypographyProps> = ({ weight, text, variant, color = colors.c11, sx }) => {
     const theme = useTheme();
 
     let fontWeight: number;

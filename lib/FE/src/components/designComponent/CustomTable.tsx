@@ -100,12 +100,13 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                         whiteSpace: key === 'dates' ? 'nowrap' : 'normal',
                       }}
                     >
-                      <CustomTypography
-                        variant="h4"
-                        weight="regular"
-                        color={colors.c11}
-                        text={String(row[key] || t('dataNotAvailable'))}
-                      />
+                      {typeof row[key] === 'string' || typeof row[key] === 'number' || typeof row[key] === 'boolean' ?
+                        <CustomTypography
+                          variant="h4"
+                          weight="regular"
+                          color={colors.c11}
+                          text={String(row[key] || t('dataNotAvailable'))}
+                        /> : row[key]}
                     </TableCell>
                   );
                 })}
