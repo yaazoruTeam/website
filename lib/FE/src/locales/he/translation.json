@@ -126,5 +126,9 @@
     "resetNetworkSettings": "איפוס הגדרות רשת",
     "CustomerCity": "עיר לקוח",
     "DateInRange": "תאריך בטווח",
-    "customerStatus": "סטטוס לקוח"
+    "customerStatus": "סטטוס לקוח",
+    "activeLoans": "השאלות פעילות",
+    "deviceAssignment": "שיוך מכשירים",
+    "noDevicesFound": "לא נמצאו מכשירים.",
+    "errorFetchingDevices": "שגיאה בטעינת מכשירים."
 }

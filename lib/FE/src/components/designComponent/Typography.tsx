@@ -1,5 +1,6 @@
 import { SxProps, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { colors } from '../../styles/theme';
 
 interface CustomTypographyProps {
     weight: 'regular' | 'medium' | 'bold';
@@ -9,7 +10,7 @@ interface CustomTypographyProps {
     sx?: SxProps;
 }
 
-const CustomTypography: React.FC<CustomTypographyProps> = ({ weight, text, variant, color, sx }) => {
+const CustomTypography: React.FC<CustomTypographyProps> = ({ weight, text, variant, color = colors.brand.color_9, sx }) => {
     const theme = useTheme();
 
     let fontWeight: number;

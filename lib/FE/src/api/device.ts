@@ -35,7 +35,7 @@ export const getDeviceById = async (device_id: string): Promise<Device.Model> =>
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return {} as Device.Model;
+            throw new Error('Failed to refresh token');
         }
         const token = localStorage.getItem('token');
         if (!token) {
@@ -48,8 +48,15 @@ export const getDeviceById = async (device_id: string): Promise<Device.Model> =>
             },
         });
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching device by id", error);
-        throw error;
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                throw new Error(`API Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
+            } else if (error.request) {
+                throw new Error('No response received from the server');
+            }
+        }
+        throw new Error(error.message || 'An unknown error occurred');
     }
 };
