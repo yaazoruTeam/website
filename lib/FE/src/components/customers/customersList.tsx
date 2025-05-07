@@ -9,7 +9,7 @@ import { Customer } from "../../model/src";
 import CustomTable from "../designComponent/CustomTable";
 import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
-import FormatDate from "../designComponent/FormatDate";
+import { formatDateToString } from "../designComponent/FormatDate";
 import CustomSearchSelect from "../designComponent/CustomSearchSelect";
 import {
   getCustomersByCity,
@@ -37,7 +37,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
     if (!filteredCustomers.length) {
       setFilteredCustomers(customers);
     }
-  }, [customers]);
+  }, [customers, filteredCustomers.length]);
 
   useEffect(() => {
     if (dateRange) {
@@ -101,7 +101,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const tableData = filteredCustomers.map((customer) => ({
     customer_id: customer.customer_id,
     customer_name: `${customer.first_name} ${customer.last_name}`,
-    registration_date: <FormatDate date={customer.created_at} />,
+    registration_date: `${formatDateToString(customer.created_at)}`,
     city: customer.city,
     status:
       customer.status === "active" ? (
@@ -130,7 +130,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
       }}
     >
       {showAddCustomer ? (
-        <AddCustomer onBack={() => setShowAddCustomer(false)} />
+        <AddCustomer />
       ) : (
         <>
           <Box
@@ -146,7 +146,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               text={t("customerManagement")}
               variant="h1"
               weight="bold"
-              color={colors.brand.color_9}
+              color={colors.c11}
             />
             <CustomButton
               label={t("addingNewCustomer")}

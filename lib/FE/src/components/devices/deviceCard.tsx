@@ -30,8 +30,8 @@ const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, on
             <Box
                 onClick={onClick}
                 sx={{
-                    backgroundColor: isOpen ? colors.brand.color_17 : colors.neutral.white,
-                    border: `1px solid ${colors.brand.color_17}`,
+                    backgroundColor: isOpen ? colors.c13 : colors.c6,
+                    border: `1px solid ${colors.c13}`,
                     borderRadius: '6px',
                     padding: '16px',
                     display: 'flex',
@@ -45,16 +45,16 @@ const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, on
                     text={device.device_number}
                     variant="h1"
                     weight="medium"
-                    color={colors.brand.color_7}
+                    color={colors.c8}
                 />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                     {!isOpen && device.status && statusMap[device.status] && (
                         <StatusTag status={statusMap[device.status]} />
                     )}
                     {isOpen ? (
-                        <ChevronUpIcon style={{ width: 24, height: 24, color: colors.brand.color_9 }} />
+                        <ChevronUpIcon style={{ width: 24, height: 24, color: colors.c11 }} />
                     ) : (
-                        <ChevronLeftIcon style={{ width: 24, height: 24, color: colors.brand.color_9 }} />
+                        <ChevronLeftIcon style={{ width: 24, height: 24, color: colors.c11 }} />
                     )}
                 </Box>
             </Box>

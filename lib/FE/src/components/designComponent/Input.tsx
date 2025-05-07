@@ -29,6 +29,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
     sx,
     ...props
 }) => {
+
     const isLargeHeight = height === '96px';
     return (
         <Box
@@ -47,7 +48,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                     text={label}
                     variant="h4"
                     weight="regular"
-                    color={colors.brand.color_9}
+                    color={colors.c11}
                     sx={{
                         textAlign: "right",
                         direction: "rtl",
@@ -79,7 +80,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                                 input: {
                                     disableUnderline: true,
                                     sx: {
-                                        color: colors.brand.color_9,
+                                        color: colors.c11,
                                         fontSize: '16px',
                                         fontFeatureSettings: "'liga' off, 'clig' off",
                                         lineHeight: '120%',
@@ -89,7 +90,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                                     },
                                     endAdornment: icon ? (
                                         <InputAdornment position="end">
-                                            {React.cloneElement(icon as React.ReactElement, { style: { width: '24px', height: '24px', color: colors.brand.color_9, position: 'relative' } })}
+                                            {React.cloneElement(icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: { width: '24px', height: '24px', color: colors.c11, position: 'relative' } })}
                                         </InputAdornment>
                                     ) : null,
                                 },
@@ -98,7 +99,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                             multiline={isLargeHeight}
                             sx={{
                                 borderRadius: "6px",
-                                background: colors.brand.color_11,
+                                background: colors.feild,
                                 alignSelf: "stretch",
                                 height: height,
                                 "& .MuiInputBase-root": {

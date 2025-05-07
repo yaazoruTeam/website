@@ -1,5 +1,5 @@
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllCustomerDevicesByCustomerId } from "../../../api/customerDevice";
 import { Customer, CustomerDevice, Device } from "../../../model";
 import CustomTypography from "../../designComponent/Typography";
@@ -32,6 +32,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
     }, [customer.customer_id]);
 
     const handleRowClick = (deviceId: string) => {
+         console.log('Device ID:', deviceId);
         navigate('./device');
     };
 
@@ -42,7 +43,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
                     text={t('devices')}
                     variant="h1"
                     weight="bold"
-                    color={colors.brand.color_9}
+                    color={colors.c11}
                 />
             </Box>
             {devices.map((device) => (

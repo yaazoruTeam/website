@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { CustomButton } from "../designComponent/Button";
 import { CustomTextField } from "../designComponent/Input";
@@ -29,7 +28,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             sx={{
                 width: '80%',
                 padding: 6,
-                backgroundColor: colors.neutral.white,
+                backgroundColor: colors.c6,
                 borderRadius: 2,
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -95,7 +94,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                     text={t('forgotPassword?')}
                     variant='h3'
                     weight='medium'
-                    color={colors.brand.color_9}
+                    color={colors.c11}
                     sx={{
                         textAlign: "right",
                         textDecoration: "underline",

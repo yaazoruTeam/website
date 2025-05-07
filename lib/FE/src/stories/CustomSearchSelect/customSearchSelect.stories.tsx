@@ -30,7 +30,6 @@
 // export const Default = Template.bind({});
 // Default.args = {};
 
-import React from "react";
 import { StoryFn, Meta } from "@storybook/react";
 import { useForm, FormProvider } from "react-hook-form";
 import CustomSearchSelect from "../../components/designComponent/CustomSearchSelect";

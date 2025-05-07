@@ -15,7 +15,7 @@ const CustomTableHead: React.FC<CustomTableHeadProps> = ({ headers }) => {
             key={index}
             sx={{
               textAlign: "right",
-              color: colors.brand.color_9,
+              color: colors.c11,
               fontSize: 17,
               fontFamily: "Heebo",
               fontWeight: "500",

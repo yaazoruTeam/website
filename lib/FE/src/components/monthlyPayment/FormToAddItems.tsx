@@ -25,7 +25,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
     if (initialItems && JSON.stringify(initialItems) !== JSON.stringify(items)) {
       setItems(initialItems);
     }
-  }, [initialItems]);
+  }, [initialItems, items]);
 
   useEffect(() => {
     if (editingItem !== null) {
@@ -98,7 +98,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
         text={t('items')}
         variant="h2"
         weight="medium"
-        color={colors.brand.color_8}
+        color={colors.c2}
         sx={{ textAlign: 'right', marginLeft: 'auto' }}
       />
       <TableContainer >
@@ -106,10 +106,10 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
           sx={{
             direction: 'rtl',
             '& .MuiTableHead-root': {
-              borderBottom: `2px solid ${colors.brand.color_14}`,
+              borderBottom: `2px solid ${colors.c15}`,
             },
             '& .MuiTableFooter-root': {
-              borderTop: `2px solid ${colors.brand.color_14}`,
+              borderTop: `2px solid ${colors.c15}`,
             },
             '& .MuiTableCell-root': {
               border: 'none',
@@ -123,7 +123,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                   text={t('paymentType')}
                   variant="h4"
                   weight="regular"
-                  color={colors.brand.color_8}
+                  color={colors.c2}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -131,7 +131,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                   text={t('description')}
                   variant="h4"
                   weight="regular"
-                  color={colors.brand.color_8}
+                  color={colors.c2}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -139,7 +139,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                   text={t('amount')}
                   variant="h4"
                   weight="regular"
-                  color={colors.brand.color_8}
+                  color={colors.c2}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -147,7 +147,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                   text={t('price')}
                   variant="h4"
                   weight="regular"
-                  color={colors.brand.color_8}
+                  color={colors.c2}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -155,7 +155,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                   text={t('total')}
                   variant="h4"
                   weight="regular"
-                  color={colors.brand.color_8}
+                  color={colors.c2}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}></TableCell>
@@ -179,7 +179,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                         text={item.paymentType.toString()}
                         variant="h4"
                         weight="regular"
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                       />)}
                   </TableCell>
                   <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -194,7 +194,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                         text={item.description.toString()}
                         variant="h4"
                         weight="regular"
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                       />)}
                   </TableCell>
                   <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -209,7 +209,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                         text={item.quantity.toString()}
                         variant="h4"
                         weight="regular"
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                       />)}
                   </TableCell>
                   <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -224,7 +224,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                         text={item.price.toString()}
                         variant="h4"
                         weight="regular"
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                       />
                     )}
                   </TableCell>
@@ -240,7 +240,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                         text={item.total.toString()}
                         variant="h4"
                         weight="regular"
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                       />
                     )}
                   </TableCell>
@@ -262,7 +262,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                         onClick={handleSubmit(saveEditedItem)}
                       />
                     ) : (
-                      <PencilIcon style={{ width: '24px', height: '24px', color: colors.brand.color_8, cursor: 'pointer' }} onClick={() => editItem(index)} />
+                      <PencilIcon style={{ width: '24px', height: '24px', color: colors.c2, cursor: 'pointer' }} onClick={() => editItem(index)} />
                     )}
                   </TableCell>
                   <TableCell
@@ -274,7 +274,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                       direction: 'rtl'
                     }}
                   >
-                    <TrashIcon style={{ width: '24px', height: '24px', color: colors.brand.color_8, cursor: 'pointer' }} onClick={() => deleteItem(item)} />
+                    <TrashIcon style={{ width: '24px', height: '24px', color: colors.c2, cursor: 'pointer' }} onClick={() => deleteItem(item)} />
                   </TableCell>
                 </TableRow>
               ))
@@ -285,7 +285,7 @@ const FormToAddItems: React.FC<{ onItemsChange: (items: ItemForMonthlyPayment.Mo
                     text={t('noItemToDisplay')}
                     variant="h4"
                     weight="regular"
-                    color={colors.brand.color_10}
+                    color={colors.c0}
                   />
                 </TableCell>
               </TableRow>

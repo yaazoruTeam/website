@@ -6,7 +6,7 @@ import { MonthlyPayment } from "../../model/src";
 import { Link, useNavigate } from "react-router-dom";
 import CustomTable from "../designComponent/CustomTable";
 import { getCustomerById } from "../../api/customerApi";
-import FormatDate from "../designComponent/FormatDate";
+import  { formatDateToString } from "../designComponent/FormatDate";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
 interface MonthlyPaymentListProps {
@@ -85,7 +85,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
             <Link
                 to={`/customer/${payment.customer_id}`}
                 style={{
-                    color: colors.brand.color_7,
+                    color: colors.c8,
                     cursor: 'pointer',
                 }}
                 onClick={(e) => e.stopPropagation()}
@@ -93,15 +93,15 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
                 {customerNames[payment.customer_id] || t('loading')}
             </Link>
         ),
-        dates: <>{FormatDate({ date: payment.start_date })} - {FormatDate({ date: payment.end_date })}</>,
+        dates: `${formatDateToString(payment.start_date)} - ${formatDateToString(payment.end_date)}`,
         amount: payment.amount,
         total_amount: payment.total_amount,
         belongsOrganization: payment.belongsOrganization,
-        last_attempt: <FormatDate date={payment.last_attempt} />,
-        last_sucsse: <FormatDate date={payment.last_sucsse} />,
-        next_charge: <FormatDate date={payment.next_charge} />,
-        update_at: <FormatDate date={payment.update_at} />,
-        updateMonthlyPayment: <PencilIcon style={{ width: '24px', height: '24px', color: colors.brand.color_8, cursor: 'pointer' }} onClick={() => onClickMonthlyPayment(payment)} />
+        last_attempt: `${formatDateToString(payment.last_attempt)}`,
+        last_sucsse: `${formatDateToString(payment.last_sucsse)}`,
+        next_charge: `${formatDateToString(payment.next_charge)}`,
+        update_at: `${formatDateToString(payment.update_at)}`,
+        updateMonthlyPayment: <PencilIcon style={{ width: '24px', height: '24px', color: colors.c2, cursor: 'pointer' }} onClick={() => onClickMonthlyPayment(payment)} />
     }));
 
     return (

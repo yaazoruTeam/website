@@ -12,8 +12,8 @@ type TooltipPropsMy = {
   position?: "top" | "bottom" | "left" | "right" | "normal";
 };
 
-const primaryColor = colors.brand.color_2;
-const secondaryColor = colors.brand.color_8;
+const primaryColor = colors.c10;
+const secondaryColor = colors.c2;
 
 
 const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "top", variant = "primary" }) => {
@@ -32,7 +32,7 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "t
         height: '40px'
       }}
     />
-  ))(({ theme }) => ({
+  ))(() => ({
     [`& .${tooltipClasses.arrow}`]: {
       color: variant === 'primary' ? primaryColor : secondaryColor,
     },
@@ -60,7 +60,7 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "t
             text={text}
             variant="h5"
             weight="regular"
-            color={colors.neutral.white}
+            color={colors.c6}
           />
         </Box>
       }

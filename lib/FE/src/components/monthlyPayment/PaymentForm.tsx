@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
+import { useEffect, useState, useImperativeHandle, forwardRef, useCallback } from 'react';
 import { Box, Typography } from '@mui/material';
 import { CustomTextField } from '../designComponent/Input';
 import { useForm } from 'react-hook-form';
@@ -11,6 +11,7 @@ interface PaymentFormInput {
     Payments: string;
     startDate: Date;
     dayOfTheMonth: string;
+    additionalField: string;
 }
 declare global {
     interface Window {
@@ -34,13 +35,13 @@ const PaymentForm = forwardRef((props: {
     const [fieldsInitialized, setFieldsInitialized] = useState<boolean>(false);
     // const terminalName = process.env.TRANZILA_TERMINAL_NAME;
 
-const { control, watch, setValue } = useForm<PaymentFormInput>({
-        defaultValues 
+    const { control, watch, setValue } = useForm<PaymentFormInput>({
+        defaultValues
     });
     useImperativeHandle(ref, () => ({
         chargeCcData, // חושפים את הפונקציה החיונית
     }));
-    const initializeTzlaFields = () => {
+    const initializeTzlaFields = useCallback(() => {
         console.log('מנסה לטעון שדות Tranzila...');
 
         if (fieldsInitialized || window.fieldsInitialized) {
@@ -80,7 +81,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                 input: {
                     height: '29px',
                     width: '100%',
-                    color: colors.brand.color_9,
+                    color: colors.c11,
                 },
                 select: {
                     height: 'auto',
@@ -92,7 +93,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
 
         setFieldsInitialized(true);
         window.fieldsInitialized = true;
-    };
+    }, [fieldsInitialized, t]);
 
     useEffect(() => {
         if (!window.TzlaHostedFields) {
@@ -103,7 +104,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
         if (!fieldsInitialized) {
             initializeTzlaFields();
         }
-    }, [fieldsInitialized]);
+    }, [fieldsInitialized, initializeTzlaFields]);
 
 
     const chargeCcData = async () => {
@@ -184,7 +185,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                 width: '100%',
                 height: '100%',
                 padding: 4,
-                backgroundColor: colors.neutral.white,
+                backgroundColor: colors.c6,
                 borderRadius: 2,
                 display: 'flex',
                 flexDirection: 'column',
@@ -202,7 +203,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                     text={t('paymentDetails')}
                     variant='h2'
                     weight='medium'
-                    color={colors.brand.color_8}
+                    color={colors.c2}
                 />
             </Box>
             <Box
@@ -230,7 +231,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                         text={t('creditcardNumber')}
                         variant='h4'
                         weight='regular'
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <Box
                         sx={{
@@ -262,7 +263,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                         text={t('expiry')}
                         variant='h4'
                         weight='regular'
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <Box
                         sx={{
@@ -294,7 +295,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                         text='cvv'
                         variant='h4'
                         weight='regular'
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <Box
                         sx={{
@@ -325,7 +326,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                         text={t('IdNumber')}
                         variant='h4'
                         weight='regular'
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <Box
                         sx={{
@@ -357,7 +358,7 @@ const { control, watch, setValue } = useForm<PaymentFormInput>({
                     text={t('billingDate')}
                     variant='h2'
                     weight='medium'
-                    color={colors.brand.color_8}
+                    color={colors.c2}
                 />
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>

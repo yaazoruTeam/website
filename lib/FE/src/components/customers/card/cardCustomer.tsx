@@ -40,6 +40,7 @@ const CardCustomer: React.FC = () => {
             formRef.current.submitForm();
             setTimeout(() => {
                 const updatedCustomer = formRef.current?.getCustomerData();
+                console.log('updatedCustomer: ', updatedCustomer);//להשתמש ולמחוק
                 //כאן ניתן לשלוח את הנתונים לשרת
             }, 200);
         }
@@ -78,13 +79,13 @@ const CardCustomer: React.FC = () => {
                         text={customer ? `${customer.first_name} ${customer.last_name}` : ''}
                         variant="h1"
                         weight="bold"
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <CustomTypography
                         text={customer ? `${t('addedOn')} ${formatDateToString(new Date(Date.now()))}` : ''}
                         variant="h3"
                         weight="regular"
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                 </Box>
                 <Box sx={{
@@ -164,13 +165,13 @@ const CardCustomer: React.FC = () => {
                             text={t('deletingCustomer')}
                             variant="h1"
                             weight="medium"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                         <CustomTypography
                             text={t('customerDeletionWarning')}
                             variant="h3"
                             weight="medium"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 2, width: '100%' }}>

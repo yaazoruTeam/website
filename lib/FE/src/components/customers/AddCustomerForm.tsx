@@ -180,6 +180,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                             rules={{
                                 required: t('warningEmail'),
                                 pattern: {
+                                    
                                     value: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
                                     message: t('errorEmail')
                                 }
@@ -187,6 +188,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                         />
                     </Box>
                     <Box style={{
+                        width: '66%',
                         alignSelf: 'stretch',
                         justifyContent: 'flex-start',
                         alignItems: 'flex-start',

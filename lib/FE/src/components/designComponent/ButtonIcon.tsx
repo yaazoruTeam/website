@@ -3,7 +3,7 @@ import { ButtonProps, Button } from "@mui/material";
 import { colors } from "../../styles/theme";
 
 export interface CustomButtonProps extends ButtonProps {
-    icon: React.ReactNode;
+    icon: React.ReactElement;
     buttonType?: 'first' | 'second' | 'third';
     state?: 'default' | 'hover' | 'active';
 }
@@ -18,61 +18,61 @@ export const CustomIconButton: React.FC<CustomButtonProps> = ({
     const buttonStyles = {
         first: {
             default: {
-                backgroundColor: colors.brand.color_4,
-                color: colors.neutral.white,
+                backgroundColor: colors.c3,
+                color: colors.c6,
                 border: `none`,
-                hover: colors.brand.color_8,
+                hover: colors.c2,
             },
             hover: {
-                backgroundColor: colors.brand.color_2,
-                color: colors.neutral.white,
+                backgroundColor: colors.c10,
+                color: colors.c6,
                 border: `none`,
                 hover: '',
             },
             active: {
-                backgroundColor: colors.neutral.white,
-                color: colors.brand.color_10,
-                border: `1px solid ${colors.brand.color_10} `,
+                backgroundColor: colors.c6,
+                color: colors.c0,
+                border: `1px solid ${colors.c0} `,
                 hover: '',
             }
         },
         second: {
             default: {
-                backgroundColor: colors.brand.color_8,
-                color: colors.neutral.white,
+                backgroundColor: colors.c2,
+                color: colors.c6,
                 border: `none`,
                 hover: '',
             },
             hover: {
-                backgroundColor: colors.brand.color_12,
-                color: colors.neutral.white,
+                backgroundColor: colors.c22,
+                color: colors.c6,
                 border: `none`,
                 hover: '',
             },
             active: {
-                backgroundColor: colors.neutral.white,
-                color: colors.brand.color_8,
-                border: `1px solid ${colors.brand.color_8} `,
+                backgroundColor: colors.c6,
+                color: colors.c2,
+                border: `1px solid ${colors.c2} `,
                 hover: '',
             }
         },
         third: {
             default: {
-                backgroundColor: colors.neutral.white,
-                color: colors.brand.color_8,
-                border: `1px solid ${colors.brand.color_12} `,
+                backgroundColor: colors.c6,
+                color: colors.c2,
+                border: `1px solid ${colors.c22} `,
                 hover: '',
             },
             hover: {
-                backgroundColor: colors.brand.color_12,
-                color: colors.neutral.white,
+                backgroundColor: colors.c22,
+                color: colors.c6,
                 border: `none`,
                 hover: '',
             },
             active: {
-                backgroundColor: colors.neutral.white,
-                color: colors.brand.color_8,
-                border: `1px solid ${colors.brand.color_12} `,
+                backgroundColor: colors.c6,
+                color: colors.c2,
+                border: `1px solid ${colors.c22} `,
                 hover: '',
             }
         }
@@ -104,7 +104,7 @@ export const CustomIconButton: React.FC<CustomButtonProps> = ({
             }}
             {...props}
         >
-            {React.cloneElement(icon as React.ReactElement, {
+            {React.cloneElement(icon as React.ReactElement<{ style?: React.CSSProperties }>, {
                 style: {
                     width: '20px',
                     height: '20px',

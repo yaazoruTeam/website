@@ -85,7 +85,7 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, { customer: Customer.Mode
                         text={t('devices')}
                         variant="h1"
                         weight="bold"
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                 </Box>
                 {devices.map((device) => (
