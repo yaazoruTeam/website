@@ -16,8 +16,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
     phone,
     email,
     onClick,
-    sx,
-    ...props
+
 }) => {
     return (
         <Box

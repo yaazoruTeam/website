@@ -39,16 +39,17 @@ export default {
   component: CustomSearchSelect,
 } as Meta;
 
-const Template: StoryFn = (args) => {
+const Template: StoryFn<typeof CustomSearchSelect> = (args) => {
   const methods = useForm();
   return (
     <FormProvider {...methods}>
       <CustomSearchSelect 
-        // options={[
-        //   { label: "תל אביב", value: "tel_aviv" },
-        //   { label: "ירושלים", value: "jerusalem" },
-        //   { label: "חיפה", value: "haifa" },
-        // ]} // הוספת options
+        name="city"
+        options={[
+          { label: "תל םביב", value: "tel_aviv" },
+          { label: "ירושלים", value: "jerusalem" },
+          { label: "חיפה", value: "haifa" },
+        ]}
         {...args}
         placeholder="עיר לקוח"
         searchType="date"

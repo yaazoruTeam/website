@@ -7,7 +7,7 @@ export default {
   component: SelectCustomerForm,
 } as Meta<typeof SelectCustomerForm>;
 
-const Template: StoryFn<typeof SelectCustomerForm> = (args) => <SelectCustomerForm />;
+const Template: StoryFn<typeof SelectCustomerForm> = () => <SelectCustomerForm />;
 
 export const Form = Template.bind({});
 Form.args = {};

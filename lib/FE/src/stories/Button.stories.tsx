@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import { CustomButton } from "../components/designComponent/Button";
 import { ThemeProvider } from '@mui/material/styles';
@@ -14,7 +15,8 @@ export default {
 
 const Template: StoryFn<typeof CustomButton> = (args) => (
   <ThemeProvider theme={theme}> {/* עטוף את הקומפוננטה ב-ThemeProvider */}
-    <CustomButton {...args} />
+    <CustomButton
+    {...args} />
   </ThemeProvider>);
 
 export const ExampleRegularButton = Template.bind({});
