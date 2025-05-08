@@ -1,5 +1,5 @@
 import getConnection from "../db/connection";
-import db from "../db";
+import * as db from "../db";
 import { CustomerDeviceExcel, HttpError } from "../model";
 import { convertFlatRowToModel } from "../utils/converters/customerDeviceExcelConverter";
 import { writeErrorsToExcel } from "../utils/excel";

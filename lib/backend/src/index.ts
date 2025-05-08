@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { router } from './routers/router';
 import { errorHandler } from "./middleware/errorHandler";
-import { sendPing } from "./telecom/ping";
+// import { sendPing } from "./telecom/ping";
 
 const cors = require('cors');
 

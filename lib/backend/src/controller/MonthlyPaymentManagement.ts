@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CreditDetails, HttpError, ItemForMonthlyPayment, MonthlyPayment, MonthlyPaymentManagement } from "../model";
-import db from "../db";
+import * as db from "../db";
 import getConnection from "../db/connection";
 import { updateItems } from "./item";
 
