@@ -142,7 +142,7 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 };
 
 const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
-    try {
+    try {        
         let customerEx;
         if (hasId) {
             customerEx = await db.Customer.findCustomer({
@@ -157,12 +157,8 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
             });
         }
         if (customerEx) {
-            try {
-                Customer.sanitizeExistingCustomer(customerEx, customer);
-            } catch (err) {
-                throw err;
-            }
-        };
+            Customer.sanitizeExistingCustomer(customerEx, customer);
+        }
     } catch (err) {
         throw err;
     }
@@ -177,5 +173,6 @@ export {
     deleteCustomer,
     getCustomersByCity,
     getCustomersByStatus,
-    getCustomersByDateRange
+    getCustomersByDateRange,
+    existingCustomer
 }
