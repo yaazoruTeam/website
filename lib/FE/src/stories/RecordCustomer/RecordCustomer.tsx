@@ -16,8 +16,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
     phone,
     email,
     onClick,
-    sx,
-    ...props
+
 }) => {
     return (
         <Box
@@ -26,7 +25,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                 height: '100%',
                 paddingTop: 2,
                 paddingBottom: 2,
-                backgroundColor: colors.neutral.white,
+                backgroundColor: colors.c6,
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
@@ -50,7 +49,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                     text={name}
                     variant='h3'
                     weight='regular'
-                    color={colors.brand.color_10}
+                    color={colors.c0}
                     sx={{
                         alignSelf: 'stretch',
                         textAlign: 'right',
@@ -69,7 +68,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                         text={email}
                         variant='h3'
                         weight='regular'
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                         sx={{
                             wordWrap: 'break-word',
                             width: 211.2,
@@ -79,7 +78,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({
                         text={phone}
                         variant='h3'
                         weight='regular'
-                        color={colors.brand.color_10}
+                        color={colors.c0}
                         sx={{
                             wordWrap: 'break-word',
                             textAlign: 'right', flexBasis: '50%',  // הטלפון תופס חצי מרחב של הקופסה

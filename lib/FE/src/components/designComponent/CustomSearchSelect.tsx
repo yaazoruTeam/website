@@ -107,8 +107,8 @@
 //           onOpen={handleSelectClick}
 //           renderValue={(selected) => (selected ? selected : placeholder)}
 //           sx={{
-//             backgroundColor: colors.brand.color_14,
-//             border: `1px solid ${colors.brand.color_12}`,
+//             backgroundColor: colors.c15,
+//             border: `1px solid ${colors.c22}`,
 //             borderRadius: 4,
 //             width: "200px",
 //             height: "50px",
@@ -131,7 +131,7 @@
 //                   style={{
 //                     width: "16px",
 //                     height: "16px",
-//                     color: colors.brand.color_9,
+//                     color: colors.c11,
 //                     position: "absolute",
 //                     top: 16,
 //                     left: "10px",
@@ -142,7 +142,7 @@
 //                   style={{
 //                     width: "16px",
 //                     height: "16px",
-//                     color: colors.brand.color_9,
+//                     color: colors.c11,
 //                     position: "absolute",
 //                     top: 16,
 //                     left: "10px",
@@ -154,7 +154,7 @@
 //                 style={{
 //                   width: "16px",
 //                   height: "16px",
-//                   color: colors.brand.color_9,
+//                   color: colors.c11,
 //                   position: "absolute",
 //                   top: 16,
 //                   left: "10px",
@@ -196,7 +196,6 @@ import {
   CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { colors } from "../../styles/theme";
-import { Customer } from "../../model/src";
 import StatusCard from "./StatusCard";
 
 interface CustomSearchSelectProps {
@@ -311,8 +310,8 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             onOpen={handleSelectClick}
             renderValue={(selected) => (selected ? selected : placeholder)}
             sx={{
-              backgroundColor: colors.brand.color_14,
-              border: `1px solid ${colors.brand.color_12}`,
+              backgroundColor: colors.c15,
+              border: `1px solid ${colors.c22}`,
               borderRadius: 4,
               width: "200px",
               height: "50px",
@@ -336,7 +335,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
                     style={{
                       width: "16px",
                       height: "16px",
-                      color: colors.brand.color_9,
+                      color: colors.c11,
                       position: "absolute",
                       top: 16,
                       left: "10px",
@@ -347,7 +346,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
                     style={{
                       width: "16px",
                       height: "16px",
-                      color: colors.brand.color_9,
+                      color: colors.c11,
                       position: "absolute",
                       top: 16,
                       left: "10px",
@@ -359,7 +358,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
                   style={{
                     width: "16px",
                     height: "16px",
-                    color: colors.brand.color_9,
+                    color: colors.c11,
                     position: "absolute",
                     top: 16,
                     left: "10px",
@@ -476,8 +475,8 @@ export default CustomSearchSelect;
 //           onOpen={handleSelectClick}
 //           renderValue={(selected) => (selected ? selected : placeholder)}
 //           sx={{
-//             backgroundColor: colors.brand.color_14,
-//             border: `1px solid ${colors.brand.color_12}`,
+//             backgroundColor: colors.c15,
+//             border: `1px solid ${colors.c22}`,
 //             borderRadius: 4,
 //             width: "200px",
 //             height: "50px",
@@ -499,7 +498,7 @@ export default CustomSearchSelect;
 //                 style={{
 //                   width: "16px",
 //                   height: "16px",
-//                   color: `${colors.brand.color_9}`,
+//                   color: `${colors.c11}`,
 //                   position: "absolute",
 //                   top: 16,
 //                   left: "10px",
@@ -510,7 +509,7 @@ export default CustomSearchSelect;
 //                 style={{
 //                   width: "16px",
 //                   height: "16px",
-//                   color: `${colors.brand.color_9}`,
+//                   color: `${colors.c11}`,
 //                   position: "absolute",
 //                   top: 16,
 //                   left: "10px",

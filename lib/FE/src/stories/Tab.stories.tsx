@@ -15,11 +15,13 @@ const tabs = [
     { label: 'היסטוריית לקוחות', content: <div>תוכן היסטוריית לקוחות ---</div> },
   ];
 
-const Template: StoryFn<typeof CustomTabs> = (args) => 
+const Template: StoryFn<typeof CustomTabs> = () => 
  <ThemeProvider theme={theme}>
     <CustomTabs tabs={tabs}/>
 </ThemeProvider>
 ;
 
 export const Tab = Template.bind({});
-Tab.args = {};
+Tab.args = {
+
+};

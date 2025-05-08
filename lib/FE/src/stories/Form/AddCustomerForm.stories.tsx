@@ -7,7 +7,7 @@ export default {
   component: AddCustomerForm,
 } as Meta<typeof AddCustomerForm>;
 
-const Template: StoryFn<typeof AddCustomerForm> = (args) => <AddCustomerForm onSubmit={()=>{}}/>;
+const Template: StoryFn<typeof AddCustomerForm> = () => <AddCustomerForm onSubmit={()=>{}}/>;
 
 export const Form = Template.bind({});
 Form.args = {};

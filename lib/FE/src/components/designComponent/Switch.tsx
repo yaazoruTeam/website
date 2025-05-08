@@ -21,7 +21,7 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
       transform: 'translateX(17px)',
       color: theme.palette.common.white,
       '& + .MuiSwitch-track': {
-        backgroundColor: colors.brand.color_4,
+        backgroundColor: colors.c3,
         opacity: 1,
         border: 0,
       },
@@ -32,7 +32,7 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
     width: 18,
     height: 18,
     borderRadius: '50%',
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.c6,
   },
   '& .MuiSwitch-track': {
     borderRadius: 10,

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CustomerSelector from '../customers/CustomerSelector';
 import PaymentForm from './PaymentForm';
 import FormToAddItems from './FormToAddItems';
@@ -10,15 +10,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/system';
 
-interface Props {
-    onBack: () => void;
-}
-
 export interface AddMonthlyPaymentFormInputs {
     full_name: string;
 }
 
-const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
+const AddMonthlyPayment: React.FC = () => {
     const { t } = useTranslation();
     const [customerData, setCustomerData] = useState<any>(null); // נתוני לקוח
     const [itemsData, setItemsData] = useState<ItemForMonthlyPayment.Model[]>([]); // נתוני פריטים
@@ -28,50 +24,8 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
     const isMobile = useMediaQuery('(max-width:600px)');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (paymentData) {
-            console.log("הנתונים עודכנו:", paymentData);
-        }
-        // בדיקה אם כל הנתונים קיימים
-        if (!customerData || !itemsData.length || !paymentData || !timeData) {
-            console.error("לא כל הנתונים מוכנים!");
-            return; // אם יש נתון חסר, לא נבצע את קריאות השרת
-        } else {
-            console.log('ניתן לבצע את הקריאות לשרת----------בהצלחה!!!');
-            addMonthlyPayment();
-        }
-    }, [paymentData]); // זה יתעדכן כשתהיה עדכון ב-paymentData
-
-    useEffect(() => {
-        console.log('נתוני הזמן המעודכנים:', timeData);
-    }, [timeData]);
-
-
-    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
-        let endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
-        return endDate;
-    };
-
-    const charge = async () => {
-        console.log('Adding monthly payment:', {
-            customerData,
-            itemsData,
-            paymentData,
-            timeData,
-        });
-        try {
-            const responsePyment: any = await paymentFormRef.current?.chargeCcData();
-            console.log('Payment completed');
-            console.log(responsePyment);
-            console.log('pymentData:', paymentData);
-        } catch (error) {
-            console.error('Error during payment:', error);
-        }
-    };
-
-    const addMonthlyPayment = async () => {
-        //כאן יתבצעו הקריאות שרת 
+    const addMonthlyPayment = useCallback(async () => {
+        //כםן יתבצעו הקריםות שרת 
         console.log('Adding monthly payment:', {
             customerData,
             itemsData,
@@ -148,8 +102,51 @@ const AddMonthlyPayment: React.FC<Props> = ({ onBack }) => {
         } catch (error) {
             console.error('Error creating monthly payment:', error)
         }
-    }
+    }, [customerData, itemsData, paymentData, timeData, navigate, t]);
 
+    useEffect(() => {
+        if (paymentData) {
+            console.log("הנתונים עודכנו:", paymentData);
+        }
+        // בדיקה אם כל הנתונים קיימים
+        if (!customerData || !itemsData.length || !paymentData || !timeData) {
+            console.error("לא כל הנתונים מוכנים!");
+            return; // אם יש נתון חסר, לא נבצע את קריאות השרת
+        } else {
+            console.log('ניתן לבצע את הקריאות לשרת----------בהצלחה!!!');
+            addMonthlyPayment();
+        }
+    }, [paymentData, itemsData.length, customerData, timeData, addMonthlyPayment]); // זה יתעדכן כשתהיה עדכון ב-paymentData
+
+    useEffect(() => {
+        console.log('נתוני הזמן המעודכנים:', timeData);
+    }, [timeData]);
+
+
+    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
+        const endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
+        return endDate;
+    };
+
+    const charge = async () => {
+        console.log('Adding monthly payment:', {
+            customerData,
+            itemsData,
+            paymentData,
+            timeData,
+        });
+        try {
+            const responsePyment: any = await paymentFormRef.current?.chargeCcData();
+            console.log('Payment completed');
+            console.log(responsePyment);
+            console.log('pymentData:', paymentData);
+        } catch (error) {
+            console.error('Error during payment:', error);
+        }
+    };
+
+    
     return (
         <>
             <CustomerSelector onCustomerSelect={setCustomerData} />

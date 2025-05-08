@@ -46,7 +46,7 @@ const MonthlyPaymentComponen: React.FC = () => {
             }}
         >
             {showAddMonthlyPayment ? (
-                <AddMonthlyPayment onBack={() => setShowAddMonthlyPayment(false)} />
+                <AddMonthlyPayment />
             ) : (
                 <>
                     <Box sx={{
@@ -60,7 +60,7 @@ const MonthlyPaymentComponen: React.FC = () => {
                             text={t('standingOrders')}
                             variant="h1"
                             weight="bold"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                         <CustomButton
                             label={t('newStandingOrder')}

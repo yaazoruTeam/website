@@ -121,7 +121,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                         width: "93%",
                         height: "100%",
                         p: 2,
-                        backgroundColor: colors.neutral.white,
+                        backgroundColor: colors.c6,
                         boxShadow: theme.shadows[0],
                         borderRadius: 2,
                         overflow: "hidden",
@@ -161,7 +161,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                     sx={{
                         width: 800,
                         padding: 3,
-                        backgroundColor: colors.neutral.white,
+                        backgroundColor: colors.c6,
                         borderRadius: 2,
                         boxShadow: 24,
                         textAlign: 'center',
@@ -171,7 +171,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                         sx={{
                             width: '100%',
                             height: '100%',
-                            backgroundColor: colors.neutral.white,
+                            backgroundColor: colors.c6,
                             borderRadius: 6,
                             flexDirection: 'column',
                             justifyContent: 'flex-start',
@@ -183,7 +183,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                             text={t('addCustomer')}
                             variant='h1'
                             weight='bold'
-                            color={colors.brand.color_7}
+                            color={colors.c8}
                         />
                         <AddCustomerForm onSubmit={addNewCustomer} />
                     </Box>
