@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpError, ItemForMonthlyPayment } from "../model";
-import db from "../db";
+import * as db from "../db";
 
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
     try {

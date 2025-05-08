@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import db from "../db";
+import * as db from "../db";
 import { TransactionDetails, HttpError } from "../model";
 import { chargeTokenTranzila } from "./ApiTranzila";
 

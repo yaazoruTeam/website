@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express from 'express';
-import { router } from '../src/routers/router';
-import { errorHandler } from '../src/middleware/errorHandler';
+import { router } from '../routers/router';
+import { errorHandler } from '../middleware/errorHandler';
 
 const app = express();
 app.use(express.json());
@@ -15,7 +15,6 @@ describe('Express Server', () => {
   });
 
   it('should handle errors using the errorHandler middleware', async () => {
-    // Simulate a route that throws an error and passes it to the errorHandler
     app.get('/error', (req, res, next) => {
         const error = new Error('Test error');
         (error as any).status = 500;

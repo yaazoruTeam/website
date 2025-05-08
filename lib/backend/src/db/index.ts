@@ -12,7 +12,7 @@ import * as Payments from "./Payments";
 import * as Item from "./Item";
 import * as PaymentCreditLink from "./PaymentCreditLink";
 
-export default {
+export {
   Customer,
   Device,
   CustomerDevice,
