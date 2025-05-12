@@ -1,10 +1,10 @@
+jest.mock("../../db");
+jest.mock("../../model");
 import { Request, Response, NextFunction } from "express";
 import * as db from "../../db";
 import { Customer, HttpError } from "../../model";
 import { createCustomer, deleteCustomer, existingCustomer, getCustomerById, getCustomers, getCustomersByCity, getCustomersByDateRange, getCustomersByStatus, updateCustomer } from "../../controller/customer";
 
-jest.mock("../../db");
-jest.mock("../../model");
 
 describe("Customer Controller", () => {
   let req: Partial<Request>;
@@ -373,17 +373,30 @@ describe("getCustomersByCity", () => {
     });
 
     it("should throw an error if a duplicate customer is found", async () => {
-        
-      (db.Customer.findCustomer as jest.Mock).mockResolvedValue({
-        customer_id:'147856987',
-        email: 'yrfgK@example.com',
-        id_number: customer.id_number,
-    });
 
-    await expect(existingCustomer(customer, false)).rejects.toMatchObject({
-        status: 409,
-        message: 'id_number already exists',
-      });
+      (db.Customer.findCustomer as jest.Mock).mockResolvedValue({
+        customer_id: '111', // ← זהה ל-customer.customer_id
+        email: customer.email, // ← זהה
+        id_number: customer.id_number, // ← זהה
     });
+    await expect(existingCustomer(customer, false)).rejects.toMatchObject({
+      status: 409,
+      message: 'id_number already exists',
+    });
+  });
+
+    // await expect(existingCustomer(customer, false)).rejects.toMatchObject({
+    //     status: 409,
+    //     message: 'id_number already exists',
+    //   });
+    // });
+    // it("manual test", async () => {
+    //   try {
+    //     await existingCustomer(customer, false);
+    //     console.log('לא נזרקה שגיאה'); // לא טוב
+    //   } catch (e) {
+    //     console.log('נזרקה שגיאה כמו שצריך!', e);
+    //   }
+    // });
   });
 });

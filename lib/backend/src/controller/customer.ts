@@ -142,26 +142,23 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 };
 
 const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
-    try {        
-        let customerEx;
-        if (hasId) {
-            customerEx = await db.Customer.findCustomer({
-                customer_id: customer.customer_id,
-                email: customer.email,
-                id_number: customer.id_number
-            });
-        } else {
-            customerEx = await db.Customer.findCustomer({
-                email: customer.email,
-                id_number: customer.id_number
-            });
-        }
-        if (customerEx) {
-            Customer.sanitizeExistingCustomer(customerEx, customer);
-        }
-    } catch (err) {
-        throw err;
+    let customerEx;
+    if (hasId) {
+        customerEx = await db.Customer.findCustomer({
+            customer_id: customer.customer_id,
+            email: customer.email,
+            id_number: customer.id_number
+        });
+    } else {
+        customerEx = await db.Customer.findCustomer({
+            email: customer.email,
+            id_number: customer.id_number
+        });
     }
+    if (customerEx) {
+        Customer.sanitizeExistingCustomer(customerEx, customer);
+    }
+
 };
 
 
