@@ -2,102 +2,43 @@ import { createTheme } from '@mui/material/styles';
 import '@fontsource/heebo';
 
 const colors = {
-  neutral: {
-    white: '#FFFFFF',
-    color10: '#F6F8FC',
-    color20: '#F1F4F9',
-    color30: '#E2E8F0',
-    color40: '#CBD4E1',
-    color50: '#94A3B8',
-    color60: '#64748B',
-    color70: '#475569',
-    color80: '#27364B',
-    color90: '#1E2A3B',
-    color100: '#0F1A2A',
-  },
-  brand: {
-    color_1: '#172A33',
-    color_2: 'rgba(21, 54, 70, 0.37)',
-    color_3: '#80E4FF',
-    color_4: '#FF7F07',
-    color_5: '#D55188',
-    color_6: '#007AFF',
-    color_7: '#0059BA',
-    color_8: '#0A425F',
-    color_9: '#032B40',
-    color_10: '#1F1F1F',
-    color_11: 'rgba(246, 248, 252, 0.58)',
-    color_12: 'rgba(11, 58, 82, 0.36)',
-    color_13: '#E4E4E4',
-    color_14: ' #F5F6FA',
-    color_15: 'rgba(246, 246, 246, 0.67)',
-    color_16: 'rgba(255, 255, 255, 0.50)',
-    color_17: '#D0E6FF',
-    color_18: ' #E5F2FF',
-    color_19: 'rgba(229, 242, 255, 0.70)',
-    color_20: 'rgba(224, 223, 255, 0.50)',
-  },
-  status: {
-    success: {
-      light: 'rgba(182, 255, 203, 0.70)',
-      dark: '#47BA79',
-    },
-    warning: {
-      light: 'rgba(255, 226, 185, 0.76)',
-      dark: '#F68C23',
-    },
-    error: {
-      light: 'rgba(253, 209, 220, 0.74)',
-      dark: '#D83232',
-    },
-    yellow: 'rgba(255, 253, 202, 1)'
-  },
+  c0: '#1F1F1F',//brand color_10
+  c1: '',
+  c2: '#0A425F',//brand color_8
+  c3: '#FF7F07',//brand color_4
+  c4: '#80E4FF',//brand color_3
+  c5: '',
+  c6: '#FFFFFF',//neutral white
+  c7: '#007AFF',//brand color_6
+  c8: '#0059BA',//brand color_7
+  c9: '',
+  c10: 'rgba(21, 54, 70, 0.37)',//'#153646 · 37%',//brand color_2
+  c11: '#032B40',//brand color_9
+  c12: '#E4E4E4',//brand color_13
+  c13: '#D0E6FF',//brand color_17
+  c14: 'rgba(246, 246, 246, 0.67)',//'#F6F6F6 · 67%',//brand color_15
+  c15: '#F5F6FA',//brand color_14
+  c16: '#E5F2FF',//brand color_18
+  c17: '#D55188',//brand.color_5
+  c18: 'rgba(253, 209, 220, 0.74)',//'#FDD1DC · 74%',//status error light
+  c19: 'rgba(255, 253, 184, 0.74)',//'#FFFDB8 · 74%',//status yellow light
+  c20: 'rgba(224, 223, 255, 0.5)',//'#E0DFFF · 50%',//brand color_20
+  c21: 'rgba(229, 242, 255, 0.7)',//'#E5F2FF · 70%',//brand color_19
+  c22: 'rgba(11, 58, 82, 0.36)',//'#0B3A52 · 36%',//brand color_12
+  c23: 'rgba(23, 42, 51, 0.52)',//'#172A33 · 52%',
+  c24: 'rgba(255, 255, 255, 0.5)',//'#FFFFFF · 50%',//brand color_16
+  c25: 'rgba(182, 255, 203, 0.7)',//'#B6FFCB · 70%',//status success light
+  c26: 'rgba(255, 226, 185, 0.76)',//'#FFE2B9 · 76%',//status warning light
+  c27: '#F3F4F6',
+  c28: '#D83232',//status error dark
+  c29: '#F68C23',//status warning dark
+  c30: '#47BA79',//status success dark
+  feild: 'rgba(246, 248, 252, 0.58)',//'#F6F8FC · 58%',//brand color_11
 };
 
 // הגדרת הצבעים של ה-theme
 const theme = createTheme({
   palette: {
-    primary: {
-      main: colors.brand.color_8, // צבע ראשי - כחול כמו הניווט הצדדי
-      contrastText: colors.brand.color_9,//צבע טקסט להרבה
-      light: colors.brand.color_18,//תכלת כמו של החיפוש למעלה
-      dark: colors.brand.color_4,//צבע כתום של הרבה מהכפתורים
-    },
-    secondary: {
-      // צבע משני
-      main: colors.brand.color_16,//כתבתי כאן סתם צבע כדי שלא יהיו שגיאות
-      dark: colors.brand.color_10,//צבע שחור 
-      light: colors.brand.color_2,//צבע אפור בהיר 
-
-    },
-    error: {
-      // צבע עבור שגיאות
-      main: colors.status.error.dark, //כתבתי כאן סתם צבע כדי שלא יהיו שגיאות
-      dark: colors.status.error.dark,
-      light: colors.status.error.light,
-    },
-    warning: {
-      // צבע עבור אזהרות
-      main: colors.status.warning.dark, //כתבתי כאן סתם צבע כדי שלא יהיו שגיאות
-      dark: colors.status.warning.dark,
-      light: colors.status.warning.light,
-    },
-    info: {
-      // צבע עבור מידע
-      main: colors.neutral.color10, //כתבתי כאן סתם צבע כדי שלא יהיו שגיאות
-    },
-    success: {
-      // צבע עבור הצלחה
-      main: colors.status.success.dark,//כתבתי כאן סתם צבע כדי שלא יהיו שגיאות
-      dark: colors.status.success.dark,
-      light: colors.status.success.light,
-    },
-
-    background: {
-      default: colors.brand.color_14, // צבע רקע ברירת מחדל
-      paper: colors.neutral.white, // צבע רקע עבור אלמנטים כמו כרטיסים
-
-    },
   },
   typography: {
     fontFamily: '"Heebo", sans-serif',

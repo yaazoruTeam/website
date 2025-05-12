@@ -123,5 +123,9 @@
     "One-TimeCancellationOfIMEILocks": "One-time cancellation of IMEI locks",
     "disconnectingAllAntennas": "disconnecting all antennas",
     "canceLine": "cance line",
-    "resetNetworkSettings": "reset network settings"
+    "resetNetworkSettings": "reset network settings",
+    "activeLoans": "active loans",
+    "deviceAssignment": "device assignment",
+     "noDevicesFound": "no devices found",
+    "errorFetchingDevices": "error fetching devices"
 }

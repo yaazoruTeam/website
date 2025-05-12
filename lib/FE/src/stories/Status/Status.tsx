@@ -37,7 +37,7 @@ const Status: React.FC<StatusProps> = ({ status }) => {
         text={status}
         variant="h4"
         weight="regular"
-        color={colors.brand.color_9}
+        color={colors.c11}
       sx={{
         textAlign: "right",
       }}

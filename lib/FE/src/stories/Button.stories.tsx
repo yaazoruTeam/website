@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import { CustomButton } from "../components/designComponent/Button";
 import { ThemeProvider } from '@mui/material/styles';
@@ -14,7 +15,8 @@ export default {
 
 const Template: StoryFn<typeof CustomButton> = (args) => (
   <ThemeProvider theme={theme}> {/* עטוף את הקומפוננטה ב-ThemeProvider */}
-    <CustomButton {...args} />
+    <CustomButton
+    {...args} />
   </ThemeProvider>);
 
 export const ExampleRegularButton = Template.bind({});
@@ -39,7 +41,7 @@ ExampleWithImg.args = {
   label: "מחיקת לקוח",
   sx: {
     background: "white",
-    color: colors.brand.color_9,
+    color: colors.c11,
     border: "1px rgba(11.47, 57.77, 81.74, 0.36) solid",
     "&:hover": {
       background: "#f9fafc",
@@ -52,7 +54,7 @@ export const ExampleGrayButton = Template.bind({});
 ExampleGrayButton.args = {
   label: "אישור",
   sx: {
-    background: colors.brand.color_2,
-    color: colors.neutral.white,
+    background: colors.c10,
+    color: colors.c6,
   },
 };

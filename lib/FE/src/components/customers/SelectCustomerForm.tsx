@@ -60,7 +60,7 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                 width: '100%',
                 height: "100%",
                 padding: 3.5,
-                backgroundColor: colors.neutral.white,
+                backgroundColor: colors.c6,
                 borderRadius: 1,
                 display: "inline-flex",
                 flexDirection: "column",
@@ -78,7 +78,7 @@ const SelectCustomerForm: React.FC<SelectCustomerFormProps> = ({ customer, onNam
                     text={t('customerDetails')}
                     variant='h2'
                     weight='medium'
-                    color={colors.brand.color_8}
+                    color={colors.c2}
                 />
 
                 <Box

@@ -22,7 +22,7 @@ import { getAllPaymentsByMonthlyPaymentId } from '../../api/payments';
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
 import { EyeIcon } from '@heroicons/react/24/outline'
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
-import FormatDate from '../designComponent/FormatDate';
+import { formatDateToString } from '../designComponent/FormatDate';
 
 const EditMonthlyPayment: React.FC = () => {
     const { id } = useParams();
@@ -76,7 +76,7 @@ const EditMonthlyPayment: React.FC = () => {
         } catch (err) {
             setError((err as Error).message);
         }
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         if (monthlyPayment) {
@@ -86,7 +86,7 @@ const EditMonthlyPayment: React.FC = () => {
                 dayOfTheMonth: monthlyPayment.dayOfTheMonth || ''
             });
         }
-    }, [monthlyPayment]);
+    }, [monthlyPayment, t, timeData]);
 
     useEffect(() => {
         if (!id) {
@@ -98,16 +98,16 @@ const EditMonthlyPayment: React.FC = () => {
     }, [id, fetchMonthlyPaymentData, t]);
 
 
-    const charge = async () => {
-        try {
-            await paymentFormRef.current?.chargeCcData();
-        } catch (error) {
-            console.error('Error during payment:', error);
-        }
-    };
+    // const charge = async () => {
+    //     try {
+    //         await paymentFormRef.current?.chargeCcData();
+    //     } catch (error) {
+    //         console.error('Error during payment:', error);
+    //     }
+    // };
 
     const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
-        let endDate = new Date(startDate);
+        const endDate = new Date(startDate);
         endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
         return endDate;
     };
@@ -261,7 +261,7 @@ const EditMonthlyPayment: React.FC = () => {
     ];
 
     const tableDataPayments = (payments || []).map(payment => ({
-        date: <FormatDate date={payment.date} />,
+        date: `${formatDateToString(payment.date)}`,
         sum: payment.amount,
         status: payment.status,
         actions: <>
@@ -277,7 +277,7 @@ const EditMonthlyPayment: React.FC = () => {
                 }}
                     onClick={() => sendToEmail()}
                 >
-                    <EnvelopeIcon style={{ width: "24px", height: "24px", color: colors.brand.color_8 }} />
+                    <EnvelopeIcon style={{ width: "24px", height: "24px", color: colors.c2 }} />
                     {t('sendToEmail')}
                 </Box>
 
@@ -289,7 +289,7 @@ const EditMonthlyPayment: React.FC = () => {
                 }}
                     onClick={() => view()}
                 >
-                    <EyeIcon style={{ width: "24px", height: "24px", color: colors.brand.color_8 }} />
+                    <EyeIcon style={{ width: "24px", height: "24px", color: colors.c2 }} />
                     {t('view')}
                 </Box>
 
@@ -301,7 +301,7 @@ const EditMonthlyPayment: React.FC = () => {
                 }}
                     onClick={() => download()}
                 >
-                    <ArrowDownTrayIcon style={{ width: "24px", height: "24px", color: colors.brand.color_8 }} />
+                    <ArrowDownTrayIcon style={{ width: "24px", height: "24px", color: colors.c2 }} />
                     {t('download')}
                 </Box>
             </Box>
@@ -333,13 +333,13 @@ const EditMonthlyPayment: React.FC = () => {
                         text={`${t('editingStandingOrder')} |`}
                         variant='h1'
                         weight='regular'
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <CustomTypography
                         text={` ${customer?.first_name} ${customer?.last_name}`}
                         variant='h1'
                         weight='bold'
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                 </Box>
                 <CustomTabs
@@ -361,18 +361,22 @@ const EditMonthlyPayment: React.FC = () => {
                             {
                                 label: t('paymentDetails'), content:
                                     <Box >
-                                        <PaymentForm ref={paymentFormRef} onPaymentChange={setPaymentData} OnTimeChange={setTimeData} defaultValues={{
+                                        <PaymentForm ref={paymentFormRef} 
+                                        onPaymentChange={setPaymentData}
+                                         OnTimeChange={setTimeData} 
+                                        defaultValues={{
                                             name: '',//customer?.first_name + ' ' + customer?.last_name,
                                             mustEvery: monthlyPayment?.frequency || '',  // פרטי תדירות החיוב
                                             Payments: String(monthlyPayment?.amountOfCharges || 0),  // מספר התשלומים
                                             startDate: monthlyPayment?.start_date || new Date(Date.now()),
-                                            dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1)  // יום החודש
+                                            dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1),  // יום החודש
+                                            additionalField: ''
                                         }} />
                                     </Box>
                             },
                             {
                                 label: t('recentPayments'), content: <Box sx={{
-                                    backgroundColor: colors.neutral.white,
+                                    backgroundColor: colors.c6,
                                     width: "100%",
                                     padding: '28px'
                                 }}>
@@ -380,7 +384,7 @@ const EditMonthlyPayment: React.FC = () => {
                                         text={t('recentPayments')}
                                         variant='h2'
                                         weight='medium'
-                                        color={colors.brand.color_8}
+                                        color={colors.c2}
                                     />
                                     <CustomTable
                                         columns={paymentHistoryColumns}

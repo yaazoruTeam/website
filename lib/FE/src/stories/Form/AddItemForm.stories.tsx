@@ -7,7 +7,7 @@ export default {
     component: ItemForm,
 } as Meta<typeof ItemForm>;
 
-const Template: StoryFn<typeof ItemForm> = (args) => <ItemForm onSubmit={() => { }} />;
+const Template: StoryFn<typeof ItemForm> = () => <ItemForm onSubmit={() => { }} />;
 
 export const Form = Template.bind({});
 Form.args = {};

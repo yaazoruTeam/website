@@ -11,9 +11,9 @@ import { CustomButton } from "../../designComponent/Button";
 import { TrashIcon } from '@heroicons/react/24/outline'
 import CustomTabs from "../../designComponent/Tab";
 import { Modal } from "@mui/material";
-import CustomerDetails, { CustomerDetailsRef } from "./customerDetails";
 import DeviceDetails from "./deviceDetails";
 import MonthlyPaymentDetails from "./monthlyPaymentDetails";
+import CustomerDetails, { CustomerDetailsRef } from "./customerDetails";
 
 const CardCustomer: React.FC = () => {
     const { id } = useParams();
@@ -40,6 +40,7 @@ const CardCustomer: React.FC = () => {
             formRef.current.submitForm();
             setTimeout(() => {
                 const updatedCustomer = formRef.current?.getCustomerData();
+                console.log(updatedCustomer);//הוספתי לוג כדי שלא תהייה שגיאה
                 //כאן ניתן לשלוח את הנתונים לשרת
             }, 200);
         }
@@ -49,7 +50,6 @@ const CardCustomer: React.FC = () => {
         console.log('delete customer: ', customer?.customer_id);
         if (customer)
             await deleteCustomer(parseInt(customer.customer_id))
-
         setOpenModal(false);
     }
 
@@ -78,13 +78,13 @@ const CardCustomer: React.FC = () => {
                         text={customer ? `${customer.first_name} ${customer.last_name}` : ''}
                         variant="h1"
                         weight="bold"
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                     <CustomTypography
-                        text={customer ? `${t('addedOn')} ${formatDateToString(new Date(Date.now()))}` : ''}
+                        text={customer ? `${t('addedOn')} ${formatDateToString(customer.created_at)}` : ''}
                         variant="h3"
                         weight="regular"
-                        color={colors.brand.color_9}
+                        color={colors.c11}
                     />
                 </Box>
                 <Box sx={{
@@ -164,13 +164,13 @@ const CardCustomer: React.FC = () => {
                             text={t('deletingCustomer')}
                             variant="h1"
                             weight="medium"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                         <CustomTypography
                             text={t('customerDeletionWarning')}
                             variant="h3"
                             weight="medium"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 2, width: '100%' }}>

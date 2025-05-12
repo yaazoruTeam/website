@@ -1,5 +1,4 @@
 // TypographyComponent.stories.tsx
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import CustomTypography from '../components/designComponent/Typography';
 import { ThemeProvider } from '@mui/material/styles';

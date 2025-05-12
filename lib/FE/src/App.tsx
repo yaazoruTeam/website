@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 
@@ -100,7 +100,7 @@ function App() {
             ]}
           />
         </ProtectedRoute>
-        <main style={{ flexGrow: 1, padding: "20px", overflow: 'auto', background: colors.brand.color_14 }}>
+        <main style={{ flexGrow: 1, padding: "20px", overflow: 'auto', background: colors.c15 }}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={

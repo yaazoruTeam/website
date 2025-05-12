@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FormControl, Select, MenuItem, InputAdornment } from '@mui/material';
-import { Controller } from 'react-hook-form';
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {  Controller } from 'react-hook-form';
 import { colors } from '../../styles/theme';
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import CustomTypography from './Typography';
@@ -27,7 +26,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                 text={label}
                 variant='h4'
                 weight='regular'
-                color={colors.brand.color_9}
+                color={colors.c11}
                 sx={{ marginBottom: '5px' }}
             />
             <Controller
@@ -41,7 +40,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                         onClose={() => setOpen(false)}
                         sx={{
                             textAlign: 'right',
-                            backgroundColor: colors.brand.color_11,
+                            backgroundColor: colors.feild,
                             border: 'none',
                             boxShadow: 'none',
                             '.MuiOutlinedInput-notchedOutline': { border: 'none' },
@@ -58,7 +57,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                         value={field.value || ''}
                         endAdornment={
                             <InputAdornment position="end" onClick={handleIconClick}>
-                                <ChevronDownIcon style={{ width: '21.5px', height: '16px', color: colors.brand.color_8 }} />
+                                <ChevronDownIcon style={{ width: '21.5px', height: '16px', color: colors.c2 }} />
                             </InputAdornment>
                         }
                     >
@@ -72,7 +71,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ name, control, options, lab
                                     text={option.label}
                                     variant='h4'
                                     weight='regular'
-                                    color={colors.brand.color_9}
+                                    color={colors.c11}
                                 />
                             </MenuItem>
                         ))}

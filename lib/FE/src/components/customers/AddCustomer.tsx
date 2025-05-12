@@ -6,11 +6,8 @@ import { colors } from '../../styles/theme';
 import { useTranslation } from 'react-i18next';
 import { addCustomer } from './addCustomerLogic';
 
-interface Props {
-  onBack: () => void;
-}
 
-const AddCustomer: React.FC<Props> = ({ onBack }) => {
+const AddCustomer: React.FC = () => {
   const { t } = useTranslation();
 
   const handleAddCustomer = async (data: AddCustomerFormInputs) => {
@@ -62,7 +59,7 @@ const AddCustomer: React.FC<Props> = ({ onBack }) => {
             text={t('addCustomer')}
             variant='h1'
             weight='bold'
-            color={colors.brand.color_7}
+            color={colors.c8}
           />
         </Box>
       </Box>

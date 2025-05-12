@@ -59,7 +59,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                 <CustomTypography
                   variant="h4"
                   weight="medium"
-                  color={colors.brand.color_9}
+                  color={colors.c11}
                   text={column.label}
                 />
               </TableCell>
@@ -83,8 +83,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                   paddingRight: 24,
                   paddingTop: 16,
                   paddingBottom: 16,
-                  background: colors.neutral.white,
-                  borderBottom: `1px ${colors.brand.color_14} solid`,
+                  background: colors.c6,
+                  borderBottom: `1px ${colors.c15} solid`,
                   cursor: onRowClick ? 'pointer' : 'auto',
                 }}
               >
@@ -96,16 +96,17 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       sx={{
                         textAlign: alignLastColumnLeft && colIndex === columns.length - 1 ? "left" : "right",
                         padding: "10px 20px",
-                        backgroundColor: colors.neutral.white,
+                        backgroundColor: colors.c6,
                         whiteSpace: key === 'dates' ? 'nowrap' : 'normal',
                       }}
                     >
-                      <CustomTypography
-                        variant="h4"
-                        weight="regular"
-                        color={colors.brand.color_9}
-                        text={row[key] || t('dataNotAvailable')}
-                      />
+                      {typeof row[key] === 'string' || typeof row[key] === 'number' || typeof row[key] === 'boolean' ?
+                        <CustomTypography
+                          variant="h4"
+                          weight="regular"
+                          color={colors.c11}
+                          text={String(row[key] || t('dataNotAvailable'))}
+                        /> : row[key]}
                     </TableCell>
                   );
                 })}
@@ -123,7 +124,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
         {showSummary && (
           <TableFooter
             sx={{
-              backgroundColor: colors.neutral.white,
+              backgroundColor: colors.c6,
               borderBottom: `none`,
             }}>
             <TableRow>
@@ -143,31 +144,31 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       text={`${(currentPage - 1) * rowsPerPage + 1}`}
                       variant="h4"
                       weight="medium"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={t('to')}
                       variant="h4"
                       weight="regular"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={`${Math.min(currentPage * rowsPerPage, totalRecords)}`}
                       variant="h4"
                       weight="medium"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={t('of')}
                       variant="h4"
                       weight="regular"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={`${totalRecords}`}
                       variant="h4"
                       weight="medium"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                   </Box>
                   <Box sx={{
@@ -179,7 +180,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       style={{
                         width: '16px',
                         height: '16px',
-                        color: colors.brand.color_9,
+                        color: colors.c11,
                         pointerEvents: currentPage === 1 ? 'none' : 'auto',
                         opacity: currentPage === 1 ? 0.5 : 1,
                         cursor: 'pointer',
@@ -194,31 +195,31 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       text={t('page')}
                       variant="h4"
                       weight="regular"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={`${currentPage}`}
                       variant="h4"
                       weight="medium"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={t('of')}
                       variant="h4"
                       weight="regular"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <CustomTypography
                       text={`${totalPages}`}
                       variant="h4"
                       weight="medium"
-                      color={colors.brand.color_9}
+                      color={colors.c11}
                     />
                     <ChevronLeftIcon
                       style={{
                         width: '16px',
                         height: '16px',
-                        color: colors.brand.color_9,
+                        color: colors.c11,
                         pointerEvents: currentPage === totalPages ? 'none' : 'auto',
                         opacity: currentPage === totalPages ? 0.5 : 1,
                         cursor: 'pointer',

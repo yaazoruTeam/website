@@ -1,4 +1,3 @@
-import React from "react";
 import CustomTableHead from "./CustomTableHead";
 
 export default {

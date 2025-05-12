@@ -34,7 +34,7 @@ export interface deviceFormInputs {
 const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialValues }) => {
     const { t } = useTranslation();
     const isMobile = useMediaQuery('(max-width:600px)');
-    const { control, handleSubmit } = useForm<deviceFormInputs>({
+    const { control } = useForm<deviceFormInputs>({
         defaultValues: initialValues || {
             SIM_number: '',
             IMEI_1: '',
@@ -55,7 +55,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
     return (
         <Box
             sx={{
-                backgroundColor: colors.neutral.white,
+                backgroundColor: colors.c6,
                 direction: 'rtl',
                 padding: '28px'
             }}
@@ -141,7 +141,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                         text={t('SIM_data')}
                         variant="h1"
                         weight="medium"
-                        color={colors.brand.color_8}
+                        color={colors.c2}
                     />
                     <Box sx={{
                         display: 'flex',
@@ -151,13 +151,13 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                             text={t('lastUpdate')}
                             variant="h4"
                             weight="regular"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                         <CustomTypography
                             text="17.02  04:17" //לשנות לפי הנתונים זה נתון ברירת חמדל לפי מה שרשום פיגמה
                             variant="h4"
                             weight="regular"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                 </Box>
@@ -165,7 +165,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                     marginTop: '8px',
                     marginBottom: '48px',
                     padding: '24px',
-                    backgroundColor: colors.brand.color_11,
+                    backgroundColor: colors.feild,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between'
@@ -183,20 +183,20 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                                 text="27.85" //לשנות לפי הנתונים זה נתון ברירת חמדל לפי מה שרשום פיגמה
                                 variant="h1"
                                 weight="medium"
-                                color={colors.brand.color_9}
+                                color={colors.c11}
                             />
                             <CustomTypography
                                 text={t('inUse')}
                                 variant="h4"
                                 weight="medium"
-                                color={colors.brand.color_9}
+                                color={colors.c11}
                             />
                         </Box>
                         <CustomTypography
                             text="|"
                             variant="h1"
                             weight="bold"
-                            color={colors.brand.color_12}
+                            color={colors.c22}
                             sx={{ mx: '20px' }}
                         />
                         <Box sx={{
@@ -209,20 +209,20 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                                 text="40.00" //לשנות לפי הנתונים זה נתון ברירת חמדל לפי מה שרשום פיגמה
                                 variant="h1"
                                 weight="medium"
-                                color={colors.brand.color_9}
+                                color={colors.c11}
                             />
                             <CustomTypography
                                 text={t('maximumUtilization')}
                                 variant="h4"
                                 weight="medium"
-                                color={colors.brand.color_9}
+                                color={colors.c11}
                             />
                         </Box>
                         <CustomTypography
                             text="|"
                             variant="h1"
                             weight="bold"
-                            color={colors.brand.color_12}
+                            color={colors.c22}
                             sx={{ mx: '20px' }}
                         />
                         <Box sx={{ mx: '20px' }} >
@@ -252,7 +252,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                             text={t('cameraAndGallery')}
                             variant="h4"
                             weight="regular"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                     <Box sx={{
@@ -266,7 +266,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                             text={t('applications')}
                             variant="h4"
                             weight="regular"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                     <Box sx={{
@@ -280,7 +280,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                             text={t('deviceBlocked')}
                             variant="h4"
                             weight="regular"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                     <Box sx={{
@@ -294,7 +294,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                             text={t('activeSIM')}
                             variant="h4"
                             weight="regular"
-                            color={colors.brand.color_9}
+                            color={colors.c11}
                         />
                     </Box>
                 </Box>
