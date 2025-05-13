@@ -15,6 +15,7 @@ import Orders from "./components/orders/Orders";
 import Branches from "./components/branches/Branches";
 import Permissions from "./components/Permissions/Permissions";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Switchboard from "./components/switchboard/Switchboard";
 
 import dashboardIconWhite from "../src/assets/dashboardIcon-white.svg";
 import dashboardIconBlue from "../src/assets/dashboardIcon-blue.svg";
@@ -30,6 +31,8 @@ import monthlyPaymentIconWhite from "../src/assets/monthlyPayment-white.svg";
 import monthlyPaymentIconBlue from "../src/assets/monthlyPayment-blue.svg";
 import permissionsIconWhite from "../src/assets/permissions-white.svg";
 import permissionsIconBlue from "../src/assets/permissions-blue.svg";
+import switchboardIconWhite from "../src/assets/switchboard-white.svg";
+import switchboardIconBlue from "../src/assets/switchboard-blue.svg";
 
 import { setupAxiosInterceptors } from "./api/axiosInterceptor";
 import { colors, theme } from "./styles/theme";
@@ -92,6 +95,12 @@ function App() {
                 text: t('standingOrder'),
               },
               {
+                iconWhite: switchboardIconWhite,
+                iconBlue: switchboardIconBlue,
+                link: "../switchboard",
+                text: t('switchboard'),
+              },
+              {
                 iconWhite: permissionsIconWhite,
                 iconBlue: permissionsIconBlue,
                 link: "../permissions",
@@ -113,7 +122,7 @@ function App() {
                 <Customers />
               </ProtectedRoute>
             } />
-              <Route path="/customer/card/:id" element={
+            <Route path="/customer/card/:id" element={
               <ProtectedRoute>
                 <CardCustomer />
               </ProtectedRoute>
@@ -146,6 +155,11 @@ function App() {
             <Route path="/permissions" element={
               <ProtectedRoute>
                 <Permissions />
+              </ProtectedRoute>
+            } />
+            <Route path="/switchboard" element={
+              <ProtectedRoute>
+                <Switchboard />
               </ProtectedRoute>
             } />
           </Routes>
