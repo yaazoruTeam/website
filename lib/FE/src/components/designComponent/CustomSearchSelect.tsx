@@ -1,183 +1,3 @@
-// import React, { useState, useEffect, useRef } from "react";
-// import {
-//   FormControl,
-//   Select,
-//   MenuItem,
-//   Box,
-//   Popper,
-//   InputBase,
-// } from "@mui/material";
-// import { getCustomers, getCustomersByDateRange } from "../../api/customerApi";
-// import CityOptions from "./CityOptions";
-// import DateRangePickerComponent from "./Calendar";
-// import {
-//   ChevronDownIcon,
-//   ChevronLeftIcon,
-//   CalendarIcon,
-// } from "@heroicons/react/24/outline";
-// import { colors } from "../../styles/theme";
-
-// interface CustomSearchSelectProps {
-//   placeholder?: string;
-//   searchType: "city" | "date";
-//   onCitySelect?: (city: string) => void;
-//   onSelect?: (filterType: "city" | "date") => void;
-// }
-
-// const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
-//   placeholder,
-//   searchType,
-//   onCitySelect,
-//   onSelect,
-// }) => {
-//   const [open, setOpen] = useState(false);
-//   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-//   const [selectedCity, setSelectedCity] = useState<string>("");
-//   const selectRef = useRef<HTMLDivElement | null>(null);
-//   const [options, setOptions] = useState<string[]>([]);
-
-//   useEffect(() => {
-//     if (searchType === "city") {
-//       fetchCities();
-//     }
-//   }, [searchType]);
-
-//   // useEffect(() => {
-//   //   const handleClickOutside = (event: MouseEvent) => {
-//   //     if (
-//   //       selectRef.current &&
-//   //       !selectRef.current.contains(event.target as Node)
-//   //     ) {
-//   //       setOpen(false);
-//   //     }
-//   //   };
-
-//   //   document.addEventListener("mousedown", handleClickOutside);
-
-//   //   return () => {
-//   //     document.removeEventListener("mousedown", handleClickOutside);
-//   //   };
-//   // }, []);
-
-//   const fetchCities = async () => {
-//     try {
-//       const citiesData = await getCustomers();
-//       console.log("Fetched cities data:", citiesData);
-
-//       if (!Array.isArray(citiesData)) {
-//         console.error("Expected array but got:", citiesData);
-//         return;
-//       }
-
-//       const uniqueCities = Array.from(
-//         new Set(citiesData.map((customer) => customer.city))
-//       );
-//       setOptions(uniqueCities);
-//     } catch (error) {
-//       console.error("Error fetching cities:", error);
-//     }
-//   };
-
-//   const handleSelectClick = (event: React.SyntheticEvent<Element, Event>) => {
-//     if (event.currentTarget instanceof HTMLElement) {
-//       setAnchorEl(event.currentTarget);
-//       setOpen((prev) => !prev);
-//     }
-//   };
-
-//   const handleCitySelect = (city: string) => {
-//     setSelectedCity(city);
-//     setOpen(false);
-//     onCitySelect?.(city);
-//   };
-
-//   const handleDateRangeSelect = (start: Date, end: Date) => {
-//     console.log("Selected date range:", start, end);
-//     onSelect?.("date");
-//     getCustomersByDateRange(start, end)
-//   };
-
-//   return (
-//     <Box ref={selectRef}>
-//       <FormControl fullWidth>
-//         <Select
-//           open={false}
-//           value={selectedCity}
-//           displayEmpty
-//           onOpen={handleSelectClick}
-//           renderValue={(selected) => (selected ? selected : placeholder)}
-//           sx={{
-//             backgroundColor: colors.c15,
-//             border: `1px solid ${colors.c22}`,
-//             borderRadius: 4,
-//             width: "200px",
-//             height: "50px",
-//             padding: "0 10px",
-//             display: "flex",
-//             alignItems: "center",
-//             "& fieldset": { border: "none" },
-//             textAlign: "right",
-//             justifyContent: "flex-end",
-//             position: "relative",
-//             "& .MuiSelect-icon": {
-//               display: "none",
-//             },
-//           }}
-//           input={<InputBase />}
-//           endAdornment={
-//             searchType === "city" ? (
-//               open ? (
-//                 <ChevronDownIcon
-//                   style={{
-//                     width: "16px",
-//                     height: "16px",
-//                     color: colors.c11,
-//                     position: "absolute",
-//                     top: 16,
-//                     left: "10px",
-//                   }}
-//                 />
-//               ) : (
-//                 <ChevronLeftIcon
-//                   style={{
-//                     width: "16px",
-//                     height: "16px",
-//                     color: colors.c11,
-//                     position: "absolute",
-//                     top: 16,
-//                     left: "10px",
-//                   }}
-//                 />
-//               )
-//             ) : (
-//               <CalendarIcon
-//                 style={{
-//                   width: "16px",
-//                   height: "16px",
-//                   color: colors.c11,
-//                   position: "absolute",
-//                   top: 16,
-//                   left: "10px",
-//                 }}
-//               />
-//             )
-//           }
-//         >
-//           <MenuItem value="" disabled>
-//             {placeholder}
-//           </MenuItem>
-//         </Select>
-//       </FormControl>
-
-//       <Popper open={open} anchorEl={anchorEl} placement="bottom-start">
-//         <CityOptions cities={options} onCitySelect={handleCitySelect} />
-//       </Popper>
-//     </Box>
-//   );
-// };
-
-// export default CustomSearchSelect;
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   FormControl,
@@ -187,22 +7,27 @@ import {
   Popper,
   InputBase,
 } from "@mui/material";
-import { getCustomers, getCustomersByDateRange } from "../../api/customerApi";
+import {
+  getCustomers,
+  getCustomersByDateRange,
+  getCustomersByStatus,
+} from "../../api/customerApi";
 import CityOptions from "./CityOptions";
 import DateRangePickerComponent from "./DateRangeSelector";
+import StatusCard from "./StatusCard";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { colors } from "../../styles/theme";
-import StatusCard from "./StatusCard";
 
 interface CustomSearchSelectProps {
   placeholder?: string;
   searchType: "city" | "date" | "status";
   onCitySelect?: (city: string) => void;
   onDateRangeSelect?: (start: Date, end: Date) => void;
+  onStatusSelect?: (status: "active" | "inactive") => void;
 }
 
 const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
@@ -210,6 +35,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   searchType,
   onCitySelect,
   onDateRangeSelect,
+  onStatusSelect,
 }) => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -219,22 +45,28 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     start: Date;
     end: Date;
   } | null>(null);
-
+  const [selectedStatus, setSelectedStatus] = useState<
+    "" | "active" | "inactive"
+  >("");
   const selectRef = useRef<HTMLDivElement | null>(null);
 
-  // Fetching Cities
   useEffect(() => {
     if (searchType === "city") {
       fetchCities();
     }
   }, [searchType]);
 
-  // Fetching customers by date range
   useEffect(() => {
     if (searchType === "date" && dateRange) {
       fetchCustomersByDateRange(dateRange.start, dateRange.end);
     }
-  }, [dateRange, searchType]);
+  }, [searchType]);
+
+  useEffect(() => {
+    if (searchType === "status" && selectedStatus) {
+      fetchStatusCard(selectedStatus);
+    }
+  }, [searchType]);
 
   const fetchCities = async () => {
     try {
@@ -256,10 +88,25 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   const fetchCustomersByDateRange = async (start: Date, end: Date) => {
     try {
       const filteredCustomers = await getCustomersByDateRange(start, end);
-      onDateRangeSelect?.(start, end); // נשלח את התוצאה להורה
+      if (!Array.isArray(filteredCustomers)) {
+        console.error("Expected array but got:", filteredCustomers);
+        return;
+      }
     } catch (error) {
       console.error("Error fetching customers by date range:", error);
-      onDateRangeSelect?.(new Date(""), new Date("")); // במקרה של שגיאה, נשלח מערך ריק
+      onDateRangeSelect?.(new Date(""), new Date(""));
+    }
+  };
+
+  const fetchStatusCard = async (status: "active" | "inactive") => {
+    try {
+      const filteredCustomers = await getCustomersByStatus(status);
+      if (!Array.isArray(filteredCustomers)) {
+        console.error("Expected array but got:", filteredCustomers);
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching customers by status:", error);
     }
   };
 
@@ -277,8 +124,15 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   };
 
   const handleDateRangeSelect = (start: Date, end: Date) => {
-    setDateRange({ start, end }); // עדכון מצב ה-TodateRange
+    setDateRange({ start, end });
     setOpen(false);
+    onDateRangeSelect?.(start, end);
+  };
+
+  const handleStatusSelect = async (status: "active" | "inactive") => {
+    setSelectedStatus(status);
+    setOpen(false);
+    onStatusSelect?.(status);
   };
 
   return (
@@ -297,7 +151,6 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
           gridArea: "1 / 1",
           top: "0px",
           left: "0px",
-          // position: "absolute",
           width: "100%",
           height: "100%",
         }}
@@ -329,7 +182,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             }}
             input={<InputBase />}
             endAdornment={
-              searchType === "city" ? (
+              searchType === "city" || searchType === "status" ? (
                 open ? (
                   <ChevronDownIcon
                     style={{
@@ -387,164 +240,14 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
           />
         )}
 
-        {searchType === "status" && open && <StatusCard />}
+        {searchType === "status" && open && (
+          <Popper open={open} anchorEl={anchorEl} placement="bottom-start">
+            <StatusCard onStatusSelect={handleStatusSelect} />
+          </Popper>
+        )}
       </Box>
     </Box>
   );
 };
 
 export default CustomSearchSelect;
-
-// import React, { useState, useEffect, useRef } from "react";
-// import {
-//   FormControl,
-//   Select,
-//   MenuItem,
-//   Box,
-//   Popper,
-//   InputBase,
-// } from "@mui/material";
-// import { getCustomers } from "../../api/customerApi";
-// import CityOptions from "./CityOptions";
-// import { ChevronDownIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
-// import { colors } from "../../styles/theme";
-
-// interface CustomSearchSelectProps {
-//   placeholder?: string;
-//   searchType: "city" | "date";
-//   onCitySelect?: (city: string) => void;
-// }
-
-// const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
-//   placeholder,
-//   searchType,
-//   onCitySelect,
-// }) => {
-//   const [open, setOpen] = useState(false);
-//   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-//   const [selectedCity, setSelectedCity] = useState<string>("");
-//   const [options, setOptions] = useState<string[]>([]);
-//   const [selectWidth, setSelectWidth] = useState<number>(200);
-//   const selectRef = useRef<HTMLDivElement | null>(null);
-
-//   useEffect(() => {
-//     if (searchType === "city") {
-//       fetchCities();
-//     }
-//   }, []);
-
-//   const fetchCities = async () => {
-//     try {
-//       const citiesData = await getCustomers();
-//       if (!Array.isArray(citiesData)) {
-//         console.error("Expected array but got:", citiesData);
-//         return;
-//       }
-
-//       const uniqueCities = Array.from(
-//         new Set(citiesData.map((customer) => customer.city))
-//       );
-//       setOptions(uniqueCities);
-//     } catch (error) {
-//       console.error("Error fetching cities:", error);
-//     }
-//   };
-
-//   const handleSelectClick = (event: React.SyntheticEvent<Element, Event>) => {
-//     if (event.currentTarget instanceof HTMLElement) {
-//       setAnchorEl(event.currentTarget);
-//       setSelectWidth(event.currentTarget.clientWidth); // קובע את הרוחב של הפופאפ
-//       setOpen((prev) => !prev);
-//     }
-//   };
-
-//   const handleCitySelect = (city: string) => {
-//     setSelectedCity(city);
-//     setOpen(false);
-//     onCitySelect?.(city);
-//   };
-
-//   return (
-//     <Box>
-//       <FormControl fullWidth>
-//         <Select
-//           ref={selectRef} // 🟢 שימוש ב-ref
-//           open={false}
-//           value={selectedCity}
-//           displayEmpty
-//           onOpen={handleSelectClick}
-//           renderValue={(selected) => (selected ? selected : placeholder)}
-//           sx={{
-//             backgroundColor: colors.c15,
-//             border: `1px solid ${colors.c22}`,
-//             borderRadius: 4,
-//             width: "200px",
-//             height: "50px",
-//             padding: "0 10px",
-//             display: "flex",
-//             alignItems: "center",
-//             "& fieldset": { border: "none" },
-//             textAlign: "right",
-//             justifyContent: "flex-end",
-//             position: "relative",
-//             "& .MuiSelect-icon": {
-//               display: "none",
-//             },
-//           }}
-//           input={<InputBase />}
-//           endAdornment={
-//             open ? (
-//               <ChevronDownIcon
-//                 style={{
-//                   width: "16px",
-//                   height: "16px",
-//                   color: `${colors.c11}`,
-//                   position: "absolute",
-//                   top: 16,
-//                   left: "10px",
-//                 }}
-//               />
-//             ) : (
-//               <ChevronLeftIcon
-//                 style={{
-//                   width: "16px",
-//                   height: "16px",
-//                   color: `${colors.c11}`,
-//                   position: "absolute",
-//                   top: 16,
-//                   left: "10px",
-//                 }}
-//               />
-//             )
-//           }
-//         >
-//           <MenuItem value="" disabled>
-//             {placeholder}
-//           </MenuItem>
-//         </Select>
-//       </FormControl>
-
-//       <Popper
-//         anchorEl={selectRef.current}
-//         open={open}
-//         // anchorEl={anchorEl}
-//         placement="bottom-end" // 🟢 תיקון חשוב ל-RTL
-//         disablePortal={true}
-//         modifiers={[
-//           {
-//             name: "offset",
-//             options: {
-//               offset: [0, 4], // רווח קטן מתחת למלבן
-//             },
-//           },
-//         ]}
-//       >
-//         <Box sx={{ width: anchorEl?.clientWidth || 200 }} dir="rtl">
-//           <CityOptions cities={options} onCitySelect={handleCitySelect} />
-//         </Box>
-//       </Popper>
-//     </Box>
-//   );
-// };
-
-// export default CustomSearchSelect;
