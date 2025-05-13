@@ -1,6 +1,95 @@
+import { useTranslation } from "react-i18next";
+import CustomTypography from "../designComponent/Typography";
+import { Box } from "@mui/material";
+import { CustomButton } from "../designComponent/Button";
+import { CustomTextField } from "../designComponent/Input";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useForm } from "react-hook-form";
+import { colors } from "../../styles/theme";
+import CustomTable from "../designComponent/CustomTable";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+
 const Switchboard: React.FC = () => {
+  const { t } = useTranslation();
+  const { control } = useForm<{ search: string }>();
+  const navigate = useNavigate();
+  //to do : לשנות את זה למערך מסוד המרכזיה וליצור useEffect ששולף את הנתונים הנכונים מהשרת
+  const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([]);
+  const columns = [
+    { label: t("ID"), key: "ID" },
+    { label: t("customerName"), key: "customerName" },
+    { label: t("email"), key: "email" },
+    { label: t("notes"), key: "notes" },
+    { label: t("balanceForUse"), key: "balanceForUse" },
+  ];
+  //to do : להתאים את זה למודל
+  const tableData = switchboardAccounts.map((switchboard) => ({
+    ID: switchboard.ID,
+    customerName: switchboard.customerName,
+    email: switchboard.email,
+    notes: switchboard.notes,
+    balanceForUse: switchboard.balanceForUse,
+  }));
+  //to do : לשנות את זה למודל
+  const onClickAccountSwitchboard = (row: any) => {
+    navigate(`/switchboard/callcenter/${row.ID}`, {
+      state: {
+        ID: row.ID,
+      },
+    });
+  }
   return (
-    <></>
+    <>
+      <Box
+        sx={{
+          paddingLeft: '10%',
+          paddingRight: '15%',
+        }}
+      >
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <CustomTypography
+            text={t('allAccounts')}
+            weight="bold"
+            variant="h1"
+          />
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            // gap:'24px'
+          }}>
+            <Box sx={{
+              width: '250px',
+              mx: '44px',
+            }}>
+              <CustomTextField
+                placeholder={t('search')}
+                icon={<MagnifyingGlassIcon />}
+                control={control}
+                name="search"
+                sx={{ border: `1px solid ${colors.c22}`, width: '250px' }}
+              />
+            </Box>
+            <CustomButton
+              label={t('addAnAccount')}
+              buttonType="first"
+              state="default"
+            />
+          </Box>
+        </Box>
+        <CustomTable
+          columns={columns}
+          data={tableData}
+          onRowClick={onClickAccountSwitchboard}
+        />
+      </Box>
+    </>
   );
 };
 

@@ -69,7 +69,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                 hover: '',
             },
             hover: {
-                backgroundColor:colors.c22,
+                backgroundColor: colors.c22,
                 color: colors.c6,
                 border: `none`,
                 hover: '',
@@ -109,6 +109,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                 text={label}
                 variant={size === 'large' ? 'h4' : 'h5'}
                 weight={state === 'active' ? size === 'large' ? 'medium' : 'bold' : 'regular'}
+                color={currentButtonStyle.color}
             />
             {icon && React.isValidElement(icon) && (
                 <span style={{ display: 'flex', justifyContent: 'flex-end' }}>

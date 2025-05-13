@@ -128,5 +128,11 @@
     "deviceAssignment": "device assignment",
     "noDevicesFound": "no devices found",
     "errorFetchingDevices": "error fetching devices",
-    "switchboard": "switchboard"
+    "switchboard": "switchboard",
+    "allAccounts": "all accounts",
+    "addAnAccount": "add an account",
+    "search": "search",
+    "ID": "ID",
+    "notes": "notes",
+    "balanceForUse": "balance for use"
 }

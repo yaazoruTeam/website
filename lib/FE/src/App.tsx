@@ -39,6 +39,7 @@ import { colors, theme } from "./styles/theme";
 import { useTranslation } from "react-i18next";
 import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
 import CardCustomer from "./components/customers/card/cardCustomer";
+import CallCenter from "./components/switchboard/CallCenter";
 
 function App() {
   const { t } = useTranslation();
@@ -160,6 +161,12 @@ function App() {
             <Route path="/switchboard" element={
               <ProtectedRoute>
                 <Switchboard />
+              </ProtectedRoute>
+            } />
+            {/* to do : לבדוק איזה ניווט הכי נכון לעשות פה. */}
+            <Route path="/switchboard/callCenter/:id" element={
+              <ProtectedRoute>
+                <CallCenter />
               </ProtectedRoute>
             } />
           </Routes>
