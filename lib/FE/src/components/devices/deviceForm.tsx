@@ -50,7 +50,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
     const [isCameraAndGallery, setIsCameraAndGallery] = useState<boolean>(true);
     const [isApplications, setIsApplications] = useState<boolean>(true);
     const [isDeviceBlocked, setIsDeviceBlocked] = useState<boolean>(true);
-    const [isActiveSIM, setisActiveSIM] = useState<boolean>(true);
+    const [isActiveSIM, setIsActiveSIM] = useState<boolean>(true);
 
     return (
         <Box
@@ -247,7 +247,10 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                         gap: '5px',
                         ml: '20px'
                     }}>
-                        <CustomSwitch checked={isCameraAndGallery} onChange={() => setIsCameraAndGallery(prev => !prev)} />
+                        <CustomSwitch initialChecked={isCameraAndGallery}
+                            onChange={(checked) => {
+                                setIsCameraAndGallery(checked);
+                            }} />
                         <CustomTypography
                             text={t('cameraAndGallery')}
                             variant="h4"
@@ -261,7 +264,10 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                         gap: '5px',
                         mx: '20px'
                     }}>
-                        <CustomSwitch checked={isApplications} onChange={() => setIsApplications(prev => !prev)} />
+                        <CustomSwitch initialChecked={isApplications}
+                            onChange={(checked) => {
+                                setIsApplications(checked);
+                            }} />
                         <CustomTypography
                             text={t('applications')}
                             variant="h4"
@@ -275,7 +281,9 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                         gap: '5px',
                         mx: '20px'
                     }}>
-                        <CustomSwitch checked={isDeviceBlocked} onChange={() => setIsDeviceBlocked(prev => !prev)} />
+                        <CustomSwitch initialChecked={isDeviceBlocked}
+                            onChange={(checked) =>
+                                setIsDeviceBlocked(checked)} />
                         <CustomTypography
                             text={t('deviceBlocked')}
                             variant="h4"
@@ -289,7 +297,9 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
                         gap: '5px',
                         mr: '20px'
                     }}>
-                        <CustomSwitch checked={isActiveSIM} onChange={() => setisActiveSIM(prev => !prev)} />
+                        <CustomSwitch initialChecked={isActiveSIM}
+                            onChange={(checked) =>
+                                setIsActiveSIM(checked)} />
                         <CustomTypography
                             text={t('activeSIM')}
                             variant="h4"
