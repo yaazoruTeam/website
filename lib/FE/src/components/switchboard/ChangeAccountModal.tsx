@@ -131,13 +131,15 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
               }}
             >
               <CustomSelect
-                name="changeAccount"
+                name="category"
                 control={control}
                 options={[
-                  { label: "כנפי חיים", value: "כנפי חיים" },
-                  { label: "יעזורו", value: "יעזורו" },
+                  { label: "כנפי חיים", value: "1" },
+                  { label: "כנפי חיים", value: "2" },
+                  { label: "כנפי חיים", value: "3" },
                 ]}
-                label="החלף לחשבון"
+                label="בחרי קטגוריה"
+                variant="changeAccount"
               />
             </Box>
           </Box>
