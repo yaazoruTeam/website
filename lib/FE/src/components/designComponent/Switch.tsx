@@ -4,7 +4,7 @@ import Switch from '@mui/material/Switch';
 import { colors } from '../../styles/theme';
 
 interface CustomSwitchProps {
-  initialChecked: boolean;
+  checked: boolean;
   onChange: (checked: boolean) => void;
 }
 
@@ -52,11 +52,11 @@ const StyledSwitch = styled(Switch)(() => ({
   },
 }));
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ({ initialChecked, onChange }) => {
+const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange }) => {
   return (
 
     <StyledSwitch
-      checked={initialChecked}
+      checked={checked}
       onChange={(e) => onChange(e.target.checked)}
     />
   );

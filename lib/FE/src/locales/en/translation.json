@@ -134,5 +134,15 @@
     "search": "search",
     "ID": "ID",
     "notes": "notes",
-    "balanceForUse": "balance for use"
+    "balanceForUse": "balance for use",
+    "organizationName": "organization name",
+    "number": "number",
+    "target": "target",
+    "fromDate": "from date",
+    "definedAsAnIdentifier": "defined as an identifier",
+    "monthlyCost": "monthly cost",
+    "outgoingCalls": "outgoing calls",
+    "callCenter": "call center",
+    "editAccount": "edit account",
+    "purchasingNewNumber": "purchasing a new number"
 }

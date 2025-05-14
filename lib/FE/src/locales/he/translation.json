@@ -137,5 +137,15 @@
     "search": "חיפוש",
     "ID": "ID",
     "notes": "הערות",
-    "balanceForUse": "יתרה לשימוש"
+    "balanceForUse": "יתרה לשימוש",
+    "organizationName": "שם ארגון",
+    "number": "מספר",
+    "target": "יעד",
+    "fromDate": "מתאריך",
+    "definedAsAnIdentifier": "מוגדר כמזהה",
+    "monthlyCost": "עלות חודשית",
+    "outgoingCalls": "שיחות יוצאות",
+    "callCenter": "מרכזיית שיחות",
+    "editAccount": "עריכת חשבון",
+    "purchasingNewNumber": "רכישת מספר חדש"
 }
