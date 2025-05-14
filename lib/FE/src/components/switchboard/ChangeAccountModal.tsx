@@ -47,21 +47,20 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
         sx: {
           boxShadow: "none",
           elevation: 0,
+          outline: `1px solid ${colors.c22}`,
         },
       }}
       BackdropProps={{
         sx: {
           backgroundColor: colors.c22,
-        //   opacity: 10,
         },
       }}
     >
       <DialogContent
         sx={{
-          p: 4,
+          p: "60px",
           backgroundColor: colors.c6,
           borderRadius: "4px",
-          outline: `10px solid ${colors.c22}`,
         }}
       >
         <Box
@@ -70,7 +69,7 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            gap: "28px",
+            gap: "40px",
             direction: "rtl",
           }}
         >
@@ -145,7 +144,7 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
           <Box
             sx={{
               display: "flex",
-              gap: 2,
+              gap: 1,
               justifyContent: "flex-end",
               width: "100%",
             }}
@@ -157,7 +156,7 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
                 borderRadius: "4px",
                 borderColor: colors.c23,
                 fontFamily: "Heebo",
-                fontSize: 16,
+                fontSize: "16px",
                 textTransform: "none",
                 color: colors.c2,
                 px: 3,
