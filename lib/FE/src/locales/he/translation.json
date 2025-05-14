@@ -131,5 +131,6 @@
     "deviceAssignment": "שיוך מכשירים",
     "noDevicesFound": "לא נמצאו מכשירים.",
     "errorFetchingDevices": "שגיאה בטעינת מכשירים.",
-    "switchboard": "מרכזיה"
+    "switchboard": "מרכזיה",
+    "theCustomerName": "שם הלקוח"
 }
