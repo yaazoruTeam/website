@@ -66,14 +66,18 @@ const Switchboard: React.FC = () => {
           }}>
             <Box sx={{
               width: '250px',
-              mx: '44px',
+              height: '44px',
+              mx: '24px',
+              border: `1px solid ${colors.c22}`,
+              paddingLeft: '10px',
+              borderRadius: '8px',
             }}>
               <CustomTextField
                 placeholder={t('search')}
                 icon={<MagnifyingGlassIcon />}
                 control={control}
                 name="search"
-                sx={{ border: `1px solid ${colors.c22}`, width: '250px' }}
+              // sx={{ border: `1px solid ${colors.c22}`, width: '250px' }}
               />
             </Box>
             <CustomButton

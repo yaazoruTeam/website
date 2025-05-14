@@ -96,7 +96,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                 height: '40px',
                 alignItems: 'center',
                 gap: '10px',
-                borderRadius: '12px',
+                borderRadius: '4px',
                 justifyContent: 'flex-end',
                 "&:hover": {
                     background: currentButtonStyle.hover,
