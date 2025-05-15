@@ -144,5 +144,6 @@
     "outgoingCalls": "outgoing calls",
     "callCenter": "call center",
     "editAccount": "edit account",
-    "purchasingNewNumber": "purchasing a new number"
+    "purchasingNewNumber": "purchasing a new number",
+    "callLog": "call log"
 }

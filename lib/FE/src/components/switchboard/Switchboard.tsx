@@ -3,7 +3,7 @@ import CustomTypography from "../designComponent/Typography";
 import { Box } from "@mui/material";
 import { CustomButton } from "../designComponent/Button";
 import { CustomTextField } from "../designComponent/Input";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Cog8ToothIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import { colors } from "../../styles/theme";
 import CustomTable from "../designComponent/CustomTable";
@@ -16,13 +16,23 @@ const Switchboard: React.FC = () => {
   const { control } = useForm<{ search: string }>();
   const navigate = useNavigate();
   //to do : לשנות את זה למערך מסוד המרכזיה וליצור useEffect ששולף את הנתונים הנכונים מהשרת
-  const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([]);
+  const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([{
+    ID: 1111,
+    customerName: "יעזורו",
+    email: "yaazoru@gmail.com",
+    notes: "אין לי מה לכתוב...",
+    balanceForUse: 100
+  }]);
+  const settings = () => {
+    console.log('settings');
+  }
   const columns = [
     { label: t("ID"), key: "ID" },
     { label: t("customerName"), key: "customerName" },
     { label: t("email"), key: "email" },
     { label: t("notes"), key: "notes" },
     { label: t("balanceForUse"), key: "balanceForUse" },
+    { label: '', key: "settings" },
   ];
   //to do : להתאים את זה למודל
   const tableData = switchboardAccounts.map((switchboard) => ({
@@ -31,6 +41,10 @@ const Switchboard: React.FC = () => {
     email: switchboard.email,
     notes: switchboard.notes,
     balanceForUse: switchboard.balanceForUse,
+    settings: <Cog8ToothIcon onClick={(e) => {
+      e.stopPropagation();
+      settings();
+    }} />
   }));
   //to do : לשנות את זה למודל
   const onClickAccountSwitchboard = (row: any) => {

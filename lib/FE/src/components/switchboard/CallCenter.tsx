@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PhoneNumber from "./PhoneNumer";
 import { formatDateToString } from "../designComponent/FormatDate";
 import CustomSwitch from "../designComponent/Switch";
@@ -17,6 +17,7 @@ import CallLog from '../../assets/CallLog.svg';
 const CallCenter: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [calls, setCalls] = useState<any[]>([{
         organizationName: "1234",
         number: "125-324-6587",
@@ -27,11 +28,12 @@ const CallCenter: React.FC = () => {
         monthlyCost: 100,
         outgoingCalls: false,
     }]);
-     const editCallCenter = () => {
+    const editCallCenter = () => {
         console.log('editCallCenter');
     }
-    const callLog = () => {
-        console.log('callLog');
+    const callLog = (call: any) => {
+        console.log('callLog', call);
+        navigate(`./callLog/${call.target}`);
     }
     const switchAccount = () => {
         console.log('Switch account');
@@ -71,10 +73,10 @@ const CallCenter: React.FC = () => {
             gap: '8px',
             width: '100%',
         }}>
-            <PencilSquareIcon style={{ width: '24px', height: '24px',cursor: 'pointer' }} onClick={editCallCenter} />
-            <img src={CallLog} alt="callLog" style={{ width: '24px', height: '24px',cursor: 'pointer' }} onClick={callLog} />
-            <img src={ChangingDestinations} alt="changingDestinations" style={{ width: '24px', height: '24px' ,cursor: 'pointer'}} onClick={switchAccount} />
-            <img src={TableWithArrow} alt="TableWithArrow" style={{ width: '24px', height: '24px',cursor: 'pointer' }} onClick={tableWithArrow} />
+            <PencilSquareIcon style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={editCallCenter} />
+            <img src={CallLog} alt="callLog" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={() => callLog(call)} />
+            <img src={ChangingDestinations} alt="changingDestinations" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={switchAccount} />
+            <img src={TableWithArrow} alt="TableWithArrow" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={tableWithArrow} />
             <TrashIcon style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={deleteCall} />
         </Box>
     }));
@@ -101,8 +103,12 @@ const CallCenter: React.FC = () => {
             )
         );
     }
-   
-
+    const editAccount = () => {
+        console.log('editAccount');
+    }
+    const purchasingNewNumber = () => {
+        console.log('purchasingNewNumber');
+    }
     return (
         <Box sx={{
             paddingLeft: '10%',
@@ -128,9 +134,11 @@ const CallCenter: React.FC = () => {
                         label={t('editAccount')}
                         buttonType="third"
                         state="active"
+                        onClick={editAccount}
                     />
                     <CustomButton
                         label={t('purchasingNewNumber')}
+                        onClick={purchasingNewNumber}
                     />
 
                 </Box>
