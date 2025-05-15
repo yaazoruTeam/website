@@ -20,6 +20,9 @@ describe("Customer Controller", () => {
     next = jest.fn();
     jest.clearAllMocks();
   });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   describe("createCustomer", () => {
     it("should create a new customer and return 201 status", async () => {
@@ -343,6 +346,7 @@ describe("Customer Controller", () => {
   });
 
   describe("existingCustomer", () => {
+
     const customer: Customer.Model = {
       customer_id: "1",
       email: "john.doe@example.com",
@@ -378,7 +382,6 @@ describe("Customer Controller", () => {
       };
       const mockDbResponse = mockCustomer;
 
-      // db.Customer.findCustomer.mockResolvedValue(mockDbResponse);
       (db.Customer.findCustomer as jest.Mock).mockResolvedValue(mockDbResponse);
       const sanitizeSpy = jest.spyOn(Customer, 'sanitizeExistingCustomer').mockImplementation(() => { });
 
@@ -413,45 +416,52 @@ describe("Customer Controller", () => {
       expect(sanitizeSpy).not.toHaveBeenCalled();
     });
 
-    //זה לא עובד, ניסיתי מלא דרכים...
-    // test('sanitizeExistingCustomer should throw error if id_number matches', async () => {
-    //   const existingDbCustomer = {
-    //     customer_id: '999', // ← שונה מהלקוח החדש
-    //     id_number: '123456789',
-    //     email: 'other@example.com',
-    //     first_name: 'John',
-    //     last_name: 'Doe',
-    //     phone_number: '053-3016587',
-    //     additional_phone: '',
-    //     city: 'Tel Aviv',
-    //     address1: '123 Main St',
-    //     address2: '',
-    //     zipCode: '12345',
-    //     status: 'active',
-    //     created_at: new Date(),
-    //     updated_at: new Date()
-    //   };
+    it('should throw error if customer with same id_number exists', async () => {
+      const mockCustomer = {
+        customer_id: '123',
+        email: 'test@example.com',
+        id_number: '123456789',
+        first_name: 'John',
+        last_name: 'Doe',
+        phone_number: '053-3016587',
+        additional_phone: '',
+        city: 'Tel Aviv',
+        address1: '123 Main St',
+        address2: '',
+        zipCode: '12345',
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date()
+      };
 
-    //   const newCustomer = {
-    //     customer_id: '123', // ← שונה
-    //     id_number: '123456789', // ← אותו מספר ת.ז
-    //     email: 'new@example.com', // ← שונה
-    //     first_name: 'Jane',
-    //     last_name: 'Smith',
-    //     phone_number: '054-1234567',
-    //     additional_phone: '',
-    //     city: 'Haifa',
-    //     address1: '456 Another St',
-    //     address2: '',
-    //     zipCode: '54321',
-    //     status: 'active',
-    //     created_at: new Date(),
-    //     updated_at: new Date()
-    //   };
+      const existing = {
+        email: 'other@example.com',
+        id_number: '123456789',
+        first_name: 'Jane',
+        last_name: 'Smith',
+        phone_number: '054-1234567',
+        additional_phone: '',
+        city: 'Haifa',
+        address1: '456 Another St',
+        address2: '',
+        zipCode: '54321',
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date()
+      };
 
-    //   jest.spyOn(db.Customer, 'findCustomer').mockResolvedValue(existingDbCustomer);
+      jest.spyOn(db.Customer, 'findCustomer').mockResolvedValue(existing);
+      jest.spyOn(Customer, 'sanitizeExistingCustomer').mockImplementation(() => {
+        throw {
+          status: 409,
+          message: 'id_number already exists',
+        };
+      });
 
-    //   await expect(existingCustomer(newCustomer, true)).rejects.toThrow('id_number already exists');
-    // });
+      await expect(existingCustomer(mockCustomer, true)).rejects.toEqual({
+        status: 409,
+        message: 'id_number already exists',
+      });
+    });
   });
 });
