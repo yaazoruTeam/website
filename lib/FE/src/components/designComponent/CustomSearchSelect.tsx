@@ -1,26 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  FormControl,
-  Select,
-  MenuItem,
-  Box,
-  Popper,
-  InputBase,
-} from "@mui/material";
-import {
-  getCustomers,
-  getCustomersByDateRange,
-  getCustomersByStatus,
-} from "../../api/customerApi";
+import { FormControl, Select, MenuItem, Box, Popper, InputBase } from "@mui/material";
+import { getCustomers, getCustomersByDateRange, getCustomersByStatus } from "../../api/customerApi";
 import CityOptions from "./CityOptions";
 import DateRangePickerComponent from "./DateRangeSelector";
-import StatusCard from "./StatusCard";
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  CalendarIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronLeftIcon, CalendarIcon, } from "@heroicons/react/24/outline";
 import { colors } from "../../styles/theme";
+import StatusCard from "./StatusCard";
 
 interface CustomSearchSelectProps {
   placeholder?: string;

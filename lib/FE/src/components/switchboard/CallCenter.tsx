@@ -13,6 +13,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import TableWithArrow from '../../assets/TableWithArrow.svg';
 import ChangingDestinations from '../../assets/ChangingDestinations.svg';
 import CallLog from '../../assets/CallLog.svg';
+import ChangeAccountModal from "./ChangeAccountModal";
 
 const CallCenter: React.FC = () => {
     const { t } = useTranslation();
@@ -28,6 +29,8 @@ const CallCenter: React.FC = () => {
         monthlyCost: 100,
         outgoingCalls: false,
     }]);
+    const [openSwitchAccount, setOpenSwitchAccount] = useState(false);
+
     const editCallCenter = () => {
         console.log('editCallCenter');
     }
@@ -37,6 +40,7 @@ const CallCenter: React.FC = () => {
     }
     const switchAccount = () => {
         console.log('Switch account');
+        setOpenSwitchAccount(true);
     }
     const tableWithArrow = () => {
         console.log('tableWithArrow');
@@ -114,6 +118,7 @@ const CallCenter: React.FC = () => {
             paddingLeft: '10%',
             paddingRight: '15%',
         }}>
+            <ChangeAccountModal open={openSwitchAccount} onClose={() => setOpenSwitchAccount(false)} />
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'space-between',

@@ -1,12 +1,12 @@
 import React from "react";
 import {
   Box,
-  Typography,
   Paper,
   List,
   ListItem,
-  ListItemText,
 } from "@mui/material";
+import CustomTypography from "./Typography";
+import { useTranslation } from "react-i18next";
 
 interface CityOptionsProps {
   cities: string[];
@@ -14,6 +14,8 @@ interface CityOptionsProps {
 }
 
 const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -41,29 +43,11 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
           gap: 1,
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            py: 1.5,
-            borderRadius: 1,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="body1"
-            sx={{
-              color: "#032B40",
-              fontFamily: "Heebo",
-              fontSize: 16,
-              textAlign: "right",
-            }}
-          >
-            עיר לקוח
-          </Typography>
-        </Box>
-
+        <CustomTypography
+          text={t('CustomerCity')}
+          variant="h4"
+          weight="regular"
+        />
         <List
           sx={{
             width: "100%",
@@ -82,19 +66,15 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
                 py: 1.5,
                 borderRadius: 1,
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 cursor: "pointer",
               }}
               onClick={() => onCitySelect(city)}
             >
-              <ListItemText
-                primary={city}
-                sx={{
-                  textAlign: "right",
-                  color: "#032B40",
-                  fontFamily: "Heebo",
-                  fontSize: 16,
-                }}
+              <CustomTypography
+                text={city}
+                variant="h4"
+                weight="regular"
               />
             </ListItem>
           ))}

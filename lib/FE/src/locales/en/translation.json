@@ -146,5 +146,9 @@
     "editAccount": "edit account",
     "purchasingNewNumber": "purchasing a new number",
     "callLog": "call log",
-    "theCustomerName": "the customer name"
+    "theCustomerName": "the customer name",
+    "switchAccount": "switch account",
+    "switchToAccount": "switch to account",
+    "deletion": "deletion",
+    "replace": "replace"
 }

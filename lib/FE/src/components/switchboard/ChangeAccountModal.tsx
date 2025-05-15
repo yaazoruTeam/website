@@ -1,18 +1,13 @@
 import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  Box,
-  Typography,
-  Button,
-  Slide,
-} from "@mui/material";
+import { Dialog, DialogContent, Box, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { CustomTextField } from "../designComponent/Input";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import CustomSelect from "../designComponent/CustomSelect";
 import { colors } from "../../styles/theme";
+import CustomTypography from "../designComponent/Typography";
+import { CustomButton } from "../designComponent/Button";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -48,6 +43,7 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
           boxShadow: "none",
           elevation: 0,
           outline: `1px solid ${colors.c22}`,
+          direction: "rtl",
         },
       }}
       BackdropProps={{
@@ -77,23 +73,15 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
             sx={{
               alignSelf: "stretch",
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "flex-start",
               alignItems: "center",
               gap: "28px",
             }}
           >
-            <Typography
-              sx={{
-                textAlign: "right",
-                color: colors.c11,
-                fontSize: "24px",
-                fontFamily: "Heebo",
-                fontWeight: 500,
-                width: "100%",
-              }}
-            >
-              החלף חשבון
-            </Typography>
+            <CustomTypography
+              text={t("switchAccount")}
+              variant="h1"
+              weight="medium" />
           </Box>
           <Box
             sx={{
@@ -134,11 +122,12 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
                 name="category"
                 control={control}
                 options={[
+                  //to do : לבצע קריאת שרת של כל החשבונות ולפי זה להציג כאן
                   { label: "כנפי חיים", value: "1" },
                   { label: "כנפי חיים", value: "2" },
                   { label: "כנפי חיים", value: "3" },
                 ]}
-                label="בחרי קטגוריה"
+                label={t("switchToAccount")}
                 variant="changeAccount"
               />
             </Box>
@@ -151,44 +140,16 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
               width: "100%",
             }}
           >
-            <Button
-              variant="outlined"
-              sx={{
-                height: 50,
-                borderRadius: "4px",
-                borderColor: colors.c23,
-                fontFamily: "Heebo",
-                fontSize: "16px",
-                textTransform: "none",
-                color: colors.c2,
-                px: 3,
-                "&:hover": {
-                  backgroundColor: colors.c35,
-                },
-              }}
+            <CustomButton
+              label={t("deletion")}
+              buttonType="third"
+              state="active"
               onClick={onClose}
-            >
-              מחיקה
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                height: 50,
-                backgroundColor: colors.c2,
-                borderRadius: "4px",
-                fontFamily: "Heebo",
-                fontSize: 16,
-                textTransform: "none",
-                color: "white",
-                boxShadow: "none",
-                px: 3,
-                "&:hover": {
-                  backgroundColor: colors.c34,
-                },
-              }}
-            >
-              החלף
-            </Button>
+            />
+            <CustomButton
+              label={t("replace")}
+              buttonType="second"
+              state="default" />
           </Box>
         </Box>
       </DialogContent>

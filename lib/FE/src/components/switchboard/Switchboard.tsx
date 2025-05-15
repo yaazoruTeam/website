@@ -23,6 +23,7 @@ const Switchboard: React.FC = () => {
     notes: "אין לי מה לכתוב...",
     balanceForUse: 100
   }]);
+
   const settings = () => {
     console.log('settings');
   }

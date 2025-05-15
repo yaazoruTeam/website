@@ -149,5 +149,9 @@
     "editAccount": "עריכת חשבון",
     "purchasingNewNumber": "רכישת מספר חדש",
     "callLog": "יומן שיחות",
-    "theCustomerName": "שם הלקוח"
+    "theCustomerName": "שם הלקוח",
+    "switchAccount": "החלף חשבון",
+    "switchToAccount": "החלף לחשבון",
+    "deletion": "מחיקה",
+    "replace": "החלף"
 }
