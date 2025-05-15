@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpError, User } from '../model';
-import db from '../db';
+import * as db from '../db';
 import { generateToken, verifyToken } from '../utils/jwt';
 import { comparePasswords } from '../utils/password';
 import { createUser } from './user';

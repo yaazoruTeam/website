@@ -145,5 +145,6 @@
     "callCenter": "call center",
     "editAccount": "edit account",
     "purchasingNewNumber": "purchasing a new number",
-    "callLog": "call log"
+    "callLog": "call log",
+    "theCustomerName": "the customer name"
 }

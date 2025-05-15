@@ -1,128 +1,95 @@
-
-import React, { useEffect, useState } from "react";
-import { Paper, Typography, Button, Box } from "@mui/material";
-import { styled } from "@mui/system";
+import React, { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
+import { colors } from "../../styles/theme";
 
 interface StatusCardProps {
-  // anchorEl: HTMLElement | null;
-  // onStatusSelect: (startDate: string, endDate: string) => void;
-  // onClose: () => void;
-  // selectRef: React.RefObject<HTMLDivElement>; // הוספת selectRef כ-prop
+  onStatusSelect: (status: 'active' | 'inactive') => Promise<void>;
 }
 
-// צבעים תואמים לעיצוב שלך
-const InactiveButton = styled(Button)({
-  padding: "4px 16px",
-  background: "rgba(253, 209, 220, 0.74)",
-  borderRadius: 16,
-  color: "#032B40",
-  textTransform: "none",
-  fontSize: 16,
-  fontFamily: "Heebo",
-  fontWeight: 400,
-});
+const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
+  const [selectedStatus, setSelectedStatus] = useState<'active' | 'inactive' | null>(null);
 
-const ActiveButton = styled(Button)({
-  padding: "4px 16px",
-  background: "rgba(182, 255, 203, 0.7)",
-  borderRadius: 16,
-  color: "#032B40",
-  textTransform: "none",
-  fontSize: 16,
-  fontFamily: "Heebo",
-  fontWeight: 400,
-});
+  const handleClick = async (status: 'active' | 'inactive') => {    
+    setSelectedStatus(status);
+    await onStatusSelect(status);
+  };
 
-const StatusCard: React.FC<StatusCardProps> = ({
-  // onStatusSelect,
-  // selectRef,
-}) => {
-  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
-
-  // useEffect(() => {
-  //   if (selectRef?.current) {
-  //     const rect = selectRef.current.getBoundingClientRect();
-  //     setPosition({
-  //       top: rect.top + window.scrollY, // הוספת גלילה אנכית
-  //       left: rect.left + window.scrollX, // הוספת גלילה אופקית
-  //       width: rect.width,
-  //     });
-  //   }
-  // }, [selectRef]);
+  const baseButtonStyles = {
+    px: 2,
+    py: 0.5,
+    borderRadius: 8,
+    color: colors.c11,
+    fontFamily: "Heebo",
+    fontSize: 16,
+    fontWeight: 400,
+    textAlign: "right" as const,
+    width: 100,
+  };
 
   return (
-      <Paper
-        elevation={0}
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        px: 2,
+        background: colors.c6,
+        borderRadius: 2,
+        outline: colors.c22,
+        outlineOffset: "-1px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 0.5,
+      }}
+    >
+      <Box
         sx={{
-          width: "100%",
-          padding: 2,
-          background: "white",
-          borderRadius: 4,
-          border: "1px solid rgba(11.47, 57.77, 81.74, 0.36)",
+          py: "14px",
+          borderRadius: 1,
           display: "flex",
-          flexDirection: "column",
-          gap: 1,
-          // position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: 10,
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        {/* כותרת */}
-        <Box
-          sx={{
-            width: "100%",
-            paddingY: "14px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ width: 16, height: 16, position: "relative" }}>
-            {/* כאן אפשר לשים SVG אם יש אייקון מיוחד */}
-          </Box>
-          <Typography
-            sx={{
-              color: "#032B40",
-              fontSize: 16,
-              fontFamily: "Heebo",
-              fontWeight: 400,
-            }}
-          >
-            סטטוס לקוח
-          </Typography>
-        </Box>
+        <Box sx={{ width: 16, height: 16 }} />
+        <Typography sx={{ color: colors.c11, fontSize: 16, fontFamily: "Heebo", fontWeight: 400 }}>
+          סטטוס לקוח
+        </Typography>
+      </Box>
 
-        {/* כפתורי סטטוס */}
-        <Box
+      <Box sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}>
+        <Button
+          onClick={() => handleClick("inactive")}
           sx={{
-            width: "100%",
-            height: 50,
-            display: "flex",
-            gap: 2,
+            ...baseButtonStyles,
+            background:
+              selectedStatus === "inactive"
+                ? colors.c32
+                : colors.c18,
+            "&:hover": {
+              background: colors.c32,
+            },
           }}
         >
-          <Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              justifyContent: "center",
-              borderRadius: 100,
-            }}
-          >
-            <ActiveButton fullWidth>פעיל</ActiveButton>
-          </Box>
-          <Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <InactiveButton fullWidth>לא פעיל</InactiveButton>
-          </Box>
-        </Box>
-      </Paper>
+          לא פעיל
+        </Button>
+
+        <Button
+          onClick={() => handleClick("active")}
+          sx={{
+            ...baseButtonStyles,
+            background:
+              selectedStatus === "active"
+                ? colors.c33
+                : colors.c25,
+            "&:hover": {
+              background: colors.c33,
+            },
+          }}
+        >
+          פעיל
+        </Button>
+      </Box>
+    </Box>
   );
 };
 

@@ -1,6 +1,8 @@
 import getConnection from "../db/connection";
-import db from "../db";
-import { CustomerDeviceExcel, HttpError } from "../model";
+import * as db from "../db";
+import { Customer, Device, CustomerDevice, CustomerDeviceExcel } from "../model";
+import * as XLSX from 'xlsx'; // ✨ שינוי: נדרש בשביל כתיבה
+import * as path from 'path'; // ✨ שינוי: נדרש בשביל כתיבה
 import { convertFlatRowToModel } from "../utils/converters/customerDeviceExcelConverter";
 import { writeErrorsToExcel } from "../utils/excel";
 
