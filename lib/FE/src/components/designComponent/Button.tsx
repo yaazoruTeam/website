@@ -2,7 +2,6 @@ import { ButtonProps, Button } from "@mui/material";
 import React from "react";
 import { colors } from "../../styles/theme";
 import TypographyComponent from "./Typography";
-
 export interface CustomButtonProps extends ButtonProps {
     label: string;
     icon?: React.ReactElement;
@@ -10,7 +9,6 @@ export interface CustomButtonProps extends ButtonProps {
     buttonType?: 'first' | 'second' | 'third';
     state?: 'default' | 'hover' | 'active';
 }
-
 export const CustomButton: React.FC<CustomButtonProps> = ({
     label,
     sx,
@@ -69,7 +67,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                 hover: '',
             },
             hover: {
-                backgroundColor:colors.c22,
+                backgroundColor: colors.c22,
                 color: colors.c6,
                 border: `none`,
                 hover: '',
@@ -82,9 +80,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             }
         }
     };
-
     const currentButtonStyle = buttonStyles[buttonType][state];
-
     return (
         <Button
             sx={{
@@ -96,7 +92,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                 height: '40px',
                 alignItems: 'center',
                 gap: '10px',
-                borderRadius: '12px',
+                borderRadius: '4px',
                 justifyContent: 'flex-end',
                 "&:hover": {
                     background: currentButtonStyle.hover,
@@ -109,6 +105,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                 text={label}
                 variant={size === 'large' ? 'h4' : 'h5'}
                 weight={state === 'active' ? size === 'large' ? 'medium' : 'bold' : 'regular'}
+                color={currentButtonStyle.color}
             />
             {icon && React.isValidElement(icon) && (
                 <span style={{ display: 'flex', justifyContent: 'flex-end' }}>
