@@ -153,5 +153,11 @@
     "switchAccount": "החלף חשבון",
     "switchToAccount": "החלף לחשבון",
     "deletion": "מחיקה",
-    "replace": "החלף"
+    "replace": "החלף",
+    "perMonth": "לחודש",
+    "numberSelection": "בחירת מספר",
+    "settingPersonalID": "הגדרת מזהה אישי",
+    "toReceiveSMSToEmail": "לקבלת SMS למייל",
+    "notifyEmailOfAllCalls": "להודיע במייל על כל השיחות",
+    "errorNoPlanSelectedBuyingNewNumber": "אין אפשרות להמשיך מבלי לבחור תוכנית"
 }

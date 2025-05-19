@@ -1,66 +1,72 @@
-import React, { useState } from "react";
-import { Radio, RadioGroup, FormControlLabel, FormControl } from "@mui/material";
+import React, { ReactElement } from "react";
+import { Radio, RadioGroup, FormControlLabel, FormControl, } from "@mui/material";
 import { colors } from "../../styles/theme";
-
 export interface RadioBoxProps {
-    options: { value: string; label: string }[];  // ✅ שינוי - שימוש במערך אופציות גמיש יותר
-    status: "default" | "hover" | "selected";    // ✅ שינוי - הוספת תמיכה במצבי הכפתור
+    options: { value: string; label: ReactElement | string }[];
+    value: string;
+    onChange: (value: string) => void;
 }
 
-const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, status }) => {
-    const [selectedValue, setSelectedValue] = useState<string>(options[0]?.value || "");
-
+const CustomRadioBox: React.FC<RadioBoxProps> = ({
+    options,
+    value,
+    onChange,
+}) => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(event.target.value);
+        onChange(event.target.value);
     };
 
     return (
         <FormControl>
-            <RadioGroup value={selectedValue} onChange={handleChange} row>
-                {options.map(({ value, label }) => (
-                    <FormControlLabel
-                        key={value}
-                        value={value}
-                        control={
-                            <Radio
-                                icon={
-                                    <div
-                                        style={{
-                                            width: 16,
-                                            height: 16,
-                                            position: "relative",
-                                            borderRadius: "50%",
-                                            border: status !== "selected" ? `0.67px solid ${colors.c10}` : "none", // ✅ שינוי - קו מסגרת במצב default/hover
-                                            background: status === "selected" ? colors.c2 : "transparent", // ✅ שינוי - מילוי במצב נבחר
-                                        }}
-                                    ></div>
-                                }
-                                checkedIcon={
-                                    <div
-                                        style={{
-                                            width: 16,
-                                            height: 16,
-                                            position: "relative",
-                                            borderRadius: "50%",
-                                            background: colors.c2, 
-                                        }}
-                                    ></div>
-                                }
-                            />
-                        }
-                        label={label}
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px",
-                            padding: "8px",
-                            borderRadius: "16px",
-                            justifyContent: "flex-end",
-                            cursor: "pointer",
-                            background: selectedValue === value ? "#E5F4FF" : "transparent", // ✅ שינוי - רקע כאשר הכפתור נבחר
-                        }}
-                    />
-                ))}
+            <RadioGroup value={value} onChange={handleChange} row>
+                {options.map((option) => {
+                    const isSelected = value === option.value;
+                    return (
+                        <FormControlLabel
+                            key={option.value}
+                            value={option.value}
+                            control={
+                                <Radio
+                                    disableRipple
+                                    icon={
+                                        <div
+                                            style={{
+                                                width: 16,
+                                                height: 16,
+                                                borderRadius: "50%",
+                                                border: `1px solid ${colors.c10}`,
+                                                background: "transparent",
+                                            }}
+                                        />
+                                    }
+                                    checkedIcon={
+                                        <div
+                                            style={{
+                                                width: 16,
+                                                height: 16,
+                                                borderRadius: "50%",
+                                                background: colors.c2,
+                                            }}
+                                        />
+                                    }
+                                    checked={isSelected}
+                                />
+                            }
+                            label={option.label}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                padding: "8px 12px",
+                                borderRadius: "16px",
+                                justifyContent: "flex-end",
+                                cursor: "pointer",
+                                background: "transparent",
+                                transition: "background 0.2s ease-in-out",
+                            }}
+                        />
+                    );
+                })}
             </RadioGroup>
         </FormControl>
     );

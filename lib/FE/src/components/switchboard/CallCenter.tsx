@@ -14,6 +14,7 @@ import TableWithArrow from '../../assets/TableWithArrow.svg';
 import ChangingDestinations from '../../assets/ChangingDestinations.svg';
 import CallLog from '../../assets/CallLog.svg';
 import ChangeAccountModal from "./ChangeAccountModal";
+import PurchasingNewNumber from "./PurchasingNewNumber";
 
 const CallCenter: React.FC = () => {
     const { t } = useTranslation();
@@ -30,6 +31,7 @@ const CallCenter: React.FC = () => {
         outgoingCalls: false,
     }]);
     const [openSwitchAccount, setOpenSwitchAccount] = useState(false);
+    const [openBuyNew, setOpenBuyNew] = useState(false);
 
     const editCallCenter = () => {
         console.log('editCallCenter');
@@ -112,6 +114,7 @@ const CallCenter: React.FC = () => {
     }
     const purchasingNewNumber = () => {
         console.log('purchasingNewNumber');
+        setOpenBuyNew(true);
     }
     return (
         <Box sx={{
@@ -119,6 +122,7 @@ const CallCenter: React.FC = () => {
             paddingRight: '15%',
         }}>
             <ChangeAccountModal open={openSwitchAccount} onClose={() => setOpenSwitchAccount(false)} />
+            <PurchasingNewNumber open={openBuyNew} onClose={() => setOpenBuyNew(false)} />
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
