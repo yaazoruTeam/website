@@ -85,9 +85,9 @@ const CallCenter: React.FC = () => {
         number: <PhoneNumber phoneNumber={call.number} country={call.country} />,
         target: <PhoneNumber phoneNumber={call.target} country={call.country} />,
         fromDate: formatDateToString(call.fromDate),
-        definedAsAnIdentifier: <CustomSwitch checked={call.definedAsAnIdentifier} onChange={(e) => { changeDefinedAsAnIdentifier(e) }} />,
+        definedAsAnIdentifier: <Box onClick={(e) => { e.stopPropagation(); }}><CustomSwitch checked={call.definedAsAnIdentifier} onChange={(e) => { changeDefinedAsAnIdentifier(e) }} /></Box>,
         monthlyCost: call.monthlyCost,
-        outgoingCalls: <CustomSwitch checked={call.outgoingCalls} onChange={(e) => { changeOutgoingCalls(e) }} />,
+        outgoingCalls: <Box onClick={(e) => { e.stopPropagation(); }}><CustomSwitch checked={call.outgoingCalls} onChange={(e) => { changeOutgoingCalls(e); }} /></Box>,
         icons: <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
