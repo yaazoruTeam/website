@@ -136,5 +136,9 @@
   "directNumber": "direct number",
   "target": "target",
   "notes/name": "notes/name",
-  "AddContact": "Add a contact"
+  "AddContact": "Add a contact",
+  "switchAccount": "switch account",
+  "switchToAccount": "switch to account",
+  "deletion": "deletion",
+  "replace": "replace"
 }

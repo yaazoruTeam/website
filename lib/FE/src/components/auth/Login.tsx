@@ -33,15 +33,15 @@ const Login2222: React.FC = () => {
             alert("Login failed. Please try again.");
         }
     };
-    
+
     return (
         <Box
             sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 height: '100vh',
-                width: '100%', 
-                backgroundColor: colors.c2, 
+                width: '100%',
+                backgroundColor: colors.c2,
                 overflow: 'hidden',
                 margin: 0,
                 padding: 0,
@@ -50,11 +50,7 @@ const Login2222: React.FC = () => {
                 left: 0,
             }}
         >
-            <Box
-                sx={{
-                    flex: 1,
-                }}
-            />
+
             <Box
                 sx={{
                     width: '70%',
@@ -64,19 +60,19 @@ const Login2222: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    padding: '4%', 
+                    padding: '4%',
                 }}
             >
                 <CustomTypography
-                text={t('loginSystem')}
-                variant="h1"
-                weight="bold"
-                color={colors.c11}
-                sx={{
-                    position: 'absolute',
-                    top: '8%',
-                    right: '10%',
-                }}
+                    text={t('loginSystem')}
+                    variant="h1"
+                    weight="bold"
+                    color={colors.c11}
+                    sx={{
+                        position: 'absolute',
+                        top: '8%',
+                        right: '10%',
+                    }}
                 />
                 <Box
                     sx={{
@@ -89,17 +85,21 @@ const Login2222: React.FC = () => {
                         zIndex: 5,
                     }}
                 >
-                    <LoginForm onSubmit={handleLogin} />  
+                    <LoginForm onSubmit={handleLogin} />
                 </Box>
             </Box>
-
+            <Box
+                sx={{
+                    flex: 1,
+                }}
+            />
             <Box
                 sx={{
                     position: 'absolute',
-                    top: '25%', 
+                    top: '25%',
                     left: '5%',
-                    width: '35%', 
-                    height: 'auto', 
+                    width: '35%',
+                    height: 'auto',
                     zIndex: 10,
                 }}
             >
