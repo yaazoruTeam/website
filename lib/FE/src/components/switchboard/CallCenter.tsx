@@ -15,6 +15,7 @@ import ChangingDestinations from '../../assets/ChangingDestinations.svg';
 import CallLog from '../../assets/CallLog.svg';
 import ChangeAccountModal from "./ChangeAccountModal";
 import PurchasingNewNumber from "./PurchasingNewNumber";
+import EditCallCenterRow from "./EditCallCenterRow";
 
 const CallCenter: React.FC = () => {
     const { t } = useTranslation();
@@ -29,9 +30,20 @@ const CallCenter: React.FC = () => {
         definedAsAnIdentifier: true,
         monthlyCost: 100,
         outgoingCalls: false,
+    },
+    {
+        organizationName: "1111",
+        number: "111-111-1111",
+        country: "USA",
+        target: "111-111-1111",
+        fromDate: new Date(Date.now()),
+        definedAsAnIdentifier: true,
+        monthlyCost: 100,
+        outgoingCalls: false,
     }]);
     const [openSwitchAccount, setOpenSwitchAccount] = useState(false);
     const [openBuyNew, setOpenBuyNew] = useState(false);
+    const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
 
     const editCallCenter = () => {
         console.log('editCallCenter');
@@ -50,6 +62,10 @@ const CallCenter: React.FC = () => {
     const deleteCall = () => {
         console.log('deleteCall');
     }
+
+    const handleRowClick = (rowData: any, rowIndex: number) => {
+        setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex);
+    };
 
     //to do : לשנות ולהתאים את זה
     const columns = [
@@ -80,10 +96,10 @@ const CallCenter: React.FC = () => {
             width: '100%',
         }}>
             <PencilSquareIcon style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={editCallCenter} />
-            <img src={CallLog} alt="callLog" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={() => callLog(call)} />
-            <img src={ChangingDestinations} alt="changingDestinations" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={switchAccount} />
-            <img src={TableWithArrow} alt="TableWithArrow" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={tableWithArrow} />
-            <TrashIcon style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={deleteCall} />
+            <img src={CallLog} alt="callLog" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); callLog(call); }} />
+            <img src={ChangingDestinations} alt="changingDestinations" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); switchAccount(); }} />
+            <img src={TableWithArrow} alt="TableWithArrow" style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); tableWithArrow(); }} />
+            <TrashIcon style={{ width: '24px', height: '24px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); deleteCall(); }} />
         </Box>
     }));
 
@@ -155,8 +171,11 @@ const CallCenter: React.FC = () => {
             <CustomTable
                 columns={columns}
                 data={tableData}
-            // onClickRow={(row) => { }}//to do : ליצור פונקציה לשינוי
-
+                onRowClick={(row, index) => handleRowClick(row, index)}
+                expandedRowIndex={expandedRowIndex}
+                renderExpandedRow={(row) => (
+                    <EditCallCenterRow call={row} />
+                )}
             />
 
         </Box>
