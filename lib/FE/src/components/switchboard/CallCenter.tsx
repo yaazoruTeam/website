@@ -174,6 +174,7 @@ const CallCenter: React.FC = () => {
                 onRowClick={(row, index) => handleRowClick(row, index)}
                 expandedRowIndex={expandedRowIndex}
                 renderExpandedRow={(row) => (
+                    //to do : למחוק את העמוד הזה ובמקום שמשתמש בקומפוננטה הזו צריך לשנות לקומפוננטה EditingContacts
                     <EditCallCenterRow call={row} />
                 )}
             />
