@@ -1,10 +1,10 @@
-import EditingContacts from "./EditingContacts";
+import SwitchboardTabs from "./SwitchboardTabs";
 
 const Switchboard: React.FC = () => {
 
   return (
     <>
-      <EditingContacts />
+      <SwitchboardTabs />
     </>
   );
 };

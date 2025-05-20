@@ -22,7 +22,7 @@ const CountryButton: React.FC<CountryButtonProps> = ({
       onClick={onClick}
       sx={{
         borderRadius: "12px",
-        padding: "8px 12px",
+        padding: "10px 12px",
         textTransform: "none",
         display: "inline-flex",
         alignItems: "center",
