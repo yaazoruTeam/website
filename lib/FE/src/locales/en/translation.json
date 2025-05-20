@@ -161,5 +161,11 @@
     "during": "during",
     "hours": "hours",
     "downloadingFile": "downloading a file",
-    "refresh": "refresh"
+    "refresh": "refresh",
+     "editingNumber": "editing number",
+    "sdpeedDial": "speed dial",
+    "directNumber": "direct number",
+    "notes/name": "notes/name",
+    "AddContact": "adding a contact",
+    "reset": "reset"
 }
