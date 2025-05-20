@@ -1,8 +1,10 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { CustomTextField } from "../designComponent/Input";
 import { useTranslation } from "react-i18next";
 import { AddCustomerFormInputs } from "../customers/AddCustomerForm";
+import { colors } from "../../styles/theme";
 
 const EditingContactsForm: React.FC = () => {
   const { t } = useTranslation();
@@ -114,6 +116,19 @@ const EditingContactsForm: React.FC = () => {
               }}
               height="29px"
             />
+            <IconButton
+              onClick={() => console.log("נמחק")}
+              sx={{
+                marginTop: 3,
+                marginRight: 2,
+                color: colors.c22,
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
+              }}
+            >
+              <TrashIcon style={{ width: "24px", height: "24px" }} />
+            </IconButton>
           </Box>
         </Box>
       </Box>
