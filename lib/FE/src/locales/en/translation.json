@@ -156,5 +156,10 @@
     "settingPersonalID": "setting a personal ID",
     "toReceiveSMSToEmail": "to receive SMS to email",
     "notifyEmailOfAllCalls": "notify by email of all calls",
-    "errorNoPlanSelectedBuyingNewNumber": "Unable to continue without choosing a plan"
+    "errorNoPlanSelectedBuyingNewNumber": "Unable to continue without choosing a plan",
+    "calls": "calls",
+    "during": "during",
+    "hours": "hours",
+    "downloadingFile": "downloading a file",
+    "refresh": "refresh"
 }
