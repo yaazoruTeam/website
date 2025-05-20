@@ -46,52 +46,6 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
 
   return (
     <Box sx={{ width: "100%", direction: "rtl", overflow: "hidden" }}>
-      {/* <Tabs
-        value={activeTab}
-        onChange={handleChange}
-        aria-label="custom styled tabs"
-        TabIndicatorProps={{
-          style: { backgroundColor: colors.c2, height: "1px" },
-        }}
-        sx={{ display: "flex", overflowX: "auto" }}
-      >
-        {tabs.map((tab, index) => (
-          <Tab
-            label={
-              <CustomTypography
-                text={tab.label}
-                variant="h4"
-                weight={activeTab === index ? "medium" : "regular"}
-                color={getColor(index)}
-                sx={{
-                  textAlign: editingContacts ? "center" : "right",
-                  width: "100%",
-                  display: "block",
-                }}
-              />
-            }
-            key={index}
-            sx={{
-              width: editingContacts ? "160px" : 200,
-              height: 48,
-              padding: 1,
-              borderTopLeftRadius: 0,
-              borderTopRightRadius: 0,
-              borderBottom: `1px ${colors.c22} solid`,
-              display: "inline-flex",
-              justifyContent: "flex-end",
-              gap: 5,
-              backgroundColor: "transparent",
-              "&:hover": {
-                backgroundColor: colors.c14,
-              },
-              transition: "all 0.3s ease",
-              marginRight: "5px",
-            }}
-          />
-        ))}
-      </Tabs> */}
-
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Tabs
           value={activeTab}
