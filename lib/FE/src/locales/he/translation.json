@@ -130,5 +130,6 @@
     "activeLoans": "השאלות פעילות",
     "deviceAssignment": "שיוך מכשירים",
     "noDevicesFound": "לא נמצאו מכשירים.",
-    "errorFetchingDevices": "שגיאה בטעינת מכשירים."
+    "errorFetchingDevices": "שגיאה בטעינת מכשירים.",
+    "switchboard": "מרכזיה"
 }
