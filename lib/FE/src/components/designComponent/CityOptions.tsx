@@ -1,12 +1,13 @@
 import React from "react";
 import {
   Box,
-  Typography,
   Paper,
   List,
   ListItem,
   ListItemText,
 } from "@mui/material";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import CustomTypography from "./Typography";
 
 interface CityOptionsProps {
   cities: string[];
@@ -15,22 +16,11 @@ interface CityOptionsProps {
 
 const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
   return (
-    <Box
-      sx={{
-        gridArea: "1 / 1",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Box>
       <Paper
         sx={{
           width: "100%",
           height: "100%",
-          padding: "0 10px",
-          p: 2,
           backgroundColor: "white",
           borderRadius: 4,
           border: "1px solid rgba(11, 57, 81, 0.36)",
@@ -38,21 +28,26 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
           flexDirection: "column",
           alignItems: "flex-start",
           boxShadow: "none",
-          gap: 1,
+          gridArea: "1 / 1",
+          justifyContent: "center",
+          marginTop: -6.3,
+          position: "relative",
+          zIndex: 10,
         }}
       >
         <Box
           sx={{
             width: "100%",
             py: 1.5,
+            paddingRight: 5.3,
+            paddingTop: 1.8,
             borderRadius: 1,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
           }}
         >
-          <Typography
-            variant="body1"
+          <CustomTypography
+            variant="h1"
+            weight="regular"
+            text="עיר לקוח"
             sx={{
               color: "#032B40",
               fontFamily: "Heebo",
@@ -60,19 +55,31 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
               textAlign: "right",
             }}
           >
-            עיר לקוח
-          </Typography>
+          </CustomTypography>
         </Box>
+
+        <ChevronDownIcon
+          style={{
+            width: "16px",
+            height: "16px",
+            color: "#032B40",
+            position: "absolute",
+            top: 16,
+            left: 10,
+            pointerEvents: "none",
+          }}
+        />
 
         <List
           sx={{
             width: "100%",
-            overflowY: "scroll",
-            height: 260,
-            scrollbarWidth: "none",
+            maxHeight: 300,
+            overflowY: "auto",
             "&::-webkit-scrollbar": {
               display: "none",
             },
+            "-ms-overflow-style": "none",
+            "scrollbar-width": "none",
           }}
         >
           {cities.map((city, index) => (
@@ -80,6 +87,7 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
               key={index}
               sx={{
                 py: 1.5,
+                paddingRight: 5.3,
                 borderRadius: 1,
                 display: "flex",
                 justifyContent: "flex-end",
@@ -105,66 +113,3 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
 };
 
 export default CityOptions;
-
-// import React from "react";
-// import {
-//   Box,
-//   Paper,
-//   List,
-//   ListItem,
-//   ListItemText,
-// } from "@mui/material";
-
-// interface CityOptionsProps {
-//   cities: string[];
-//   onCitySelect: (city: string) => void;
-// }
-
-// const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
-//   return (
-//     <Paper
-//       sx={{
-//         width: "100%", // חשוב! כדי שיירש מה־Box העוטף אותו ב־Popper
-//         p: 2,
-//         backgroundColor: "white",
-//         borderRadius: 4,
-//         border: "1px solid rgba(11, 57, 81, 0.36)",
-//         display: "flex",
-//         flexDirection: "column",
-//         alignItems: "flex-start",
-//         gap: 1,
-//       }}
-//     >
-//       <List sx={{ width: "100%", overflowY: "auto", maxHeight: 260 }}>
-//         {cities.map((city, index) => (
-//           <ListItem
-//             key={index}
-//             sx={{
-//               py: 1.5,
-//               borderRadius: 1,
-//               display: "flex",
-//               justifyContent: "flex-end",
-//               cursor: "pointer",
-//               "&:hover": {
-//                 backgroundColor: "#f0f0f0",
-//               },
-//             }}
-//             onClick={() => onCitySelect(city)}
-//           >
-//             <ListItemText
-//               primary={city}
-//               sx={{
-//                 textAlign: "right",
-//                 color: "#032B40",
-//                 fontFamily: "Heebo",
-//                 fontSize: 16,
-//               }}
-//             />
-//           </ListItem>
-//         ))}
-//       </List>
-//     </Paper>
-//   );
-// };
-
-// export default CityOptions;

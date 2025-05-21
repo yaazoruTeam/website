@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { colors } from "../../styles/theme";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 interface StatusCardProps {
-  onStatusSelect: (status: 'active' | 'inactive') => Promise<void>;
+  onStatusSelect: (status: "active" | "inactive") => Promise<void>;
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
-  const [selectedStatus, setSelectedStatus] = useState<'active' | 'inactive' | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<
+    "active" | "inactive" | null
+  >(null);
 
-  const handleClick = async (status: 'active' | 'inactive') => {    
+  const handleClick = async (status: "active" | "inactive") => {
     setSelectedStatus(status);
     await onStatusSelect(status);
   };
@@ -29,16 +32,22 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
   return (
     <Box
       sx={{
+        background: colors.c6,
         width: "100%",
         height: "100%",
-        px: 2,
-        background: colors.c6,
-        borderRadius: 2,
-        outline: colors.c22,
-        outlineOffset: "-1px",
+        backgroundColor: "white",
+        borderRadius: 4,
+        border: `1px solid ${colors.c22}`,
         display: "flex",
         flexDirection: "column",
-        gap: 0.5,
+        alignItems: "flex-start",
+        boxShadow: "none",
+        gridArea: "1 / 1",
+        justifyContent: "center",
+        paddingBottom: 2,
+        // marginTop: ,
+        position: "relative",
+        zIndex: 10,
       }}
     >
       <Box
@@ -50,21 +59,37 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
           alignItems: "center",
         }}
       >
-        <Box sx={{ width: 16, height: 16 }} />
-        <Typography sx={{ color: colors.c11, fontSize: 16, fontFamily: "Heebo", fontWeight: 400 }}>
+        <Typography
+          sx={{
+            color: colors.c11,
+            fontSize: 16,
+            fontFamily: "Heebo",
+            fontWeight: 400,
+            paddingRight: 5.3
+          }}
+        >
           סטטוס לקוח
         </Typography>
       </Box>
-
-      <Box sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}>
+      <ChevronDownIcon
+        style={{
+          width: "16px",
+          height: "16px",
+          color: "#032B40",
+          position: "absolute",
+          top: 16,
+          left: 10,
+          pointerEvents: "none",
+        }}
+      />
+      <Box
+        sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}
+      >
         <Button
           onClick={() => handleClick("inactive")}
           sx={{
             ...baseButtonStyles,
-            background:
-              selectedStatus === "inactive"
-                ? colors.c32
-                : colors.c18,
+            background: selectedStatus === "inactive" ? colors.c32 : colors.c18,
             "&:hover": {
               background: colors.c32,
             },
@@ -77,10 +102,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
           onClick={() => handleClick("active")}
           sx={{
             ...baseButtonStyles,
-            background:
-              selectedStatus === "active"
-                ? colors.c33
-                : colors.c25,
+            background: selectedStatus === "active" ? colors.c33 : colors.c25,
             "&:hover": {
               background: colors.c33,
             },
