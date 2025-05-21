@@ -131,5 +131,14 @@
     "deviceAssignment": "שיוך מכשירים",
     "noDevicesFound": "לא נמצאו מכשירים.",
     "errorFetchingDevices": "שגיאה בטעינת מכשירים.",
-    "switchboard": "מרכזיה"
-}
+    "switchboard": "מרכזיה",
+    "theCustomerName": "שם הלקוח",
+    "number": "מספר",
+    "editingNumber": "עריכת מספר",
+    "sdpeedDial": "חיוג מהיר",
+    "directNumber": "מספר ישיר",
+    "target": "יעד",
+    "notes/name": "הערות/ שם",
+    "AddContact": "הוספת איש קשר",
+    "reset": "איפוס"
+} 
