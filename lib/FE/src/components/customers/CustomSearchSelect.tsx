@@ -21,6 +21,7 @@ interface CustomSearchSelectProps {
   onCitySelect?: (city: string) => void;
   onDateRangeSelect?: (start: Date, end: Date) => void;
   onStatusSelect?: (status: "active" | "inactive") => void;
+  SwitchboardSelect?: boolean
 }
 
 const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
@@ -29,6 +30,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   onCitySelect,
   onDateRangeSelect,
   onStatusSelect,
+  SwitchboardSelect,
 }) => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -176,7 +178,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             sx={{
               backgroundColor: colors.c15,
               border: `1px solid ${colors.c22}`,
-              borderRadius: 4,
+              borderRadius: SwitchboardSelect? 1 : 4,
               width: "200px",
               height: "50px",
               padding: "0 10px",
