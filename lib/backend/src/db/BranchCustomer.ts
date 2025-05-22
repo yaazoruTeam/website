@@ -37,7 +37,7 @@ const getBranchCustomerById = async (branchCustomer_id: string) => {
     };
 };
 
-const getBranchCustomerByBranc_id = async (branch_id: string) => {
+const getBranchCustomerByBranch_id = async (branch_id: string) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.branchCustomer').where({ branch_id }).select();
@@ -46,7 +46,7 @@ const getBranchCustomerByBranc_id = async (branch_id: string) => {
     };
 };
 
-const getBranchCustomerByCuseomer_id = async (customer_id: string) => {
+const getBranchCustomerByCustomer_id = async (customer_id: string) => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.branchCustomer').where({ customer_id }).select();
@@ -140,8 +140,8 @@ export {
     createBranchCustomer,
     getAllBranchCustomer,
     getBranchCustomerById,
-    getBranchCustomerByBranc_id,
-    getBranchCustomerByCuseomer_id,
+    getBranchCustomerByBranch_id,
+    getBranchCustomerByCustomer_id,
     updateBranchCustomer,
     deleteBranchCustomer,
     doesBranchCustomerExist,
