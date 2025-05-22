@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { colors } from "../../styles/theme";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import StatusTag from "./Status";
+import CustomTypography from "./Typography";
+import { useTranslation } from "react-i18next";
 
 interface StatusCardProps {
   onStatusSelect: (status: "active" | "inactive") => Promise<void>;
@@ -12,21 +15,10 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
     "active" | "inactive" | null
   >(null);
 
-  const handleClick = async (status: "active" | "inactive") => {
-    setSelectedStatus(status);
-    await onStatusSelect(status);
-  };
+  const { t } = useTranslation();
 
-  const baseButtonStyles = {
-    px: 2,
-    py: 0.5,
-    borderRadius: 8,
-    color: colors.c11,
-    fontFamily: "Heebo",
-    fontSize: 16,
-    fontWeight: 400,
-    textAlign: "right" as const,
-    width: 100,
+  const handleClick = async (status: "active" | "inactive") => {
+    await onStatusSelect(status);
   };
 
   return (
@@ -65,7 +57,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
             fontSize: 16,
             fontFamily: "Heebo",
             fontWeight: 400,
-            paddingRight: 5.3
+            paddingRight: 5.3,
           }}
         >
           סטטוס לקוח
@@ -88,7 +80,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         <Button
           onClick={() => handleClick("inactive")}
           sx={{
-            ...baseButtonStyles,
+            // ...baseButtonStyles,
             background: selectedStatus === "inactive" ? colors.c32 : colors.c18,
             "&:hover": {
               background: colors.c32,
@@ -101,7 +93,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         <Button
           onClick={() => handleClick("active")}
           sx={{
-            ...baseButtonStyles,
+            // ...baseButtonStyles,
             background: selectedStatus === "active" ? colors.c33 : colors.c25,
             "&:hover": {
               background: colors.c33,
@@ -110,6 +102,21 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         >
           פעיל
         </Button>
+        <CustomTypography
+          variant="h4"
+          weight="regular"
+          text={t("customerStatus")}
+        />
+      </Box>
+      <Box
+        sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}
+      >
+        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("inactive")}>
+          <StatusTag status="inactive" />
+        </Box>
+        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("active")}>
+          <StatusTag status="active" />
+        </Box>
       </Box>
     </Box>
   );

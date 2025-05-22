@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Modal, Popover, Stack, useMediaQuery } from "@mui/material";
+import { Box, Popover, Stack, useMediaQuery } from "@mui/material";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
 import SelectCustomerForm from "./SelectCustomerForm";
@@ -10,6 +10,7 @@ import CustomTypography from "../designComponent/Typography";
 import { colors, theme } from "../../styles/theme";
 import { useTranslation } from "react-i18next";
 import { addCustomer } from "./addCustomerLogic";
+import CustomModal from "../designComponent/Modal";
 
 interface CustomerSelectorProps {
     onCustomerSelect: (customer: Customer.Model) => void;
@@ -147,48 +148,28 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                     </Stack>
                 </Box>
             </Popover >
-            <Modal
-                open={open}
-                onClose={handleCloseModel}
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backdropFilter: 'blur(4px)',
-                }}
-            >
+            <CustomModal open={open} onClose={handleCloseModel}>
                 <Box
                     sx={{
-                        width: 800,
-                        padding: 3,
+                        width: '100%',
+                        height: '100%',
                         backgroundColor: colors.c6,
-                        borderRadius: 2,
-                        boxShadow: 24,
-                        textAlign: 'center',
+                        borderRadius: 6,
+                        flexDirection: 'column',
+                        justifyContent: 'flex-start',
+                        alignItems: 'flex-start',
+                        display: 'inline-flex',
                     }}
                 >
-                    <Box
-                        sx={{
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: colors.c6,
-                            borderRadius: 6,
-                            flexDirection: 'column',
-                            justifyContent: 'flex-start',
-                            alignItems: 'flex-end',
-                            display: 'inline-flex',
-                        }}
-                    >
-                        <CustomTypography
-                            text={t('addCustomer')}
-                            variant='h1'
-                            weight='bold'
-                            color={colors.c8}
-                        />
-                        <AddCustomerForm onSubmit={addNewCustomer} />
-                    </Box>
+                    <CustomTypography
+                        text={t('addCustomer')}
+                        variant='h1'
+                        weight='bold'
+                        color={colors.c8}
+                    />
+                    <AddCustomerForm onSubmit={addNewCustomer} />
                 </Box>
-            </Modal>
+            </CustomModal>
         </>
     );
 };

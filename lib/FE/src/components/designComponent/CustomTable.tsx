@@ -10,12 +10,14 @@ import { Box } from "@mui/system";
 interface CustomTableProps {
   columns: { label: string; key: string }[];
   data: { [key: string]: any }[];
-  onRowClick?: (rowData: any) => void;
+  onRowClick?: (rowData: any, rowIndex: number) => void;
   showSummary?: boolean;
   alignLastColumnLeft?: boolean;
+  expandedRowIndex?: number | null;
+  renderExpandedRow?: (rowData: any, rowIndex: number) => React.ReactNode;
 }
 
-const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft }) => {
+const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {
   const { t } = useTranslation();
 
   const rowsPerPage = 15;
@@ -68,50 +70,62 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
         </TableHead>
         <TableBody>
           {paginatedData.length > 0 ? (
-            paginatedData.map((row, index) => (
-              <TableRow
-                key={index}
-                onClick={() => {
-                  if (onRowClick) {
-                    console.log(row);
-                    onRowClick(row);
-                  }
-                }} sx={{
-                  width: '100%',
-                  height: '57px',
-                  paddingLeft: 24,
-                  paddingRight: 24,
-                  paddingTop: 16,
-                  paddingBottom: 16,
-                  background: colors.c6,
-                  borderBottom: `1px ${colors.c15} solid`,
-                  cursor: onRowClick ? 'pointer' : 'auto',
-                }}
-              >
-                {columns.map((column, colIndex) => {
-                  const key = column.key;
-                  return (
-                    <TableCell
-                      key={colIndex}
-                      sx={{
-                        textAlign: alignLastColumnLeft && colIndex === columns.length - 1 ? "left" : "right",
-                        padding: "10px 20px",
-                        backgroundColor: colors.c6,
-                        whiteSpace: key === 'dates' ? 'nowrap' : 'normal',
-                      }}
-                    >
-                      {typeof row[key] === 'string' || typeof row[key] === 'number' || typeof row[key] === 'boolean' ?
-                        <CustomTypography
-                          variant="h4"
-                          weight="regular"
-                          color={colors.c11}
-                          text={String(row[key] || t('dataNotAvailable'))}
-                        /> : row[key]}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))
+            paginatedData.map((row, index) => {
+              const actualIndex = (currentPage - 1) * rowsPerPage + index;
+              return (
+                <React.Fragment key={index}>
+                  <TableRow
+                    // key={index}
+                    onClick={() => {
+                      if (onRowClick) {
+                        console.log(row);
+                        onRowClick(row, actualIndex);
+                      }
+                    }} sx={{
+                      width: '100%',
+                      height: '57px',
+                      paddingLeft: 24,
+                      paddingRight: 24,
+                      paddingTop: 16,
+                      paddingBottom: 16,
+                      background: colors.c6,
+                      borderBottom: `1px ${colors.c15} solid`,
+                      cursor: onRowClick ? 'pointer' : 'auto',
+                    }}
+                  >
+                    {columns.map((column, colIndex) => {
+                      const key = column.key;
+                      return (
+                        <TableCell
+                          key={colIndex}
+                          sx={{
+                            textAlign: alignLastColumnLeft && colIndex === columns.length - 1 ? "left" : "right",
+                            padding: "10px 20px",
+                            backgroundColor: colors.c6,
+                            whiteSpace: key === 'dates' ? 'nowrap' : 'normal',
+                          }}
+                        >
+                          {typeof row[key] === 'string' || typeof row[key] === 'number' || typeof row[key] === 'boolean' ?
+                            <CustomTypography
+                              variant="h4"
+                              weight="regular"
+                              color={colors.c11}
+                              text={String(row[key] || t('dataNotAvailable'))}
+                            /> : row[key]}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                  {expandedRowIndex === actualIndex && renderExpandedRow && (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} sx={{ padding: 0 }}>
+                        {renderExpandedRow(row, actualIndex)}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} sx={{ textAlign: "center", padding: "10px 20px" }}>

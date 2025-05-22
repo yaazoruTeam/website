@@ -1,0 +1,16 @@
+<svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="flag">
+<g id="contents">
+<path id="background" fill-rule="evenodd" clip-rule="evenodd" d="M0 0.5H20V15.5H0V0.5Z" fill="#F7FCFF"/>
+<g id="mark">
+<rect id="lines" x="0.0170898" y="3.9375" width="20" height="1.875" fill="#E31D1C"/>
+<path id="lines_2" fill-rule="evenodd" clip-rule="evenodd" d="M0 0.5H20V2.375H0V0.5Z" fill="#E31D1C"/>
+<rect id="lines_3" x="-0.0366211" y="7.375" width="20" height="1.875" fill="#E31D1C"/>
+<rect id="lines_4" x="0.0698242" y="10.75" width="20" height="1.875" fill="#E31D1C"/>
+<rect id="lines_5" x="0.0634766" y="13.9375" width="20" height="1.875" fill="#E31D1C"/>
+<path id="square" fill-rule="evenodd" clip-rule="evenodd" d="M0 0.5H10V9.25H0V0.5Z" fill="#3D58DB"/>
+<path id="Star 5" fill-rule="evenodd" clip-rule="evenodd" d="M5.08279 6.25818L3.25694 7.52463L3.84037 5.3555L2.5 3.96986L4.31493 3.89494L5.08279 1.75L5.85066 3.89494H7.6625L6.32522 5.3555L6.99495 7.3966L5.08279 6.25818Z" fill="#F7FCFF"/>
+</g>
+</g>
+</g>
+</svg>

@@ -1,27 +1,12 @@
 import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  Box,
-  Typography,
-  Button,
-  Slide,
-} from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
+import { Box } from "@mui/material";
 import { CustomTextField } from "../designComponent/Input";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import CustomSelect from "../designComponent/CustomSelect";
-import { colors } from "../../styles/theme";
-
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement;
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import CustomTypography from "../designComponent/Typography";
+import { CustomButton } from "../designComponent/Button";
+import CustomModal from "../designComponent/Modal";
 
 interface ChangeAccountModalProps {
   open: boolean;
@@ -36,163 +21,101 @@ const ChangeAccountModal: React.FC<ChangeAccountModalProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      TransitionComponent={Transition}
-      keepMounted
-      maxWidth="sm"
-      fullWidth
-      PaperProps={{
-        sx: {
-          boxShadow: "none",
-          elevation: 0,
-          outline: `1px solid ${colors.c22}`,
-        },
-      }}
-      BackdropProps={{
-        sx: {
-          backgroundColor: colors.c22,
-        },
-      }}
-    >
-      <DialogContent
+    <CustomModal open={open} onClose={onClose}>
+      <Box
         sx={{
-          p: "60px",
-          backgroundColor: colors.c6,
-          borderRadius: "4px",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: "40px",
+          direction: "rtl",
         }}
       >
+        <Box
+          sx={{
+            alignSelf: "stretch",
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: "28px",
+          }}
+        >
+          <CustomTypography
+            text={t("switchAccount")}
+            variant="h1"
+            weight="medium" />
+        </Box>
         <Box
           sx={{
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
-            gap: "40px",
-            direction: "rtl",
+            gap: "24px",
           }}
         >
           <Box
             sx={{
-              alignSelf: "stretch",
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              gap: "28px",
-            }}
-          >
-            <Typography
-              sx={{
-                textAlign: "right",
-                color: colors.c11,
-                fontSize: "24px",
-                fontFamily: "Heebo",
-                fontWeight: 500,
-                width: "100%",
-              }}
-            >
-              החלף חשבון
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              width: "100%",
               display: "flex",
               flexDirection: "column",
-              gap: "24px",
+              alignItems: "flex-end",
+              gap: 1,
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-end",
-                gap: 1,
+            <CustomTextField
+              name="theCustomerName"
+              label={t("theCustomerName")}
+              rules={{
+                required: t("requiredField"),
               }}
-            >
-              <CustomTextField
-                name="theCustomerName"
-                label={t("theCustomerName")}
-                rules={{
-                  required: t("requiredField"),
-                }}
-                control={control}
-              />
-              <Box sx={{ width: "21.5px", height: "16px" }} />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-end",
-                width: "100%",
-                gap: 1,
-              }}
-            >
-              <CustomSelect
-                name="category"
-                control={control}
-                options={[
-                  { label: "כנפי חיים", value: "1" },
-                  { label: "כנפי חיים", value: "2" },
-                  { label: "כנפי חיים", value: "3" },
-                ]}
-                label="בחרי קטגוריה"
-                variant="changeAccount"
-              />
-            </Box>
+              control={control}
+            />
+            <Box sx={{ width: "21.5px", height: "16px" }} />
           </Box>
           <Box
             sx={{
               display: "flex",
-              gap: 1,
-              justifyContent: "flex-end",
+              flexDirection: "column",
+              alignItems: "flex-end",
               width: "100%",
+              gap: 1,
             }}
           >
-            <Button
-              variant="outlined"
-              sx={{
-                height: 50,
-                borderRadius: "4px",
-                borderColor: colors.c23,
-                fontFamily: "Heebo",
-                fontSize: "16px",
-                textTransform: "none",
-                color: colors.c2,
-                px: 3,
-                "&:hover": {
-                  backgroundColor: colors.c35,
-                },
-              }}
-              onClick={onClose}
-            >
-              מחיקה
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                height: 50,
-                backgroundColor: colors.c2,
-                borderRadius: "4px",
-                fontFamily: "Heebo",
-                fontSize: 16,
-                textTransform: "none",
-                color: "white",
-                boxShadow: "none",
-                px: 3,
-                "&:hover": {
-                  backgroundColor: colors.c34,
-                },
-              }}
-            >
-              החלף
-            </Button>
+            <CustomSelect
+              name="category"
+              control={control}
+              options={[
+                //to do : לבצע קריאת שרת של כל החשבונות ולפי זה להציג כאן
+                { label: "כנפי חיים", value: "1" },
+                { label: "כנפי חיים", value: "2" },
+                { label: "כנפי חיים", value: "3" },
+              ]}
+              label={t("switchToAccount")}
+              variant="changeAccount"
+            />
           </Box>
         </Box>
-      </DialogContent>
-    </Dialog>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            justifyContent: "flex-end",
+            width: "100%",
+          }}
+        >
+          <CustomButton
+            label={t("deletion")}
+            buttonType="third"
+            state="active"
+            onClick={onClose}
+          />
+          <CustomButton
+            label={t("replace")}
+            buttonType="second"
+            state="default" />
+        </Box>
+      </Box>
+    </CustomModal>
   );
 };
 

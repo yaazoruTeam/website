@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Box, Paper, List, ListItem } from "@mui/material";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import CustomTypography from "./Typography";
 
@@ -54,8 +48,7 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
               fontSize: 16,
               textAlign: "right",
             }}
-          >
-          </CustomTypography>
+          ></CustomTypography>
         </Box>
 
         <ChevronDownIcon
@@ -90,20 +83,12 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
                 paddingRight: 5.3,
                 borderRadius: 1,
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 cursor: "pointer",
               }}
               onClick={() => onCitySelect(city)}
             >
-              <ListItemText
-                primary={city}
-                sx={{
-                  textAlign: "right",
-                  color: "#032B40",
-                  fontFamily: "Heebo",
-                  fontSize: 16,
-                }}
-              />
+              <CustomTypography text={city} variant="h4" weight="regular" />
             </ListItem>
           ))}
         </List>
