@@ -17,11 +17,11 @@ import { colors } from "../../styles/theme";
 
 interface CustomSearchSelectProps {
   placeholder?: string;
-  searchType: "city" | "date" | "status";
+  searchType: "city" | "date" | "status" | "other";
   onCitySelect?: (city: string) => void;
   onDateRangeSelect?: (start: Date, end: Date) => void;
   onStatusSelect?: (status: "active" | "inactive") => void;
-  SwitchboardSelect?: boolean
+  SwitchboardSelect?: boolean;
 }
 
 const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
@@ -178,7 +178,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             sx={{
               backgroundColor: colors.c15,
               border: `1px solid ${colors.c22}`,
-              borderRadius: SwitchboardSelect? 1 : 4,
+              borderRadius: SwitchboardSelect ? 1 : 4,
               width: "200px",
               height: "50px",
               padding: "0 10px",
@@ -195,7 +195,9 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             }}
             input={<InputBase />}
             endAdornment={
-              searchType === "city" || searchType === "status" ? (
+              searchType === "city" ||
+              searchType === "status" ||
+              searchType === "other" ? (
                 open ? (
                   <ChevronDownIcon
                     style={{

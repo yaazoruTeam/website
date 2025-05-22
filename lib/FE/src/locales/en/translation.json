@@ -162,5 +162,7 @@
   "ID": "ID",
   "notes": "notes",
   "balanceForUse": "balance for use",
-  "organizationName": "organization name"
+  "organizationName": "organization name",
+  "phoneNumber": "phone number",
+  "StatusNumbers": "status number"
 }

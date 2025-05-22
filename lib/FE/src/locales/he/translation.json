@@ -165,5 +165,7 @@
     "settingPersonalID": "הגדרת מזהה אישי",
     "toReceiveSMSToEmail": "לקבלת SMS למייל",
     "notifyEmailOfAllCalls": "להודיע במייל על כל השיחות",
-    "errorNoPlanSelectedBuyingNewNumber": "אין אפשרות להמשיך מבלי לבחור תוכנית"
+    "errorNoPlanSelectedBuyingNewNumber": "אין אפשרות להמשיך מבלי לבחור תוכנית",
+    "phoneNumber": "מספר טלפון",
+    "StatusNumbers": "סטטוס מספרים"
 }
