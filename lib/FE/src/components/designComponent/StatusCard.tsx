@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { colors } from "../../styles/theme";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import StatusTag from "./Status";
@@ -36,8 +36,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         boxShadow: "none",
         gridArea: "1 / 1",
         justifyContent: "center",
-        paddingBottom: 2,
-        // marginTop: ,
+        paddingBottom: 0.5,
         position: "relative",
         zIndex: 10,
       }}
@@ -51,17 +50,19 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
           alignItems: "center",
         }}
       >
-        <Typography
+        <CustomTypography
+          text={t("customerStatus")}
+          weight="regular"
+          variant="h1"
           sx={{
             color: colors.c11,
             fontSize: 16,
             fontFamily: "Heebo",
             fontWeight: 400,
             paddingRight: 5.3,
+            marginTop: -0.3
           }}
-        >
-          סטטוס לקוח
-        </Typography>
+        ></CustomTypography>
       </Box>
       <ChevronDownIcon
         style={{
@@ -75,47 +76,22 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         }}
       />
       <Box
-        sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}
-      >
-        <Button
-          onClick={() => handleClick("inactive")}
-          sx={{
-            // ...baseButtonStyles,
-            background: selectedStatus === "inactive" ? colors.c32 : colors.c18,
-            "&:hover": {
-              background: colors.c32,
-            },
-          }}
-        >
-          לא פעיל
-        </Button>
+        sx={{
+          height: 50,
+          display: "flex",
+          gap: 1,
+          justifyContent: "center",
+          paddingLeft: 2,
+          paddingRight: 2,
+          paddingTop: 2,
 
-        <Button
-          onClick={() => handleClick("active")}
-          sx={{
-            // ...baseButtonStyles,
-            background: selectedStatus === "active" ? colors.c33 : colors.c25,
-            "&:hover": {
-              background: colors.c33,
-            },
-          }}
-        >
-          פעיל
-        </Button>
-        <CustomTypography
-          variant="h4"
-          weight="regular"
-          text={t("customerStatus")}
-        />
-      </Box>
-      <Box
-        sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}
+        }}
       >
-        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("inactive")}>
-          <StatusTag status="inactive" />
-        </Box>
         <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("active")}>
           <StatusTag status="active" />
+        </Box>
+        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("inactive")}>
+          <StatusTag status="inactive" />
         </Box>
       </Box>
     </Box>
