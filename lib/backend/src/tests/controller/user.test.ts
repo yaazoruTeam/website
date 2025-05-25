@@ -1,11 +1,11 @@
 import request from 'supertest';
 import express from 'express';
 import { createUser, getUsers, getUserById, updateUser, deleteUser } from '../../controller/user';
-import * as db from '../../../src/db';
-import { User } from '../../model';
+import * as db from '../../db';
+import { User } from '../../model/src';
 import { hashPassword } from '../../utils/password';
 
-jest.mock('../../../src/db');
+jest.mock('../../db');
 jest.mock('../../utils/password');
 jest.mock('../../model');
 

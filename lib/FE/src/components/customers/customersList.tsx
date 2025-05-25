@@ -10,13 +10,13 @@ import CustomTable from "../designComponent/CustomTable";
 import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
 import { formatDateToString } from "../designComponent/FormatDate";
-import CustomSearchSelect from "../designComponent/CustomSearchSelect";
+// import CustomSearchSelect from "../designComponent/CustomSearchSelect";
+import CustomSearchSelect from "./CustomSearchSelect";
+
 import {
   getCustomersByCity,
   getCustomersByDateRange,
 } from "../../api/customerApi";
-import FilterResetCard from "../designComponent/FilterResetCard";
-
 interface CustomersListProps {
   customers: Customer.Model[];
 }
@@ -31,7 +31,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const [dateRange, setDateRange] = useState<{
     start: Date;
     end: Date;
-  } | null>(null); // חדש - מכיל את טווח התאריכים
+  } | null>(null);
 
   useEffect(() => {
     if (!filteredCustomers.length) {
@@ -41,7 +41,6 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
 
   useEffect(() => {
     if (dateRange) {
-      // קריאה לפונקציה שמביאה את הלקוחות לפי טווח התאריכים
       fetchCustomersByDateRange(dateRange.start, dateRange.end);
     }
   }, [dateRange]);
@@ -67,11 +66,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   };
 
   const handleDateRangeSelect = (start: Date, end: Date) => {
-    setDateRange({ start, end }); // עדכון מצב ה-TodateRange
-    fetchCustomersByDateRange(start, end); // הפעלת הפונקציה כדי לחפש לפי טווח תאריכים
+    setDateRange({ start, end });
+    fetchCustomersByDateRange(start, end);
   };
 
-  const handleStatusSelect = (status: string) => {
+  const handleStatusSelect = (status: "active" | "inactive") => {
     if (!status) {
       setFilteredCustomers(customers);
       return;
@@ -84,10 +83,10 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const fetchCustomersByDateRange = async (start: Date, end: Date) => {
     try {
       const customersInRange = await getCustomersByDateRange(start, end);
-      setFilteredCustomers(customersInRange); // עדכון הלקוחות שהתקבלו בטווח התאריכים
+      setFilteredCustomers(customersInRange);
     } catch (error) {
       console.error("Error fetching customers by date range:", error);
-      setFilteredCustomers([]); // במקרה של שגיאה, נשלח מערך ריק
+      setFilteredCustomers([]);
     }
   };
 
@@ -163,7 +162,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               marginTop: 2,
               display: "flex",
               gap: 2,
-              justifyContent: "flex-start", // אם אתה רוצה את ה-Selects בסדר קווים
+              justifyContent: "flex-start",
               flexWrap: "wrap",
               alignItems: "center",
             }}
@@ -186,52 +185,10 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               <CustomSearchSelect
                 searchType="status"
                 placeholder={t("customerStatus")}
-                onCitySelect={handleStatusSelect}
+                onStatusSelect={handleStatusSelect}
               />
-            </Box>
-            <Box>
-              <FilterResetCard />
             </Box>
           </Box>
-
-          {/* <Box
-            sx={{
-              width: "50%",
-              marginTop: 2,
-              display: "flex",
-              gap: 2,
-              justifyContent: "flex-end",
-            }}
-          >
-            <Box sx={{ flex: 1 }}>
-              <CustomSearchSelect
-                searchType="city"
-                placeholder={t("CustomerCity")}
-                onCitySelect={handleCitySelect}
-              />
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <CustomSearchSelect
-                searchType="date"
-                placeholder={t("DateInRange")}
-                onCitySelect={handleCitySelect}
-              />
-            </Box>
-            <Box
-              sx={{
-                flex: 1,
-                justifyContent: "flex-end",
-                width: "100%",
-              }}
-            >
-              <CustomSearchSelect
-                searchType="city"
-                placeholder={t("CustomerCity")}
-                onCitySelect={handleCitySelect}
-              />
-            </Box>
-          </Box> */}
-
           <Box
             sx={{
               width: "100%",
