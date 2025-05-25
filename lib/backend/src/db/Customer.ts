@@ -1,8 +1,6 @@
 import { Customer, HttpError } from "../model";
 import getConnection from "./connection";
 
-
-
 const createCustomer = async (customer: Customer.Model, trx?: any) => {
     const knex = getConnection();
     try {
