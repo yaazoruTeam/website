@@ -15,7 +15,7 @@ import ChangingDestinations from '../../assets/ChangingDestinations.svg';
 import CallLog from '../../assets/CallLog.svg';
 import ChangeAccountModal from "./ChangeAccountModal";
 import PurchasingNewNumber from "./PurchasingNewNumber";
-import EditCallCenterRow from "./EditCallCenterRow";
+import SwitchboardTabs from "./SwitchboardTabs";
 
 const CallCenter: React.FC = () => {
     const { t } = useTranslation();
@@ -174,8 +174,7 @@ const CallCenter: React.FC = () => {
                 onRowClick={(row, index) => handleRowClick(row, index)}
                 expandedRowIndex={expandedRowIndex}
                 renderExpandedRow={(row) => (
-                    //to do : למחוק את העמוד הזה ובמקום שמשתמש בקומפוננטה הזו צריך לשנות לקומפוננטה EditingContacts
-                    <EditCallCenterRow call={row} />
+                    <SwitchboardTabs />
                 )}
             />
 

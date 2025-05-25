@@ -117,7 +117,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                 background: colors.feild,
                 alignSelf: "stretch",
                 height: height,
-                width: width,
+                width: width || "100%",
                 "& .MuiInputBase-root": {
                   height: height || "29px",
                   display: "flex",

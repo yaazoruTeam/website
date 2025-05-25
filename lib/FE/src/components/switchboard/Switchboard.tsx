@@ -9,7 +9,6 @@ import { colors } from "../../styles/theme";
 import CustomTable from "../designComponent/CustomTable";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SwitchboardTabs from "./SwitchboardTabs";
 
 
 const Switchboard: React.FC = () => {
@@ -109,7 +108,6 @@ const Switchboard: React.FC = () => {
           onRowClick={onClickAccountSwitchboard}
         />
       </Box>
-      <SwitchboardTabs />
     </>
   );
 };

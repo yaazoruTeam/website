@@ -23,18 +23,21 @@ const TabPanel: React.FC<{
 type CustomTabsProps = {
   tabs: { label: string; content: React.ReactNode }[];
   editingContacts?: boolean;
-  sideComponent?: React.ReactNode;
+  onActiveTabChange?: (index: number) => void;
 };
 
 const CustomTabs: React.FC<CustomTabsProps> = ({
   tabs,
   editingContacts,
-  sideComponent,
+  onActiveTabChange,
 }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+    if (onActiveTabChange) {
+      onActiveTabChange(newValue);
+    }
   };
 
   const getColor = (index: number) => {
@@ -92,18 +95,6 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
             />
           ))}
         </Tabs>
-        {activeTab === 1 && (
-          <Box
-            sx={{
-              ml: 2,
-              height: "48px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {sideComponent}
-          </Box>
-        )}
       </Box>
 
       {tabs.map((tab, index) => (

@@ -5,11 +5,15 @@ import { CustomTextField } from "../designComponent/Input";
 import { useTranslation } from "react-i18next";
 import { AddCustomerFormInputs } from "../customers/AddCustomerForm";
 import { colors } from "../../styles/theme";
-
-const EditingContactsForm: React.FC = () => {
+import { forwardRef, useEffect, useImperativeHandle } from "react";
+interface EditingContactsFormProps {
+  value: Partial<AddCustomerFormInputs>;
+  onChange: (data: Partial<AddCustomerFormInputs>) => void;
+}
+const EditingContactsForm = forwardRef<any, EditingContactsFormProps>(({ value, onChange }, ref) => {
   const { t } = useTranslation();
-  const { control } = useForm<AddCustomerFormInputs>({
-    defaultValues: {
+  const { control, watch, handleSubmit } = useForm<AddCustomerFormInputs>({
+    defaultValues: value || {
       first_name: "",
       last_name: "",
       id_number: "",
@@ -20,6 +24,28 @@ const EditingContactsForm: React.FC = () => {
       city: "",
     },
   });
+
+  // --- שינוי: עדכון האב בכל שינוי בטופס ---
+  useEffect(() => {
+    const subscription = watch((values) => {
+      onChange(values);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, onChange]);
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () =>
+      new Promise((resolve, reject) => {
+        handleSubmit(
+          (data) => resolve(data),
+          (errors) => reject(errors)
+        )();
+      }),
+  }));
+  // --- שינוי: עדכון הטופס אם value משתנה (למשל באיפוס) ---
+  // useEffect(() => {
+  //   reset(value);
+  // }, [value, reset]);
 
   return (
     <Box
@@ -75,7 +101,7 @@ const EditingContactsForm: React.FC = () => {
               name="number"
               placeholder="1"
               control={control}
-              rules={{ required: "שדה חובה" }}
+              rules={{ required: t('requiredField') }}
               height="29px"
             />
             <CustomTextField
@@ -83,7 +109,7 @@ const EditingContactsForm: React.FC = () => {
               name="directNumber"
               placeholder="1-973-964-0286"
               control={control}
-              rules={{ required: "שדה חובה" }}
+              rules={{ required: t('requiredField') }}
               height="29px"
             />
             <CustomTextField
@@ -91,7 +117,7 @@ const EditingContactsForm: React.FC = () => {
               name="target"
               placeholder="054-8494926"
               control={control}
-              rules={{ required: "שדה חובה" }}
+              rules={{ required: t('requiredField') }}
               height="29px"
             />
             <CustomTextField
@@ -99,21 +125,6 @@ const EditingContactsForm: React.FC = () => {
               name="notes/name"
               placeholder="אבא"
               control={control}
-              rules={{
-                required: t("requiredField"),
-                minLength: {
-                  value: 9,
-                  message: t("warningPhone"),
-                },
-                maxLength: {
-                  value: 15,
-                  message: t("errorPhone"),
-                },
-                pattern: {
-                  value: /^\d+$/,
-                  message: t("errorPhoneDigit"),
-                },
-              }}
               height="29px"
             />
             <IconButton
@@ -134,6 +145,6 @@ const EditingContactsForm: React.FC = () => {
       </Box>
     </Box>
   );
-};
+});
 
 export default EditingContactsForm;

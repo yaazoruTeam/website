@@ -162,10 +162,11 @@
     "hours": "hours",
     "downloadingFile": "downloading a file",
     "refresh": "refresh",
-     "editingNumber": "editing number",
-    "sdpeedDial": "speed dial",
+    "editingNumber": "editing number",
+    "speedDial": "speed dial",
     "directNumber": "direct number",
     "notes/name": "notes/name",
     "AddContact": "adding a contact",
-    "reset": "reset"
+    "reset": "reset",
+    "addNumber": "add number"
 }
