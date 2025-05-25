@@ -92,7 +92,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
             />
           ))}
         </Tabs>
-        {activeTab === 1 && (
+        {activeTab === (sideComponentTabIndex ?? 1) && (
           <Box
             sx={{
               ml: 2,
