@@ -74,6 +74,8 @@ const EditMonthlyPayment: React.FC = () => {
             setCreditDetails(creditData);
             setPayments(historyPaymentsDataByMonthlyPayment);
         } catch (err) {
+            console.log(err);
+            console.log('Error fetching monthly payment data:', err);
             setError((err as Error).message);
         }
     }, [t]);
@@ -86,7 +88,7 @@ const EditMonthlyPayment: React.FC = () => {
                 dayOfTheMonth: monthlyPayment.dayOfTheMonth || ''
             });
         }
-    }, [monthlyPayment, t, timeData]);
+    }, [monthlyPayment, t]);
 
     useEffect(() => {
         if (!id) {
@@ -179,6 +181,7 @@ const EditMonthlyPayment: React.FC = () => {
             monthlyPayment: {
                 monthlyPayment_id: monthlyPayment?.monthlyPayment_id,
                 customer_id: customer?.customer_id,
+                customer_name: `${customer?.first_name} ${customer?.last_name}`,
                 belongsOrganization: 'יעזורו',
                 start_date: monthlyPayment?.start_date,
                 end_date: calculateEndDate(timeData.startDate, timeData?.payments, parseInt(timeData?.mustEvery)),
@@ -223,12 +226,12 @@ const EditMonthlyPayment: React.FC = () => {
                     navigate('/monthlyPayment');
                 }
             } else {
-                setError('Error updating monthly payment');
+                // setError('Error updating monthly payment');
             }
 
         } catch (error) {
             console.error('Error updating monthly payment:', error)
-            setError('Error updating monthly payment');
+            // setError('Error updating monthly payment');
         }
     };
 
@@ -336,7 +339,7 @@ const EditMonthlyPayment: React.FC = () => {
                         color={colors.c11}
                     />
                     <CustomTypography
-                        text={` ${customer?.first_name} ${customer?.last_name}`}
+                        text={monthlyPayment?.customer_name || ''}
                         variant='h1'
                         weight='bold'
                         color={colors.c11}

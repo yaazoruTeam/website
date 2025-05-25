@@ -3,6 +3,7 @@ import { HttpError } from ".";
 interface Model {
     monthlyPayment_id: string;
     customer_id: string;
+    customer_name: string;
     belongsOrganization: string;
     start_date: Date;
     end_date:Date;
@@ -136,6 +137,7 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
     const newMonthlyPayment: Model = {
         monthlyPayment_id: monthlyPayment.monthlyPayment_id,
         customer_id: monthlyPayment.customer_id,
+        customer_name: monthlyPayment.customer_name || '', 
         belongsOrganization: monthlyPayment.belongsOrganization,
         start_date: monthlyPayment.start_date,
         end_date:monthlyPayment.end_date,

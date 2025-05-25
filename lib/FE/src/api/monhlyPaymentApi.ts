@@ -32,6 +32,8 @@ export const getMonthlyPayment = async (): Promise<MonthlyPayment.Model[]> => {
 
 // GET(id)
 export const getMonthlyPaymentById = async (monthlyPayment_id: string): Promise<MonthlyPayment.Model> => {
+    console.log('get monthlyPaymentById called with id:', monthlyPayment_id);
+    
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
@@ -47,6 +49,8 @@ export const getMonthlyPaymentById = async (monthlyPayment_id: string): Promise<
                 Authorization: `Bearer ${token}`,
             },
         });
+        console.log('Response data:', response.data);
+        
         return response.data;
     } catch (error) {
         console.error("Error fetching monthly payment id", error);
