@@ -30,7 +30,7 @@ const SwitchboardTabs: React.FC = () => {
               content: <CustomerForm />,
             },
             {
-              label: t("sdpeedDial"),
+              label: t("speedDial"),
               content: <EditingContacts />,
             },
           ]}

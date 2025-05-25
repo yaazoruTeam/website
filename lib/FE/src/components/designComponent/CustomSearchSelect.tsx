@@ -60,13 +60,13 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     if (searchType === "date" && dateRange) {
       fetchCustomersByDateRange(dateRange.start, dateRange.end);
     }
-  }, [searchType]);
+  }, [searchType, dateRange]);
 
   useEffect(() => {
     if (searchType === "status" && selectedStatus) {
       fetchStatusCard(selectedStatus);
     }
-  }, [searchType]);
+  }, [searchType, selectedStatus]);
 
   const fetchCities = async () => {
     try {

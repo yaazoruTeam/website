@@ -34,7 +34,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         px: 2,
         background: colors.c6,
         borderRadius: 2,
-        outline: colors.c22,
+        outline: `1px solid ${colors.c22}`,
         outlineOffset: "-1px",
         display: "flex",
         flexDirection: "column",
