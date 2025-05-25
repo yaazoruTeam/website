@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpError, Payments } from "../model";
-import db from "../db"
+import * as db from "../db"
 
 const createPayments = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -6,7 +6,7 @@ services:
     volumes:
       - ./lib/backend/src:/app/src
       - ./lib/backend/package.json:/app/package.json
-      - ./lib/backend/tsconfig.json:/app/tsconfig.json 
+      - ./lib/backend/tsconfig.json:/app/tsconfig.json
       - C:/dev/yaazoru/lib:/app/lib
     ports:
       - "3006:3006"
@@ -22,8 +22,10 @@ services:
       - DATABASE_URL=postgres://postgres:password@database:5432/mydb
     # depends_on:
     #   - database
-    # networks:
-    #   - yaazoru-internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - yaazoru-internal
   frontend:
     image: node:20
     container_name: react-frontend
@@ -57,4 +59,4 @@ volumes:
   db-data:
 networks:
   yaazoru-internal:
-    driver: host
+    driver: bridge

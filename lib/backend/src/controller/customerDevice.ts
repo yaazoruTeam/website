@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import db from "../db";
+import * as db from "../db";
 import { CustomerDevice, HttpError } from "../model";
 
 const createCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

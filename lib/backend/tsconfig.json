@@ -13,7 +13,7 @@
   },
   "include": [
     "src/**/*"
-  ],
+, "src/tests/ReadExcelDevicesForDonors.test.ts"  ],
   "exclude": [
     "node_modules"
   ]

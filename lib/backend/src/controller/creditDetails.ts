@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import db from "../db";
+import * as db from "../db";
 import { CreditDetails, HttpError } from "../model";
 
 const createCreditDetails = async (

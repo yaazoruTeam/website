@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import db from "../db";
+import * as db from "../db";
 import { User, HttpError } from "../model";
 import { hashPassword } from '../utils/password';
 

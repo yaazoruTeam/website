@@ -71,121 +71,134 @@ const Header: React.FunctionComponent = () => {
           height: "100%",
         }}
       >
-        {!token ? (
-          <CustomButton
-            label={t('login')}
-            sx={{
-              background: colors.c6,
-              color: colors.c11,
-              border: `1px ${colors.c22} solid`,
-              "&:hover": {
-                background: "#f9fafc",
-              },
-            }}
-            onClick={() => navigate('/login')}
-          />
-        ) : (
-          <Box
-            sx={{
-              width: '100%',
-              height: '100%',
-              justifyContent: 'start',
-              alignItems: 'center',
-              display: 'inline-flex',
-            }}
-          >
-            <Box sx={{
-              marginLeft: '30px',
-              width: '45.5px',
-              height: '45.5px',
-              position: 'relative',
-              backgroundColor: colors.c16,
-              borderRadius: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <CustomTypography
-                text={userName ? userName?.charAt(0) : ''}
-                variant="h1"
-                weight="medium"
-                color={colors.c2}
-              />
-            </Box>
-            <Box
+        <Box sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          marginLeft: '2%',
+         marginRight: '8%',
+        }}>
+          <Box>
+            <TextField
+              variant="standard"
+              placeholder={t('topNavigation-Search')}
+              fullWidth
               sx={{
-                marginLeft: '16px',
-                pt: 1,
-                pb: 1,
-                borderRadius: 1,
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                gap: 1,
-                display: 'flex',
-                cursor: 'pointer',
+                marginRight: '15%',
+                width: "100%",
+                // height: '50px',
+                borderRadius: "43px",
+                backgroundColor: colors.c21,
+                "& .MuiInput-underline:before": { borderBottom: "none" },
+                "& .MuiInput-underline:after": { borderBottom: "none" },
+                "& .MuiInputBase-input": {
+                  backgroundColor: "transparent",
+                  textAlign: "right",
+                  direction: "rtl",
+                  padding: "12px 16px",
+                  fontSize: "18px",
+                  fontFamily: "Heebo",
+                  fontWeight: 400,
+                  color: colors.c2,
+                },
+                "& input::placeholder": {
+                  color: colors.c10,
+                  opacity: 1,
+                },
+                "@media (max-width: 600px)": {
+                  width: "100%",
+                },
               }}
-              onClick={handleLogout}
-            >
-              <CustomTypography
-                text={t('logout')}
-                variant="h4"
-                weight="regular"
-                color={colors.c8}
-              />
-              <ArrowRightStartOnRectangleIcon style={{ width: '24px', height: '24px', color: colors.c8 }} />
-            </Box>
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{
+                      marginRight: "24px",
+                    }}
+                  >
+                    <MagnifyingGlassIcon
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        color: colors.c22,
+                      }}
+                    />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Box>
-        )}
-
-        <TextField
-          variant="standard"
-          placeholder={t('topNavigation-Search')}
-          fullWidth
-          sx={{
-            marginRight: '15%',
-            width: "50%",
-            height: '50px',
-            borderRadius: "43px",
-            backgroundColor: colors.c21,
-            "& .MuiInput-underline:before": { borderBottom: "none" },
-            "& .MuiInput-underline:after": { borderBottom: "none" },
-            "& .MuiInputBase-input": {
-              backgroundColor: "transparent",
-              textAlign: "right",
-              direction: "rtl",
-              padding: "12px 16px",
-              fontSize: "18px",
-              fontFamily: "Heebo",
-              fontWeight: 400,
-              color: colors.c2,
-            },
-            "& input::placeholder": {
-              color: colors.c10,
-              opacity: 1,
-            },
-            "@media (max-width: 600px)": {
-              width: "100%",
-            },
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position="end"
+          < Box>
+            {!token ? (
+              <CustomButton
+                label={t('login')}
                 sx={{
-                  marginRight: "24px",
+                  background: colors.c6,
+                  color: colors.c11,
+                  border: `1px ${colors.c22} solid`,
+                  "&:hover": {
+                    background: "#f9fafc",
+                  },
+                }}
+                onClick={() => navigate('/login')}
+              />
+            ) : (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'start',
+                  alignItems: 'center',
+                  display: 'inline-flex',
                 }}
               >
-                <MagnifyingGlassIcon
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    color: colors.c22,
+
+                <Box
+                  sx={{
+                    marginLeft: '16px',
+                    pt: 1,
+                    pb: 1,
+                    borderRadius: 1,
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    gap: 1,
+                    display: 'flex',
+                    cursor: 'pointer',
                   }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
+                  onClick={handleLogout}
+                >
+                  <CustomTypography
+                    text={t('logout')}
+                    variant="h4"
+                    weight="regular"
+                    color={colors.c8}
+                  />
+                  <ArrowRightStartOnRectangleIcon style={{ width: '24px', height: '24px', color: colors.c8 }} />
+                </Box>
+                <Box sx={{
+                  marginLeft: '30px',
+                  width: '45.5px',
+                  height: '45.5px',
+                  position: 'relative',
+                  backgroundColor: colors.c16,
+                  borderRadius: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                  <CustomTypography
+                    text={userName ? userName?.charAt(0) : ''}
+                    variant="h1"
+                    weight="medium"
+                    color={colors.c2}
+                  />
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Box>
       </Toolbar>
     </AppBar>
   );
