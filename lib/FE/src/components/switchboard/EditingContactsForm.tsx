@@ -42,10 +42,6 @@ const EditingContactsForm = forwardRef<any, EditingContactsFormProps>(({ value, 
         )();
       }),
   }));
-  // --- שינוי: עדכון הטופס אם value משתנה (למשל באיפוס) ---
-  // useEffect(() => {
-  //   reset(value);
-  // }, [value, reset]);
 
   return (
     <Box

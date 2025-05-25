@@ -66,9 +66,7 @@ const CallCenter: React.FC = () => {
   };
 
   const handleRowClick = (rowData: any, rowIndex: number) => {
-    setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex);
-    console.log(rowData);
-    
+    setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex);    
   };
 
   //to do : לשנות ולהתאים את זה
