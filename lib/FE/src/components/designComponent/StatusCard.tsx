@@ -1,34 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { colors } from "../../styles/theme";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import StatusTag from "./Status";
 import CustomTypography from "./Typography";
 import { useTranslation } from "react-i18next";
-import StatusTag from "./Status";
 
 interface StatusCardProps {
-  onStatusSelect: (status: 'active' | 'inactive') => Promise<void>;
+  onStatusSelect: (status: "active" | "inactive") => Promise<void>;
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
+  const [selectedStatus, setSelectedStatus] = useState<
+    "active" | "inactive" | null
+  >(null);
+
   const { t } = useTranslation();
 
-  const handleClick = async (status: 'active' | 'inactive') => {
+  const handleClick = async (status: "active" | "inactive") => {
     await onStatusSelect(status);
   };
 
   return (
     <Box
       sx={{
+        background: colors.c6,
         width: "100%",
         height: "100%",
-        px: 2,
-        background: colors.c6,
-        borderRadius: 2,
-        outline: colors.c22,
-        outlineOffset: "-1px",
+        backgroundColor: "white",
+        borderRadius: 4,
+        border: `1px solid ${colors.c22}`,
         display: "flex",
         flexDirection: "column",
-        gap: 0.5,
+        alignItems: "flex-start",
+        boxShadow: "none",
+        gridArea: "1 / 1",
+        justifyContent: "center",
+        paddingBottom: 0.5,
+        position: "relative",
+        zIndex: 10,
       }}
     >
       <Box
@@ -41,20 +51,47 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         }}
       >
         <CustomTypography
-          variant="h4"
+          text={t("customerStatus")}
           weight="regular"
-          text={t('customerStatus')} />
+          variant="h1"
+          sx={{
+            color: colors.c11,
+            fontSize: 16,
+            fontFamily: "Heebo",
+            fontWeight: 400,
+            paddingRight: 5.3,
+            marginTop: -0.3
+          }}
+        ></CustomTypography>
       </Box>
-      <Box sx={{ height: 50, display: "flex", gap: 1, justifyContent: "center" }}>
-        <Box
-          sx={{ cursor: "pointer" }}
-          onClick={() => handleClick("inactive")}>
-          <StatusTag status="inactive" />
-        </Box>
-        <Box
-          sx={{ cursor: "pointer" }}
-          onClick={() => handleClick("active")}>
+      <ChevronDownIcon
+        style={{
+          width: "16px",
+          height: "16px",
+          color: "#032B40",
+          position: "absolute",
+          top: 16,
+          left: 10,
+          pointerEvents: "none",
+        }}
+      />
+      <Box
+        sx={{
+          height: 50,
+          display: "flex",
+          gap: 1,
+          justifyContent: "center",
+          paddingLeft: 2,
+          paddingRight: 2,
+          paddingTop: 2,
+
+        }}
+      >
+        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("active")}>
           <StatusTag status="active" />
+        </Box>
+        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("inactive")}>
+          <StatusTag status="inactive" />
         </Box>
       </Box>
     </Box>
