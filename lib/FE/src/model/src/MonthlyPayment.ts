@@ -6,7 +6,7 @@ interface Model {
     customer_name: string;
     belongsOrganization: string;
     start_date: Date;
-    end_date:Date;
+    end_date: Date;
     amount: number;
     total_amount: number;
     oneTimePayment: number;
@@ -33,6 +33,13 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
         const error: HttpError.Model = {
             status: 400,
             message: 'Invalid or missing "customer_id".',
+        };
+        throw error;
+    }
+    if (!monthlyPayment.customer_name) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Invalid or missing "customer_name".',
         };
         throw error;
     }
@@ -137,10 +144,10 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
     const newMonthlyPayment: Model = {
         monthlyPayment_id: monthlyPayment.monthlyPayment_id,
         customer_id: monthlyPayment.customer_id,
-        customer_name: monthlyPayment.customer_name || '', 
+        customer_name: monthlyPayment.customer_name || '',
         belongsOrganization: monthlyPayment.belongsOrganization,
         start_date: monthlyPayment.start_date,
-        end_date:monthlyPayment.end_date,
+        end_date: monthlyPayment.end_date,
         amount: monthlyPayment.amount,
         total_amount: monthlyPayment.total_amount,
         oneTimePayment: monthlyPayment.oneTimePayment,

@@ -199,7 +199,7 @@ const EditMonthlyPayment: React.FC = () => {
                 status: 'active',
             },
             creditDetails: {
-                //פה יש עוד דברים שצריך לשנות
+                //to do: פה יש עוד דברים שצריך לשנות
                 credit_id: creditDetails.credit_id,
                 customer_id: customer?.customer_id,
                 token: creditDetails.token/*paymentData?.token*/,
@@ -226,12 +226,12 @@ const EditMonthlyPayment: React.FC = () => {
                     navigate('/monthlyPayment');
                 }
             } else {
-                // setError('Error updating monthly payment');
+                setError('Error updating monthly payment');
             }
 
         } catch (error) {
             console.error('Error updating monthly payment:', error)
-            // setError('Error updating monthly payment');
+            setError('Error updating monthly payment');
         }
     };
 
@@ -364,17 +364,17 @@ const EditMonthlyPayment: React.FC = () => {
                             {
                                 label: t('paymentDetails'), content:
                                     <Box >
-                                        <PaymentForm ref={paymentFormRef} 
-                                        onPaymentChange={setPaymentData}
-                                         OnTimeChange={setTimeData} 
-                                        defaultValues={{
-                                            name: '',//customer?.first_name + ' ' + customer?.last_name,
-                                            mustEvery: monthlyPayment?.frequency || '',  // פרטי תדירות החיוב
-                                            Payments: String(monthlyPayment?.amountOfCharges || 0),  // מספר התשלומים
-                                            startDate: monthlyPayment?.start_date || new Date(Date.now()),
-                                            dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1),  // יום החודש
-                                            additionalField: ''
-                                        }} />
+                                        <PaymentForm ref={paymentFormRef}
+                                            onPaymentChange={setPaymentData}
+                                            OnTimeChange={setTimeData}
+                                            defaultValues={{
+                                                name: '',//customer?.first_name + ' ' + customer?.last_name,
+                                                mustEvery: monthlyPayment?.frequency || '',  // פרטי תדירות החיוב
+                                                Payments: String(monthlyPayment?.amountOfCharges || 0),  // מספר התשלומים
+                                                startDate: monthlyPayment?.start_date || new Date(Date.now()),
+                                                dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1),  // יום החודש
+                                                additionalField: ''
+                                            }} />
                                     </Box>
                             },
                             {
