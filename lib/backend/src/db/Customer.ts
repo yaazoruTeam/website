@@ -29,14 +29,15 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
     };
 }
 
-const getCustomers = async (): Promise<Customer.Model[]> => {
+const getCustomers = async (limit: number, offset: number): Promise<Customer.Model[]> => {
     const knex = getConnection();
     try {
-        return await knex.select()
-            .table('yaazoru.customers')
+        return await knex('yaazoru.customers')
+            .select('*')
+            .limit(limit)
+            .offset(offset)
             .orderBy('customer_id');
-    }
-    catch (err) {
+    } catch (err) {
         throw err;
     };
 }
@@ -159,6 +160,12 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
     }
 };
 
+const countCustomers = async (): Promise<number> => {
+    const knex = getConnection();
+    const [{ count }] = await knex('yaazoru.customers').count('customer_id as count');
+    return parseInt(count as string, 10);
+};
+
 export {
     createCustomer,
     getCustomers,
@@ -169,5 +176,6 @@ export {
     doesCustomerExist,
     getCustomersByCity,
     getCustomersByStatus,
-    getCustomersByDateRange
+    getCustomersByDateRange,
+    countCustomers,
 }

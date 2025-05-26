@@ -17,8 +17,19 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
 
 const getCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const customers = await db.Customer.getCustomers();
-        res.status(200).json(customers);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const offset = (page - 1) * limit;
+
+        const customers = await db.Customer.getCustomers(limit, offset);
+        const total = await db.Customer.countCustomers();
+
+        res.status(200).json({
+            data: customers,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
