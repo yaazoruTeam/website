@@ -10,10 +10,10 @@ import { formatDateToString } from "../../designComponent/FormatDate";
 import { CustomButton } from "../../designComponent/Button";
 import { TrashIcon } from '@heroicons/react/24/outline'
 import CustomTabs from "../../designComponent/Tab";
-import { Modal } from "@mui/material";
 import DeviceDetails from "./deviceDetails";
 import MonthlyPaymentDetails from "./monthlyPaymentDetails";
 import CustomerDetails, { CustomerDetailsRef } from "./customerDetails";
+import CustomModal from "../../designComponent/Modal";
 
 const CardCustomer: React.FC = () => {
     const { id } = useParams();
@@ -129,69 +129,47 @@ const CardCustomer: React.FC = () => {
                     }
                 />
             </Box>
-            <Modal
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backdropFilter: 'blur(4px)'
-                }}>
+            <CustomModal open={openModal} onClose={() => setOpenModal(false)}>
                 <Box sx={{
-                    width: '100%',
-                    maxWidth: 500,
-                    padding: 5,
-                    background: 'white',
-                    borderRadius: 3,
+                    direction: 'rtl',
+                    alignSelf: 'stretch',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
+                    justifyContent: 'flex-start',
                     alignItems: 'flex-start',
-                    gap: 3,
-                    direction: 'rtl'
+                    gap: 2
                 }}>
-                    <Box sx={{
-                        direction: 'rtl',
-                        alignSelf: 'stretch',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        gap: 2
-                    }}>
-                        <CustomTypography
-                            text={t('deletingCustomer')}
-                            variant="h1"
-                            weight="medium"
-                            color={colors.c11}
-                        />
-                        <CustomTypography
-                            text={t('customerDeletionWarning')}
-                            variant="h3"
-                            weight="medium"
-                            color={colors.c11}
-                        />
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 2, width: '100%' }}>
-
-                        <CustomButton
-                            label={t('approval')}
-                            size={isMobile ? 'small' : 'large'}
-                            buttonType="first"
-                            state="default"
-                            onClick={deletingCustomer}
-                        />
-                        <CustomButton
-                            label={t('cancellation')}
-                            size={isMobile ? 'small' : 'large'}
-                            buttonType="second"
-                            state="hover"
-                            onClick={() => setOpenModal(false)}
-                        />
-                    </Box>
+                    <CustomTypography
+                        text={t('deletingCustomer')}
+                        variant="h1"
+                        weight="medium"
+                        color={colors.c11}
+                    />
+                    <CustomTypography
+                        text={t('customerDeletionWarning')}
+                        variant="h3"
+                        weight="medium"
+                        color={colors.c11}
+                    />
                 </Box>
-            </Modal>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 2, width: '100%' }}>
+
+                    <CustomButton
+                        label={t('approval')}
+                        size={isMobile ? 'small' : 'large'}
+                        buttonType="first"
+                        state="default"
+                        onClick={deletingCustomer}
+                    />
+                    <CustomButton
+                        label={t('cancellation')}
+                        size={isMobile ? 'small' : 'large'}
+                        buttonType="second"
+                        state="hover"
+                        onClick={() => setOpenModal(false)}
+                    />
+                </Box>
+            </CustomModal>
         </Box>
 
 

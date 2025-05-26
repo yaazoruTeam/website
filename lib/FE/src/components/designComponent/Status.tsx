@@ -30,7 +30,7 @@ const StatusTag: React.FC<StatusTagProps> = ({ status }) => {
         px: 2, // paddingLeft + paddingRight
         py: 0.5, // paddingTop + paddingBottom
         background: color,
-        borderRadius: 1,
+        borderRadius: 5,
         display: "inline-flex",
         justifyContent: "center",
         alignItems: "center",
@@ -41,7 +41,6 @@ const StatusTag: React.FC<StatusTagProps> = ({ status }) => {
         text={label}
         variant="h4"
         weight="regular"
-        color={colors.c11}
       />
     </Box>
   );
