@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box } from "@mui/material";
 import { colors } from "../../styles/theme";
 import { useTranslation } from "react-i18next";
 import { MonthlyPayment } from "../../model/src";
 import { Link, useNavigate } from "react-router-dom";
 import CustomTable from "../designComponent/CustomTable";
-import { getCustomerById } from "../../api/customerApi";
 import  { formatDateToString } from "../designComponent/FormatDate";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
@@ -17,46 +16,6 @@ interface MonthlyPaymentListProps {
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [customerNames, setCustomerNames] = useState<{ [key: string]: string }>({});
-    const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({});
-    const [searchCustomer, setSearchCustomer] = useState<string>('');
-    const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment);
-
-    useEffect(() => {
-        const fetchCustomerNames = async () => {
-            const data: { [key: string]: { name: string, id: string } } = {};
-            for (const payment of monthlyPayment) {
-                const customer = await getCustomerById(payment.customer_id);
-                data[payment.customer_id] = {
-                    name: `${customer.first_name} ${customer.last_name}`,
-                    id: customer.id_number,
-                };
-            }
-            setCustomerData(data);
-        };
-
-        fetchCustomerNames();
-    }, [monthlyPayment]);
-
-    useEffect(() => {
-        const lowerSearch = searchCustomer.toLowerCase().trim();
-        if (!lowerSearch) {
-            setFilteredPayments(monthlyPayment);
-            return;
-        }
-
-        const filtered = monthlyPayment.filter(payment => {
-            const customer = customerData[payment.customer_id];
-            if (!customer) return false;
-            return (
-                customer.name.toLowerCase().includes(lowerSearch) ||
-                (typeof customer.id === "string" && customer.id.includes(lowerSearch))
-            );
-        });
-
-        setFilteredPayments(filtered);
-    }, [searchCustomer, monthlyPayment, customerData]);
-
     const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
         navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`, {
             state: {
@@ -83,14 +42,14 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
         monthlyPayment_id: payment.monthlyPayment_id,
         customer_name: (
             <Link
-                to={`/customer/${payment.customer_id}`}
+                to={`/customer/card/${payment.customer_id}`}
                 style={{
                     color: colors.c8,
                     cursor: 'pointer',
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {customerNames[payment.customer_id] || t('loading')}
+                {payment.customer_name || t('loading')}
             </Link>
         ),
         dates: `${formatDateToString(payment.start_date)} - ${formatDateToString(payment.end_date)}`,

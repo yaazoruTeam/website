@@ -10,6 +10,7 @@ const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: 
         const [newMonthlyPayment] = await query
             .insert({
                 customer_id: monthlyPayment.customer_id,
+                customer_name: monthlyPayment.customer_name,
                 belongsOrganization: monthlyPayment.belongsOrganization,
                 start_date: monthlyPayment.start_date,
                 end_date: monthlyPayment.end_date,

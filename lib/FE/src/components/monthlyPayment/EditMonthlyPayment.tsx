@@ -62,9 +62,6 @@ const EditMonthlyPayment: React.FC = () => {
             }
 
             const itemsData = await getItemsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
-            console.log('i after fetch monthly payment,customer and items');
-            console.log(itemsData);
-
             const paymentCreditLink: PaymentCreditLink.Model = await getPaymentCreditLinkByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
             const creditData: CreditDetails.Model = await getCreditDetailsById(paymentCreditLink.creditDetails_id);
             const historyPaymentsDataByMonthlyPayment: Payments.Model[] = await getAllPaymentsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
@@ -86,7 +83,7 @@ const EditMonthlyPayment: React.FC = () => {
                 dayOfTheMonth: monthlyPayment.dayOfTheMonth || ''
             });
         }
-    }, [monthlyPayment, t, timeData]);
+    }, [monthlyPayment, t]);
 
     useEffect(() => {
         if (!id) {
@@ -179,6 +176,7 @@ const EditMonthlyPayment: React.FC = () => {
             monthlyPayment: {
                 monthlyPayment_id: monthlyPayment?.monthlyPayment_id,
                 customer_id: customer?.customer_id,
+                customer_name: `${customer?.first_name} ${customer?.last_name}`,
                 belongsOrganization: 'יעזורו',
                 start_date: monthlyPayment?.start_date,
                 end_date: calculateEndDate(timeData.startDate, timeData?.payments, parseInt(timeData?.mustEvery)),
@@ -196,7 +194,7 @@ const EditMonthlyPayment: React.FC = () => {
                 status: 'active',
             },
             creditDetails: {
-                //פה יש עוד דברים שצריך לשנות
+                //to do: פה יש עוד דברים שצריך לשנות
                 credit_id: creditDetails.credit_id,
                 customer_id: customer?.customer_id,
                 token: creditDetails.token/*paymentData?.token*/,
@@ -336,7 +334,7 @@ const EditMonthlyPayment: React.FC = () => {
                         color={colors.c11}
                     />
                     <CustomTypography
-                        text={` ${customer?.first_name} ${customer?.last_name}`}
+                        text={monthlyPayment?.customer_name || ''}
                         variant='h1'
                         weight='bold'
                         color={colors.c11}
@@ -361,17 +359,17 @@ const EditMonthlyPayment: React.FC = () => {
                             {
                                 label: t('paymentDetails'), content:
                                     <Box >
-                                        <PaymentForm ref={paymentFormRef} 
-                                        onPaymentChange={setPaymentData}
-                                         OnTimeChange={setTimeData} 
-                                        defaultValues={{
-                                            name: '',//customer?.first_name + ' ' + customer?.last_name,
-                                            mustEvery: monthlyPayment?.frequency || '',  // פרטי תדירות החיוב
-                                            Payments: String(monthlyPayment?.amountOfCharges || 0),  // מספר התשלומים
-                                            startDate: monthlyPayment?.start_date || new Date(Date.now()),
-                                            dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1),  // יום החודש
-                                            additionalField: ''
-                                        }} />
+                                        <PaymentForm ref={paymentFormRef}
+                                            onPaymentChange={setPaymentData}
+                                            OnTimeChange={setTimeData}
+                                            defaultValues={{
+                                                name: '',//customer?.first_name + ' ' + customer?.last_name,
+                                                mustEvery: monthlyPayment?.frequency || '',  // פרטי תדירות החיוב
+                                                Payments: String(monthlyPayment?.amountOfCharges || 0),  // מספר התשלומים
+                                                startDate: monthlyPayment?.start_date || new Date(Date.now()),
+                                                dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1),  // יום החודש
+                                                additionalField: ''
+                                            }} />
                                     </Box>
                             },
                             {
