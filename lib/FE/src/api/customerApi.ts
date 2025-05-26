@@ -5,24 +5,28 @@ import { handleTokenRefresh } from './token';
 
 // const baseUrl = `${process.env.BASE_URL}/customer`;
 const baseUrl = 'http://localhost:3006/controller/customer';
+export interface PaginatedCustomersResponse {
+  data: Customer.Model[];
+  total: number;
+}
 
 // GET
-export const getCustomers = async (): Promise<Customer.Model[]> => {
+export const getCustomers = async (page: number, limit: number = 10): Promise<PaginatedCustomersResponse> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return [];
+            return { data: [], total: 0 };
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<Customer.Model[]> = await axios.get(baseUrl, {
+        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}?page=${page}&limit=${limit}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-        });
+        });        
         return response.data;
     } catch (error) {
         console.error("Error fetching customers", error);

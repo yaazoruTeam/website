@@ -10,24 +10,29 @@ import CustomTable from "../designComponent/CustomTable";
 import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
 import { formatDateToString } from "../designComponent/FormatDate";
-// import CustomSearchSelect from "../designComponent/CustomSearchSelect";
-import CustomSearchSelect from "./CustomSearchSelect";
+
 
 import {
   getCustomersByCity,
   getCustomersByDateRange,
 } from "../../api/customerApi";
+import CustomSearchSelect from "./CustomSearchSelect";
 interface CustomersListProps {
   customers: Customer.Model[];
+  total: number;
+  page: number;
+  limit: number;
+  onPageChange: (page: number) => void;
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
+const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange }) => {  
+  const totalPages = Math.ceil(total / limit);
   const { t } = useTranslation();
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
   const [filteredCustomers, setFilteredCustomers] =
-    useState<Customer.Model[]>(customers);
+    useState<Customer.Model[]>(customers||[]);
   const [dateRange, setDateRange] = useState<{
     start: Date;
     end: Date;
@@ -203,7 +208,13 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
               columns={columns}
               data={tableData}
               onRowClick={onClickCustomer}
-              showSummary={true}
+              showSummary={{
+                total: total,
+                page: page,
+                totalPages: totalPages,
+                limit: limit,
+                onPageChange: onPageChange,
+              }}
               alignLastColumnLeft={true}
             />
           </Box>
