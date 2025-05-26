@@ -62,9 +62,6 @@ const EditMonthlyPayment: React.FC = () => {
             }
 
             const itemsData = await getItemsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
-            console.log('i after fetch monthly payment,customer and items');
-            console.log(itemsData);
-
             const paymentCreditLink: PaymentCreditLink.Model = await getPaymentCreditLinkByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
             const creditData: CreditDetails.Model = await getCreditDetailsById(paymentCreditLink.creditDetails_id);
             const historyPaymentsDataByMonthlyPayment: Payments.Model[] = await getAllPaymentsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
@@ -74,8 +71,6 @@ const EditMonthlyPayment: React.FC = () => {
             setCreditDetails(creditData);
             setPayments(historyPaymentsDataByMonthlyPayment);
         } catch (err) {
-            console.log(err);
-            console.log('Error fetching monthly payment data:', err);
             setError((err as Error).message);
         }
     }, [t]);
