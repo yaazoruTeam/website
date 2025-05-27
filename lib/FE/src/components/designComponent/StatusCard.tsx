@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box } from "@mui/material";
 import { colors } from "../../styles/theme";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
