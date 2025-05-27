@@ -11,9 +11,6 @@ interface StatusCardProps {
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
-  const [selectedStatus, setSelectedStatus] = useState<
-    "active" | "inactive" | null
-  >(null);
 
   const { t } = useTranslation();
 
