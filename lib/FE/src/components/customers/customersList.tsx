@@ -10,13 +10,13 @@ import CustomTable from "../designComponent/CustomTable";
 import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
 import { formatDateToString } from "../designComponent/FormatDate";
-// import CustomSearchSelect from "../designComponent/CustomSearchSelect";
 import CustomSearchSelect from "./CustomSearchSelect";
 
 import {
   getCustomersByCity,
   getCustomersByDateRange,
 } from "../../api/customerApi";
+import FilterResetButton from "../designComponent/FilterResetButton";
 interface CustomersListProps {
   customers: Customer.Model[];
 }
@@ -32,6 +32,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
     start: Date;
     end: Date;
   } | null>(null);
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   useEffect(() => {
     if (!filteredCustomers.length) {
@@ -68,6 +69,13 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   const handleDateRangeSelect = (start: Date, end: Date) => {
     setDateRange({ start, end });
     fetchCustomersByDateRange(start, end);
+  };
+
+  const handleResetFilters = () => {
+    setFilteredCustomers(customers);
+    setDateRange(null);
+    setResetTrigger(true);
+    setTimeout(() => setResetTrigger(false), 0);
   };
 
   const handleStatusSelect = (status: "active" | "inactive") => {
@@ -172,6 +180,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                 searchType="city"
                 placeholder={t("CustomerCity")}
                 onCitySelect={handleCitySelect}
+                resetTrigger={resetTrigger}
               />
             </Box>
             <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
@@ -179,6 +188,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                 searchType="date"
                 placeholder={t("DateInRange")}
                 onDateRangeSelect={handleDateRangeSelect}
+                resetTrigger={resetTrigger}
               />
             </Box>
             <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
@@ -186,7 +196,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
                 searchType="status"
                 placeholder={t("customerStatus")}
                 onStatusSelect={handleStatusSelect}
+                resetTrigger={resetTrigger}
               />
+            </Box>
+            <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
+              <FilterResetButton onReset={handleResetFilters} />
             </Box>
           </Box>
           <Box
