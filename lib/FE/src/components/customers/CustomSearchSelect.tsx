@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FormControl, Select, MenuItem, Box, InputBase } from "@mui/material";
+import { FormControl, Select, MenuItem, Box/*, InputBase*/, OutlinedInput } from "@mui/material";
 import {
-  getCustomers,
+  getCities,
   getCustomersByDateRange,
   getCustomersByStatus,
 } from "../../api/customerApi";
@@ -81,20 +81,8 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
 
   const fetchCities = async () => {
     try {
-      const citiesData = await getCustomers();
-      if (!Array.isArray(citiesData)) {
-        console.error("Expected array but got:", citiesData);
-        return;
-      }
-
-      const uniqueCities = Array.from(
-        new Set(
-          citiesData
-            .map((customer) => customer.city?.trim())
-            .filter((city) => !!city)
-        )
-      );
-      setOptions(uniqueCities);
+      const cities: string[] = await getCities();
+      setOptions(cities);
     } catch (error) {
       console.error("Error fetching cities:", error);
     }
@@ -193,11 +181,13 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
               },
               zIndex: 5,
             }}
-            input={<InputBase />}
+            // input={<InputBase notched={false} />}
+            input={<OutlinedInput />}
+
             endAdornment={
               searchType === "city" ||
-              searchType === "status" ||
-              searchType === "other" ? (
+                searchType === "status" ||
+                searchType === "other" ? (
                 open ? (
                   <ChevronDownIcon
                     style={{

@@ -25,18 +25,25 @@ interface CustomersListProps {
   onPageChange: (page: number) => void;
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange }) => {  
+const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange }) => {
   const totalPages = Math.ceil(total / limit);
   const { t } = useTranslation();
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
-  const [filteredCustomers, setFilteredCustomers] =
-    useState<Customer.Model[]>(customers||[]);
-  const [dateRange, setDateRange] = useState<{
-    start: Date;
-    end: Date;
-  } | null>(null);
+  const [filteredCustomers, setFilteredCustomers] = useState<Customer.Model[]>(customers || []);
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date; } | null>(null);
+  const [filterType, setFilterType] = useState<
+    | { type: "city"; value: string }
+    | { type: "date"; value: { start: Date; end: Date } }
+    | { type: "status"; value: "active" | "inactive" }
+    | null
+  >(null);
+
+  const [filteredTotal, setFilteredTotal] = useState(total);
+  const [filteredPage, setFilteredPage] = useState(page);
+  const [filteredTotalPages, setFilteredTotalPages] = useState(totalPages);
+
 
   useEffect(() => {
     if (!filteredCustomers.length) {
@@ -51,16 +58,25 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
   }, [dateRange]);
 
   const handleCitySelect = async (city: string) => {
+    setFilterType(city ? { type: "city", value: city } : null);
     if (!city) {
       setFilteredCustomers(customers);
       return;
     }
 
     try {
-      const cityCustomers = await getCustomersByCity(city);
+  //       data: Customer.Model[];
+  // total: number;
+  // page?: number;
+  // totalPages: number;
+      const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(city, 1);
 
       if (cityCustomers.length > 0) {
         setFilteredCustomers(cityCustomers);
+        setFilteredTotal(total);
+        setFilteredPage(page || 1);
+        setFilteredTotalPages(totalPages);
+        onPageChange(1);
       } else {
         setFilteredCustomers([]);
       }
@@ -95,6 +111,38 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
     }
   };
 
+  const handlePageChange = async (newPage: number) => {
+
+    if (!filterType) {
+      onPageChange(newPage);
+
+      setFilteredCustomers(customers);
+      setFilteredTotal(total);
+      return;
+    }
+
+    switch (filterType.type) {
+      case "city": {
+      const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(filterType.value, newPage);
+        setFilteredCustomers(cityCustomers);
+        setFilteredTotal(total);
+        setFilteredPage(page || 1);
+        setFilteredTotalPages(totalPages);
+        break;
+      }
+      case "date": {
+        await fetchCustomersByDateRange(filterType.value.start, filterType.value.end/*, newPage*/);
+        break;
+      }
+      case "status": {
+        // סטטוס נעשה מקומית, אז אין צורך לעשות קריאת API
+        const filtered = customers.filter((customer) => customer.status === filterType.value);
+        setFilteredCustomers(filtered.slice((newPage - 1) * limit, newPage * limit));
+        setFilteredTotal(filtered.length);
+        break;
+      }
+    }
+  };
   const columns = [
     { label: t("customerName"), key: "customer_name" },
     { label: t("registrationDate"), key: "registration_date" },
@@ -209,11 +257,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
               data={tableData}
               onRowClick={onClickCustomer}
               showSummary={{
-                total: total,
-                page: page,
-                totalPages: totalPages,
+                total: filteredTotal,
+                page: filteredPage,
+                totalPages: filteredTotalPages,
                 limit: limit,
-                onPageChange: onPageChange,
+                onPageChange: handlePageChange,
               }}
               alignLastColumnLeft={true}
             />

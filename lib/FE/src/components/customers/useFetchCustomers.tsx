@@ -12,7 +12,7 @@ export const useFetchCustomers = (page: number, limit: number = 10) => {
     const fetchCustomers = async () => {
       try {
         setIsLoading(true);
-        const { data, total } = await getCustomers(page, limit);
+        const { data, total } = await getCustomers(page);
         setCustomers(data);
         setTotal(total);
       } catch (err) {

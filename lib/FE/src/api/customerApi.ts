@@ -6,27 +6,29 @@ import { handleTokenRefresh } from './token';
 // const baseUrl = `${process.env.BASE_URL}/customer`;
 const baseUrl = 'http://localhost:3006/controller/customer';
 export interface PaginatedCustomersResponse {
-  data: Customer.Model[];
-  total: number;
+    data: Customer.Model[];
+    total: number;
+    page?: number;
+    totalPages: number;
 }
 
 // GET
-export const getCustomers = async (page: number, limit: number = 10): Promise<PaginatedCustomersResponse> => {
+export const getCustomers = async (page: number): Promise<PaginatedCustomersResponse> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return { data: [], total: 0 };
+            return { data: [], total: 0, totalPages: 1 };
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}?page=${page}&limit=${limit}`, {
+        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}?page=${page}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-        });        
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching customers", error);
@@ -60,22 +62,26 @@ export const getCustomerById = async (cusomer_id: string): Promise<Customer.Mode
 };
 
 //GET(city)
-export const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
+export const getCustomersByCity = async (city: string, page: number = 1): Promise<PaginatedCustomersResponse> => {
     try {
+        console.log('Fetching customers by city:', city, 'Page:', page);
+
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return {} as Customer.Model[];
+            return { data: [], total: 0, totalPages: 1 };
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/city/${city}`, {
+        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}/city/${city}?page=${page}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
         });
+        console.log('Response data:', response.data);
+
         return response.data;
     } catch (error) {
         console.error("Error fetching customers by city", error);
@@ -127,6 +133,17 @@ export const getCustomersByDateRange = async (startDate: Date, endDate: Date): P
         return response.data;
     } catch (error) {
         console.error("Error fetching customers by dates", error);
+        throw error;
+    }
+};
+
+//GET(cities)
+export const getCities = async (): Promise<string[]> => {
+    try {
+        const response: AxiosResponse<string[]> = await axios.get(`${baseUrl}/cities`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching cities", error);
         throw error;
     }
 };
