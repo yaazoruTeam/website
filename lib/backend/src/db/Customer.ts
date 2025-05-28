@@ -47,9 +47,8 @@ const getCustomers = async (limit: number, offset: number): Promise<{ customers:
         };
     } catch (err) {
         console.log('Error in getCustomers: in db::', err);
-
         throw err;
-    };
+    }
 }
 
 const getCustomerById = async (customer_id: string) => {
