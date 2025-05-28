@@ -10,13 +10,8 @@ import CustomTable from "../designComponent/CustomTable";
 import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
 import { formatDateToString } from "../designComponent/FormatDate";
-
-
-import {
-  getCustomersByCity,
-  getCustomersByDateRange,
-} from "../../api/customerApi";
 import CustomSearchSelect from "./CustomSearchSelect";
+import { getCustomersByCity, getCustomersByDateRange, getCustomersByStatus } from "../../api/customerApi";
 interface CustomersListProps {
   customers: Customer.Model[];
   total: number;
@@ -32,7 +27,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
   const [filteredCustomers, setFilteredCustomers] = useState<Customer.Model[]>(customers || []);
-  const [dateRange, setDateRange] = useState<{ start: Date; end: Date; } | null>(null);
+  // const [dateRange, setDateRange] = useState<{ start: Date; end: Date; } | null>(null);
   const [filterType, setFilterType] = useState<
     | { type: "city"; value: string }
     | { type: "date"; value: { start: Date; end: Date } }
@@ -51,12 +46,6 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
     }
   }, [customers, filteredCustomers.length]);
 
-  useEffect(() => {
-    if (dateRange) {
-      fetchCustomersByDateRange(dateRange.start, dateRange.end);
-    }
-  }, [dateRange]);
-
   const handleCitySelect = async (city: string) => {
     setFilterType(city ? { type: "city", value: city } : null);
     if (!city) {
@@ -65,10 +54,6 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
     }
 
     try {
-  //       data: Customer.Model[];
-  // total: number;
-  // page?: number;
-  // totalPages: number;
       const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(city, 1);
 
       if (cityCustomers.length > 0) {
@@ -87,26 +72,41 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
   };
 
   const handleDateRangeSelect = (start: Date, end: Date) => {
-    setDateRange({ start, end });
-    fetchCustomersByDateRange(start, end);
+    setFilterType({ type: "date", value: { start, end } });
+    fetchCustomersByDateRange(start, end, 1);
   };
 
   const handleStatusSelect = (status: "active" | "inactive") => {
     if (!status) {
       setFilteredCustomers(customers);
+      setFilterType(null);
       return;
     }
-
-    const filtered = customers.filter((customer) => customer.status === status);
-    setFilteredCustomers(filtered);
+    setFilterType({ type: "status", value: status });
+    fetchCustomersByStatus(status);
   };
 
-  const fetchCustomersByDateRange = async (start: Date, end: Date) => {
+  const fetchCustomersByDateRange = async (start: Date, end: Date, page: number) => {
     try {
-      const customersInRange = await getCustomersByDateRange(start, end);
+      const { data: customersInRange, total, totalPages } = await getCustomersByDateRange(start, end, page);
       setFilteredCustomers(customersInRange);
+      setFilteredTotal(total);
+      setFilteredPage(page || 1);
+      setFilteredTotalPages(totalPages);
     } catch (error) {
       console.error("Error fetching customers by date range:", error);
+      setFilteredCustomers([]);
+    }
+  };
+  const fetchCustomersByStatus = async (status: "active" | "inactive", page: number = 1) => {
+    try {
+      const { data: customersByStatus, total, totalPages } = await getCustomersByStatus(status, page);
+      setFilteredCustomers(customersByStatus);
+      setFilteredTotal(total);
+      setFilteredPage(page || 1);
+      setFilteredTotalPages(totalPages);
+    } catch (error) {
+      console.error("Error fetching customers by status:", error);
       setFilteredCustomers([]);
     }
   };
@@ -123,7 +123,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
 
     switch (filterType.type) {
       case "city": {
-      const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(filterType.value, newPage);
+        const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(filterType.value, newPage);
         setFilteredCustomers(cityCustomers);
         setFilteredTotal(total);
         setFilteredPage(page || 1);
@@ -131,14 +131,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
         break;
       }
       case "date": {
-        await fetchCustomersByDateRange(filterType.value.start, filterType.value.end/*, newPage*/);
+        await fetchCustomersByDateRange(filterType.value.start, filterType.value.end, newPage);
         break;
       }
       case "status": {
-        // סטטוס נעשה מקומית, אז אין צורך לעשות קריאת API
-        const filtered = customers.filter((customer) => customer.status === filterType.value);
-        setFilteredCustomers(filtered.slice((newPage - 1) * limit, newPage * limit));
-        setFilteredTotal(filtered.length);
+        await fetchCustomersByStatus(filterType.value, newPage);
         break;
       }
     }

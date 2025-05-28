@@ -90,17 +90,17 @@ export const getCustomersByCity = async (city: string, page: number = 1): Promis
 };
 
 //GET(status)
-export const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
+export const getCustomersByStatus = async (status: 'active' | 'inactive', page: number = 1): Promise<PaginatedCustomersResponse> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return {} as Customer.Model[];
+            return { data: [], total: 0, totalPages: 1 };
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/status/${status}`, {
+        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}/status/${status}?page=${page}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -114,17 +114,17 @@ export const getCustomersByStatus = async (status: 'active' | 'inactive'): Promi
 };
 
 //GET(dates)
-export const getCustomersByDateRange = async (startDate: Date, endDate: Date): Promise<Customer.Model[]> => {
+export const getCustomersByDateRange = async (startDate: Date, endDate: Date, page: number = 1): Promise<PaginatedCustomersResponse> => {
     try {
         const newToken = await handleTokenRefresh();
         if (!newToken) {
-            return {} as Customer.Model[];
+            return { data: [], total: 0, totalPages: 1 };
         }
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No token found!');
         }
-        const response: AxiosResponse<Customer.Model[]> = await axios.get(`${baseUrl}/dates?startDate=${startDate}&endDate=${endDate}`, {
+        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}/dates?startDate=${startDate}&endDate=${endDate}&page=${page}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
