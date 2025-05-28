@@ -29,15 +29,25 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
     };
 }
 
-const getCustomers = async (limit: number, offset: number): Promise<Customer.Model[]> => {
+const getCustomers = async (limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.customers')
+        const customers = await knex('yaazoru.customers')
             .select('*')
             .limit(limit)
             .offset(offset)
             .orderBy('customer_id');
+
+        const [{ count }] = await knex('yaazoru.customers')
+            .count('*');
+
+        return {
+            customers,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
+        console.log('Error in getCustomers: in db::', err);
+
         throw err;
     };
 }
@@ -51,37 +61,51 @@ const getCustomerById = async (customer_id: string) => {
     };
 };
 
-const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
+const getCustomersByCity = async (city: string, limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.customers')
+        const customers = await knex('yaazoru.customers')
             .select('*')
             .where({ city })
-            .orderBy('customer_id');
+            .orderBy('customer_id')
+            .limit(limit)
+            .offset(offset);
+        const [{ count }] = await knex('yaazoru.customers')
+            .count('*')
+            .where({ city });
+
+        return {
+            customers,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
     };
 };
 
-const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
+const getCustomersByStatus = async (status: 'active' | 'inactive', limit: number, offset: number): Promise<Customer.Model[]> => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.customers')
             .select('*')
             .where({ status })
-            .orderBy('customer_id');
+            .orderBy('customer_id')
+            .limit(limit)
+            .offset(offset);
     } catch (err) {
         throw err;
     };
 };
 
-const getCustomersByDateRange = async (startDate: string, endDate: string): Promise<Customer.Model[]> => {
+const getCustomersByDateRange = async (startDate: string, endDate: string, limit: number, offset: number): Promise<Customer.Model[]> => {
     const knex = getConnection();
     try {
         return await knex('yaazoru.customers')
             .select('*')
             .whereBetween('created_at', [startDate, endDate])
-            .orderBy('customer_id');
+            .orderBy('customer_id')
+            .limit(limit)
+            .offset(offset);
     } catch (err) {
         throw err;
     }
@@ -160,10 +184,24 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
     }
 };
 
-const countCustomers = async (): Promise<number> => {
+// const countCustomers = async (): Promise<number> => {
+//     const knex = getConnection();
+//     const [{ count }] = await knex('yaazoru.customers').count('customer_id as count');
+//     return parseInt(count as string, 10);
+// };
+
+const getUniqueCities = async (): Promise<string[]> => {
     const knex = getConnection();
-    const [{ count }] = await knex('yaazoru.customers').count('customer_id as count');
-    return parseInt(count as string, 10);
+    try {
+        const rows = await knex('yaazoru.customers')
+            .distinct('city')
+            .whereNotNull('city')
+            .andWhere('city', '!=', '');
+
+        return rows.map(row => row.city);
+    } catch (error) {
+        throw error;
+    }
 };
 
 export {
@@ -175,7 +213,8 @@ export {
     findCustomer,
     doesCustomerExist,
     getCustomersByCity,
+    getUniqueCities,
     getCustomersByStatus,
     getCustomersByDateRange,
-    countCustomers,
+    // countCustomers,
 }

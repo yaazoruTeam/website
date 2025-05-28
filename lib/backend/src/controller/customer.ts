@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import * as db from "../db";
 import { Customer, HttpError } from "../model";
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const limit = parseInt(process.env.LIMIT || '10', 10);
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -17,12 +21,10 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
 
 const getCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const page = parseInt(req.query.page as string, 1);
-        const limit = parseInt(req.query.limit as string, 10);
+        const page = parseInt(req.query.page as string);
         const offset = (page - 1) * limit;
 
-        const customers = await db.Customer.getCustomers(limit, offset);
-        const total = await db.Customer.countCustomers();
+        const { customers, total } = await db.Customer.getCustomers(limit, offset);
 
         res.status(200).json({
             data: customers,
@@ -31,6 +33,8 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
             total
         });
     } catch (error: any) {
+        console.log('Error in getCustomers: in controller:: ', error);
+
         next(error);
     }
 };
@@ -56,70 +60,103 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
 const getCustomersByCity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { city } = req.params;
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
         if (!city) {
             const error: HttpError.Model = {
                 status: 400,
                 message: 'City parameter is required.'
-            };
+            }
             throw error;
         }
-        const customers = await db.Customer.getCustomersByCity(city);
-        if (!customers.length) {
+
+        const { customers, total } = await db.Customer.getCustomersByCity(city, limit, offset);
+
+        if (customers.length === 0) {
             const error: HttpError.Model = {
                 status: 404,
                 message: `No customers found in city: ${city}`
             };
             throw error;
         }
-        res.status(200).json(customers);
-    } catch (error: any) {
+
+        res.status(200).json({
+            data: customers,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
+    } catch (error) {
         next(error);
     }
 };
 
-const getCustomersByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { status } = req.params;
-        if (status !== 'active' && status !== 'inactive') {
-            const error: HttpError.Model = {
-                status: 400,
-                message: "Invalid status. Allowed values: 'active' or 'inactive'."
-            };
-            throw error;
-        }
-        const customers = await db.Customer.getCustomersByStatus(status);
-        res.status(200).json(customers);
-    } catch (error: any) {
-        next(error);
-    }
-};
 
-const getCustomersByDateRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { startDate, endDate } = req.query;
+// const getCustomersByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//     try {
+//         const { status } = req.params;
+//         const page = parseInt(req.query.page as string, 10) || 1;
+//         const limit = parseInt(req.query.limit as string, 10) || 10;
+//         const offset = (page - 1) * limit;
 
-        if (!startDate || !endDate) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'Both startDate and endDate parameters are required.'
-            };
-            throw error;
-        }
+//         if (status !== 'active' && status !== 'inactive') {
+//             const error: HttpError.Model = {
+//                 status: 400,
+//                 message: "Invalid status. Allowed values: 'active' or 'inactive'."
+//             };
+//             throw error;
+//         }
+//         const customers = await db.Customer.getCustomersByStatus(status);
+//         const total = await db.Customer.countCustomersByStatus(status);
 
-        const customers = await db.Customer.getCustomersByDateRange(startDate as string, endDate as string);
-        if (!customers.length) {
-            const error: HttpError.Model = {
-                status: 404,
-                message: `No customers found between ${startDate} and ${endDate}`
-            };
-            throw error;
-        }
+//         res.status(200).json({
+//             data: customers,
+//             page,
+//             totalPages: Math.ceil(total / limit),
+//             total
+//         });
+//     } catch (error: any) {
+//         next(error);
+//     }
+// };
 
-        res.status(200).json(customers);
-    } catch (error: any) {
-        next(error);
-    }
-};
+// const getCustomersByDateRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//     try {
+//         const { startDate, endDate } = req.query;
+//         const page = parseInt(req.query.page as string, 10) || 1;
+//         const limit = parseInt(req.query.limit as string, 10) || 10;
+//         const offset = (page - 1) * limit;
+
+//         if (!startDate || !endDate) {
+//             const error: HttpError.Model = {
+//                 status: 400,
+//                 message: 'Both startDate and endDate parameters are required.'
+//             };
+//             throw error;
+//         }
+
+//         const customers = await db.Customer.getCustomersByDateRange(startDate as string, endDate as string);
+//         const total = await db.Customer.countCustomersByDateRange(startDate as string, endDate as string);
+
+//         // if (!customers.length) {
+//         //     const error: HttpError.Model = {
+//         //         status: 404,
+//         //         message: `No customers found between ${startDate} and ${endDate}`
+//         //     };
+//         //     throw error;
+//         // }
+
+//         res.status(200).json({
+//             data: customers,
+//             page,
+//             totalPages: Math.ceil(total / limit),
+//             total
+//         });
+//     } catch (error: any) {
+//         next(error);
+//     }
+// };
 
 const updateCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -179,6 +216,14 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
     }
 };
 
+const getCities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const cities = await db.Customer.getUniqueCities();
+        res.status(200).json(cities);
+    } catch (error) {
+        next(error);
+    }
+};
 
 export {
     createCustomer,
@@ -187,6 +232,7 @@ export {
     updateCustomer,
     deleteCustomer,
     getCustomersByCity,
-    getCustomersByStatus,
-    getCustomersByDateRange
+    getCities,
+    // getCustomersByStatus,
+    // getCustomersByDateRange
 }
