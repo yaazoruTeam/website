@@ -83,29 +83,43 @@ const getCustomersByCity = async (city: string, limit: number, offset: number): 
     };
 };
 
-const getCustomersByStatus = async (status: 'active' | 'inactive', limit: number, offset: number): Promise<Customer.Model[]> => {
+const getCustomersByStatus = async (status: 'active' | 'inactive', limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.customers')
+        const customers = await knex('yaazoru.customers')
             .select('*')
             .where({ status })
             .orderBy('customer_id')
             .limit(limit)
             .offset(offset);
+        const [{ count }] = await knex('yaazoru.customers')
+            .count('*')
+            .where({ status });
+        return {
+            customers,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
     };
 };
 
-const getCustomersByDateRange = async (startDate: string, endDate: string, limit: number, offset: number): Promise<Customer.Model[]> => {
+const getCustomersByDateRange = async (startDate: string, endDate: string, limit: number, offset: number): Promise<{customers:Customer.Model[], total: number}> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.customers')
+        const customers = await knex('yaazoru.customers')
             .select('*')
             .whereBetween('created_at', [startDate, endDate])
             .orderBy('customer_id')
             .limit(limit)
             .offset(offset);
+        const [{ count }] = await knex('yaazoru.customers')
+            .count('*')
+            .whereBetween('created_at', [startDate, endDate]);
+        return {
+            customers,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
     }
