@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Popover, Stack, useMediaQuery } from "@mui/material";
 import { useFetchCustomers } from "./useFetchCustomers";
 import { Customer } from "../../model/src";
@@ -20,18 +20,60 @@ interface CustomerSelectorProps {
 const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, initialCustomer }) => {
     const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { customers, isLoading, error } = useFetchCustomers();
     const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer || null);
     const [open, setOpen] = useState<boolean>(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [searchTerm, setSearchTerm] = useState("");
+    const [page, setPage] = useState(1);
+    const [allCustomers, setAllCustomers] = useState<Customer.Model[]>([]);
+    const isFetchingRef = useRef(false);
+    const stackRef = useRef<HTMLDivElement>(null);
+    const prevScrollHeight = useRef<number>(0);
 
-    const filteredCustomer = useMemo(() => {
-        return customers.filter((customer) =>
-            customer.first_name.includes(searchTerm?.toLowerCase()) ||
-            customer.last_name.includes(searchTerm?.toLowerCase())
-        );
-    }, [searchTerm, customers]);
+
+    const { customers, total, isLoading, error } = useFetchCustomers({
+        page,
+        filterType: searchTerm ? { type: "search", value: searchTerm } : undefined,
+    });
+
+    const hasMore = customers.length > 0 && allCustomers.length < total;
+
+      const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+        const el = e.currentTarget;
+        if (isLoading || isFetchingRef.current || !hasMore) return;
+        const bottomReached = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+        if (bottomReached) {
+            isFetchingRef.current = true;
+            setPage(prev => prev + 1);
+        }
+    }, [isLoading, hasMore]);
+
+
+     // שמירת מיקום גלילה לפני טעינת עוד לקוחות
+    useEffect(() => {
+        if (isFetchingRef.current && stackRef.current) {
+            prevScrollHeight.current = stackRef.current.scrollHeight;
+        }
+    }, [isFetchingRef.current]);
+
+     // אחרי טעינת לקוחות, החזרת הגלילה לאותו מיקום
+    useEffect(() => {
+        if (!isFetchingRef.current && stackRef.current && page > 1) {
+            const el = stackRef.current;
+            el.scrollTop = el.scrollHeight - prevScrollHeight.current;
+        }
+    }, [allCustomers, page]);
+
+    useEffect(() => {
+        isFetchingRef.current = false;
+        if (page === 1) {
+            setAllCustomers(customers); // חיפוש חדש -> איפוס
+        } else {
+            setAllCustomers(prev => {
+                return [...prev, ...customers];
+            });
+        }
+    }, [customers]);
 
     useEffect(() => {
         setSelectedCustomer(prev => {
@@ -41,6 +83,10 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
             return initialCustomer;
         });
     }, [initialCustomer]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm]);
 
     if (isLoading) return <div>Loading customers...</div>;
     if (error) return <div>{error}</div>;
@@ -81,12 +127,14 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                 customer={selectedCustomer}
                 onNameClick={handleOpen}
                 onNameChange={setSearchTerm}
+            // searchTerm={searchTerm} 
             />
 
             <Popover
                 open={isOpen}
                 anchorEl={anchorEl}
                 onClose={handleClose}
+                keepMounted 
                 disableAutoFocus
                 disableEnforceFocus
                 anchorOrigin={{
@@ -141,11 +189,23 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                         }}
                         onClick={handleOpenModel}
                     />
-                    <Stack sx={{ gap: 2 }}>
-                        {filteredCustomer.map((customer, index) => (
+
+                    <Stack sx={{ gap: 2, overflowY: hasMore ? "auto" : "hidden", maxHeight: "60vh" }} onScroll={handleScroll} ref={stackRef}
+                    >
+                        {allCustomers.map((customer, index) => (
                             <RecordCustomer name={`${customer.first_name} ${customer.last_name}`} phone={`${customer.phone_number}`} email={customer.email} key={index} onClick={() => handleSelectCustomer(customer)} />
                         ))}
                     </Stack>
+                    {!hasMore && (
+                        <Box sx={{ textAlign: 'center', p: 2 }}>
+                            <CustomTypography text={t("noMoreCustomers")} variant="h4" weight="regular" />
+                        </Box>
+                    )}
+                    {/* {hasMore && (
+                        <Button onClick={handleLoadMore} disabled={isLoading}>
+                            {isLoading ? t("loading") : t("loadMore")}
+                        </Button>
+                    )} */}
                 </Box>
             </Popover >
             <CustomModal open={open} onClose={handleCloseModel}>
