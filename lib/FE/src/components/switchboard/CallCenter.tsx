@@ -197,12 +197,7 @@ const CallCenter: React.FC = () => {
     setOpenBuyNew(true);
   };
   return (
-    <Box
-      sx={{
-        paddingLeft: "10%",
-        paddingRight: "15%",
-      }}
-    >
+    <>
       <ChangeAccountModal
         open={openSwitchAccount}
         onClose={() => setOpenSwitchAccount(false)}
@@ -260,28 +255,28 @@ const CallCenter: React.FC = () => {
           <CustomSearchSelect
             searchType="other"
             placeholder={t("customerName")}
-            switchboardSelect
+            SwitchboardSelect
           />
         </Box>
         <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
           <CustomSearchSelect
             searchType="other"
             placeholder={t("phoneNumber")}
-            switchboardSelect
+            SwitchboardSelect
           />
         </Box>
         <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
           <CustomSearchSelect
             searchType="other"
             placeholder={t("fromDate")}
-            switchboardSelect
+            SwitchboardSelect
           />
         </Box>
         <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
           <CustomSearchSelect
             searchType="other"
             placeholder={t("StatusNumbers")}
-            switchboardSelect
+            SwitchboardSelect
           />
         </Box>
       </Box>
@@ -295,7 +290,7 @@ const CallCenter: React.FC = () => {
           <EditCallCenterRow call={row} />
         )}
       />
-    </Box>
+    </>
   );
 };
 

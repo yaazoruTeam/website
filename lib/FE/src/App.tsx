@@ -41,6 +41,7 @@ import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
 import CardCustomer from "./components/customers/card/cardCustomer";
 import CallCenter from "./components/switchboard/CallCenter";
 import CallLog from "./components/switchboard/CallLog";
+import { AppLayout } from "./components/designComponent/AppLayout";
 
 function App() {
   const { t } = useTranslation();
@@ -64,121 +65,166 @@ function App() {
                 iconWhite: dashboardIconWhite,
                 iconBlue: dashboardIconBlue,
                 link: "../dashboard",
-                text: t('dashboard'),
+                text: t("dashboard"),
               },
               {
                 iconWhite: customerIconWhite,
                 iconBlue: customerIconBlue,
                 link: "../customers",
-                text: t('customers'),
+                text: t("customers"),
               },
               {
                 iconWhite: devicesIconWhite,
                 iconBlue: devicesIconBlue,
                 link: "../devices",
-                text: t('devices'),
+                text: t("devices"),
               },
               {
                 iconWhite: ordersIconWhite,
                 iconBlue: ordersIconBlue,
                 link: "../orders",
-                text: t('orders'),
+                text: t("orders"),
               },
               {
                 iconWhite: branchesIconWhite,
                 iconBlue: branchesIconBlue,
                 link: "../branches",
-                text: t('branches'),
+                text: t("branches"),
               },
               {
                 iconWhite: monthlyPaymentIconWhite,
                 iconBlue: monthlyPaymentIconBlue,
                 link: "../monthlyPayment",
-                text: t('standingOrder'),
+                text: t("standingOrder"),
               },
               {
                 iconWhite: switchboardIconWhite,
                 iconBlue: switchboardIconBlue,
                 link: "../switchboard",
-                text: t('switchboard'),
+                text: t("switchboard"),
               },
               {
                 iconWhite: permissionsIconWhite,
                 iconBlue: permissionsIconBlue,
                 link: "../permissions",
-                text: t('permissions'),
+                text: t("permissions"),
               },
             ]}
           />
         </ProtectedRoute>
-        <main style={{ flexGrow: 1, padding: "20px", overflow: 'auto', background: colors.c15 }}>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/customers" element={
-              <ProtectedRoute>
-                <Customers />
-              </ProtectedRoute>
-            } />
-            <Route path="/customer/card/:id" element={
-              <ProtectedRoute>
-                <CardCustomer />
-              </ProtectedRoute>
-            } />
-            <Route path="/devices" element={
-              <ProtectedRoute>
-                <Devices />
-              </ProtectedRoute>
-            } />
-            <Route path="/orders" element={
-              <ProtectedRoute>
-                <Orders />
-              </ProtectedRoute>
-            } />
-            <Route path="/branches" element={
-              <ProtectedRoute>
-                <Branches />
-              </ProtectedRoute>
-            } />
-            <Route path="/monthlyPayment" element={
-              <ProtectedRoute>
-                <MonthlyPaymentComponen />
-              </ProtectedRoute>
-            } />
-            <Route path="/monthlyPayment/edit/:id" element={
-              <ProtectedRoute>
-                <EditMonthlyPayment />
-              </ProtectedRoute>
-            } />
-            <Route path="/permissions" element={
-              <ProtectedRoute>
-                <Permissions />
-              </ProtectedRoute>
-            } />
-            <Route path="/switchboard" element={
-              <ProtectedRoute>
-                <Switchboard />
-              </ProtectedRoute>
-            } />
-            {/* to do : לבדוק איזה ניווט הכי נכון לעשות פה. */}
-            <Route path="/switchboard/callCenter/:id" element={
-              <ProtectedRoute>
-                <CallCenter />
-              </ProtectedRoute>
-            } />
-             <Route path="/switchboard/callCenter/:id/callLog/:callId" element={
-              <ProtectedRoute>
-                <CallLog />
-              </ProtectedRoute>
-            } />
-          </Routes>
+        <main
+          style={{
+            flexGrow: 1,
+            padding: "20px",
+            overflow: "auto",
+            background: colors.c15,
+          }}
+        >
+          <AppLayout>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/customers"
+                element={
+                  <ProtectedRoute>
+                    <Customers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/customer/card/:id"
+                element={
+                  <ProtectedRoute>
+                    <CardCustomer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/devices"
+                element={
+                  <ProtectedRoute>
+                    <Devices />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/orders"
+                element={
+                  <ProtectedRoute>
+                    <Orders />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/branches"
+                element={
+                  <ProtectedRoute>
+                    <Branches />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/monthlyPayment"
+                element={
+                  <ProtectedRoute>
+                    <MonthlyPaymentComponen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/monthlyPayment/edit/:id"
+                element={
+                  <ProtectedRoute>
+                    <EditMonthlyPayment />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/permissions"
+                element={
+                  <ProtectedRoute>
+                    <Permissions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/switchboard"
+                element={
+                  <ProtectedRoute>
+                    <Switchboard />
+                  </ProtectedRoute>
+                }
+              />
+              {/* to do : לבדוק איזה ניווט הכי נכון לעשות פה. */}
+              <Route
+                path="/switchboard/callCenter/:id"
+                element={
+                  <ProtectedRoute>
+                    <CallCenter />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/switchboard/callCenter/:id/callLog/:callId"
+                element={
+                  <ProtectedRoute>
+                    <CallLog />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </AppLayout>
         </main>
       </div>
-    </ThemeProvider >
+    </ThemeProvider>
   );
 }
 

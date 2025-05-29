@@ -167,5 +167,6 @@
     "notifyEmailOfAllCalls": "להודיע במייל על כל השיחות",
     "errorNoPlanSelectedBuyingNewNumber": "אין אפשרות להמשיך מבלי לבחור תוכנית",
     "phoneNumber": "מספר טלפון",
-    "StatusNumbers": "סטטוס מספרים"
+    "StatusNumbers": "סטטוס מספרים",
+    "return": "< חזרה"
 }
