@@ -148,6 +148,30 @@ export const getCities = async (): Promise<string[]> => {
     }
 };
 
+//GET(name) - search customers by name
+export const getCustomersByName = async (name: string, page: number = 1): Promise<PaginatedCustomersResponse> => {
+    try {
+        const newToken = await handleTokenRefresh();
+        if (!newToken) {
+            return { data: [], total: 0, totalPages: 1 };
+        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found!');
+        }
+        const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}/search?q=${name}&page=${page}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching customers by name", error);
+        throw error;
+    }
+};
+
 
 // POST
 export const createCustomer = async (customerData: Customer.Model): Promise<Customer.Model> => {
