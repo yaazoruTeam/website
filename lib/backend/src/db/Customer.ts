@@ -103,7 +103,7 @@ const getCustomersByStatus = async (status: 'active' | 'inactive', limit: number
     };
 };
 
-const getCustomersByDateRange = async (startDate: string, endDate: string, limit: number, offset: number): Promise<{customers:Customer.Model[], total: number}> => {
+const getCustomersByDateRange = async (startDate: string, endDate: string, limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
         const customers = await knex('yaazoru.customers')
@@ -197,25 +197,68 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
     }
 };
 
-// const countCustomers = async (): Promise<number> => {
-//     const knex = getConnection();
-//     const [{ count }] = await knex('yaazoru.customers').count('customer_id as count');
-//     return parseInt(count as string, 10);
-// };
-
 const getUniqueCities = async (): Promise<string[]> => {
     const knex = getConnection();
     try {
         const rows = await knex('yaazoru.customers')
             .distinct('city')
             .whereNotNull('city')
-            .andWhere('city', '!=', '');
+            .andWhere('city', '!=', '')
+            .orderBy('city');
 
         return rows.map(row => row.city);
     } catch (error) {
         throw error;
     }
 };
+
+const searchCustomersByName = async (
+    searchTerm: string,
+    limit: number,
+    offset: number
+): Promise<{ customers: Customer.Model[], total: number }> => {
+    const knex = getConnection();
+    try {
+        const trimmed = searchTerm.trim();
+        if (!trimmed) {
+            return { customers: [], total: 0 };
+        }
+
+        const terms = trimmed.split(/\s+/);
+
+        const buildWhereClause = (query: any) => {
+            terms.forEach(term => {
+                query.andWhere((qb: any) => {
+                    qb.whereILike('first_name', `%${term}%`)
+                        .orWhereILike('last_name', `%${term}%`);
+                });
+            });
+        };
+
+        const customers = await knex('yaazoru.customers')
+            .select('*')
+            .where(function () {
+                buildWhereClause(this);
+            })
+            .orderBy('customer_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count: totalCount }] = await knex('yaazoru.customers')
+            .count('*')
+            .where(function () {
+                buildWhereClause(this);
+            });
+
+        return {
+            customers,
+            total: parseInt(totalCount as string, 10)
+        };
+    } catch (err) {
+        throw err;
+    }
+};
+
 
 export {
     createCustomer,
@@ -226,8 +269,8 @@ export {
     findCustomer,
     doesCustomerExist,
     getCustomersByCity,
+    searchCustomersByName,
     getUniqueCities,
     getCustomersByStatus,
     getCustomersByDateRange,
-    // countCustomers,
 }

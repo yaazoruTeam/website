@@ -224,6 +224,30 @@ const getCities = async (req: Request, res: Response, next: NextFunction): Promi
     }
 };
 
+const searchCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const searchTerm = req.query.q as string;
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        if (!searchTerm) {
+            res.status(400).json({ message: "Missing search term" });
+            return;
+        }
+
+        const { customers, total } = await db.Customer.searchCustomersByName(searchTerm, limit, offset);
+
+        res.status(200).json({
+            data: customers,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export {
     createCustomer,
     getCustomers,
@@ -233,5 +257,6 @@ export {
     getCustomersByCity,
     getCities,
     getCustomersByStatus,
-    getCustomersByDateRange
+    getCustomersByDateRange,
+    searchCustomers,
 }
