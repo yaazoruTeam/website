@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import AddCustomer from "./AddCustomer";
 import { CustomButton } from "../designComponent/Button";
@@ -11,135 +11,22 @@ import StatusTag from "../designComponent/Status";
 import { useNavigate } from "react-router-dom";
 import { formatDateToString } from "../designComponent/FormatDate";
 import CustomSearchSelect from "./CustomSearchSelect";
-import { getCustomersByCity, getCustomersByDateRange, getCustomersByStatus } from "../../api/customerApi";
 interface CustomersListProps {
   customers: Customer.Model[];
   total: number;
   page: number;
   limit: number;
   onPageChange: (page: number) => void;
+  onFilterChange: (filter: any) => void;
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange }) => {
+const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange, onFilterChange }) => {
   const totalPages = Math.ceil(total / limit);
   const { t } = useTranslation();
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer.Model[]>(customers || []);
-  // const [dateRange, setDateRange] = useState<{ start: Date; end: Date; } | null>(null);
-  const [filterType, setFilterType] = useState<
-    | { type: "city"; value: string }
-    | { type: "date"; value: { start: Date; end: Date } }
-    | { type: "status"; value: "active" | "inactive" }
-    | null
-  >(null);
 
-  const [filteredTotal, setFilteredTotal] = useState(total);
-  const [filteredPage, setFilteredPage] = useState(page);
-  const [filteredTotalPages, setFilteredTotalPages] = useState(totalPages);
-
-
-  useEffect(() => {
-    if (!filteredCustomers.length) {
-      setFilteredCustomers(customers);
-    }
-  }, [customers, filteredCustomers.length]);
-
-  const handleCitySelect = async (city: string) => {
-    setFilterType(city ? { type: "city", value: city } : null);
-    if (!city) {
-      setFilteredCustomers(customers);
-      return;
-    }
-
-    try {
-      const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(city, 1);
-
-      if (cityCustomers.length > 0) {
-        setFilteredCustomers(cityCustomers);
-        setFilteredTotal(total);
-        setFilteredPage(page || 1);
-        setFilteredTotalPages(totalPages);
-        onPageChange(1);
-      } else {
-        setFilteredCustomers([]);
-      }
-    } catch (error) {
-      console.error("Error fetching customers by city:", error);
-      setFilteredCustomers([]);
-    }
-  };
-
-  const handleDateRangeSelect = (start: Date, end: Date) => {
-    setFilterType({ type: "date", value: { start, end } });
-    fetchCustomersByDateRange(start, end, 1);
-  };
-
-  const handleStatusSelect = (status: "active" | "inactive") => {
-    if (!status) {
-      setFilteredCustomers(customers);
-      setFilterType(null);
-      return;
-    }
-    setFilterType({ type: "status", value: status });
-    fetchCustomersByStatus(status);
-  };
-
-  const fetchCustomersByDateRange = async (start: Date, end: Date, page: number) => {
-    try {
-      const { data: customersInRange, total, totalPages } = await getCustomersByDateRange(start, end, page);
-      setFilteredCustomers(customersInRange);
-      setFilteredTotal(total);
-      setFilteredPage(page || 1);
-      setFilteredTotalPages(totalPages);
-    } catch (error) {
-      console.error("Error fetching customers by date range:", error);
-      setFilteredCustomers([]);
-    }
-  };
-  const fetchCustomersByStatus = async (status: "active" | "inactive", page: number = 1) => {
-    try {
-      const { data: customersByStatus, total, totalPages } = await getCustomersByStatus(status, page);
-      setFilteredCustomers(customersByStatus);
-      setFilteredTotal(total);
-      setFilteredPage(page || 1);
-      setFilteredTotalPages(totalPages);
-    } catch (error) {
-      console.error("Error fetching customers by status:", error);
-      setFilteredCustomers([]);
-    }
-  };
-
-  const handlePageChange = async (newPage: number) => {
-
-    if (!filterType) {
-      onPageChange(newPage);
-
-      setFilteredCustomers(customers);
-      setFilteredTotal(total);
-      return;
-    }
-
-    switch (filterType.type) {
-      case "city": {
-        const { data: cityCustomers, total, page, totalPages } = await getCustomersByCity(filterType.value, newPage);
-        setFilteredCustomers(cityCustomers);
-        setFilteredTotal(total);
-        setFilteredPage(page || 1);
-        setFilteredTotalPages(totalPages);
-        break;
-      }
-      case "date": {
-        await fetchCustomersByDateRange(filterType.value.start, filterType.value.end, newPage);
-        break;
-      }
-      case "status": {
-        await fetchCustomersByStatus(filterType.value, newPage);
-        break;
-      }
-    }
-  };
   const columns = [
     { label: t("customerName"), key: "customer_name" },
     { label: t("registrationDate"), key: "registration_date" },
@@ -147,7 +34,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
     { label: "", key: "status" },
   ];
 
-  const tableData = filteredCustomers.map((customer) => ({
+  const tableData = customers.map((customer) => ({
     customer_id: customer.customer_id,
     customer_name: `${customer.first_name} ${customer.last_name}`,
     registration_date: `${formatDateToString(customer.created_at)}`,
@@ -221,21 +108,30 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
               <CustomSearchSelect
                 searchType="city"
                 placeholder={t("CustomerCity")}
-                onCitySelect={handleCitySelect}
+                onCitySelect={(city: string) => {
+                  onFilterChange(city ? { type: "city", value: city } : null);
+                  onPageChange(1);
+                }}
               />
             </Box>
             <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
               <CustomSearchSelect
                 searchType="date"
                 placeholder={t("DateInRange")}
-                onDateRangeSelect={handleDateRangeSelect}
+                 onDateRangeSelect={(start: Date, end: Date) => {
+                  onFilterChange({ type: "date", value: { start, end } });
+                  onPageChange(1);
+                }}
               />
             </Box>
             <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
               <CustomSearchSelect
                 searchType="status"
                 placeholder={t("customerStatus")}
-                onStatusSelect={handleStatusSelect}
+                 onStatusSelect={(status: "active" | "inactive") => {
+                  onFilterChange(status ? { type: "status", value: status } : null);
+                  onPageChange(1);
+                }}
               />
             </Box>
           </Box>
@@ -254,11 +150,11 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
               data={tableData}
               onRowClick={onClickCustomer}
               showSummary={{
-                total: filteredTotal,
-                page: filteredPage,
-                totalPages: filteredTotalPages,
-                limit: limit,
-                onPageChange: handlePageChange,
+                total,
+                page,
+                totalPages,
+                limit,
+                onPageChange,
               }}
               alignLastColumnLeft={true}
             />

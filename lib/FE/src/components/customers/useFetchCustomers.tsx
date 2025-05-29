@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
-import { getCustomers } from "../../api/customerApi";
+import { getCustomers, getCustomersByCity, getCustomersByStatus, getCustomersByDateRange } from "../../api/customerApi";
 import { Customer } from "../../model";
 
-export const useFetchCustomers = (page: number, limit: number = 10) => {
+interface UseFetchCustomersProps {
+  page: number;
+  filterType?: {
+    type: "city" | "status" | "date";
+    value: any; 
+  };
+}
+
+export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) => {
   const [customers, setCustomers] = useState<Customer.Model[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -10,14 +18,30 @@ export const useFetchCustomers = (page: number, limit: number = 10) => {
 
   useEffect(() => {
     const fetchCustomers = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const { data, total } = await getCustomers(page);
-        setCustomers(data);
-        setTotal(total);
-      } catch (err) {
-        setError("Failed to fetch customers.");
-        console.error(err);
+        let data, total;
+        if (!filterType) {
+          const res = await getCustomers(page);
+          data = res.data;
+          total = res.total;
+        } else if (filterType.type === "city") {
+          const res = await getCustomersByCity(filterType.value, page);
+          data = res.data;
+          total = res.total;
+        } else if (filterType.type === "status") {
+          const res = await getCustomersByStatus(filterType.value, page);
+          data = res.data;
+          total = res.total;
+        } else if (filterType.type === "date") {
+          const res = await getCustomersByDateRange(filterType.value.start, filterType.value.end, page);
+          data = res.data;
+          total = res.total;
+        }
+        setCustomers(data ?? []);
+        setTotal(total ?? 0);
+      } catch (error: any) {
+        setError(`Failed to fetch customers: ${error.message}`);
         setCustomers([]);
         setTotal(0);
       } finally {
@@ -26,7 +50,7 @@ export const useFetchCustomers = (page: number, limit: number = 10) => {
     };
 
     fetchCustomers();
-  }, [page, limit]);
+  }, [page, filterType]);
 
   return { customers, total, isLoading, error };
 };
