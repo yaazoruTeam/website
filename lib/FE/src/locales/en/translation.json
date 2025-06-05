@@ -170,5 +170,6 @@
   "reset": "reset",
   "addNumber": "add number",
   "phoneNumber": "phone number",
-  "statusNumbers": "status number"
+  "statusNumbers": "status number",
+  "noCustomersFound": "no customers found"
 }
