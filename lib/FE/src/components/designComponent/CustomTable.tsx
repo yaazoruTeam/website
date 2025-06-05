@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableContainer, Paper, TableHead, TableRow, TableCell, TableFooter } from "@mui/material";
-import CustomTypography from "./Typography";
-import { colors } from "../../styles/theme";
-import { useTranslation } from "react-i18next";
-import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from "@mui/material";
 import { Box } from "@mui/system";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { colors } from "../../styles/theme";
+import CustomTypography from "./Typography";
 
 interface CustomTableProps {
   columns: { label: string; key: string }[];
   data: { [key: string]: any }[];
   onRowClick?: (rowData: any, rowIndex: number) => void;
-  showSummary?: boolean;
+  showSummary?: { page: number, limit: number, total: number, totalPages: number, onPageChange: (page: number) => void };
   alignLastColumnLeft?: boolean;
   expandedRowIndex?: number | null;
   renderExpandedRow?: (rowData: any, rowIndex: number) => React.ReactNode;
@@ -19,26 +18,6 @@ interface CustomTableProps {
 
 const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {
   const { t } = useTranslation();
-
-  const rowsPerPage = 15;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginatedData, setPaginatedData] = useState(data);
-
-  const totalRecords = showSummary ? data.length : 0;
-  const totalPages = showSummary ? Math.ceil(totalRecords / rowsPerPage) : 1;
-
-  useEffect(() => {
-    if (showSummary) {
-      const offset = (currentPage - 1) * rowsPerPage;
-      setPaginatedData(data.slice(offset, offset + rowsPerPage));
-    } else {
-      setPaginatedData(data);
-    }
-  }, [currentPage, data, showSummary]);
-
-  const handlePageChange = (value: number) => {
-    setCurrentPage(value);
-  };
 
   return (
     <TableContainer component={Paper} sx={{ boxShadow: "none", padding: 2, direction: 'rtl', backgroundColor: 'transparent' }}>
@@ -69,9 +48,11 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedData.length > 0 ? (
-            paginatedData.map((row, index) => {
-              const actualIndex = (currentPage - 1) * rowsPerPage + index;
+          {data.length > 0 ? (
+            data.map((row, index) => {
+              const actualIndex = showSummary
+                ? ((showSummary.page ? showSummary.page - 1 : 0) * showSummary.limit + index)
+                : index;
               return (
                 <React.Fragment key={index}>
                   <TableRow
@@ -154,7 +135,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                     gap: 0.5
                   }}>
                     <CustomTypography
-                      text={`${(currentPage - 1) * rowsPerPage + 1}`}
+                      text={`${(showSummary.page - 1) * showSummary.limit + 1}`}
                       variant="h4"
                       weight="medium"
                       color={colors.c11}
@@ -166,7 +147,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       color={colors.c11}
                     />
                     <CustomTypography
-                      text={`${Math.min(currentPage * rowsPerPage, totalRecords)}`}
+                      text={`${Math.min(showSummary.page * showSummary.limit, showSummary.total)}`}
                       variant="h4"
                       weight="medium"
                       color={colors.c11}
@@ -178,7 +159,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       color={colors.c11}
                     />
                     <CustomTypography
-                      text={`${totalRecords}`}
+                      text={`${showSummary.total}`}
                       variant="h4"
                       weight="medium"
                       color={colors.c11}
@@ -194,13 +175,13 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                         width: '16px',
                         height: '16px',
                         color: colors.c11,
-                        pointerEvents: currentPage === 1 ? 'none' : 'auto',
-                        opacity: currentPage === 1 ? 0.5 : 1,
+                        pointerEvents: showSummary.page === 1 ? 'none' : 'auto',
+                        opacity: showSummary.page === 1 ? 0.5 : 1,
                         cursor: 'pointer',
                       }}
                       onClick={() => {
-                        if (currentPage > 1) {
-                          handlePageChange(currentPage - 1);
+                        if (showSummary.page > 1) {
+                          showSummary.onPageChange(showSummary.page - 1);
                         }
                       }}
                     />
@@ -211,7 +192,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       color={colors.c11}
                     />
                     <CustomTypography
-                      text={`${currentPage}`}
+                      text={`${showSummary.page}`}
                       variant="h4"
                       weight="medium"
                       color={colors.c11}
@@ -223,7 +204,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       color={colors.c11}
                     />
                     <CustomTypography
-                      text={`${totalPages}`}
+                      text={`${showSummary.totalPages}`}
                       variant="h4"
                       weight="medium"
                       color={colors.c11}
@@ -233,13 +214,13 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                         width: '16px',
                         height: '16px',
                         color: colors.c11,
-                        pointerEvents: currentPage === totalPages ? 'none' : 'auto',
-                        opacity: currentPage === totalPages ? 0.5 : 1,
+                        pointerEvents: showSummary.page === showSummary.totalPages ? 'none' : 'auto',
+                        opacity: showSummary.page === showSummary.totalPages ? 0.5 : 1,
                         cursor: 'pointer',
                       }}
                       onClick={() => {
-                        if (currentPage < totalPages) {
-                          handlePageChange(currentPage + 1);
+                        if (showSummary.page < showSummary.totalPages) {
+                          showSummary.onPageChange(showSummary.page + 1);
                         }
                       }}
                     />
