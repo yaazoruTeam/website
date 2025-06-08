@@ -49,12 +49,25 @@ const CallLog: React.FC = () => {
     console.log('callId', callId);
 
     const downloadFile = () => {
+        //to do: download data to file
         console.log('Downloading file...');
 
     };
 
     const refresh = () => {
+        //to do: refresh list - Re-fetch the data - send to useEffect again
         console.log('Refreshing...');
+        setCalls([ //to do: Change this to fetch the actual data from the server
+            {
+                country: '972-79-606-4286',
+                target: '1-973-964-0286',
+                date: Date.now(),
+                durationCall: '01:04:23',
+                timeCall: '23:44:00 pm',
+                costInShekels: '03.00',
+                penniesPerMinute: '04.00'
+            }
+        ]);
     };
 
     return (
