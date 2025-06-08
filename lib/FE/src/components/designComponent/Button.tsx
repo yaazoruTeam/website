@@ -2,7 +2,6 @@ import { ButtonProps, Button } from "@mui/material";
 import React from "react";
 import { colors } from "../../styles/theme";
 import TypographyComponent from "./Typography";
-
 export interface CustomButtonProps extends ButtonProps {
     label: string;
     icon?: React.ReactElement;
@@ -10,7 +9,6 @@ export interface CustomButtonProps extends ButtonProps {
     buttonType?: 'first' | 'second' | 'third';
     state?: 'default' | 'hover' | 'active';
 }
-
 export const CustomButton: React.FC<CustomButtonProps> = ({
     label,
     sx,
@@ -82,9 +80,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             }
         }
     };
-
     const currentButtonStyle = buttonStyles[buttonType][state];
-
     return (
         <Button
             sx={{

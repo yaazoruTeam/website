@@ -78,7 +78,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                     // key={index}
                     onClick={() => {
                       if (onRowClick) {
-                        console.log(row);
                         onRowClick(row, actualIndex);
                       }
                     }} sx={{

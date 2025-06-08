@@ -3,21 +3,13 @@ import CustomTypography from "../designComponent/Typography";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { CustomButton } from "../designComponent/Button";
-import { ArrowDownOnSquareIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
-
+import { ArrowDownOnSquareIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const CallLog: React.FC = () => {
     const { t } = useTranslation();
     const { callId } = useParams();
-    const refresh = () => {
-        //to do: לעשות שוב קריאת שרת לקבלת כל הנתונים
-        console.log('refresh');
-    }
-    const downloadFile = () => {
-        //to do: להוריד את הקובץ
-        console.log('downloadFile');
-    }
 
+    console.log('callId', callId);
     return (
         <Box sx={{
             paddingLeft: '10%',
