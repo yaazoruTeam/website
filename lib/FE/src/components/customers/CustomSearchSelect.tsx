@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  FormControl,
-  Select,
-  MenuItem,
-  Box,
-  Popper,
-  InputBase,
-} from "@mui/material";
+import { FormControl, Select, MenuItem, Box, InputBase } from "@mui/material";
 import {
   getCustomers,
   getCustomersByDateRange,
   getCustomersByStatus,
 } from "../../api/customerApi";
-import CityOptions from "./CityOptions";
-import DateRangePickerComponent from "./DateRangeSelector";
-import StatusCard from "./StatusCard";
+import CityOptions from "../designComponent/CityOptions";
+import DateRangePickerComponent from "../designComponent/DateRangeSelector";
+import StatusCard from "../designComponent/StatusCard";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -24,10 +17,11 @@ import { colors } from "../../styles/theme";
 
 interface CustomSearchSelectProps {
   placeholder?: string;
-  searchType: "city" | "date" | "status";
+  searchType: "city" | "date" | "status" | "other";
   onCitySelect?: (city: string) => void;
   onDateRangeSelect?: (start: Date, end: Date) => void;
   onStatusSelect?: (status: "active" | "inactive") => void;
+  SwitchboardSelect?: boolean;
 }
 
 const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
@@ -36,6 +30,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   onCitySelect,
   onDateRangeSelect,
   onStatusSelect,
+  SwitchboardSelect,
 }) => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -68,6 +63,22 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     }
   }, [searchType, selectedStatus]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        selectRef.current &&
+        !selectRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const fetchCities = async () => {
     try {
       const citiesData = await getCustomers();
@@ -77,7 +88,11 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
       }
 
       const uniqueCities = Array.from(
-        new Set(citiesData.map((customer) => customer.city))
+        new Set(
+          citiesData
+            .map((customer) => customer.city?.trim())
+            .filter((city) => !!city)
+        )
       );
       setOptions(uniqueCities);
     } catch (error) {
@@ -143,14 +158,12 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
         height: 100,
         display: "grid",
         position: "relative",
-        zIndex: 5,
+        zIndex: 1,
       }}
     >
       <Box
         sx={{
           gridArea: "1 / 1",
-          top: "0px",
-          left: "0px",
           width: "100%",
           height: "100%",
         }}
@@ -165,7 +178,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             sx={{
               backgroundColor: colors.c15,
               border: `1px solid ${colors.c22}`,
-              borderRadius: 4,
+              borderRadius: SwitchboardSelect ? 1 : 4,
               width: "200px",
               height: "50px",
               padding: "0 10px",
@@ -182,7 +195,9 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             }}
             input={<InputBase />}
             endAdornment={
-              searchType === "city" || searchType === "status" ? (
+              searchType === "city" ||
+              searchType === "status" ||
+              searchType === "other" ? (
                 open ? (
                   <ChevronDownIcon
                     style={{
@@ -225,27 +240,20 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             </MenuItem>
           </Select>
         </FormControl>
-
-        {searchType === "city" && (
-          <Popper open={open} anchorEl={anchorEl} placement="bottom-start">
-            <CityOptions cities={options} onCitySelect={handleCitySelect} />
-          </Popper>
-        )}
-
-        {searchType === "date" && open && (
-          <DateRangePickerComponent
-            anchorEl={anchorEl}
-            onDateRangeSelect={handleDateRangeSelect}
-            onClose={() => setOpen(false)}
-          />
-        )}
-
-        {searchType === "status" && open && (
-          <Popper open={open} anchorEl={anchorEl} placement="bottom-start">
-            <StatusCard onStatusSelect={handleStatusSelect} />
-          </Popper>
-        )}
       </Box>
+      {searchType === "city" && open && (
+        <CityOptions cities={options} onCitySelect={handleCitySelect} />
+      )}
+      {searchType === "status" && open && (
+        <StatusCard onStatusSelect={handleStatusSelect} />
+      )}
+      {searchType === "date" && open && (
+        <DateRangePickerComponent
+          anchorEl={anchorEl}
+          onDateRangeSelect={handleDateRangeSelect}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </Box>
   );
 };
