@@ -1,5 +1,9 @@
 import { Customer, HttpError } from "../model";
 import getConnection from "./connection";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 
 
@@ -29,7 +33,7 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
     };
 }
 
-const getCustomers = async (limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomers = async (offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
         const customers = await knex('yaazoru.customers')
@@ -60,7 +64,7 @@ const getCustomerById = async (customer_id: string) => {
     };
 };
 
-const getCustomersByCity = async (city: string, limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomersByCity = async (city: string,  offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
         const customers = await knex('yaazoru.customers')
@@ -82,7 +86,7 @@ const getCustomersByCity = async (city: string, limit: number, offset: number): 
     };
 };
 
-const getCustomersByStatus = async (status: 'active' | 'inactive', limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomersByStatus = async (status: 'active' | 'inactive',  offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
         const customers = await knex('yaazoru.customers')
@@ -103,7 +107,7 @@ const getCustomersByStatus = async (status: 'active' | 'inactive', limit: number
     };
 };
 
-const getCustomersByDateRange = async (startDate: string, endDate: string, limit: number, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomersByDateRange = async (startDate: string, endDate: string,  offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();
     try {
         const customers = await knex('yaazoru.customers')
@@ -214,7 +218,6 @@ const getUniqueCities = async (): Promise<string[]> => {
 
 const searchCustomersByName = async (
     searchTerm: string,
-    limit: number,
     offset: number
 ): Promise<{ customers: Customer.Model[], total: number }> => {
     const knex = getConnection();

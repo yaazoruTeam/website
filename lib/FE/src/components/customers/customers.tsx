@@ -11,7 +11,7 @@ const Customers: React.FC = () => {
     | { type: "status"; value: "active" | "inactive" }
     | null
   >(null);
-  const limit = 10;
+  const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10;
 
   const { customers, total, isLoading, error } = useFetchCustomers({ page, filterType: filterType ?? undefined });
 

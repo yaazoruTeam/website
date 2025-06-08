@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import * as db from "../db";
 import { Customer, HttpError } from "../model";
 import * as dotenv from 'dotenv';
-dotenv.config();
 
-const limit = parseInt(process.env.LIMIT || '10', 10);
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -24,7 +24,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
         const page = parseInt(req.query.page as string);
         const offset = (page - 1) * limit;
 
-        const { customers, total } = await db.Customer.getCustomers(limit, offset);
+        const { customers, total } = await db.Customer.getCustomers(offset);
 
         res.status(200).json({
             data: customers,
@@ -71,7 +71,7 @@ const getCustomersByCity = async (req: Request, res: Response, next: NextFunctio
             throw error;
         }
 
-        const { customers, total } = await db.Customer.getCustomersByCity(city, limit, offset);
+        const { customers, total } = await db.Customer.getCustomersByCity(city, offset);
 
         if (customers.length === 0) {
             const error: HttpError.Model = {
@@ -106,7 +106,7 @@ const getCustomersByStatus = async (req: Request, res: Response, next: NextFunct
             };
             throw error;
         }
-        const { customers, total } = await db.Customer.getCustomersByStatus(status, limit, offset);
+        const { customers, total } = await db.Customer.getCustomersByStatus(status, offset);
         // const total = await db.Customer.countCustomersByStatus(status);
 
         res.status(200).json({
@@ -124,7 +124,7 @@ const getCustomersByDateRange = async (req: Request, res: Response, next: NextFu
     try {
         const { startDate, endDate } = req.query;
         const page = parseInt(req.query.page as string, 10) || 1;
-        const limit = parseInt(req.query.limit as string, 10) || 10;
+        // const limit = parseInt(req.query.limit as string, 10) || 10;
         const offset = (page - 1) * limit;
 
         if (!startDate || !endDate) {
@@ -135,7 +135,7 @@ const getCustomersByDateRange = async (req: Request, res: Response, next: NextFu
             throw error;
         }
 
-        const { customers, total } = await db.Customer.getCustomersByDateRange(startDate as string, endDate as string, limit, offset);
+        const { customers, total } = await db.Customer.getCustomersByDateRange(startDate as string, endDate as string, offset);
         // const total = await db.Customer.countCustomersByDateRange(startDate as string, endDate as string);
 
         if (customers.length === 0) {
@@ -235,7 +235,7 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
             return;
         }
 
-        const { customers, total } = await db.Customer.searchCustomersByName(searchTerm, limit, offset);
+        const { customers, total } = await db.Customer.searchCustomersByName(searchTerm, offset);
 
         res.status(200).json({
             data: customers,
