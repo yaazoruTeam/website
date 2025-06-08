@@ -15,8 +15,7 @@ import ChangingDestinations from "../../assets/ChangingDestinations.svg";
 import CallLog from "../../assets/CallLog.svg";
 import ChangeAccountModal from "./ChangeAccountModal";
 import PurchasingNewNumber from "./PurchasingNewNumber";
-import EditCallCenterRow from "./EditCallCenterRow";
-import CustomSearchSelect from "../customers/CustomSearchSelect";
+import SwitchboardTabs from "./SwitchboardTabs";
 
 const CallCenter: React.FC = () => {
   const { t } = useTranslation();
@@ -67,7 +66,7 @@ const CallCenter: React.FC = () => {
   };
 
   const handleRowClick = (rowData: any, rowIndex: number) => {
-    setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex);
+    setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex);    
   };
 
   //to do : לשנות ולהתאים את זה
@@ -170,119 +169,67 @@ const CallCenter: React.FC = () => {
 
   const changeDefinedAsAnIdentifier = (e: any) => {
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של מוגדר כמזהה
-    console.log("changeDefinedAsAnIdentifier", e);
+    console.log('changeDefinedAsAnIdentifier', e);
     //שינוי הסטטוס לבינתיים
     setCalls((prevCalls) =>
       prevCalls.map((call, i) =>
         i === 0 ? { ...call, definedAsAnIdentifier: e } : call
       )
     );
-  };
+
+  }
 
   const changeOutgoingCalls = (e: any) => {
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של שיחות יוצאות
-    console.log("changeOutgoingCalls", e);
+    console.log('changeOutgoingCalls', e);
     //שינוי הסטטוס לבינתיים
     setCalls((prevCalls) =>
       prevCalls.map((call, i) =>
         i === 0 ? { ...call, outgoingCalls: e } : call
       )
     );
-  };
+  }
   const editAccount = () => {
-    console.log("editAccount");
-  };
+    console.log('editAccount');
+  }
   const purchasingNewNumber = () => {
-    console.log("purchasingNewNumber");
+    console.log('purchasingNewNumber');
     setOpenBuyNew(true);
-  };
+  }
   return (
-    <Box
-      sx={{
-        paddingLeft: "10%",
-        paddingRight: "15%",
-      }}
-    >
-      <ChangeAccountModal
-        open={openSwitchAccount}
-        onClose={() => setOpenSwitchAccount(false)}
-      />
-      <PurchasingNewNumber
-        open={openBuyNew}
-        onClose={() => setOpenBuyNew(false)}
-      />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          my: "24px",
-        }}
-      >
+    <Box sx={{
+      paddingLeft: '10%',
+      paddingRight: '15%',
+    }}>
+      <ChangeAccountModal open={openSwitchAccount} onClose={() => setOpenSwitchAccount(false)} />
+      <PurchasingNewNumber open={openBuyNew} onClose={() => setOpenBuyNew(false)} />
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        my: '24px'
+      }}>
         <CustomTypography
-          text={`${t("callCenter")}/ ${id}`} //to do : לשנות לשם הארגון לאחר שיהיה לי את הנתונים האמיתיים
+          text={`${t('callCenter')}/ ${id}`}//to do : לשנות לשם הארגון לאחר שיהיה לי את הנתונים האמיתיים
           weight="bold"
           variant="h1"
         />
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-          }}
-        >
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
           <CustomButton
-            label={t("editAccount")}
+            label={t('editAccount')}
             buttonType="third"
             state="active"
             onClick={editAccount}
           />
           <CustomButton
-            label={t("purchasingNewNumber")}
+            label={t('purchasingNewNumber')}
             onClick={purchasingNewNumber}
           />
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          paddingTop: 1,
-          marginBottom: -3,
-          display: "flex",
-          width: "100%",
-          direction: "rtl",
-          gap: 2,
-          justifyContent: "flex-start",
-          flexWrap: "wrap",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
-          <CustomSearchSelect
-            searchType="other"
-            placeholder={t("customerName")}
-            switchboardSelect
-          />
-        </Box>
-        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
-          <CustomSearchSelect
-            searchType="other"
-            placeholder={t("phoneNumber")}
-            switchboardSelect
-          />
-        </Box>
-        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
-          <CustomSearchSelect
-            searchType="other"
-            placeholder={t("fromDate")}
-            switchboardSelect
-          />
-        </Box>
-        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
-          <CustomSearchSelect
-            searchType="other"
-            placeholder={t("StatusNumbers")}
-            switchboardSelect
-          />
+
         </Box>
       </Box>
       <CustomTable
@@ -290,11 +237,11 @@ const CallCenter: React.FC = () => {
         data={tableData}
         onRowClick={(row, index) => handleRowClick(row, index)}
         expandedRowIndex={expandedRowIndex}
-        renderExpandedRow={(row) => (
-          //to do : למחוק את העמוד הזה ובמקום שמשתמש בקומפוננטה הזו צריך לשנות לקומפוננטה EditingContacts
-          <EditCallCenterRow call={row} />
+        renderExpandedRow={() => (
+          <SwitchboardTabs />
         )}
       />
+
     </Box>
   );
 };
