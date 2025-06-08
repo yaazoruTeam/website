@@ -10,6 +10,16 @@ const CallLog: React.FC = () => {
     const { callId } = useParams();
 
     console.log('callId', callId);
+
+    const downloadFile = () => {
+        console.log('Downloading file...');
+        
+    };
+
+    const refresh = () => {
+        console.log('Refreshing...');
+    };
+    
     return (
         <Box sx={{
             paddingLeft: '10%',
