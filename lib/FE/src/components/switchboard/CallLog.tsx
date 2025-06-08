@@ -1,25 +1,62 @@
+import { useState } from "react";
 import { Box } from "@mui/material";
 import CustomTypography from "../designComponent/Typography";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { CustomButton } from "../designComponent/Button";
 import { ArrowDownOnSquareIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import PhoneNumber from "./PhoneNumer";
+import { formatDateToString } from "../designComponent/FormatDate";
+import CustomTable from "../designComponent/CustomTable";
 
 const CallLog: React.FC = () => {
     const { t } = useTranslation();
     const { callId } = useParams();
+    const [calls, setCalls] = useState<any[]>([//to do:Change the data type to match the actual data.
+        {
+            country: '972-79-606-4286',
+            target: '1-973-964-0286',
+            date: Date.now(),
+            durationCall: '01:04:23',
+            timeCall: '23:44:00 pm',
+            costInShekels: '03.00',
+            penniesPerMinute: '04.00'
+        }
+    ]);
+
+    //to to:useEffect to fetch the data from the server
+
+    const columns = [
+        { label: t('country'), key: 'country' },
+        { label: t('target'), key: 'target' },
+        { label: t('date'), key: 'date' },
+        { label: t('durationCall'), key: 'durationCall' },
+        { label: t('timeCall'), key: 'timeCall' },
+        { label: t('costInShekels'), key: 'costInShekels' },
+        { label: t('penniesPerMinute'), key: 'penniesPerMinute' },
+    ];
+
+    const tableData = calls.map(call => ({
+        country: <PhoneNumber country="Israel" phoneNumber={call.country} />,
+        target: <PhoneNumber country="USA" phoneNumber={call.target} />,
+        date: formatDateToString(call.date),
+        durationCall: call.durationCall,
+        timeCall: call.timeCall,
+        costInShekels: call.costInShekels,
+        penniesPerMinute: call.penniesPerMinute,
+    }));
 
     console.log('callId', callId);
 
     const downloadFile = () => {
         console.log('Downloading file...');
-        
+
     };
 
     const refresh = () => {
         console.log('Refreshing...');
     };
-    
+
     return (
         <Box sx={{
             paddingLeft: '10%',
@@ -73,6 +110,10 @@ const CallLog: React.FC = () => {
                     />
                 </Box>
             </Box>
+            <CustomTable
+                columns={columns}
+                data={tableData}
+            />
         </Box>
     );
 }
