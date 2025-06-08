@@ -70,6 +70,7 @@ const CallLog: React.FC = () => {
                         onClick={refresh}
                     />
                 </Box>
+                //
             </Box>
         </Box>
     );
