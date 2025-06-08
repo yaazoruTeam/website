@@ -166,7 +166,18 @@
     "toReceiveSMSToEmail": "לקבלת SMS למייל",
     "notifyEmailOfAllCalls": "להודיע במייל על כל השיחות",
     "errorNoPlanSelectedBuyingNewNumber": "אין אפשרות להמשיך מבלי לבחור תוכנית",
+    "calls": "שיחות",
+    "during": "במשך",
+    "hours": "שעות",
+    "downloadingFile": "הורדת קובץ",
+    "refresh": "רענון",
+    "addNumber": "להוסיף מספר",
     "phoneNumber": "מספר טלפון",
     "StatusNumbers": "סטטוס מספרים",
-    "return": "< חזרה"
+    "return": "< חזרה",
+    "country": "ארץ",
+    "durationCall": "משך השיחה",
+    "timeCall":"שעת ביצוע השיחה",
+    "costInShekels": "עלות בשקלים",
+    "penniesPerMinute": "אגורות לדקה"
 }
