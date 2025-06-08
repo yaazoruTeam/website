@@ -12,7 +12,7 @@ const createMonthlyPayment = async () => {
             await knex.schema.withSchema("yaazoru").createTable("monthlyPayment", (table: Knex.TableBuilder) => {
                 table.increments("monthlyPayment_id").primary();
                 table.string("customer_id").notNullable();
-                table.string("customer_name").notNullable().defaultTo('');;
+                table.string("customer_name").notNullable().defaultTo('');
                 table.string("belongsOrganization").notNullable();
                 table.date("start_date").notNullable();
                 table.date("end_date").notNullable();
