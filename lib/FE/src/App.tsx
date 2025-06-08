@@ -40,7 +40,7 @@ import { useTranslation } from "react-i18next";
 import EditMonthlyPayment from "./components/monthlyPayment/EditMonthlyPayment";
 import CardCustomer from "./components/customers/card/cardCustomer";
 import CallCenter from "./components/switchboard/CallCenter";
-import CallLog from "./components/switchboard/callLog";
+import CallLog from "./components/switchboard/CallLog";
 
 function App() {
   const { t } = useTranslation();
@@ -170,7 +170,7 @@ function App() {
                 <CallCenter />
               </ProtectedRoute>
             } />
-             <Route path="/switchboard/callCenter/:id/callLog/:id" element={
+             <Route path="/switchboard/callCenter/:id/callLog/:callId" element={
               <ProtectedRoute>
                 <CallLog />
               </ProtectedRoute>
