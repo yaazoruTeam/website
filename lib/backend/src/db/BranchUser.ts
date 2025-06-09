@@ -1,7 +1,6 @@
 import { BranchUser } from "../model";
 import getConnection from "./connection";
-
-
+const limit = Number(process.env.LIMIT) || 10;
 
 const createBranchUser = async (branchUser: BranchUser.Model) => {
     const knex = getConnection();
@@ -18,15 +17,24 @@ const createBranchUser = async (branchUser: BranchUser.Model) => {
     };
 }
 
-const getAllBranchUser = async (): Promise<BranchUser.Model[]> => {
+const getAllBranchUser = async (offset: number): Promise<{ branchUsers: BranchUser.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex.select().table('yaazoru.branchUser');
-    }
-    catch (err) {
+        const branchUsers = await knex('yaazoru.branchUser')
+            .select('*')
+            .orderBy('branchUser_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.branchUser').count('*');
+        return {
+            branchUsers,
+            total: parseInt(count as string, 10)
+        };
+    } catch (err) {
         throw err;
-    };
-}
+    }
+};
 
 const getBranchUserById = async (branchUser_id: string) => {
     const knex = getConnection();
@@ -37,22 +45,50 @@ const getBranchUserById = async (branchUser_id: string) => {
     };
 };
 
-const getBranchUserByBranch_id = async (branch_id: string) => {
+const getBranchUserByBranch_id = async (branch_id: string, offset: number): Promise<{ branchUsers: BranchUser.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.branchUser').where({ branch_id }).select();
+        const branchUsers = await knex('yaazoru.branchUser')
+            .select('*')
+            .where({ branch_id })
+            .orderBy('branchUser_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.branchUser')
+            .where({ branch_id })
+            .count('*');
+
+        return {
+            branchUsers,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
-    };
+    }
 };
 
-const getBranchUserByUser_id = async (user_id: string) => {
+const getBranchUserByUser_id = async (user_id: string, offset: number): Promise<{ branchUsers: BranchUser.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.branchUser').where({ user_id }).select();
+        const branchUsers = await knex('yaazoru.branchUser')
+            .select('*')
+            .where({ user_id })
+            .orderBy('branchUser_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.branchUser')
+            .where({ user_id })
+            .count('*');
+
+        return {
+            branchUsers,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
-    };
+    }
 };
 
 const updateBranchUser = async (branchUser_id: string, branchUser: BranchUser.Model) => {
