@@ -18,6 +18,7 @@ import paymentCreditLinkRouter from './paymentCreditLink'
 import authRouter from './auth'
 import { errorHandler } from '../middleware/errorHandler';
 import { hasRole } from '../middleware/auth';
+import noteRouter from './notes';
 
 const router = Router();
 const ROUTE_PATH = '/controller';
@@ -36,6 +37,8 @@ router.use(`${ROUTE_PATH}/payments`, paymentsRouter);
 router.use(`${ROUTE_PATH}/item`, itemRouter);
 router.use(`${ROUTE_PATH}/paymentCreditLink`, paymentCreditLinkRouter);
 router.use(`${ROUTE_PATH}/auth`, authRouter);
+router.use(`${ROUTE_PATH}/note`, noteRouter);
+
 
 
 router.get(`${ROUTE_PATH}/excel`, hasRole('admin'), excelController.handleReadExcelFile);
