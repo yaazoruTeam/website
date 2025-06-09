@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import * as db from "../db";
 import { CustomerDevice, HttpError } from "../model";
+import * as dotenv from 'dotenv';
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 const createCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -17,8 +20,17 @@ const createCustomerDevice = async (req: Request, res: Response, next: NextFunct
 
 const getCustomersDevices = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const customersDevices = await db.CustomerDevice.getCustomersDevices();
-        res.status(200).json(customersDevices);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { customerDevices, total } = await db.CustomerDevice.getCustomersDevices(offset);
+
+        res.status(200).json({
+            data: customerDevices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -44,6 +56,9 @@ const getCustomerDeviceById = async (req: Request, res: Response, next: NextFunc
 
 const getAllDevicesByCustomerId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
         CustomerDevice.sanitizeIdExisting(req);
         const existCustomer = await db.Customer.doesCustomerExist(req.params.id);
         if (!existCustomer) {
@@ -53,15 +68,20 @@ const getAllDevicesByCustomerId = async (req: Request, res: Response, next: Next
             };
             throw error;
         }
-        const allCustomerDevice: CustomerDevice.Model[] = await db.CustomerDevice.getCustomerDeviceByCustomerId(req.params.id);
-        if (allCustomerDevice.length === 0) {
+        const { customerDevices, total } = await db.CustomerDevice.getCustomerDeviceByCustomerId(req.params.id, offset);
+        if (customerDevices.length === 0) {
             const error: HttpError.Model = {
                 status: 404,
                 message: 'This customer has no devices.'
             };
             throw error;
         }
-        res.status(200).json(allCustomerDevice);
+        res.status(200).json({
+            data: customerDevices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -69,6 +89,9 @@ const getAllDevicesByCustomerId = async (req: Request, res: Response, next: Next
 
 const getCustomerIdByDeviceId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
         CustomerDevice.sanitizeIdExisting(req);
         const device_id = req.params.id;
         const deviceExist = await db.Device.doesDeviceExist(device_id);
@@ -79,8 +102,13 @@ const getCustomerIdByDeviceId = async (req: Request, res: Response, next: NextFu
             }
             throw error;
         }
-        const [customerDevice] = await db.CustomerDevice.getCustomerDeviceByDeviceId(device_id);
-        res.status(200).json(customerDevice);
+        const { customerDevices, total } = await db.CustomerDevice.getCustomerDeviceByDeviceId(device_id, offset);
+        res.status(200).json({
+            data: customerDevices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
