@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import * as db from "../db";
 import { BranchCustomer, HttpError } from "../model";
+const limit = Number(process.env.LIMIT) || 10;
 
 const createBranchCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -40,8 +41,17 @@ const createBranchCustomer = async (req: Request, res: Response, next: NextFunct
 
 const getAllBranchCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const allBranchCustomer = await db.BranchCustomer.getAllBranchCustomer();
-        res.status(200).json(allBranchCustomer);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { branchCustomers, total } = await db.BranchCustomer.getAllBranchCustomer(offset);
+
+        res.status(200).json({
+            data: branchCustomers,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -67,6 +77,9 @@ const getBranchCustomerById = async (req: Request, res: Response, next: NextFunc
 
 const getBranchCustomerByBranch_id = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
         BranchCustomer.sanitizeIdExisting(req);
         const existBranch = await db.BranchCustomer.doesBranchExist(req.params.id);
         if (!existBranch) {
@@ -76,8 +89,13 @@ const getBranchCustomerByBranch_id = async (req: Request, res: Response, next: N
             };
             throw error;
         }
-        const branchCustomer = await db.BranchCustomer.getBranchCustomerByBranc_id(req.params.id);
-        res.status(200).json(branchCustomer);
+        const { branchCustomers, total } = await db.BranchCustomer.getBranchCustomerByBranc_id(req.params.id, offset);
+        res.status(200).json({
+            data: branchCustomers,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -85,6 +103,9 @@ const getBranchCustomerByBranch_id = async (req: Request, res: Response, next: N
 
 const getBranchCustomerByCustomer_id = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
         BranchCustomer.sanitizeIdExisting(req);
         const existCustomer = await db.BranchCustomer.doesCustomerExist(req.params.id);
         if (!existCustomer) {
@@ -94,8 +115,13 @@ const getBranchCustomerByCustomer_id = async (req: Request, res: Response, next:
             };
             throw error;
         }
-        const branchCustomer = await db.BranchCustomer.getBranchCustomerByCuseomer_id(req.params.id);
-        res.status(200).json(branchCustomer);
+        const { branchCustomers, total } = await db.BranchCustomer.getBranchCustomerByCuseomer_id(req.params.id, offset);
+        res.status(200).json({
+            data: branchCustomers,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
