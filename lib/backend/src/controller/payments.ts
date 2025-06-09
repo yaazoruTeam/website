@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { HttpError, Payments } from "../model";
 import * as db from "../db"
 
+const limit = Number(process.env.LIMIT) || 10;
+
 const createPayments = async (req: Request, res: Response, next: NextFunction) => {
     try {
         Payments.sanitizeBodyExisting(req);
@@ -24,8 +26,17 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllPayments = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const payments = await db.Payments.getPayments();
-        res.status(200).json(payments);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { payments, total } = await db.Payments.getPayments(offset);
+
+        res.status(200).json({
+            data: payments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -60,8 +71,17 @@ const getPaymentsByMonthlyPaymentId = async (req: Request, res: Response, next: 
             };
             throw error;
         }
-        const payments = await db.Payments.getPaymentsByMonthlyPaymentId(req.params.id);
-        res.status(200).json(payments);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { payments, total } = await db.Payments.getPaymentsByMonthlyPaymentId(req.params.id, offset);
+
+        res.status(200).json({
+            data: payments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
