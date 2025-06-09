@@ -175,5 +175,10 @@
     "addNumber": "להוסיף מספר",
     "phoneNumber": "מספר טלפון",
     "StatusNumbers": "סטטוס מספרים",
-    "noCustomersFound": "לא נמצאו לקוחות."
+    "noCustomersFound": "לא נמצאו לקוחות.",
+    "country": "ארץ",
+    "durationCall": "משך השיחה",
+    "timeCall":"שעת ביצוע השיחה",
+    "costInShekels": "עלות בשקלים",
+    "penniesPerMinute": "אגורות לדקה"
 }
