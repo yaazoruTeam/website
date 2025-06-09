@@ -15,7 +15,6 @@ const createNotesSchema = async () => {
                 table.enum('entity_type', ['customer', 'device', 'branch']).notNullable();
                 table.text("content").notNullable();
                 table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
-                // table.string("created_by").notNullable(); // ניתן להוסיף אם תרצי
             });
             console.log('Notes table created successfully.');
         }

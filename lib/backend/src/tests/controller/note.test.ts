@@ -40,10 +40,13 @@ describe('Notes Controller', () => {
   });
 
   it('should get all notes', async () => {
-    (db.Note.getNotes as jest.Mock).mockResolvedValue([mockNote]);
+    (db.Note.getNotes as jest.Mock).mockResolvedValue({
+      notes: [mockNote],
+      total: 1
+    });
     const res = await request(app).get('/notes');
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
+    expect(res.body.data).toHaveLength(1); // כאן!
   });
 
   it('should get note by id', async () => {

@@ -2,7 +2,7 @@
 export type EntityType = 'customer' | 'device' | 'branch';
 
 interface Note {
-    note_id: string;
+    note_id: number;
     entity_id: string;
     entity_type: EntityType;
     content: string;
