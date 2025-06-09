@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FormControl, Select, MenuItem, Box, InputBase } from "@mui/material";
-import {
-  getCustomers,
-  getCustomersByDateRange,
-  getCustomersByStatus,
-} from "../../api/customerApi";
+import { FormControl, Select, MenuItem, Box/*, InputBase*/, OutlinedInput } from "@mui/material";
 import CityOptions from "../designComponent/CityOptions";
 import DateRangePickerComponent from "../designComponent/DateRangeSelector";
 import StatusCard from "../designComponent/StatusCard";
@@ -14,6 +9,7 @@ import {
   CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { colors } from "../../styles/theme";
+import { getCities } from "../../api/customerApi";
 
 interface CustomSearchSelectProps {
   placeholder?: string;
@@ -36,30 +32,11 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
-  const [dateRange, setDateRange] = useState<{
-    start: Date;
-    end: Date;
-  } | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<
-    "" | "active" | "inactive"
-  >("");
   const selectRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (searchType === "city") {
       fetchCities();
-    }
-  }, [searchType]);
-
-  useEffect(() => {
-    if (searchType === "date" && dateRange) {
-      fetchCustomersByDateRange(dateRange.start, dateRange.end);
-    }
-  }, [searchType]);
-
-  useEffect(() => {
-    if (searchType === "status" && selectedStatus) {
-      fetchStatusCard(selectedStatus);
     }
   }, [searchType]);
 
@@ -81,47 +58,10 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
 
   const fetchCities = async () => {
     try {
-      const citiesData = await getCustomers();
-      if (!Array.isArray(citiesData)) {
-        console.error("Expected array but got:", citiesData);
-        return;
-      }
-
-      const uniqueCities = Array.from(
-        new Set(
-          citiesData
-            .map((customer) => customer.city?.trim())
-            .filter((city) => !!city)
-        )
-      );
-      setOptions(uniqueCities);
+      const cities: string[] = await getCities();
+      setOptions(cities);
     } catch (error) {
       console.error("Error fetching cities:", error);
-    }
-  };
-
-  const fetchCustomersByDateRange = async (start: Date, end: Date) => {
-    try {
-      const filteredCustomers = await getCustomersByDateRange(start, end);
-      if (!Array.isArray(filteredCustomers)) {
-        console.error("Expected array but got:", filteredCustomers);
-        return;
-      }
-    } catch (error) {
-      console.error("Error fetching customers by date range:", error);
-      onDateRangeSelect?.(new Date(""), new Date(""));
-    }
-  };
-
-  const fetchStatusCard = async (status: "active" | "inactive") => {
-    try {
-      const filteredCustomers = await getCustomersByStatus(status);
-      if (!Array.isArray(filteredCustomers)) {
-        console.error("Expected array but got:", filteredCustomers);
-        return;
-      }
-    } catch (error) {
-      console.error("Error fetching customers by status:", error);
     }
   };
 
@@ -139,13 +79,11 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   };
 
   const handleDateRangeSelect = (start: Date, end: Date) => {
-    setDateRange({ start, end });
     setOpen(false);
     onDateRangeSelect?.(start, end);
   };
 
   const handleStatusSelect = async (status: "active" | "inactive") => {
-    setSelectedStatus(status);
     setOpen(false);
     onStatusSelect?.(status);
   };
@@ -193,11 +131,12 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
               },
               zIndex: 5,
             }}
-            input={<InputBase />}
+            input={<OutlinedInput />}
+
             endAdornment={
               searchType === "city" ||
-              searchType === "status" ||
-              searchType === "other" ? (
+                searchType === "status" ||
+                searchType === "other" ? (
                 open ? (
                   <ChevronDownIcon
                     style={{

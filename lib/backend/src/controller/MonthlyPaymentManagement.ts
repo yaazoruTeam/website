@@ -96,7 +96,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
 
         await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx);
 
-        const existingItems = await db.Item.getAllItemByMonthlyPaymentId(id);
+        const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id);
         await updateItems(existingItems, items, trx);
 
         await trx.commit();

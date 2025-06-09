@@ -6,21 +6,26 @@ import { MonthlyPayment } from "../../model/src";
 import { Link, useNavigate } from "react-router-dom";
 import CustomTable from "../designComponent/CustomTable";
 import { getCustomerById } from "../../api/customerApi";
-import  { formatDateToString } from "../designComponent/FormatDate";
+import { formatDateToString } from "../designComponent/FormatDate";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
 interface MonthlyPaymentListProps {
     monthlyPayment: MonthlyPayment.Model[];
     isCustomerCard?: boolean;
+    page?: number;
+    totalPages?: number;
+    total?: number;
+    onPageChange?: (page: number) => void;
 }
 
-const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false }) => {
+const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false, page = 1, totalPages = 1, total = 0, onPageChange }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [customerNames, setCustomerNames] = useState<{ [key: string]: string }>({});
     const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({});
     const [searchCustomer, setSearchCustomer] = useState<string>('');
     const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment);
+    const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10;
 
     useEffect(() => {
         const fetchCustomerNames = async () => {
@@ -137,12 +142,17 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
                         columns={columns}
                         data={tableData}
                         onRowClick={onClickMonthlyPayment}
-                        showSummary={true}
+                        showSummary={{
+                            page,
+                            limit,
+                            total,
+                            totalPages,
+                            onPageChange: onPageChange || (() => { })
+                        }}
                     /> :
                         <CustomTable
                             columns={columns}
                             data={tableData}
-                            showSummary={false}
                         />
                     }
                 </Box>

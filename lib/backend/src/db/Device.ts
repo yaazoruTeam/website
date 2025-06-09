@@ -1,5 +1,8 @@
 import { Device, HttpError } from "../model";
 import getConnection from "./connection";
+import * as dotenv from 'dotenv';
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 const createDevice = async (device: Device.Model, trx?: any) => {
     const knex = getConnection();
@@ -20,10 +23,21 @@ const createDevice = async (device: Device.Model, trx?: any) => {
     };
 }
 
-const getDevices = async (): Promise<Device.Model[]> => {
+const getDevices = async (offset: number): Promise<{ devices: Device.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex.select().table('yaazoru.devices');
+        const devices = await knex('yaazoru.devices')
+            .select('*')
+            .orderBy('device_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.devices').count('*');
+
+        return {
+            devices,
+            total: parseInt(count as string, 10)
+        };
     }
     catch (err) {
         throw err;
@@ -39,15 +53,27 @@ const getDeviceById = async (device_id: string) => {
     };
 };
 
-const getDevicesByStatus = async (status: 'active' | 'inactive') => {
+const getDevicesByStatus = async (status: 'active' | 'inactive', offset: number): Promise<{ devices: Device.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.devices')
-            .select()
+        const devices = await knex('yaazoru.devices')
+            .select('*')
+            .where({ status })
+            .orderBy('device_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.devices')
+            .count('*')
             .where({ status });
+
+        return {
+            devices,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
-    };
+    }
 };
 
 const updateDevice = async (device_id: string, device: Device.Model) => {

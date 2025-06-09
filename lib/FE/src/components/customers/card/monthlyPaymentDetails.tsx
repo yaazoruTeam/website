@@ -13,8 +13,8 @@ const MonthlyPaymentDetails: React.FC<{ customer: Customer.Model }> = ({ custome
 
     useEffect(() => {
         const getMonthlyPayments = async (customer_id: string) => {
-            const monthlyPaymentData: MonthlyPayment.Model[] = await getMonthlyPaymentByCustomerId(customer_id);
-            setMonthlyPayment(monthlyPaymentData);
+            const { data } = await getMonthlyPaymentByCustomerId(customer_id, 1);
+            setMonthlyPayment(data);
         };
         getMonthlyPayments(customer.customer_id);
     }, [customer]);
@@ -31,7 +31,8 @@ const MonthlyPaymentDetails: React.FC<{ customer: Customer.Model }> = ({ custome
                     color={colors.c11}
                 />
             </Box>
-            <MonthlyPaymentList monthlyPayment={monthlyPayment} isCustomerCard={true} />
+            <MonthlyPaymentList 
+            monthlyPayment={monthlyPayment} isCustomerCard={true} />
         </Box>
     );
 };

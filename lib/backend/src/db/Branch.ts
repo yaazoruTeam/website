@@ -1,6 +1,8 @@
 import { Branch, HttpError } from "../model";
 import getConnection from "./connection";
-
+import * as dotenv from 'dotenv';
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 
 const createBranch = async (branch: Branch.Model) => {
@@ -21,15 +23,24 @@ const createBranch = async (branch: Branch.Model) => {
     };
 }
 
-const getBranches = async (): Promise<Branch.Model[]> => {
+const getBranches = async (offset: number): Promise<{ branches: Branch.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex.select().table('yaazoru.branches');
-    }
-    catch (err) {
+        const branches = await knex('yaazoru.branches')
+            .select('*')
+            .orderBy('branch_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.branches').count('*');
+        return {
+            branches,
+            total: parseInt(count as string, 10)
+        };
+    } catch (err) {
         throw err;
-    };
-}
+    }
+};
 
 const getBranchById = async (branch_id: string) => {
     const knex = getConnection();
@@ -40,15 +51,27 @@ const getBranchById = async (branch_id: string) => {
     };
 };
 
-const getBranchesByCity = async (city: string) => {
+const getBranchesByCity = async (city: string, offset: number): Promise<{ branches: Branch.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.branches')
-            .select()
-            .where({ city });
+        const branches = await knex('yaazoru.branches')
+            .select('*')
+            .where({ city })
+            .orderBy('branch_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.branches')
+            .where({ city })
+            .count('*');
+
+        return {
+            branches,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
-    };
+    }
 };
 
 const updateBranch = async (branch_id: string, branch: Branch.Model) => {

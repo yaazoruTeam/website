@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpError, MonthlyPayment } from "../model/src";
 import * as db from "../db";
+import dotenv from "dotenv";
+dotenv.config();
+
+const limit = Number(process.env.LIMIT) || 10;
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -24,8 +28,17 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
 
 const getMonthlyPayments = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const monthlyPayment = await db.MonthlyPayment.getMonthlyPayment();
-        res.status(200).json(monthlyPayment);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPayments(offset);
+
+        res.status(200).json({
+            data: monthlyPayments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -62,21 +75,29 @@ const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: 
             };
             throw error;
         }
-        const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentByCustomerId(req.params.id);
-        if (!monthlyPayment) {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByCustomerId(req.params.id, offset);
+
+        if (monthlyPayments.length === 0) {
             const error: HttpError.Model = {
                 status: 404,
                 message: "There is no monthly payment for this customer.",
             };
             throw error;
         }
-        res.status(200).json(monthlyPayment);
+        res.status(200).json({
+            data: monthlyPayments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     }
     catch (error: any) {
         next(error);
     }
 }
-
 const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { status } = req.params;
@@ -87,8 +108,17 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
             };
             throw error;
         }
-        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByStatus(status);
-        res.status(200).json(monthlyPayments);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByStatus(status, offset);
+
+        res.status(200).json({
+            data: monthlyPayments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -97,8 +127,6 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
 const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { organization } = req.params;
-        console.log(organization);
-
         if (!organization) {
             const error: HttpError.Model = {
                 status: 400,
@@ -106,7 +134,11 @@ const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next
             };
             throw error;
         }
-        const monthlyPayments = await db.MonthlyPayment.getMonthlyPaymentByOrganization(organization);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByOrganization(organization, offset);
+
         if (monthlyPayments.length === 0) {
             const error: HttpError.Model = {
                 status: 404,
@@ -114,7 +146,12 @@ const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next
             };
             throw error;
         }
-        res.status(200).json(monthlyPayments);
+        res.status(200).json({
+            data: monthlyPayments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }

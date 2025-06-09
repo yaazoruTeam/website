@@ -1,7 +1,7 @@
 import { HttpError, User } from "../model";
 import getConnection from "./connection";
 
-
+const limit = Number(process.env.LIMIT) || 10;
 
 const createUser = async (user: User.Model) => {
     const knex = getConnection();
@@ -29,10 +29,20 @@ const createUser = async (user: User.Model) => {
     };
 }
 
-const getUsers = async (): Promise<User.Model[]> => {
+const getUsers = async (offset: number): Promise<{ users: User.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex.select().table('yaazoru.users');
+        const users = await knex('yaazoru.users')
+            .select('*')
+            .orderBy('user_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.users').count('*');
+        return {
+            users,
+            total: parseInt(count as string, 10)
+        };
     }
     catch (err) {
         throw err;
@@ -127,5 +137,11 @@ const doesUserExist = async (user_id: string): Promise<boolean> => {
 };
 
 export {
-    createUser, getUsers, getUserById, updateUser, deleteUser, findUser, doesUserExist
+    createUser,
+    getUsers,
+    getUserById,
+    updateUser,
+    deleteUser,
+    findUser,
+    doesUserExist
 }

@@ -3,6 +3,8 @@ import * as db from "../db";
 import { User, HttpError } from "../model";
 import { hashPassword } from '../utils/password';
 
+const limit = Number(process.env.LIMIT) || 10;
+
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         User.sanitizeBodyExisting(req);
@@ -19,8 +21,17 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
 
 const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const users = await db.User.getUsers();
-        res.status(200).json(users);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { users, total } = await db.User.getUsers(offset);
+
+        res.status(200).json({
+            data: users,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }

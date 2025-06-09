@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import * as db from "../db";
 import { Branch, HttpError } from "../model";
+import * as dotenv from 'dotenv';
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 const createBranch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -16,8 +19,17 @@ const createBranch = async (req: Request, res: Response, next: NextFunction): Pr
 
 const getBranches = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const branches = await db.Branch.getBranches();
-        res.status(200).json(branches);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { branches, total } = await db.Branch.getBranches(offset);
+
+        res.status(200).json({
+            data: branches,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -51,7 +63,10 @@ const getBranchesByCity = async (req: Request, res: Response, next: NextFunction
             };
             throw error;
         }
-        const branches = await db.Branch.getBranchesByCity(city);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { branches, total } = await db.Branch.getBranchesByCity(city, offset);
         if (branches.length === 0) {
             const error: HttpError.Model = {
                 status: 404,
@@ -59,7 +74,12 @@ const getBranchesByCity = async (req: Request, res: Response, next: NextFunction
             }
             throw error;
         }
-        res.status(200).json(branches);
+        res.status(200).json({
+            data: branches,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     }
     catch (error: any) {
         next(error)

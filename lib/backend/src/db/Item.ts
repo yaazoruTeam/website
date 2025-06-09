@@ -1,7 +1,7 @@
 import { HttpError, ItemForMonthlyPayment, Payments } from "../model";
 import getConnection from "./connection";
 
-
+const limit = Number(process.env.LIMIT) || 10;
 
 const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
     const knex = getConnection();
@@ -25,15 +25,24 @@ const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
     };
 }
 
-const getItems = async (): Promise<ItemForMonthlyPayment.Model[]> => {
+const getItems = async (offset: number): Promise<{ items: ItemForMonthlyPayment.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex.select().table('yaazoru.item');
-    }
-    catch (err) {
+        const items = await knex('yaazoru.item')
+            .select('*')
+            .orderBy('item_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.item').count('*');
+        return {
+            items,
+            total: parseInt(count as string, 10)
+        };
+    } catch (err) {
         throw err;
-    };
-}
+    }
+};
 
 const getItemId = async (item_id: string) => {
     const knex = getConnection();
@@ -44,13 +53,33 @@ const getItemId = async (item_id: string) => {
     };
 };
 
-const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number): Promise<{ items: ItemForMonthlyPayment.Model[], total: number }> => {
     const knex = getConnection();
     try {
-        return await knex('yaazoru.item').where({ monthlyPayment_id });
+        const items = await knex('yaazoru.item')
+            .where({ monthlyPayment_id })
+            .orderBy('item_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.item')
+            .where({ monthlyPayment_id })
+            .count('*');
+
+        return {
+            items,
+            total: parseInt(count as string, 10)
+        };
     } catch (err) {
         throw err;
-    };
+    }
+};
+
+const getAllItemsByMonthlyPaymentIdNoPagination = async (monthlyPayment_id: string): Promise<ItemForMonthlyPayment.Model[]> => {
+    const knex = getConnection();
+    return await knex('yaazoru.item')
+        .where({ monthlyPayment_id })
+        .orderBy('item_id');
 };
 
 const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model,trx?:any) => {
@@ -128,5 +157,12 @@ const doesItemExist = async (item_id: string): Promise<boolean> => {
 };
 
 export {
-    createItem, getItems, getItemId, getAllItemByMonthlyPaymentId, updateItem, deleteItem,/* findCustomer,*/ doesItemExist
+    createItem,
+    getItems,
+    getItemId,
+    getAllItemByMonthlyPaymentId,
+    getAllItemsByMonthlyPaymentIdNoPagination,
+    updateItem,
+    deleteItem,
+    doesItemExist
 };

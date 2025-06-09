@@ -171,6 +171,7 @@
   "addNumber": "add number",
   "phoneNumber": "phone number",
   "statusNumbers": "status number",
+  "noCustomersFound": "no customers found",
   "country": "country",
   "durationCall": "duration of the call",
   "timeCall": "time of call",

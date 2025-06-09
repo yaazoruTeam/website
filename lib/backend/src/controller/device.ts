@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import * as db from "../db";
 import { Device, HttpError } from "../model";
+import * as dotenv from 'dotenv';
+dotenv.config();
+const limit = Number(process.env.LIMIT) || 10;
 
 const createDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -17,8 +20,17 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
 
 const getDevices = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const devices = await db.Device.getDevices();
-        res.status(200).json(devices);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { devices, total } = await db.Device.getDevices(offset);
+
+        res.status(200).json({
+            data: devices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
@@ -52,8 +64,17 @@ const getDevicesByStatus = async (req: Request, res: Response, next: NextFunctio
             };
             throw error;
         }
-        const devices = await db.Device.getDevicesByStatus(status);
-        res.status(200).json(devices);
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const offset = (page - 1) * limit;
+
+        const { devices, total } = await db.Device.getDevicesByStatus(status, offset);
+
+        res.status(200).json({
+            data: devices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error: any) {
         next(error);
     }
