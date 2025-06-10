@@ -175,5 +175,6 @@
   "durationCall": "duration of the call",
   "timeCall": "time of call",
   "costInShekels": "cost in shekels",
-  "penniesPerMinute": "pennies per minute"
+  "penniesPerMinute": "pennies per minute",
+  "resetFilters": "reset filters"
 }

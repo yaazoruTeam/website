@@ -22,6 +22,7 @@ interface CustomSearchSelectProps {
   onDateRangeSelect?: (start: Date, end: Date) => void;
   onStatusSelect?: (status: "active" | "inactive") => void;
   SwitchboardSelect?: boolean;
+  resetTrigger?: boolean;
 }
 
 const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
@@ -31,6 +32,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   onDateRangeSelect,
   onStatusSelect,
   SwitchboardSelect,
+  resetTrigger,
 }) => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -55,13 +57,13 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     if (searchType === "date" && dateRange) {
       fetchCustomersByDateRange(dateRange.start, dateRange.end);
     }
-  }, [searchType]);
+  }, [searchType, dateRange]);
 
   useEffect(() => {
     if (searchType === "status" && selectedStatus) {
       fetchStatusCard(selectedStatus);
     }
-  }, [searchType]);
+  }, [searchType, selectedStatus]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -78,6 +80,14 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (resetTrigger) {
+      setSelectedCity("");
+      setSelectedStatus("");
+      setDateRange(null);
+    }
+  }, [resetTrigger]);
 
   const fetchCities = async () => {
     try {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box } from "@mui/material";
 import { colors } from "../../styles/theme";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -11,9 +11,6 @@ interface StatusCardProps {
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
-  const [selectedStatus, setSelectedStatus] = useState<
-    "active" | "inactive" | null
-  >(null);
 
   const { t } = useTranslation();
 
@@ -27,9 +24,9 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
         background: colors.c6,
         width: "100%",
         height: "100%",
-        backgroundColor: "white",
         borderRadius: 4,
-        border: `1px solid ${colors.c22}`,
+        outline: `1px solid ${colors.c22}`,
+        outlineOffset: "-1px",
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
