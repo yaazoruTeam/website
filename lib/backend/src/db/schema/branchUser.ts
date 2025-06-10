@@ -1,10 +1,10 @@
-import getConnection from "../connection";
+import getDbConnection from "../connection";
 import { Knex } from "knex"
 
 const createBranchUserSchema = async () => {
     console.log('create branchUser schema');
 
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const tableExists = await knex.schema.withSchema("yaazoru").hasTable("branchUser");
         if (!tableExists) {

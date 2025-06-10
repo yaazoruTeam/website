@@ -1,10 +1,10 @@
-import getConnection from "../connection";
+import getDbConnection from "../connection";
 import { Knex } from "knex"
 
 const createPaymentCreditLink = async () => {
     console.log('create paymentCreditLink schema');
 
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const tableExists = await knex.schema.withSchema("yaazoru").hasTable("paymentCreditLink");
         if (!tableExists) {

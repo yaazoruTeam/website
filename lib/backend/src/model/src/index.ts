@@ -15,6 +15,7 @@ import * as  MonthlyPayment from "./MonthlyPayment";
 import * as  Payments from "./Payments";
 import * as  PaymentCreditLink from "./PaymentCreditLink";
 import * as  MonthlyPaymentManagement from "./MonthlyPaymentManagement";
+import * as  Comment from "./Comment";
 
 export {
   Customer,
@@ -34,4 +35,5 @@ export {
   Payments,
   PaymentCreditLink,
   MonthlyPaymentManagement,
+  Comment
 };

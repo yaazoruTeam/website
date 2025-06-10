@@ -1,10 +1,10 @@
-import getConnection from "../connection";
+import getDbConnection from "../connection";
 import { Knex } from "knex"
 
 const createNotesSchema = async () => {
     console.log('create notes schema');
 
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const tableExists = await knex.schema.withSchema("yaazoru").hasTable("notes");
         if (!tableExists) {
