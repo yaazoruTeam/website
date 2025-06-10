@@ -179,5 +179,6 @@
     "durationCall": "משך השיחה",
     "timeCall":"שעת ביצוע השיחה",
     "costInShekels": "עלות בשקלים",
-    "penniesPerMinute": "אגורות לדקה"
+    "penniesPerMinute": "אגורות לדקה",
+    "resetFilters": "אפס סינון"
 }

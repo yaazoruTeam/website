@@ -41,6 +41,12 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
   }, [customers, filteredCustomers.length]);
 
   useEffect(() => {
+    if (resetTrigger) {
+      setResetTrigger(false);
+    }
+  }, [resetTrigger]);
+
+  useEffect(() => {
     if (dateRange) {
       fetchCustomersByDateRange(dateRange.start, dateRange.end);
     }
@@ -75,7 +81,6 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers }) => {
     setFilteredCustomers(customers);
     setDateRange(null);
     setResetTrigger(true);
-    setTimeout(() => setResetTrigger(false), 0);
   };
 
   const handleStatusSelect = (status: "active" | "inactive") => {
