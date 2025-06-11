@@ -46,6 +46,7 @@ const AddMonthlyPayment: React.FC = () => {
             monthlyPayment: {
                 monthlyPayment_id: '',
                 customer_id: customerData.customer_id,
+                customer_name: `${customerData.first_name} ${customerData.last_name}`,
                 belongsOrganization: 'יעזורו',
                 start_date: timeData.startDate,
                 end_date: calculateEndDate(timeData.startDate, parseInt(timeData.payments), parseInt(timeData.mustEvery)),

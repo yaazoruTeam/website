@@ -33,39 +33,94 @@ import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { formatDateToString } from "../designComponent/FormatDate";
 
 const EditMonthlyPayment: React.FC = () => {
-  const { id } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { fromCustomerCard, customerId } = location.state || {};
-  const { t } = useTranslation();
-  const isMobile = useMediaQuery("(max-width:600px)");
-  const [customer, setCustomer] = useState<Customer.Model>();
-  const [monthlyPayment, setMonthlyPayment] = useState<MonthlyPayment.Model>();
-  const [items, setItems] = useState<ItemForMonthlyPayment.Model[]>([]);
-  const [timeData, setTimeData] = useState<{
-    startDate: Date;
-    payments: number;
-    mustEvery: string;
-    dayOfTheMonth: string;
-  }>({
-    startDate: new Date(Date.now()),
-    payments: 400000,
-    mustEvery: monthlyPayment?.frequency || "",
-    dayOfTheMonth: monthlyPayment?.dayOfTheMonth || "",
-  });
-  const [paymentData, setPaymentData] = useState<any>(null);
-  const [creditDetails, setCreditDetails] = useState<CreditDetails.Model>();
-  const [error, setError] = useState<string | null>(null);
-  const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
-  const [payments, setPayments] = useState<Payments.Model[]>([]);
+    const { id } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { fromCustomerCard, customerId } = location.state || {};
+    const { t } = useTranslation();
+    const isMobile = useMediaQuery('(max-width:600px)');
+    const [customer, setCustomer] = useState<Customer.Model>();
+    const [monthlyPayment, setMonthlyPayment] = useState<MonthlyPayment.Model>();
+    const [items, setItems] = useState<ItemForMonthlyPayment.Model[]>([]);
+    const [timeData, setTimeData] = useState<{ startDate: Date, payments: number, mustEvery: string, dayOfTheMonth: string }>({
+        startDate: new Date(Date.now()),
+        payments: 400000,
+        mustEvery: monthlyPayment?.frequency || '',
+        dayOfTheMonth: monthlyPayment?.dayOfTheMonth || '',
+    });
+    const [paymentData, setPaymentData] = useState<any>(null);
+    const [creditDetails, setCreditDetails] = useState<CreditDetails.Model>();
+    const [error, setError] = useState<string | null>(null);
+    const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
+    const [payments, setPayments] = useState<Payments.Model[]>([]);
 
-  const fetchMonthlyPaymentData = useCallback(
-    async (id: string) => {
-      try {
-        const monthlyPaymentEdit: MonthlyPayment.Model =
-          await getMonthlyPaymentById(id);
-        if (!monthlyPaymentEdit) {
-          throw new Error(t("errorPaymentNotFound"));
+
+
+    const fetchMonthlyPaymentData = useCallback(async (id: string) => {
+        try {
+            const monthlyPaymentEdit: MonthlyPayment.Model = await getMonthlyPaymentById(id);
+            if (!monthlyPaymentEdit) {
+                throw new Error(t('errorPaymentNotFound'));
+            }
+            setMonthlyPayment(monthlyPaymentEdit);
+
+            const customerData = await getCustomerById(monthlyPaymentEdit.customer_id);
+            if (!customerData) {
+                throw new Error(t('errorCustomerNotFound'));
+            }
+
+            const itemsData = await getItemsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
+            const paymentCreditLink: PaymentCreditLink.Model = await getPaymentCreditLinkByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
+            const creditData: CreditDetails.Model = await getCreditDetailsById(paymentCreditLink.creditDetails_id);
+            const historyPaymentsDataByMonthlyPayment: Payments.Model[] = await getAllPaymentsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id);
+
+            setCustomer(customerData);
+            setItems(itemsData);
+            setCreditDetails(creditData);
+            setPayments(historyPaymentsDataByMonthlyPayment);
+        } catch (err) {
+            setError((err as Error).message);
+        }
+    }, [t]);
+
+    useEffect(() => {
+        if (monthlyPayment) {
+            setTimeData({
+                ...timeData,
+                mustEvery: monthlyPayment.frequency || '',
+                dayOfTheMonth: monthlyPayment.dayOfTheMonth || ''
+            });
+        }
+    }, [monthlyPayment, t]);
+
+    useEffect(() => {
+        if (!id) {
+            setError(t('errorInvalidId'));
+            return;
+        }
+        fetchMonthlyPaymentData(id);
+
+    }, [id, fetchMonthlyPaymentData, t]);
+
+
+    // const charge = async () => {
+    //     try {
+    //         await paymentFormRef.current?.chargeCcData();
+    //     } catch (error) {
+    //         console.error('Error during payment:', error);
+    //     }
+    // };
+
+    const calculateEndDate = (startDate: Date, numberOfCharges: number, chargeIntervalMonths: number): Date => {
+        const endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + chargeIntervalMonths * (numberOfCharges - 1));
+        return endDate;
+    };
+
+    const update = async () => {
+        if (!customer || !monthlyPayment || !creditDetails) {
+            setError('Missing customer or monthly payment or credit details data');
+            return;
         }
         setMonthlyPayment(monthlyPaymentEdit);
 
@@ -206,14 +261,58 @@ const EditMonthlyPayment: React.FC = () => {
       };
     });
 
-    let amount = 0;
-    let oneTimePayment = 0;
-    items?.forEach((item) => {
-      if (item.paymentType === t("standingOrder"))
-        amount += parseFloat(item.total.toString());
-      if (item.paymentType === t("oneTimePayment"))
-        oneTimePayment += parseFloat(item.total.toString());
-    });
+        const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
+            customer_id: customer?.customer_id,
+            monthlyPayment: {
+                monthlyPayment_id: monthlyPayment?.monthlyPayment_id,
+                customer_id: customer?.customer_id,
+                customer_name: `${customer?.first_name} ${customer?.last_name}`,
+                belongsOrganization: 'יעזורו',
+                start_date: monthlyPayment?.start_date,
+                end_date: calculateEndDate(timeData.startDate, timeData?.payments, parseInt(timeData?.mustEvery)),
+                amount: amount,
+                total_amount: amount * monthlyPayment.amountOfCharges !== timeData?.payments ? timeData.payments : monthlyPayment.amountOfCharges,
+                oneTimePayment: oneTimePayment,
+                frequency: monthlyPayment.frequency !== timeData?.mustEvery ? timeData.mustEvery : monthlyPayment.frequency,
+                amountOfCharges: monthlyPayment.amountOfCharges !== timeData?.payments ? timeData.payments : monthlyPayment.amountOfCharges,
+                dayOfTheMonth: monthlyPayment.dayOfTheMonth !== timeData?.dayOfTheMonth ? timeData.dayOfTheMonth : monthlyPayment.dayOfTheMonth,
+                next_charge: monthlyPayment.next_charge,
+                last_attempt: monthlyPayment?.last_attempt,
+                last_sucsse: monthlyPayment?.last_sucsse,
+                created_at: monthlyPayment?.created_at,
+                update_at: new Date(Date.now()),
+                status: 'active',
+            },
+            creditDetails: {
+                //to do: פה יש עוד דברים שצריך לשנות
+                credit_id: creditDetails.credit_id,
+                customer_id: customer?.customer_id,
+                token: creditDetails.token/*paymentData?.token*/,
+                expiry_month: creditDetails.expiry_month /*paymentData?.expiry_month*/,
+                expiry_year: creditDetails.expiry_year/*paymentData?.expiry_year*/,
+                created_at: creditDetails.created_at,
+                update_at: new Date(Date.now()),
+            },
+            paymentCreditLink: {
+                paymentCreditLink_id: '',
+                creditDetails_id: '',
+                monthlyPayment_id: '',
+                status: 'active',
+            },
+            payments: [],
+            items: updatedItems,
+        };
+        try {
+            const response = await updateMonthlyPayment(monthlyPaymentManagement, monthlyPayment?.monthlyPayment_id || '');
+            if (response.status === 200) {
+                if (fromCustomerCard && customerId) {
+                    navigate(`/customer/${customerId}`);
+                } else {
+                    navigate('/monthlyPayment');
+                }
+            } else {
+                setError('Error updating monthly payment');
+            }
 
     const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
       customer_id: customer?.customer_id,
@@ -466,12 +565,101 @@ const EditMonthlyPayment: React.FC = () => {
                   width: "100%",
                   padding: "28px",
                 }}
-              >
-                <CustomTypography
-                  text={t("recentPayments")}
-                  variant="h2"
-                  weight="medium"
-                  color={colors.c2}
+                    onClick={() => download()}
+                >
+                    <ArrowDownTrayIcon style={{ width: "24px", height: "24px", color: colors.c2 }} />
+                    {t('download')}
+                </Box>
+            </Box>
+        </>,
+    }));
+
+    if (error) {
+        return (
+            <Box sx={{ textAlign: 'center', mt: 4 }}>
+                <CustomTypography text={error} variant="h2" weight="bold" color="red" />
+                <CustomButton label={t('backToHome')} onClick={() => navigate('/')} />
+            </Box>
+        );
+    }
+
+    return (
+        <>
+            <Box sx={{
+                paddingLeft: '10%',
+                paddingRight: '15%',
+            }}>
+                <Box sx={{
+                    direction: 'rtl',
+                    display: 'flex',
+                    paddingTop: '5%',
+                    paddingBottom: '3%'
+                }}>
+                    <CustomTypography
+                        text={`${t('editingStandingOrder')} |`}
+                        variant='h1'
+                        weight='regular'
+                        color={colors.c11}
+                    />
+                    <CustomTypography
+                        text={monthlyPayment?.customer_name || ''}
+                        variant='h1'
+                        weight='bold'
+                        color={colors.c11}
+                    />
+                </Box>
+                <CustomTabs
+                    tabs={
+                        [
+                            {
+                                label: t('customerDetails'), content:
+                                    <Box sx={{
+                                        width: '100%',
+                                    }}>
+                                        <Box sx={{ marginBottom: 2 }}>
+                                            <CustomerSelector onCustomerSelect={setCustomer} initialCustomer={customer} />
+                                        </Box>
+                                        <Box sx={{ marginBottom: 2 }}>
+                                            <FormToAddItems onItemsChange={setItems} initialItems={items} />
+                                        </Box>
+                                    </Box>
+                            },
+                            {
+                                label: t('paymentDetails'), content:
+                                    <Box >
+                                        <PaymentForm ref={paymentFormRef}
+                                            onPaymentChange={setPaymentData}
+                                            OnTimeChange={setTimeData}
+                                            defaultValues={{
+                                                name: '',//customer?.first_name + ' ' + customer?.last_name,
+                                                mustEvery: monthlyPayment?.frequency || '',  // פרטי תדירות החיוב
+                                                Payments: String(monthlyPayment?.amountOfCharges || 0),  // מספר התשלומים
+                                                startDate: monthlyPayment?.start_date || new Date(Date.now()),
+                                                dayOfTheMonth: String(monthlyPayment?.dayOfTheMonth || 1),  // יום החודש
+                                                additionalField: ''
+                                            }} />
+                                    </Box>
+                            },
+                            {
+                                label: t('recentPayments'), content: <Box sx={{
+                                    backgroundColor: colors.c6,
+                                    width: "100%",
+                                    padding: '28px'
+                                }}>
+                                    <CustomTypography
+                                        text={t('recentPayments')}
+                                        variant='h2'
+                                        weight='medium'
+                                        color={colors.c2}
+                                    />
+                                    <CustomTable
+                                        columns={paymentHistoryColumns}
+                                        data={tableDataPayments}
+                                    />
+                                </Box>
+                            },
+                        ]
+                    }
                 />
                 <CustomTable
                   columns={paymentHistoryColumns}
