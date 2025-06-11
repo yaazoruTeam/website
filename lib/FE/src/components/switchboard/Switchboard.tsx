@@ -10,7 +10,6 @@ import CustomTable from "../designComponent/CustomTable";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 const Switchboard: React.FC = () => {
   const { t } = useTranslation();
   const { control } = useForm<{ search: string }>();
