@@ -5,9 +5,11 @@
     "main": "src/index.ts",
     "scripts": {
         "test": "jest",
+        "build": "tsc",
         "build-schema": "ts-node ./src/db/buildSchema",
         "dev": "set PORT=3006 && ts-node ./src",
-        "payment-servic-dev": "ts-node ./src/services/monthlyPayment"
+        "payment-service-dev": "ts-node ./src/services/monthlyPayment",
+        "start": "node dist/index.js"
     },
     "dependencies": {
         "@types/xlsx": "^0.0.36",
