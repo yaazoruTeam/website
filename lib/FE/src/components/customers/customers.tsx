@@ -1,6 +1,7 @@
 import React from "react";
 import CustomersList from "./customersList";
 import { useFetchCustomers } from "./useFetchCustomers";
+import ChatBot from "../ChatBot/ChatBot";
 
 const Customers: React.FC = () => {
   const { customers, isLoading, error } = useFetchCustomers();
@@ -11,6 +12,7 @@ const Customers: React.FC = () => {
   return (
     <>
         <CustomersList customers={customers} />
+        <ChatBot />
     </>
   );
 };

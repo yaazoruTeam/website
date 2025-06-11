@@ -179,5 +179,10 @@
     "durationCall": "משך השיחה",
     "timeCall":"שעת ביצוע השיחה",
     "costInShekels": "עלות בשקלים",
-    "penniesPerMinute": "אגורות לדקה"
+    "penniesPerMinute": "אגורות לדקה",
+    "customerComments": "הערות לקוח",
+    "WriteComment": "כתיבת תגובה",
+    "closed": "סגור",
+    "AddingEmoji": "הוספת אימוג'י",
+    "send": "שלח"
 }
