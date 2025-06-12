@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { CreditDetails, HttpError, ItemForMonthlyPayment, MonthlyPayment, MonthlyPaymentManagement } from "../model";
 import * as db from "../db";
-import getConnection from "../db/connection";
+import getDbConnection from "../db/connection";
 import { updateItems } from "./item";
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     const trx = await knex.transaction();
     try {
         const sanitized = MonthlyPaymentManagement.sanitize(req.body);
@@ -55,7 +55,7 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
 
 
 const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     const trx = await knex.transaction();
     try {
         MonthlyPaymentManagement.sanitizeIdExisting(req);

@@ -1,10 +1,10 @@
 import { HttpError, ItemForMonthlyPayment, Payments } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 
 
 const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.item') : knex('yaazoru.item');
         const [newItem] = await query
@@ -26,7 +26,7 @@ const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
 }
 
 const getItems = async (): Promise<ItemForMonthlyPayment.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.item');
     }
@@ -36,7 +36,7 @@ const getItems = async (): Promise<ItemForMonthlyPayment.Model[]> => {
 }
 
 const getItemId = async (item_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.item').where({ item_id }).first();
     } catch (err) {
@@ -45,7 +45,7 @@ const getItemId = async (item_id: string) => {
 };
 
 const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.item').where({ monthlyPayment_id });
     } catch (err) {
@@ -54,7 +54,7 @@ const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string) => {
 };
 
 const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model,trx?:any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.item') : knex('yaazoru.item');
         const updateItem = await query
@@ -71,7 +71,7 @@ const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model,trx
 };
 
 const deleteItem = async (item_id: string,trx?:any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.item') : knex('yaazoru.item');
         const deleteItem = await query
@@ -92,7 +92,7 @@ const deleteItem = async (item_id: string,trx?:any) => {
 };
 
 // const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
-//     const knex = getConnection();
+//     const knex = getDbConnection();
 //     try {
 //         return await knex('yaazoru.customers')
 //             .where(function () {
@@ -115,7 +115,7 @@ const deleteItem = async (item_id: string,trx?:any) => {
 // };
 
 const doesItemExist = async (item_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.item')
             .select('item_id')

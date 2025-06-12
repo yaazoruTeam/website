@@ -3,7 +3,7 @@ import knex, { Knex } from "knex";
 
 let connection: Knex<any, unknown[]> | null = null;
 
-function getConnection(): Knex<any, unknown[]> {
+function getDbConnection(): Knex<any, unknown[]> {
     if (connection == null) {
         connection = knex({
             client: 'pg',
@@ -22,4 +22,4 @@ function getConnection(): Knex<any, unknown[]> {
 }
 
 
-export default getConnection;
+export default getDbConnection;
