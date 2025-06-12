@@ -1,7 +1,7 @@
 import React from "react";
 import CustomersList from "./customersList";
 import { useFetchCustomers } from "./useFetchCustomers";
-import { Box } from "@mui/system";
+import ChatBot from "../ChatBot/ChatBot";
 
 const Customers: React.FC = () => {
   const { customers, isLoading, error } = useFetchCustomers();
@@ -11,14 +11,8 @@ const Customers: React.FC = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          paddingLeft: "10%",
-          paddingRight: "15%",
-        }}
-      >
         <CustomersList customers={customers} />
-      </Box>
+        <ChatBot />
     </>
   );
 };
