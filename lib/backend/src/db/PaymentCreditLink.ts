@@ -1,10 +1,10 @@
 import { HttpError, PaymentCreditLink } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 
 
 const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.paymentCreditLink') : knex('yaazoru.paymentCreditLink');
         const [newPaymentCreditLink] = await query
@@ -21,7 +21,7 @@ const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Mode
 }
 
 const getPaymentCreditLink = async (): Promise<PaymentCreditLink.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.paymentCreditLink');
     }
@@ -31,7 +31,7 @@ const getPaymentCreditLink = async (): Promise<PaymentCreditLink.Model[]> => {
 }
 
 const getPaymentCreditLinkId = async (paymentCreditLink_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.paymentCreditLink').where({ paymentCreditLink_id }).first();
     } catch (err) {
@@ -40,7 +40,7 @@ const getPaymentCreditLinkId = async (paymentCreditLink_id: string) => {
 };
 
 const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.paymentCreditLink').where({ monthlyPayment_id }).first();
     } catch (err) {
@@ -49,7 +49,7 @@ const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string)
 };
 
 const getPaymentCreditLinkByCreditDetailsId = async (credit_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.paymentCreditLink').where({ credit_id }).first();
     } catch (err) {
@@ -58,7 +58,7 @@ const getPaymentCreditLinkByCreditDetailsId = async (credit_id: string) => {
 };
 
 const updatePaymentCreditLink = async (paymentCreditLink_id: string, paymentCreditLink: PaymentCreditLink.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updatePaymentCreditLink = await knex('yaazoru.paymentCreditLink')
             .where({ paymentCreditLink_id })
@@ -74,7 +74,7 @@ const updatePaymentCreditLink = async (paymentCreditLink_id: string, paymentCred
 };
 
 const deletePaymentCreditLink = async (paymentCreditLink_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updatePaymentCreditLink = await knex('yaazoru.paymentCreditLink')
             .where({ paymentCreditLink_id })
@@ -94,7 +94,7 @@ const deletePaymentCreditLink = async (paymentCreditLink_id: string) => {
 };
 
 // const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
-//     const knex = getConnection();
+//     const knex = getDbConnection();
 //     try {
 //         return await knex('yaazoru.customers')
 //             .where(function () {
@@ -117,7 +117,7 @@ const deletePaymentCreditLink = async (paymentCreditLink_id: string) => {
 // };
 
 const doesPaymentCreditLinkExist = async (paymentCreditLink_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.paymentCreditLink')
             .select('paymentCreditLink_id')
@@ -130,7 +130,7 @@ const doesPaymentCreditLinkExist = async (paymentCreditLink_id: string): Promise
 };
 
 const doesMonthlyPaimentExistInPaymentCreditLink = async (monthlyPayment_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.paymentCreditLink')
             .select('monthlyPayment_id')
@@ -142,7 +142,7 @@ const doesMonthlyPaimentExistInPaymentCreditLink = async (monthlyPayment_id: str
     }
 };
 const doesCreditDetailsExistInPaymentCreditLink = async (credit_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.paymentCreditLink')
             .select('credit_id')

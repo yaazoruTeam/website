@@ -1,10 +1,8 @@
 import { BranchCustomer } from "../model";
-import getConnection from "./connection";
-
-
+import getDbConnection from "./connection";
 
 const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const [newBranchCustomer] = await knex('yaazoru.branchCustomer')
             .insert({
@@ -19,7 +17,7 @@ const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {
 }
 
 const getAllBranchCustomer = async (): Promise<BranchCustomer.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.branchCustomer');
     }
@@ -29,7 +27,7 @@ const getAllBranchCustomer = async (): Promise<BranchCustomer.Model[]> => {
 }
 
 const getBranchCustomerById = async (branchCustomer_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branchCustomer').where({ branchCustomer_id }).first();
     } catch (err) {
@@ -38,7 +36,7 @@ const getBranchCustomerById = async (branchCustomer_id: string) => {
 };
 
 const getBranchCustomerByBranc_id = async (branch_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branchCustomer').where({ branch_id }).select();
     } catch (err) {
@@ -47,7 +45,7 @@ const getBranchCustomerByBranc_id = async (branch_id: string) => {
 };
 
 const getBranchCustomerByCuseomer_id = async (customer_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branchCustomer').where({ customer_id }).select();
     } catch (err) {
@@ -56,7 +54,7 @@ const getBranchCustomerByCuseomer_id = async (customer_id: string) => {
 };
 
 const updateBranchCustomer = async (branchCustomer_id: string, branchCustomer: BranchCustomer.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateBranchCustomer = await knex('yaazoru.branchCustomer')
             .where({ branchCustomer_id })
@@ -72,7 +70,7 @@ const updateBranchCustomer = async (branchCustomer_id: string, branchCustomer: B
 };
 
 const deleteBranchCustomer = async (branchCustomer_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const deleteBranchCustomer = await knex('yaazoru.branchCustomer').where({ branchCustomer_id }).del().returning('*');
         if (deleteBranchCustomer.length === 0) {
@@ -85,7 +83,7 @@ const deleteBranchCustomer = async (branchCustomer_id: string) => {
 };
 
 const doesBranchCustomerExist = async (branchCustomer_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchCustomer')
             .select('branchCustomer_id')
@@ -98,7 +96,7 @@ const doesBranchCustomerExist = async (branchCustomer_id: string): Promise<boole
 };
 
 const doesBranchExist = async (branch_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchCustomer')
             .select('branch_id')
@@ -111,7 +109,7 @@ const doesBranchExist = async (branch_id: string): Promise<boolean> => {
 };
 
 const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchCustomer')
             .select('customer_id')
@@ -124,7 +122,7 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
 };
 
 const doesBranchCustomerCombinationExist = async (branch_id: string, customer_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchCustomer')
             .select('branch_id', 'customer_id')
