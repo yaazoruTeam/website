@@ -25,12 +25,12 @@ function sanitize(customer: Model, hasId: boolean): Model {
         const phoneStr = String(phone); // המרה למחרוזת
         const cleaned = phoneStr.replace(/[\s-]/g, ''); // מסיר מקפים ורווחים
         const normalized = cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
-      
-        return /^\d{9,10}$/.test(normalized);
-      };
-      
 
-    console.log('customer sanitaized: ',customer);
+        return /^\d{9,10}$/.test(normalized);
+    };
+
+
+    console.log('customer sanitaized: ', customer);
 
     if (hasId && !customer.customer_id) {
         const error: HttpError.Model = {
@@ -66,7 +66,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
-    if (!customer.phone_number|| !isValidPhoneNumber(customer.phone_number)) {
+    if (!customer.phone_number || !isValidPhoneNumber(customer.phone_number)) {
         console.log('faild phone number: ', customer.phone_number);
 
         const error: HttpError.Model = {
@@ -120,7 +120,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
         };
         throw error;
     }
- 
+
     const newCustomer: Model = {
         customer_id: customer.customer_id,
         first_name: customer.first_name.trim(),
@@ -132,15 +132,18 @@ function sanitize(customer: Model, hasId: boolean): Model {
         city: customer.city.trim(),
         address1: customer.address1.trim(),
         address2: customer.address2,
-        zipCode: customer.zipCode,
+        zipCode: customer.zipCode || '',
         status: customer.status || 'active',
-        created_at: customer.created_at,
-        updated_at: customer.updated_at,
+        created_at: customer.created_at || new Date(Date.now()),
+        updated_at: customer.updated_at || new Date(Date.now()),
     };
     return newCustomer;
 }
 
 const sanitizeExistingCustomer = (customerExis: Model, customer: Model) => {
+    console.log('Comparing id_number:', customerExis.id_number, customer.id_number);
+    console.log('customerExis === customer?', customerExis.id_number === customer.id_number);
+
     if (customerExis.id_number === customer.id_number) {
         const error: HttpError.Model = {
             status: 409,
