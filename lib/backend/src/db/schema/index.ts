@@ -14,8 +14,6 @@ import { createItem } from "./itemForMonthlyPayment"
 import { createPaymentCreditLink } from "./paymentCreditLink"
 import { createCommentsSchema } from "./comments"
 
-
-
 const createSchema = async () => {
     console.log("Creating schema...");
     try {
