@@ -1,10 +1,8 @@
 import { HttpError, User } from "../model";
-import getConnection from "./connection";
-
-
+import getDbConnection from "./connection";
 
 const createUser = async (user: User.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const [newUser] = await knex('yaazoru.users')
             .insert({
@@ -30,7 +28,7 @@ const createUser = async (user: User.Model) => {
 }
 
 const getUsers = async (): Promise<User.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.users');
     }
@@ -40,7 +38,7 @@ const getUsers = async (): Promise<User.Model[]> => {
 }
 
 const getUserById = async (user_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.users').where({ user_id }).first();
     } catch (err) {
@@ -49,7 +47,7 @@ const getUserById = async (user_id: string) => {
 };
 
 const updateUser = async (user_id: string, user: User.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateUser = await knex('yaazoru.users')
             .where({ user_id })
@@ -65,7 +63,7 @@ const updateUser = async (user_id: string, user: User.Model) => {
 };
 
 const deleteUser = async (user_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateUser = await knex('yaazoru.users')
             .where({ user_id })
@@ -85,7 +83,7 @@ const deleteUser = async (user_id: string) => {
 };
 
 const findUser = async (criteria: { user_id?: string; email?: string; id_number?: string; password?: string; user_name?: string; }) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.users')
             .where(function () {
@@ -114,7 +112,7 @@ const findUser = async (criteria: { user_id?: string; email?: string; id_number?
 };
 
 const doesUserExist = async (user_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.users')
             .select('user_id')

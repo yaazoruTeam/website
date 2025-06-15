@@ -1,10 +1,10 @@
 import { Branch, HttpError } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 
 
 const createBranch = async (branch: Branch.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const [newBranch] = await knex('yaazoru.branches')
             .insert({
@@ -22,7 +22,7 @@ const createBranch = async (branch: Branch.Model) => {
 }
 
 const getBranches = async (): Promise<Branch.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.branches');
     }
@@ -32,7 +32,7 @@ const getBranches = async (): Promise<Branch.Model[]> => {
 }
 
 const getBranchById = async (branch_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branches').where({ branch_id }).first();
     } catch (err) {
@@ -41,7 +41,7 @@ const getBranchById = async (branch_id: string) => {
 };
 
 const getBranchesByCity = async (city: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branches')
             .select()
@@ -52,7 +52,7 @@ const getBranchesByCity = async (city: string) => {
 };
 
 const updateBranch = async (branch_id: string, branch: Branch.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateBranch = await knex('yaazoru.branches')
             .where({ branch_id })
@@ -68,7 +68,7 @@ const updateBranch = async (branch_id: string, branch: Branch.Model) => {
 };
 
 const deleteBranch = async (branch_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateBranch = await knex('yaazoru.branches')
             .where({ branch_id })
@@ -88,7 +88,7 @@ const deleteBranch = async (branch_id: string) => {
 };
 
 const doesBranchExist = async (branch_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branches')
             .select('branch_id')

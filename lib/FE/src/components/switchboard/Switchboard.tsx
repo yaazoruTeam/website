@@ -57,12 +57,6 @@ const Switchboard: React.FC = () => {
   }
   return (
     <>
-      <Box
-        sx={{
-          paddingLeft: '10%',
-          paddingRight: '15%',
-        }}
-      >
         <Box sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -107,7 +101,6 @@ const Switchboard: React.FC = () => {
           data={tableData}
           onRowClick={onClickAccountSwitchboard}
         />
-      </Box>
     </>
   );
 };

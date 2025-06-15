@@ -16,6 +16,7 @@ import CallLog from "../../assets/CallLog.svg";
 import ChangeAccountModal from "./ChangeAccountModal";
 import PurchasingNewNumber from "./PurchasingNewNumber";
 import SwitchboardTabs from "./SwitchboardTabs";
+import CustomSearchSelect from "../customers/CustomSearchSelect";
 
 const CallCenter: React.FC = () => {
   const { t } = useTranslation();
@@ -229,7 +230,48 @@ const CallCenter: React.FC = () => {
             label={t('purchasingNewNumber')}
             onClick={purchasingNewNumber}
           />
-
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          paddingTop: 1,
+          marginBottom: -3,
+          display: "flex",
+          width: "100%",
+          direction: "rtl",
+          gap: 2,
+          justifyContent: "flex-start",
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
+          <CustomSearchSelect
+            searchType="other"
+            placeholder={t("customerName")}
+            SwitchboardSelect
+          />
+        </Box>
+        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
+          <CustomSearchSelect
+            searchType="other"
+            placeholder={t("phoneNumber")}
+            SwitchboardSelect
+          />
+        </Box>
+        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
+          <CustomSearchSelect
+            searchType="other"
+            placeholder={t("fromDate")}
+            SwitchboardSelect
+          />
+        </Box>
+        <Box sx={{ flex: 1, maxWidth: "15%", paddingLeft: 3 }}>
+          <CustomSearchSelect
+            searchType="other"
+            placeholder={t("StatusNumbers")}
+            SwitchboardSelect
+          />
         </Box>
       </Box>
       <CustomTable
@@ -241,7 +283,6 @@ const CallCenter: React.FC = () => {
           <SwitchboardTabs />
         )}
       />
-
     </Box>
   );
 };

@@ -1,8 +1,8 @@
 import { CreditDetails, HttpError } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
     const [newCreditDetails] = await query
@@ -22,7 +22,7 @@ const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any
 };
 
 const getCreditDetails = async (): Promise<CreditDetails.Model[]> => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     return await knex.select().table("yaazoru.creditDetails");
   } catch (err) {
@@ -31,7 +31,7 @@ const getCreditDetails = async (): Promise<CreditDetails.Model[]> => {
 };
 
 const getCreditDetailsById = async (credit_id: string) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     return await knex("yaazoru.creditDetails").where({ credit_id }).first();
   } catch (err) {
@@ -44,7 +44,7 @@ const updateCreditDetails = async (
   creditDetails: CreditDetails.Model,
   trx?: any
 ) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
     const updateCreditDetails = await query
@@ -61,7 +61,7 @@ const updateCreditDetails = async (
 };
 
 // const deleteCrCreditDetails = async (credit_id: string) => {
-//   const knex = getConnection();
+//   const knex = getDbConnection();
 //   try {
 //     const updateCreditDetails = await knex("yaazoru.creditDetails")
 //       .where({ credit_id })
@@ -81,7 +81,7 @@ const updateCreditDetails = async (
 // };
 
 const doesCreditDetailsExist = async (credit_id: string): Promise<boolean> => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const result = await knex("yaazoru.creditDetails")
       .select("credit_id")
@@ -94,7 +94,7 @@ const doesCreditDetailsExist = async (credit_id: string): Promise<boolean> => {
 };
 
 const doesTokenExist = async (token: string): Promise<boolean> => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const result = await knex("yaazoru.creditDetails")
       .select("token")
