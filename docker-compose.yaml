@@ -1,62 +1,93 @@
+# services:
+#   backend:
+#     image: node:20
+#     container_name: node-backend
+#     working_dir: /app
+#     volumes:
+#       - ./lib/backend/src:/app/src
+#       - ./lib/backend/package.json:/app/package.json
+#       - ./lib/backend/tsconfig.json:/app/tsconfig.json
+#       - C:/dev/yaazoru/lib:/app/lib
+#     ports:
+#       - "3006:3006"
+#     command: sh -c "npm install && npm run build-schema && PORT=3006 npm run dev"
+#     environment:
+#       - NODE_ENV=development
+#       - POSTGRES_DB=postgres
+#       - DB_HOST=host.docker.internal
+#       - DB_PORT=5432
+#       - DB_USER=postgres
+#       - DB_NAME=yaazoru
+#       - DB_PASSWORD=${DB_PASSWORD}
+#       - DATABASE_URL=postgres://postgres:password@database:5432/mydb
+#     # depends_on:
+#     #   - database
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+#     networks:
+#       - yaazoru-internal
+#   frontend:
+#     image: node:20
+#     container_name: react-frontend
+#     working_dir: /app
+#     volumes:
+#       - ./lib/frontend/public:/app/public
+#       - ./lib/frontend/src:/app/src
+#       - ./lib/frontend/package.json:/app/package.json
+#       - ./lib/frontend/tsconfig.json:/app/tsconfig.json
+#     ports:
+#       - "3005:3005"
+#     command: sh -c "npm install && PORT=3005 npm start"
+#     environment:
+#       - NODE_ENV=development
+#     networks:
+#       - yaazoru-internal
+#   database:
+#     image: postgres:15
+#     container_name: postgres-db
+#     environment:
+#       POSTGRES_USER: yaazoru
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: yaazoru
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+#     networks:
+#       - yaazoru-internal
+# volumes:
+#   db-data:
+# networks:
+#   yaazoru-internal:
+#     driver: bridge
+
+
 services:
   backend:
-    image: node:20
-    container_name: node-backend
-    working_dir: /app
-    volumes:
-      - ./lib/backend/src:/app/src
-      - ./lib/backend/package.json:/app/package.json
-      - ./lib/backend/tsconfig.json:/app/tsconfig.json
-      - C:/dev/yaazoru/lib:/app/lib
+    build:
+      context: .
+      dockerfile: lib/backend/Dockerfile
     ports:
       - "3006:3006"
-    command: sh -c "npm install && npm run build-schema && PORT=3006 npm run dev"
     environment:
-      - NODE_ENV=development
-      - POSTGRES_DB=postgres
-      - DB_HOST=host.docker.internal
-      - DB_PORT=5432
+      - DATABASE_URL=postgres://postgres:123@database:5432/yaazoru
+      - DB_HOST=database
       - DB_USER=postgres
+      - DB_PASSWORD=123
       - DB_NAME=yaazoru
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DATABASE_URL=postgres://postgres:password@database:5432/mydb
-    # depends_on:
-    #   - database
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - yaazoru-internal
-  frontend:
-    image: node:20
-    container_name: react-frontend
-    working_dir: /app
-    volumes:
-      - ./lib/frontend/public:/app/public
-      - ./lib/frontend/src:/app/src
-      - ./lib/frontend/package.json:/app/package.json
-      - ./lib/frontend/tsconfig.json:/app/tsconfig.json
-    ports:
-      - "3005:3005"
-    command: sh -c "npm install && PORT=3005 npm start"
-    environment:
-      - NODE_ENV=development
-    networks:
-      - yaazoru-internal
+    depends_on:
+      - database
+
   database:
     image: postgres:15
-    container_name: postgres-db
     environment:
-      POSTGRES_USER: yaazoru
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
       POSTGRES_DB: yaazoru
     ports:
       - "5432:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - yaazoru-internal
+      - db_data:/var/lib/postgresql/data
+
 volumes:
-  db-data:
-networks:
-  yaazoru-internal:
-    driver: bridge
+  db_data:
