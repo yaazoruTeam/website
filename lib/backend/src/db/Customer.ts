@@ -1,8 +1,6 @@
 import { Customer, HttpError } from "../model";
 import getDbConnection from "./connection";
 
-
-
 const createCustomer = async (customer: Customer.Model, trx?: any) => {
     const knex = getDbConnection();
     try {
@@ -128,11 +126,12 @@ const findCustomer = async (criteria: { customer_id?: string; email?: string; id
     try {
         return await knex('yaazoru.customers')
             .where(function () {
-                if (criteria.email) {
+                if (criteria.email && criteria.id_number) {
+                    this.where({ email: criteria.email }).orWhere({ id_number: criteria.id_number });
+                } else if (criteria.email) {
                     this.where({ email: criteria.email });
-                }
-                if (criteria.id_number) {
-                    this.andWhere({ id_number: criteria.id_number });
+                } else if (criteria.id_number) {
+                    this.where({ id_number: criteria.id_number });
                 }
             })
             .modify((query) => {
