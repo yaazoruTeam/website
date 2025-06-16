@@ -46,8 +46,6 @@ const EditMonthlyPayment: React.FC = () => {
     const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null);
     const [payments, setPayments] = useState<Payments.Model[]>([]);
 
-
-
     const fetchMonthlyPaymentData = useCallback(async (id: string) => {
         try {
             const monthlyPaymentEdit: MonthlyPayment.Model = await getMonthlyPaymentById(id);
@@ -83,7 +81,7 @@ const EditMonthlyPayment: React.FC = () => {
                 dayOfTheMonth: monthlyPayment.dayOfTheMonth || ''
             });
         }
-    }, [monthlyPayment, t]);
+    }, [monthlyPayment]);
 
     useEffect(() => {
         if (!id) {

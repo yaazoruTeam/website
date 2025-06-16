@@ -1,10 +1,10 @@
 import { TransactionDetails, HttpError } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 const createTransactionDetails = async (
   transactionDetails: TransactionDetails.Model
 ) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const [newTransactionDetails] = await knex("yaazoru.transactionDetails")
       .insert({
@@ -29,7 +29,7 @@ const createTransactionDetails = async (
 };
 
 const getTransactionDetails = async (): Promise<TransactionDetails.Model[]> => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     return await knex.select().table("yaazoru.transactionDetails");
   } catch (err) {
@@ -38,7 +38,7 @@ const getTransactionDetails = async (): Promise<TransactionDetails.Model[]> => {
 };
 
 const getTransactionDetailsById = async (transaction_id: string) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     return await knex("yaazoru.transactionDetails")
       .where({ transaction_id })
@@ -52,7 +52,7 @@ const updateTransactionDetails = async (
   transaction_id: string,
   transactionDetails: TransactionDetails.Model
 ) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const updateTransactionDetails = await knex("yaazoru.transactionDetails")
       .where({ transaction_id })
@@ -68,7 +68,7 @@ const updateTransactionDetails = async (
 };
 
 const deleteTransactionDetails = async (transaction_id: string) => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const updateTransactionDetails = await knex("yaazoru.transactionDetails")
       .where({ transaction_id })
@@ -90,7 +90,7 @@ const deleteTransactionDetails = async (transaction_id: string) => {
 const doesTransactionDetailsExist = async (
   transaction_id: string
 ): Promise<boolean> => {
-  const knex = getConnection();
+  const knex = getDbConnection();
   try {
     const result = await knex("yaazoru.transactionDetails")
       .select("transaction_id")

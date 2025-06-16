@@ -7,7 +7,7 @@ const colors = {
   c2: "#0A425F", //brand color_8
   c3: "#FF7F07", //brand color_4
   c4: "#80E4FF", //brand color_3
-  c5: "",
+  c5: "rgba(205, 244, 255, 0.44)",
   c6: "#FFFFFF", //neutral white
   c7: "#007AFF", //brand color_6
   c8: "#0059BA", //brand color_7
@@ -38,7 +38,10 @@ const colors = {
   c33: "rgba(182, 255, 203, 1)",
   c34: "#0a3b55",
   c35: "rgba(10, 66, 95, 0.04)",
-  c36: "#E0E0E0"
+  c36: "#E0E0E0",
+  c37: "#1D75DD",
+  c38: "#989BA1", //neutral gray
+  c39: "#DDDDDD", //neutral light gray
 };
 
 // הגדרת הצבעים של ה-theme

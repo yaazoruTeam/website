@@ -1,4 +1,4 @@
-import getConnection from "../db/connection";
+import getDbConnection from "../db/connection";
 import * as db from "../db";
 import { Customer, Device, CustomerDevice, CustomerDeviceExcel } from "../model";
 import * as XLSX from 'xlsx'; // ✨ שינוי: נדרש בשביל כתיבה
@@ -7,7 +7,7 @@ import { convertFlatRowToModel } from "../utils/converters/customerDeviceExcelCo
 import { writeErrorsToExcel } from "../utils/excel";
 
 const processExcelData = async (data: any[]): Promise<void> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     const errors: any[] = [];
 
     for (const item of data) {

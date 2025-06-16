@@ -1,10 +1,8 @@
 import { BranchUser } from "../model";
-import getConnection from "./connection";
-
-
+import getDbConnection from "./connection";
 
 const createBranchUser = async (branchUser: BranchUser.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const [newBranchUser] = await knex('yaazoru.branchUser')
             .insert({
@@ -19,7 +17,7 @@ const createBranchUser = async (branchUser: BranchUser.Model) => {
 }
 
 const getAllBranchUser = async (): Promise<BranchUser.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.branchUser');
     }
@@ -29,7 +27,7 @@ const getAllBranchUser = async (): Promise<BranchUser.Model[]> => {
 }
 
 const getBranchUserById = async (branchUser_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branchUser').where({ branchUser_id }).first();
     } catch (err) {
@@ -38,7 +36,7 @@ const getBranchUserById = async (branchUser_id: string) => {
 };
 
 const getBranchUserByBranch_id = async (branch_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branchUser').where({ branch_id }).select();
     } catch (err) {
@@ -47,7 +45,7 @@ const getBranchUserByBranch_id = async (branch_id: string) => {
 };
 
 const getBranchUserByUser_id = async (user_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.branchUser').where({ user_id }).select();
     } catch (err) {
@@ -56,7 +54,7 @@ const getBranchUserByUser_id = async (user_id: string) => {
 };
 
 const updateBranchUser = async (branchUser_id: string, branchUser: BranchUser.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateBranchUser = await knex('yaazoru.branchUser')
             .where({ branchUser_id })
@@ -72,7 +70,7 @@ const updateBranchUser = async (branchUser_id: string, branchUser: BranchUser.Mo
 };
 
 const deleteBranchUser = async (branchUser_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const deleteBranchUser = await knex('yaazoru.branchUser').where({ branchUser_id }).del().returning('*');
         if (deleteBranchUser.length === 0) {
@@ -85,7 +83,7 @@ const deleteBranchUser = async (branchUser_id: string) => {
 };
 
 const doesBranchUserExist = async (branchUser_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchUser')
             .select('branchUser_id')
@@ -98,7 +96,7 @@ const doesBranchUserExist = async (branchUser_id: string): Promise<boolean> => {
 };
 
 const doesBranchExist = async (branch_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchUser')
             .select('branch_id')
@@ -111,7 +109,7 @@ const doesBranchExist = async (branch_id: string): Promise<boolean> => {
 };
 
 const doesUserExist = async (user_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchUser')
             .select('user_id')
@@ -124,7 +122,7 @@ const doesUserExist = async (user_id: string): Promise<boolean> => {
 };
 
 const doesBranchUserCombinationExist = async (branch_id: string, user_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.branchUser')
             .select('branch_id', 'user_id')

@@ -1,10 +1,10 @@
 import { Customer, HttpError } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 
 
 const createCustomer = async (customer: Customer.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.customers') : knex('yaazoru.customers');
         const [newCustomer] = await query
@@ -30,7 +30,7 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
 }
 
 const getCustomers = async (): Promise<Customer.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select()
             .table('yaazoru.customers')
@@ -42,7 +42,7 @@ const getCustomers = async (): Promise<Customer.Model[]> => {
 }
 
 const getCustomerById = async (customer_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customers').where({ customer_id }).first();
     } catch (err) {
@@ -51,7 +51,7 @@ const getCustomerById = async (customer_id: string) => {
 };
 
 const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customers')
             .select('*')
@@ -63,7 +63,7 @@ const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
 };
 
 const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customers')
             .select('*')
@@ -75,7 +75,7 @@ const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Cust
 };
 
 const getCustomersByDateRange = async (startDate: string, endDate: string): Promise<Customer.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customers')
             .select('*')
@@ -87,7 +87,7 @@ const getCustomersByDateRange = async (startDate: string, endDate: string): Prom
 };
 
 const updateCustomer = async (customer_id: string, customer: Customer.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         customer.updated_at = new Date(Date.now());
         const updateCustomer = await knex('yaazoru.customers')
@@ -104,7 +104,7 @@ const updateCustomer = async (customer_id: string, customer: Customer.Model) => 
 };
 
 const deleteCustomer = async (customer_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateCustomer = await knex('yaazoru.customers')
             .where({ customer_id })
@@ -124,7 +124,7 @@ const deleteCustomer = async (customer_id: string) => {
 };
 
 const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customers')
             .where(function () {
@@ -147,7 +147,7 @@ const findCustomer = async (criteria: { customer_id?: string; email?: string; id
 };
 
 const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.customers')
             .select('customer_id')

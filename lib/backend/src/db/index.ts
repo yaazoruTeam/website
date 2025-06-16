@@ -11,6 +11,8 @@ import * as MonthlyPayment from "./MonthlyPayment";
 import * as Payments from "./Payments";
 import * as Item from "./Item";
 import * as PaymentCreditLink from "./PaymentCreditLink";
+import * as Comment from "./Comment";
+
 
 export {
   Customer,
@@ -26,4 +28,5 @@ export {
   Payments,
   Item,
   PaymentCreditLink,
+  Comment
 };

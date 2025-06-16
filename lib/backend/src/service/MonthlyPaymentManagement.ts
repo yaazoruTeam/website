@@ -1,9 +1,9 @@
-import getConnection from "../db/connection"; 
+import getDbConnection from "../db/connection"; 
 import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from "model/src";
 import * as db from "db";
 
 const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentManagement.Model) => {
-    const knex = getConnection(); 
+    const knex = getDbConnection(); 
     const trx = await knex.transaction();
     try {
         const existCustomer = await db.Customer.doesCustomerExist(monthlyPayment.customer_id);

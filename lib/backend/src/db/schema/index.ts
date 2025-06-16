@@ -12,6 +12,9 @@ import { createMonthlyPayment } from "./monthlyPayment"
 import { createPayments } from "./payments"
 import { createItem } from "./itemForMonthlyPayment"
 import { createPaymentCreditLink } from "./paymentCreditLink"
+import { createCommentsSchema } from "./comments"
+
+
 
 const createSchema = async () => {
     console.log("Creating schema...");
@@ -30,6 +33,7 @@ const createSchema = async () => {
         await createPayments();
         await createItem();
         await createPaymentCreditLink();
+        await createCommentsSchema();
         console.log("Schema created successfully");
     } catch (err) {
         console.error("Error creating schema", err);

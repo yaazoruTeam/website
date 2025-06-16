@@ -1,8 +1,9 @@
 import { Device, HttpError } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
+
 
 const createDevice = async (device: Device.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.devices') : knex('yaazoru.devices');
         const [newDevice] = await query
@@ -21,7 +22,7 @@ const createDevice = async (device: Device.Model, trx?: any) => {
 }
 
 const getDevices = async (): Promise<Device.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.devices');
     }
@@ -31,7 +32,7 @@ const getDevices = async (): Promise<Device.Model[]> => {
 }
 
 const getDeviceById = async (device_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.devices').where({ device_id }).first();
     } catch (err) {
@@ -40,7 +41,7 @@ const getDeviceById = async (device_id: string) => {
 };
 
 const getDevicesByStatus = async (status: 'active' | 'inactive') => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.devices')
             .select()
@@ -51,7 +52,7 @@ const getDevicesByStatus = async (status: 'active' | 'inactive') => {
 };
 
 const updateDevice = async (device_id: string, device: Device.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateDevice = await knex('yaazoru.devices')
             .where({ device_id })
@@ -67,7 +68,7 @@ const updateDevice = async (device_id: string, device: Device.Model) => {
 };
 
 const deleteDevice = async (device_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateDevice = await knex('yaazoru.devices')
             .where({ device_id })
@@ -87,7 +88,7 @@ const deleteDevice = async (device_id: string) => {
 };
 
 const findDevice = async (criteria: { device_id?: string; SIM_number?: string; IMEI_1?: string; mehalcha_number?: string; device_number: string; }) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.devices')
             .where(function () {
@@ -116,7 +117,7 @@ const findDevice = async (criteria: { device_id?: string; SIM_number?: string; I
 };
 
 const doesDeviceExist = async (device_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.devices')
             .select('device_id')

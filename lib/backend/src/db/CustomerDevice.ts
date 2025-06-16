@@ -1,8 +1,8 @@
 import { CustomerDevice } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.customerDevice') : knex('yaazoru.customerDevice');
         const [newCustomerDevice] = await query
@@ -22,7 +22,7 @@ const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: 
 }
 
 const getCustomersDevices = async (): Promise<CustomerDevice.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.customerDevice');
     }
@@ -32,7 +32,7 @@ const getCustomersDevices = async (): Promise<CustomerDevice.Model[]> => {
 }
 
 const getCustomerDeviceById = async (customerDevice_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customerDevice').where({ customerDevice_id }).first();
     } catch (err) {
@@ -41,7 +41,7 @@ const getCustomerDeviceById = async (customerDevice_id: string) => {
 };
 
 const getCustomerDeviceByCustomerId = async (customer_id: string): Promise<CustomerDevice.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customerDevice').where({ customer_id });
     } catch (err) {
@@ -50,7 +50,7 @@ const getCustomerDeviceByCustomerId = async (customer_id: string): Promise<Custo
 };
 
 const getCustomerDeviceByDeviceId = async (device_id: string): Promise<CustomerDevice.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customerDevice').where({ device_id });
     } catch (err) {
@@ -59,7 +59,7 @@ const getCustomerDeviceByDeviceId = async (device_id: string): Promise<CustomerD
 };
 
 const updateCustomerDevice = async (customerDevice_id: string, customerDevice: CustomerDevice.Model) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateCustomerDevice = await knex('yaazoru.customerDevice')
             .where({ customerDevice_id })
@@ -75,7 +75,7 @@ const updateCustomerDevice = async (customerDevice_id: string, customerDevice: C
 };
 
 const deleteCustomerDevice = async (customerDevice_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const deleteCustomerDevice = await knex('yaazoru.customerDevice').where({ customerDevice_id }).del().returning('*');
         if (deleteCustomerDevice.length === 0) {
@@ -88,7 +88,7 @@ const deleteCustomerDevice = async (customerDevice_id: string) => {
 };
 
 const findCustomerDevice = async (criteria: { customerDevice_id?: string; device_id?: string; }) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.customerDevice')
             .where(function () {
@@ -108,7 +108,7 @@ const findCustomerDevice = async (criteria: { customerDevice_id?: string; device
 };
 
 const doesCustomerDeviceExist = async (customerDevice_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.customerDevice')
             .select('customerDevice_id')

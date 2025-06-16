@@ -1,10 +1,10 @@
 import { HttpError, MonthlyPayment } from "../model";
-import getConnection from "./connection";
+import getDbConnection from "./connection";
 
 
 
 const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.monthlyPayment') : knex('yaazoru.monthlyPayment');
         const [newMonthlyPayment] = await query
@@ -34,7 +34,7 @@ const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: 
 }
 
 const getMonthlyPayment = async (): Promise<MonthlyPayment.Model[]> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex.select().table('yaazoru.monthlyPayment');
     }
@@ -44,7 +44,7 @@ const getMonthlyPayment = async (): Promise<MonthlyPayment.Model[]> => {
 }
 
 const getMonthlyPaymentById = async (monthlyPayment_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.monthlyPayment').where({ monthlyPayment_id }).first();
     } catch (err) {
@@ -53,7 +53,7 @@ const getMonthlyPaymentById = async (monthlyPayment_id: string) => {
 };
 
 const getMonthlyPaymentByCustomerId = async (customer_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.monthlyPayment')
             .select()
@@ -64,7 +64,7 @@ const getMonthlyPaymentByCustomerId = async (customer_id: string) => {
 }
 
 const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive') => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.monthlyPayment')
             .select()
@@ -75,7 +75,7 @@ const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive') => {
 };
 
 const getMonthlyPaymentByOrganization = async (belongsOrganization: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         return await knex('yaazoru.monthlyPayment')
             .select()
@@ -86,7 +86,7 @@ const getMonthlyPaymentByOrganization = async (belongsOrganization: string) => {
 };
 
 const updateMonthlyPayment = async (monthlyPayment_id: string, monthlyPayment: MonthlyPayment.Model, trx?: any) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const query = trx ? trx('yaazoru.monthlyPayment') : knex('yaazoru.monthlyPayment');
         const updateMonthlyPayment = await query
@@ -103,7 +103,7 @@ const updateMonthlyPayment = async (monthlyPayment_id: string, monthlyPayment: M
 };
 
 const deleteMonthlyPayment = async (monthlyPayment_id: string) => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const updateMonthlyPayment = await knex('yaazoru.monthlyPayment')
             .where({ monthlyPayment_id })
@@ -123,7 +123,7 @@ const deleteMonthlyPayment = async (monthlyPayment_id: string) => {
 };
 
 // const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
-//     const knex = getConnection();
+//     const knex = getDbConnection();
 //     try {
 //         return await knex('yaazoru.customers')
 //             .where(function () {
@@ -146,7 +146,7 @@ const deleteMonthlyPayment = async (monthlyPayment_id: string) => {
 // };
 
 const doesMonthlyPaymentExist = async (monthlyPayment_id: string): Promise<boolean> => {
-    const knex = getConnection();
+    const knex = getDbConnection();
     try {
         const result = await knex('yaazoru.monthlyPayment')
             .select('monthlyPayment_id')
