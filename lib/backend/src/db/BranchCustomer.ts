@@ -1,4 +1,4 @@
-import { BranchCustomer } from "../model";
+import { BranchCustomer } from "@/model/src";
 import getDbConnection from "./connection";
 
 const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {

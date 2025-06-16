@@ -1,4 +1,4 @@
-import { BranchUser } from "../model";
+import { BranchUser } from "@/model/src";
 import getDbConnection from "./connection";
 
 const createBranchUser = async (branchUser: BranchUser.Model) => {

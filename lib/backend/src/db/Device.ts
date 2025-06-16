@@ -1,4 +1,4 @@
-import { Device, HttpError } from "../model";
+import { Device, HttpError } from "@/model/src";
 import getDbConnection from "./connection";
 
 

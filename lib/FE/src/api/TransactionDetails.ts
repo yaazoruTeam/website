@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { TransactionDetails } from '../model/src';
+import {  } from '../model/src';
 import { handleTokenRefresh } from './token';
 
 

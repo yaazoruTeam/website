@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { CreditDetails, HttpError, ItemForMonthlyPayment, MonthlyPayment, MonthlyPaymentManagement } from "../model";
-import * as db from "../db";
-import getDbConnection from "../db/connection";
+import { CreditDetails, HttpError, ItemForMonthlyPayment, MonthlyPayment, MonthlyPaymentManagement } from "@/model/src";
+import * as db from "@/db";
+import getDbConnection from "@/db/connection";
 import { updateItems } from "./item";
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {

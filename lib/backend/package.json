@@ -5,7 +5,7 @@
     "main": "src/index.ts",
     "scripts": {
         "test": "jest",
-        "build": "tsc",
+        "build": "tsc && tsc-alias",
         "build-schema": "ts-node ./src/db/buildSchema",
         "dev": "set PORT=3006 && ts-node ./src",
         "payment-service-dev": "ts-node ./src/services/monthlyPayment",
@@ -27,6 +27,7 @@
         "pg-hstore": "^2.3.4",
         "safer-buffer": "^2.1.2",
         "sequelize": "^6.37.5",
+        "tsconfig-paths": "^4.2.0",
         "xlsx": "^0.18.5"
     },
     "author": "",
@@ -46,6 +47,7 @@
         "supertest": "^7.1.0",
         "ts-jest": "^29.3.2",
         "ts-node": "^10.9.2",
+        "tsc-alias": "^1.8.16",
         "typescript": "^5.8.3"
     }
 }

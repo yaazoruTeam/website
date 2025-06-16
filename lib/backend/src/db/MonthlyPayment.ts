@@ -1,4 +1,4 @@
-import { HttpError, MonthlyPayment } from "../model";
+import { HttpError, MonthlyPayment } from "@/model/src";
 import getDbConnection from "./connection";
 
 

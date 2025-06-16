@@ -1,4 +1,4 @@
-import { Comment } from "../model";
+import { Comment } from "@/model/src";
 import getDbConnection from "./connection";
 import * as dotenv from 'dotenv';
 dotenv.config();

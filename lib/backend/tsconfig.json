@@ -9,7 +9,16 @@
     "baseUrl": "./src",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+       "paths": {
+      "@model/*": ["model/src/*"],      // אם קבצי המודל שלך נמצאים ב-src/model/
+      "@service/*": ["service/*"],  // אם קבצי השירותים שלך ב-src/service/
+      "@controller/*": ["controller/*"], // אם קבצי הקונטרולרים שלך ב-src/controller/
+      "@db/*": ["db/*"],            // אם קבצי ה-DB שלך ב-src/db/
+      "@config/*": ["config/*"],    // אם יש לך תיקיית קונפיגורציה ב-src/config/
+      "@routes/*": ["routes/*"],    // אם קבצי הראוטים שלך ב-src/routes/
+      "@/*": ["*"]        
+    }
   },
   "include": [
     "src/**/*"

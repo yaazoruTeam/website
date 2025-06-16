@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError, PaymentCreditLink } from "../model";
-import * as db from "../db";
+import { HttpError, PaymentCreditLink } from "@/model/src";
+import * as db from "@/db";
 
 const createPaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
     try {

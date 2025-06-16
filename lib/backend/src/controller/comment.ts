@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import * as db from "../db";
-import { Comment } from "../model";
+import * as db from "@/db";
+import { Comment } from "@/model/src";
 import { HttpError } from 'model';
 import * as dotenv from 'dotenv';
 dotenv.config();

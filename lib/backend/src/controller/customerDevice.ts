@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import * as db from "../db";
-import { CustomerDevice, HttpError } from "../model";
+import * as db from "@/db";
+import { CustomerDevice, HttpError } from "@/model/src";
 
 const createCustomerDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

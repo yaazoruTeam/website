@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import * as db from "../db";
-import { User, HttpError } from "../model";
-import { hashPassword } from '../utils/password';
+import * as db from "@/db";
+import { User, HttpError } from "@/model/src";
+import { hashPassword } from '@/utils/password';
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

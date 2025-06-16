@@ -1,4 +1,4 @@
-import { CustomerDevice } from "../model";
+import { CustomerDevice } from "@/model/src";
 import getDbConnection from "./connection";
 
 const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: any) => {

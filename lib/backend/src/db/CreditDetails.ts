@@ -1,4 +1,4 @@
-import { CreditDetails, HttpError } from "../model";
+import { CreditDetails, HttpError } from "@/model/src";
 import getDbConnection from "./connection";
 
 const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
