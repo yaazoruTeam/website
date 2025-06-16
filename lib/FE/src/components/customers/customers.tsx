@@ -12,7 +12,7 @@ const Customers: React.FC = () => {
   return (
     <>
         <CustomersList customers={customers} />
-        <ChatBot />
+        <ChatBot entityType="customer" entityId="1"/>
     </>
   );
 };
