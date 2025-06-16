@@ -5,48 +5,68 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { colors } from "../../styles/theme";
-import { Box, IconButton, TextField } from "@mui/material";
+import { Alert, Box, IconButton, Snackbar, TextField } from "@mui/material";
 import CustomTypography from "../designComponent/Typography";
+import { Comment } from "../../model";
+import { EntityType } from "../../model/src/Comment";
+import { CreateCommentDto } from "../../model/src/Dtos";
+import {
+  getCommentsByEntityTypeAndEntityId,
+  createComment,
+} from "../../api/comment";
+import { formatDateToString } from "../designComponent/FormatDate";
 import profilePicture from "../../assets/profilePicture.svg";
 import EmojiPicker from "emoji-picker-react";
 import { useTranslation } from "react-i18next";
 
-interface Message {
-  text: string;
-  imageUrl?: string;
-  timestamp: string;
+interface ChatBotProps {
+  entityType: EntityType;
+  entityId: string;
 }
 
-const ChatBot: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
+  const [comments, setComments] = useState<
+    Array<
+      | Comment.Model
+      | (Omit<Comment.Model, "comment_id"> & { comment_id: string })
+    >
+  >([]);
   const [inputText, setInputText] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiPickerPosition, setEmojiPickerPosition] = useState<{
     top: number;
     left: number;
   } | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { t } = useTranslation();
 
-  useEffect(() => {
-    // TODO: כשתהיה לך גישה לשרת - החליפי את הקוד הזה בקריאת axios.get('/api/messages')
-    const fakeData: Message[] = [
-      {
-        text: "נולום ארווס סאפיאן - פוסיליס קוויס, אקווזמן קוואזי במר מודוף. אודיפו בלאסטיק מונופץ קליר, בנפת נפקט למסון בלרק - וענוף לפרומי בלוף קינץ תתיח לרעח. לת צשחמי ליבם סולגק. בראיט ולחת צורק מונחף, בגורמי מגמש. תרבנך וסתעד לכנו סתשם השמה - לתכי מורגם בורק? לתיג ישבעס.",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        text: "ושבעגט ליבם סולגק. בראיט ולחת צורק מונחף, בגורמי מגמש. תרבנך וסתעד לכנו סתשם השמה - לתכי מורגם בורק? לתיג ישבעס.",
-        timestamp: new Date().toISOString(),
-      },
-    ];
+  const ENTITY_TYPE = entityType;
+  const ENTITY_ID = entityId;
 
-    // הדמיית עיכוב בשרת
-    setTimeout(() => {
-      setMessages(fakeData);
-    }, 500);
-  }, []);
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await getCommentsByEntityTypeAndEntityId(
+          ENTITY_TYPE,
+          ENTITY_ID,
+          1
+        );
+        setComments(response.data);
+      } catch (err) {
+        console.error("Failed to fetch comments:", err);
+        setError(t("FailedToLoadComments.PleaseTryAgainLater."));
+      }
+    };
+
+    fetchComments();
+  }, [ENTITY_TYPE, ENTITY_ID]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [comments]);
 
   useEffect(() => {
     if (showEmojiPicker && inputRef.current) {
@@ -86,25 +106,97 @@ const ChatBot: React.FC = () => {
     };
   }, [showEmojiPicker]);
 
-  const sendMessage = async () => {
+  const sendComment = async () => {
     if (!inputText.trim()) return;
 
-    const newMessage: Message = {
-      text: inputText,
-      timestamp: new Date().toISOString(),
+    const tempCommentId = `temp-${Date.now()}`;
+    const tempComment: Omit<Comment.Model, "comment_id"> & {
+      comment_id: string;
+    } = {
+      comment_id: tempCommentId,
+      entity_type: ENTITY_TYPE,
+      entity_id: ENTITY_ID,
+      content: inputText,
+      created_at: new Date(),
     };
 
-    setMessages((prev) => [...prev, newMessage]);
+    setComments((prev) => [...prev, tempComment]);
     setInputText("");
     setShowEmojiPicker(false);
 
-    // TODO: כשתתחברי לשרת - שלחי את ההודעה לשרת עם axios.post('/api/messages', newMessage)
     try {
-      console.log("הודעה נשלחה (סימולציה):", newMessage);
-      // await axios.post('/api/messages', newMessage);
+      const commentDataToSend: CreateCommentDto = {
+        entity_type: ENTITY_TYPE,
+        entity_id: ENTITY_ID,
+        content: tempComment.content,
+        created_at: tempComment.created_at.toISOString(),
+      };
+
+      const sentComment = await createComment(commentDataToSend);
+
+      setComments((prev) =>
+        prev.map((c) => (c.comment_id === tempCommentId ? sentComment : c))
+      );
     } catch (err) {
-      console.error("שגיאה בשליחה לשרת:", err);
+      console.error("Error sending comment to server:", err);
+      setError(t("FailedToSendComment.PleaseTryAgain."));
+      setComments((prev) => prev.filter((c) => c.comment_id !== tempCommentId));
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const tempCommentId = `temp-file-${Date.now()}`;
+    const tempFileComment: Omit<Comment.Model, "comment_id"> & {
+      comment_id: string;
+    } = {
+      comment_id: tempCommentId,
+      entity_type: ENTITY_TYPE,
+      entity_id: ENTITY_ID,
+      content: file.type.startsWith("image/")
+        ? `[${t("ImageSent")}]`
+        : `📎 ${file.name}`,
+      created_at: new Date(),
+    };
+
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setComments((prev) => [
+          ...prev,
+          { ...tempFileComment, content: "" /* file_url */ },
+        ]);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setComments((prev) => [...prev, tempFileComment]);
+    }
+
+    e.target.value = "";
+
+    try {
+      const fileCommentDataToSend: CreateCommentDto = {
+        entity_type: ENTITY_TYPE,
+        entity_id: ENTITY_ID,
+        content: tempFileComment.content,
+        created_at: tempFileComment.created_at.toISOString(),
+      };
+
+      const sentComment = await createComment(fileCommentDataToSend);
+      setComments((prev) =>
+        prev.map((c) => (c.comment_id === tempCommentId ? sentComment : c))
+      );
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      setError(t("FailedToUploadFile.PleaseTryAgain."));
+      setComments((prev) => prev.filter((c) => c.comment_id !== tempCommentId));
+    }
+  };
+
+  const handleCloseError = () => {
+    setError(null);
   };
 
   return (
@@ -169,15 +261,10 @@ const ChatBot: React.FC = () => {
           overflowY: "auto",
         }}
       >
-        {messages.map((msg, i) => {
-          const date = new Date(msg.timestamp);
+        {comments.map((comment, i) => {
+          const date = comment.created_at;
 
-          const formattedDate = `${String(date.getDate()).padStart(
-            2,
-            "0"
-          )}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(
-            date.getFullYear()
-          ).slice(2)}`;
+          const formattedDateForDisplay = formatDateToString(date);
 
           const formattedTime = date.toLocaleTimeString("en-US", {
             hour: "2-digit",
@@ -186,7 +273,7 @@ const ChatBot: React.FC = () => {
           });
 
           return (
-            <React.Fragment key={i}>
+            <React.Fragment key={comment.comment_id || i}>
               {/* פס תאריך */}
               <Box
                 sx={{
@@ -207,7 +294,7 @@ const ChatBot: React.FC = () => {
                   }}
                 />
                 <CustomTypography
-                  text={formattedDate}
+                  text={formattedDateForDisplay}
                   variant="h5"
                   weight="medium"
                   sx={{
@@ -284,16 +371,7 @@ const ChatBot: React.FC = () => {
                       padding: "10px 14px",
                     }}
                   >
-                    {msg.imageUrl ? (
-                      <Box
-                        component="img"
-                        src={msg.imageUrl}
-                        alt="uploaded"
-                        sx={{ maxWidth: "100%", borderRadius: 1.5 }}
-                      />
-                    ) : (
-                      msg.text
-                    )}
+                    {comment.content}
                   </Box>
 
                   {/* שעה מתחת להודעה בצד ימין */}
@@ -303,7 +381,7 @@ const ChatBot: React.FC = () => {
                       justifyContent: "center",
                       display: "flex",
                       flexDirection: "column",
-                      color: "#989BA1",
+                      color: colors.c38,
                       fontSize: 14,
                       fontFamily: "Heebo",
                       fontWeight: "400",
@@ -318,6 +396,7 @@ const ChatBot: React.FC = () => {
             </React.Fragment>
           );
         })}
+        <div ref={messagesEndRef} />
       </Box>
       <Box
         sx={{
@@ -368,39 +447,15 @@ const ChatBot: React.FC = () => {
             },
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") sendMessage();
+            if (e.key === "Enter") sendComment();
           }}
         />
         <input
           type="file"
           id="fileInput"
-          accept="image/*"
+          accept="image/*, .pdf, .doc, .docx"
           style={{ display: "none" }}
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-
-            if (file.type.startsWith("image/")) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                const newMessage: Message = {
-                  text: "",
-                  imageUrl: reader.result as string,
-                  timestamp: new Date().toISOString(),
-                };
-                setMessages((prev) => [...prev, newMessage]);
-              };
-              reader.readAsDataURL(file);
-            } else {
-              const newMessage: Message = {
-                text: `📎 ${file.name}`,
-                timestamp: new Date().toISOString(),
-              };
-              setMessages((prev) => [...prev, newMessage]);
-            }
-
-            e.target.value = "";
-          }}
+          onChange={handleFileUpload}
         />
         <PaperClipIcon
           style={{
@@ -409,7 +464,7 @@ const ChatBot: React.FC = () => {
             color: colors.c38,
             cursor: "pointer",
           }}
-          title="צרף קובץ"
+          title={t("AttachFile")}
           onClick={() => {
             document.getElementById("fileInput")?.click();
           }}
@@ -426,7 +481,7 @@ const ChatBot: React.FC = () => {
           onClick={() => setShowEmojiPicker((prev) => !prev)}
         />
         <IconButton
-          onClick={sendMessage}
+          onClick={sendComment}
           sx={{
             backgroundColor: colors.c37,
             border: "none",
@@ -455,7 +510,6 @@ const ChatBot: React.FC = () => {
               marginLeft: 2,
             }}
             title={t("send")}
-            onClick={() => setShowEmojiPicker((prev) => !prev)}
           />
         </IconButton>
         {showEmojiPicker &&
@@ -478,6 +532,20 @@ const ChatBot: React.FC = () => {
             document.getElementById("emoji-portal-root") as HTMLElement
           )}
       </Box>
+      {/* הודעת שגיאה בתחתית המסך */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
