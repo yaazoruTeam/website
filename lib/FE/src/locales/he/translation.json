@@ -179,5 +179,15 @@
     "durationCall": "משך השיחה",
     "timeCall":"שעת ביצוע השיחה",
     "costInShekels": "עלות בשקלים",
-    "penniesPerMinute": "אגורות לדקה"
+    "penniesPerMinute": "אגורות לדקה",
+    "customerComments": "הערות לקוח",
+    "WriteComment": "כתיבת תגובה",
+    "closed": "סגור",
+    "AddingEmoji": "הוספת אימוג'י",
+    "send": "שלח",
+    "FailedToLoadComments.PleaseTryAgainLater.": "טעינת ההערות נכשלה. אנא נסה שוב מאוחר יותר.",
+    "FailedToSendComment.PleaseTryAgain.": "שליחת ההערה נכשלה. אנא נסה שוב.",
+    "FailedToUploadFile.PleaseTryAgain.": "העלאת הקובץ נכשלה. אנא נסה שוב.",
+    "AttachFile": "צרף קובץ",
+    "ImageSent": "תמונה נשלחה"
 }
