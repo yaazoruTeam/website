@@ -1,4 +1,5 @@
-# FROM node:20
+# שלב 1: Build Stage - בניית האפליקציה (קומפילציה של TypeScript)
+# FROM node:20-alpine AS builder
 
 # WORKDIR /app
 
@@ -32,61 +33,48 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app 
 
-# העתקת קבצי package.json להתקנת תלויות (מנצל cache)
-COPY lib/backend/package*.json ./ 
+# העתקת קבצי הגדרות הפרויקט בלבד
+# זה מאפשר ניצול יעיל של מטמון ה-Docker (cache) - אם קבצי ה-package.json/package-lock.json לא השתנו,
+# ה-Docker לא יצטרך להריץ שוב את npm install
+COPY package*.json ./
 
-# התקנת כל התלויות (כולל dev dependencies הנחוצות לקומפילציה)
-RUN npm install --silent
+# התקנת כל התלויות (גם devDependencies לצורך ה-build)
+RUN npm install
 
-# העתקת קבצי TypeScript והגדרות
-COPY lib/backend/tsconfig.json ./
+# העתקת קוד המקור
+COPY . .
 
-# העתקת קוד מקור (ללא תיקיית tests)
-COPY lib/backend/src ./src
+# ביצוע ה-build של האפליקציה (קומפילציה של TypeScript ל-JavaScript)
+# הפקודה "build" מוגדרת ב-package.json
+RUN npm run build
 
-# מחיקת תיקיית הבדיקות אם היא קיימת
-RUN rm -rf ./src/tests || true
+# שלב 2: Production Stage - יצירת אימג' סופי קטן ונקי
+FROM node:20-alpine
 
-# העתקת המודלים הנדרשים במיקום הנכון
-COPY lib/model ./model
+WORKDIR /app
 
-# קומפילציית TypeScript (ללא בדיקות, עם דילוג על בדיקות lib)
-RUN npx tsc --skipLibCheck
+# העתקת קבצי הגדרות הפרויקט בלבד עבור תלויות הייצור
+COPY package*.json ./
 
-# שלב Production - מכיל רק את מה שנדרש להרצת האפליקציה (קטן ויעיל יותר)
-FROM node:20-alpine AS production
+# התקנת תלויות ייצור בלבד
+# שימוש ב-npm ci מבטיח התקנה נקייה ומדויקת על פי package-lock.json
+RUN npm ci --only=production
 
-# יצירת משתמש לא-רוט לביטחון
-RUN addgroup -g 1001 -S nodejs && adduser -S appuser -u 1001
+# העתקת תוצרי ה-build משלב ה-builder
+# אנחנו מעתיקים את התיקייה 'dist' שיצר ה-build, ואת קובץ ה-package.json
+# (package.json נחוץ עבור הפקודה npm ci וגם אם יש סקריפטים שרצים מהתיקיה)
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
-WORKDIR /app 
+# משתני סביבה (ניתן גם להעביר מבחוץ, מומלץ יותר לסביבות ייצור)
+ENV PORT=3006
+ENV NODE_ENV=production
 
-# העתקת קבצי ה-package מה-builder stage כדי לאפשר התקנת תלויות production
-COPY --from=builder /app/package*.json ./ 
-
-# התקנת תלויות Production בלבד (אופטימיזציה נוספת)
-RUN npm ci --only=production --silent && npm cache clean --force
-
-# העתקת הקבצים המקומפלים (dist) משלב ה-builder
-COPY --from=builder /app/dist ./dist 
-
-# העתקת המודלים הנדרשים לזמן הרצה במיקום הנכון
-COPY --from=builder /app/model ./model
-
-# שינוי בעלות לכל הקבצים למשתמש appuser
-RUN chown -R appuser:nodejs /app
-USER appuser
-
-# הגדרת פורט חשיפה
+# חשיפת פורט
 EXPOSE 3006
 
-# הגדרת משתני סביבה
-ENV NODE_ENV=production
-ENV PORT=3006
-
-# בדיקת תקינות
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "const http = require('http'); const options = { host: 'localhost', port: 3006, timeout: 2000 }; const req = http.request(options, res => { console.log('STATUS:', res.statusCode); process.exit(res.statusCode === 200 ? 0 : 1) }); req.on('error', () => process.exit(1)); req.end();"
-
-# פקודת ההפעלה של השרת
-CMD ["node", "dist/index.js"]
+# הפקודה שתריץ את האפליקציה ב-production
+# אנחנו מריצים את הסקריפט 'start' שהגדרת ב-package.json,
+# שמוביל ל-'node dist/index.js'
+CMD [ "npm", "start" ]

@@ -42,8 +42,8 @@ Thumbs.db
 npm-debug.log
 .git
 .gitignore
-dist
+# dist
 build
 *.log
 lib/*/node_modules
-lib/*/dist
+# lib/*/dist
