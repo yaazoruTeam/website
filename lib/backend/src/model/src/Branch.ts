@@ -8,7 +8,7 @@ interface Model {
   phone_number: string
   additional_phone?: string
   status: string
-      sda : number
+  sda: number
 }
 
 function sanitize(branch: Model, hasId: boolean): Model {
