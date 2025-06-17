@@ -1,1 +1,1 @@
-declare module '@fontsource/heebo';
+declare module '@fontsource/heebo'

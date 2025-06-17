@@ -1,25 +1,25 @@
-import { HttpError, ItemForMonthlyPayment } from ".";
+import { HttpError, ItemForMonthlyPayment } from '.'
 
 interface Model {
-  transaction_id: string;
-  credit_id: string;
-  customer_name: string;//שם לקוח
-  dates: string;//תאריכים
-  amount: number;//(חודשי)סכום
-  total_sum: number;//סה"כ
-  belongs_to_organization: string;//שייל לאירגון
-  last_attempt: Date;//נסיון אחרון
-  last_success: Date;//הצלחה אחרונה
-  next_charge: Date;//החיוב הבא
-  update: Date;//עידכון
-  items: ItemForMonthlyPayment.Model[];//פריטים
+  transaction_id: string
+  credit_id: string
+  customer_name: string //שם לקוח
+  dates: string //תאריכים
+  amount: number //(חודשי)סכום
+  total_sum: number //סה"כ
+  belongs_to_organization: string //שייל לאירגון
+  last_attempt: Date //נסיון אחרון
+  last_success: Date //הצלחה אחרונה
+  next_charge: Date //החיוב הבא
+  update: Date //עידכון
+  items: ItemForMonthlyPayment.Model[] //פריטים
   credit: {
-    token: string;
-    expiry_month: string;
-    expiry_year: string;
-    cvv: string;
+    token: string
+    expiry_month: string
+    expiry_year: string
+    cvv: string
   }
-  status: "active" | "inactive";
+  status: 'active' | 'inactive'
 }
 
 function sanitize(transactionDetails: Model, hasId: boolean): Model {
@@ -27,8 +27,8 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "transaction_id".',
-    };
-    throw error;
+    }
+    throw error
   }
   // if (!transactionDetails.credit_id) {
   //   const error: HttpError.Model = {
@@ -41,103 +41,103 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_name".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.dates) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "dates".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.amount) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "amount".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.total_sum) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "total_sum".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.belongs_to_organization) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "belongs_to_organization".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.last_attempt) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "last_attempt".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.last_success) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "last_success".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.next_charge) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "next_charge".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.update) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "update".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.items) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "items".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.credit) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.credit.token) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit-token".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.credit.expiry_year || transactionDetails.credit.expiry_month) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit-date".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!transactionDetails.credit.cvv) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit-cvv".',
-    };
-    throw error;
+    }
+    throw error
   }
   const newTransactionDetails: Model = {
     transaction_id: transactionDetails.transaction_id,
-     credit_id: transactionDetails.credit_id,
+    credit_id: transactionDetails.credit_id,
     customer_name: transactionDetails.customer_name,
     dates: transactionDetails.dates,
     amount: transactionDetails.amount,
@@ -152,36 +152,32 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
       cvv: transactionDetails.credit.cvv,
       expiry_month: transactionDetails.credit.expiry_month,
       expiry_year: transactionDetails.credit.expiry_year,
-      token: transactionDetails.credit.token
+      token: transactionDetails.credit.token,
     },
     status: transactionDetails.status || 'active',
-  };
-  return newTransactionDetails;
+  }
+  return newTransactionDetails
 }
 
 const sanitizeIdExisting = (id: any) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
-      message: "No ID provided",
-    };
-    throw error;
+      message: 'No ID provided',
+    }
+    throw error
   }
-};
+}
 
 const sanitizeBodyExisting = (req: any) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
-      message: "No body provaider",
-    };
-    throw error;
+      message: 'No body provaider',
+    }
+    throw error
   }
-};
+}
 
-export type { Model };
-export {
-  sanitize,
-  sanitizeIdExisting,
-  sanitizeBodyExisting,
-};
+export type { Model }
+export { sanitize, sanitizeIdExisting, sanitizeBodyExisting }
