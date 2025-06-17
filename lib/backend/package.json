@@ -7,7 +7,9 @@
     "test": "jest",
     "build-schema": "ts-node ./src/db/buildSchema",
     "dev": "set PORT=3006 && ts-node ./src",
-    "payment-servic-dev": "ts-node ./src/services/monthlyPayment"
+    "payment-servic-dev": "ts-node ./src/services/monthlyPayment",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@types/xlsx": "^0.0.36",
