@@ -1,12 +1,10 @@
-import { TransactionDetails, HttpError } from "../model";
-import getConnection from "./connection";
+import { TransactionDetails, HttpError } from '../model'
+import getDbConnection from './connection'
 
-const createTransactionDetails = async (
-  transactionDetails: TransactionDetails.Model
-) => {
-  const knex = getConnection();
+const createTransactionDetails = async (transactionDetails: TransactionDetails.Model) => {
+  const knex = getDbConnection()
   try {
-    const [newTransactionDetails] = await knex("yaazoru.transactionDetails")
+    const [newTransactionDetails] = await knex('yaazoru.transactionDetails')
       .insert({
         credit_id: transactionDetails.credit_id,
         customer_name: transactionDetails.customer_name,
@@ -19,88 +17,84 @@ const createTransactionDetails = async (
         next_charge: transactionDetails.next_charge,
         update: transactionDetails.update,
         items: transactionDetails.items,
-        status: "active",
+        status: 'active',
       })
-      .returning("*");
-    return newTransactionDetails;
+      .returning('*')
+    return newTransactionDetails
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const getTransactionDetails = async (): Promise<TransactionDetails.Model[]> => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    return await knex.select().table("yaazoru.transactionDetails");
+    return await knex.select().table('yaazoru.transactionDetails')
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const getTransactionDetailsById = async (transaction_id: string) => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    return await knex("yaazoru.transactionDetails")
-      .where({ transaction_id })
-      .first();
+    return await knex('yaazoru.transactionDetails').where({ transaction_id }).first()
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const updateTransactionDetails = async (
   transaction_id: string,
-  transactionDetails: TransactionDetails.Model
+  transactionDetails: TransactionDetails.Model,
 ) => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    const updateTransactionDetails = await knex("yaazoru.transactionDetails")
+    const updateTransactionDetails = await knex('yaazoru.transactionDetails')
       .where({ transaction_id })
       .update(transactionDetails)
-      .returning("*");
+      .returning('*')
     if (updateTransactionDetails.length === 0) {
-      throw { status: 404, message: "TransactionDetails not found" };
+      throw { status: 404, message: 'TransactionDetails not found' }
     }
-    return updateTransactionDetails[0];
+    return updateTransactionDetails[0]
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const deleteTransactionDetails = async (transaction_id: string) => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    const updateTransactionDetails = await knex("yaazoru.transactionDetails")
+    const updateTransactionDetails = await knex('yaazoru.transactionDetails')
       .where({ transaction_id })
-      .update({ status: "inactive" })
-      .returning("*");
+      .update({ status: 'inactive' })
+      .returning('*')
     if (updateTransactionDetails.length === 0) {
       const error: HttpError.Model = {
         status: 404,
-        message: "TransactionDetails not found",
-      };
-      throw error;
+        message: 'TransactionDetails not found',
+      }
+      throw error
     }
-    return updateTransactionDetails[0];
+    return updateTransactionDetails[0]
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
-const doesTransactionDetailsExist = async (
-  transaction_id: string
-): Promise<boolean> => {
-  const knex = getConnection();
+const doesTransactionDetailsExist = async (transaction_id: string): Promise<boolean> => {
+  const knex = getDbConnection()
   try {
-    const result = await knex("yaazoru.transactionDetails")
-      .select("transaction_id")
+    const result = await knex('yaazoru.transactionDetails')
+      .select('transaction_id')
       .where({ transaction_id })
-      .first();
-    return !!result;
+      .first()
+    return !!result
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 export {
   createTransactionDetails,
@@ -109,4 +103,4 @@ export {
   updateTransactionDetails,
   deleteTransactionDetails,
   doesTransactionDetailsExist,
-};
+}

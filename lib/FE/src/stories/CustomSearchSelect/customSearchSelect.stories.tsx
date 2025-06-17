@@ -30,33 +30,33 @@
 // export const Default = Template.bind({});
 // Default.args = {};
 
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm, FormProvider } from "react-hook-form";
-import CustomSearchSelect from "../../components/designComponent/CustomSearchSelect";
+import { StoryFn, Meta } from '@storybook/react'
+import { useForm, FormProvider } from 'react-hook-form'
+import CustomSearchSelect from '../../components/designComponent/CustomSearchSelect'
 
 export default {
-  title: "Components/CustomSearchSelect",
+  title: 'Components/CustomSearchSelect',
   component: CustomSearchSelect,
-} as Meta;
+} as Meta
 
 const Template: StoryFn<typeof CustomSearchSelect> = (args) => {
-  const methods = useForm();
+  const methods = useForm()
   return (
     <FormProvider {...methods}>
-      <CustomSearchSelect 
-        name="city"
+      <CustomSearchSelect
+        name='city'
         options={[
-          { label: "תל םביב", value: "tel_aviv" },
-          { label: "ירושלים", value: "jerusalem" },
-          { label: "חיפה", value: "haifa" },
+          { label: 'תל םביב', value: 'tel_aviv' },
+          { label: 'ירושלים', value: 'jerusalem' },
+          { label: 'חיפה', value: 'haifa' },
         ]}
         {...args}
-        placeholder="עיר לקוח"
-        searchType="date"
+        placeholder='עיר לקוח'
+        searchType='date'
       />
     </FormProvider>
-  );
-};
+  )
+}
 
-export const Default = Template.bind({});
-Default.args = {};
+export const Default = Template.bind({})
+Default.args = {}

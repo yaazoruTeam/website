@@ -1,11 +1,7 @@
-import AppBar from "@mui/material/AppBar";
+import AppBar from '@mui/material/AppBar'
 
-const Devices = () =>{
-  return (
-    <AppBar sx={{ display: 'flex' }}>
-
-    </AppBar>
-  );
+const Devices = () => {
+  return <AppBar sx={{ display: 'flex' }}></AppBar>
 }
 
-export default Devices;
+export default Devices

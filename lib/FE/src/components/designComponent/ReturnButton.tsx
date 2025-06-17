@@ -1,37 +1,33 @@
-import React from "react";
-import Button from "@mui/material/Button";
-import { colors } from "../../styles/theme";
-import { useNavigate } from "react-router-dom";
+import React from 'react'
+import { Box } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { colors } from '../../styles/theme'
+import { useTranslation } from 'react-i18next'
 
 const ReturnButton: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
-    <Button
+    <Box
       onClick={() => navigate(-1)}
       sx={{
-        textAlign: "center",
+        alignSelf: 'flex-start',
         color: colors.c11,
         fontSize: 18,
-        fontFamily: "Heebo",
+        fontFamily: 'Heebo',
         fontWeight: 400,
-        textDecoration: "underline",
-        wordWrap: "break-word",
-        padding: 0,
-        minWidth: "auto",
-        backgroundColor: "transparent",
-        boxShadow: "none",
-        "&:hover": {
-          backgroundColor: "transparent",
-          textDecoration: "underline",
-          boxShadow: "none",
-        },
+        textDecoration: 'underline',
+        wordWrap: 'break-word',
+        cursor: 'pointer',
+        userSelect: 'none',
+        marginTop: 1,
+        marginRight: 1,
       }}
-      disableRipple
     >
-      {"חזרה >"}
-    </Button>
-  );
-};
+      {t('return')}
+    </Box>
+  )
+}
 
-export default ReturnButton;
+export default ReturnButton
