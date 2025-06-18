@@ -261,7 +261,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           overflowY: "auto",
         }}
       >
-        {comments.map((comment, i) => {
+        {comments.map((comment) => {
           const date = comment.created_at;
 
           const formattedDateForDisplay = formatDateToString(date);
@@ -273,7 +273,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           });
 
           return (
-            <React.Fragment key={comment.comment_id || i}>
+            <React.Fragment key={comment.comment_id}>
               {/* פס תאריך */}
               <Box
                 sx={{
