@@ -1,4 +1,2 @@
-function main() {
-
-}
-main();
+function main() {}
+main()

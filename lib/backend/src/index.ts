@@ -3,10 +3,10 @@ import { router } from './routers/router';
 import { errorHandler } from "./middleware/errorHandler";
 import { createSchema } from "db/schema";
 
-const cors = require('cors');
+const cors = require('cors')
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app = express()
+const PORT = process.env.PORT || 3000
 
 // Middleware
 app.use(cors());

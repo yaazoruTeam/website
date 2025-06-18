@@ -1,25 +1,28 @@
-import React, { ReactNode } from "react";
-import { styled } from "@mui/material/styles";
-import { Box } from "@mui/system";
-import { colors } from "../../styles/theme";
-import CustomTypography from "./Typography";
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import React, { ReactNode } from 'react'
+import { styled } from '@mui/material/styles'
+import { Box } from '@mui/system'
+import { colors } from '../../styles/theme'
+import CustomTypography from './Typography'
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
 
 type TooltipPropsMy = {
-  text: string;
-  children: ReactNode;
-  variant?: "primary" | "secondary";
-  position?: "top" | "bottom" | "left" | "right" | "normal";
-};
+  text: string
+  children: ReactNode
+  variant?: 'primary' | 'secondary'
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'normal'
+}
 
-const primaryColor = colors.c10;
-const secondaryColor = colors.c2;
+const primaryColor = colors.c10
+const secondaryColor = colors.c2
 
-
-const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "top", variant = "primary" }) => {
-
-  const arrow = position !== 'normal';
-  const tooltipPlacement = position === 'normal' ? 'top' : position;
+const CustomTooltip: React.FC<TooltipPropsMy> = ({
+  text,
+  children,
+  position = 'top',
+  variant = 'primary',
+}) => {
+  const arrow = position !== 'normal'
+  const tooltipPlacement = position === 'normal' ? 'top' : position
 
   const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip
@@ -29,7 +32,7 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "t
       placement={tooltipPlacement}
       sx={{
         width: '40px',
-        height: '40px'
+        height: '40px',
       }}
     />
   ))(() => ({
@@ -42,8 +45,7 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "t
       height: '26px',
       padding: '4px 8px',
     },
-  }));
-
+  }))
 
   return (
     <BootstrapTooltip
@@ -53,22 +55,16 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({ text, children, position = "t
             justifyContent: 'center',
             display: 'flex',
             alignItems: 'center',
-            padding: '4px 4px'
+            padding: '4px 4px',
           }}
         >
-          <CustomTypography
-            text={text}
-            variant="h5"
-            weight="regular"
-            color={colors.c6}
-          />
+          <CustomTypography text={text} variant='h5' weight='regular' color={colors.c6} />
         </Box>
       }
     >
       <Box>{children}</Box>
     </BootstrapTooltip>
+  )
+}
 
-  );
-};
-
-export default CustomTooltip;
+export default CustomTooltip

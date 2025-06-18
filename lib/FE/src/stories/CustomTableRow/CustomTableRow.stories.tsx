@@ -1,10 +1,10 @@
-import React from 'react';
-import CustomTableRow from './CustomTableRow';
+import React from 'react'
+import CustomTableRow from './CustomTableRow'
 
 export default {
   title: 'Components/CustomTableRow',
   component: CustomTableRow,
-};
+}
 
 const sampleData = {
   phone1: '054-8494216',
@@ -14,6 +14,6 @@ const sampleData = {
   city: 'צפת',
   region: 'צפון',
   id: '24',
-};
+}
 
-export const Default = () => <CustomTableRow data={sampleData} />;
+export const Default = () => <CustomTableRow data={sampleData} />
