@@ -1,4 +1,4 @@
-import { HttpError, ItemForMonthlyPayment, Payments } from '../model'
+import { HttpError, ItemForMonthlyPayment, Payments } from '@/model/src'
 import getDbConnection from './connection'
 
 const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {

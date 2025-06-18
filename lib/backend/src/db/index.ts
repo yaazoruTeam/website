@@ -22,7 +22,6 @@ export {
   BranchCustomer,
   BranchUser,
   CreditDetails,
-  TransactionDetails,
   MonthlyPayment,
   Payments,
   Item,

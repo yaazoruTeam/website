@@ -1,4 +1,4 @@
-import { Customer, HttpError } from '../model'
+import { Customer, HttpError } from '@/model/src'
 import getDbConnection from './connection'
 
 const createCustomer = async (customer: Customer.Model, trx?: any) => {

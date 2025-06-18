@@ -1,4 +1,4 @@
-import { Branch, HttpError } from '../model'
+import { Branch, HttpError } from '@/model/src'
 import getDbConnection from './connection'
 
 const createBranch = async (branch: Branch.Model) => {

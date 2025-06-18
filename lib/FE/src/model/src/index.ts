@@ -29,7 +29,6 @@ export {
   BranchUser,
   CustomerDeviceExcel,
   CreditDetails,
-  TransactionDetails,
   ItemForMonthlyPayment,
   MonthlyPayment,
   Payments,
