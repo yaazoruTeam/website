@@ -37,10 +37,8 @@ export const getCommentsByEntityTypeAndEntityId = async (
         },
       }
     );
-    // return response.data;
     const formattedData = response.data.data.map((commentItem) => ({
-      // שנה את שם המשתנה מ-comment ל-commentItem כדי למנוע בלבול, זה איבר בודד
-      ...commentItem, // השתמש ב-commentItem
+      ...commentItem,
       created_at: new Date(commentItem.created_at as unknown as string),
     }));
 
@@ -73,7 +71,6 @@ export const createComment = async (
         },
       }
     );
-    // return response.data;
     return {
       ...response.data,
       created_at: new Date(response.data.created_at as unknown as string),
