@@ -80,3 +80,15 @@ export const createComment = async (
     throw error;
   }
 };
+
+export const uploadFile = async (file: File): Promise<{ fileUrl: string }> => {
+  const formData = new FormData();
+  formData.append("file", file); 
+
+  const response = await axios.post(`${baseUrl}/upload`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
