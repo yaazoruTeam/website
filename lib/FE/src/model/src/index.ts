@@ -16,8 +16,8 @@ import * as Payments from "./Payments";
 import * as PaymentCreditLink from "./PaymentCreditLink";
 import * as MonthlyPaymentManagement from "./MonthlyPaymentManagement";
 import * as Comment from "./Comment";
-import * as CreateCommentDto from "./Dtos";
-import * as EntityType from "./Comment";
+import { CreateCommentDto } from "./Dtos";
+import { EntityType } from "./Comment";
 
 export {
   Customer,
