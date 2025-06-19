@@ -1,10 +1,11 @@
-import { EntityType } from './Comment';
+import { EntityType } from "./Comment";
 
 export interface CreateCommentDto {
-    comment_id?: number;
-    entity_id: string;
-    entity_type: EntityType;
-    content: string;
-    created_at: string;
-    file_url?: string;
+  entity_id: string;
+  entity_type: EntityType;
+  content?: string;
+  file_url?: string;
+  file_name?: string;
+  file_type?: string;
+  created_at: string;
 }
