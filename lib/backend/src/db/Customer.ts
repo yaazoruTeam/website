@@ -1,5 +1,9 @@
 import { Customer, HttpError } from '../model'
 import getDbConnection from './connection'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+const limit = Number(process.env.LIMIT) || 10
 
 const createCustomer = async (customer: Customer.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -27,11 +31,24 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
   }
 }
 
-const getCustomers = async (): Promise<Customer.Model[]> => {
+const getCustomers = async (offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex.select().table('yaazoru.customers').orderBy('customer_id')
+    const customers = await knex('yaazoru.customers')
+      .select('*')
+      .limit(limit)
+      .offset(offset)
+      .orderBy('customer_id')
+
+    const [{ count }] = await knex('yaazoru.customers')
+      .count('*')
+
+    return {
+      customers,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
+    console.log('Error in getCustomers: in db:', err)
     throw err
   }
 }
@@ -45,34 +62,65 @@ const getCustomerById = async (customer_id: string) => {
   }
 }
 
-const getCustomersByCity = async (city: string): Promise<Customer.Model[]> => {
+const getCustomersByCity = async (city: string, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.customers').select('*').where({ city }).orderBy('customer_id')
+    const customers = await knex('yaazoru.customers')
+      .select('*')
+      .where({ city })
+      .orderBy('customer_id')
+      .limit(limit)
+      .offset(offset)
+    const [{ count }] = await knex('yaazoru.customers')
+      .count('*')
+      .where({ city })
+
+    return {
+      customers,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
 }
 
-const getCustomersByStatus = async (status: 'active' | 'inactive'): Promise<Customer.Model[]> => {
+const getCustomersByStatus = async (status: 'active' | 'inactive', offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.customers').select('*').where({ status }).orderBy('customer_id')
+    const customers = await knex('yaazoru.customers')
+      .select('*')
+      .where({ status })
+      .orderBy('customer_id')
+      .limit(limit)
+      .offset(offset)
+    const [{ count }] = await knex('yaazoru.customers')
+      .count('*')
+      .where({ status })
+    return {
+      customers,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
 }
 
-const getCustomersByDateRange = async (
-  startDate: string,
-  endDate: string,
-): Promise<Customer.Model[]> => {
+const getCustomersByDateRange = async (startDate: string, endDate: string, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.customers')
+    const customers = await knex('yaazoru.customers')
       .select('*')
       .whereBetween('created_at', [startDate, endDate])
       .orderBy('customer_id')
+      .limit(limit)
+      .offset(offset)
+    const [{ count }] = await knex('yaazoru.customers')
+      .count('*')
+      .whereBetween('created_at', [startDate, endDate])
+    return {
+      customers,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
@@ -155,6 +203,68 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
   }
 }
 
+const getUniqueCities = async (): Promise<string[]> => {
+  const knex = getDbConnection()
+  try {
+    const rows = await knex('yaazoru.customers')
+      .distinct('city')
+      .whereNotNull('city')
+      .andWhere('city', '!=', '')
+      .orderBy('city')
+
+    return rows.map(row => row.city)
+  } catch (error) {
+    throw error
+  }
+}
+
+const searchCustomersByName = async (
+  searchTerm: string,
+  offset: number
+): Promise<{ customers: Customer.Model[], total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const trimmed = searchTerm.trim()
+    if (!trimmed) {
+      return { customers: [], total: 0 }
+    }
+
+    const terms = trimmed.split(/\s+/)
+
+    const buildWhereClause = (query: any) => {
+      terms.forEach(term => {
+        query.andWhere((qb: any) => {
+          qb.whereILike('first_name', `%${term}%`)
+            .orWhereILike('last_name', `%${term}%`)
+        })
+      })
+    }
+
+    const customers = await knex('yaazoru.customers')
+      .select('*')
+      .where(function () {
+        buildWhereClause(this)
+      })
+      .orderBy('customer_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count: totalCount }] = await knex('yaazoru.customers')
+      .count('*')
+      .where(function () {
+        buildWhereClause(this)
+      })
+
+    return {
+      customers,
+      total: parseInt(totalCount as string, 10)
+    }
+  } catch (err) {
+    throw err
+  }
+}
+
+
 export {
   createCustomer,
   getCustomers,
@@ -164,6 +274,8 @@ export {
   findCustomer,
   doesCustomerExist,
   getCustomersByCity,
+  searchCustomersByName,
+  getUniqueCities,
   getCustomersByStatus,
   getCustomersByDateRange,
 }

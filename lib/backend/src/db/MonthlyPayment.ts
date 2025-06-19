@@ -1,5 +1,10 @@
 import { HttpError, MonthlyPayment } from '../model'
 import getDbConnection from './connection'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+const limit = Number(process.env.LIMIT) || 10
+
 
 const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -31,13 +36,25 @@ const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: 
   }
 }
 
-const getMonthlyPayment = async (): Promise<MonthlyPayment.Model[]> => {
-  const knex = getDbConnection()
-  try {
-    return await knex.select().table('yaazoru.monthlyPayment')
-  } catch (err) {
-    throw err
-  }
+const getMonthlyPayments = async ( offset: number): Promise<{ monthlyPayments: MonthlyPayment.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const monthlyPayments = await knex('yaazoru.monthlyPayment')
+            .select('*')
+            .limit(limit)
+            .offset(offset)
+            .orderBy('monthlyPayment_id')
+
+        const [{ count }] = await knex('yaazoru.monthlyPayment')
+            .count('*')
+
+        return {
+            monthlyPayments,
+            total: parseInt(count as string, 10)
+        };
+    } catch (err) {
+        throw err
+    }
 }
 
 const getMonthlyPaymentById = async (monthlyPayment_id: string) => {
@@ -49,31 +66,73 @@ const getMonthlyPaymentById = async (monthlyPayment_id: string) => {
   }
 }
 
-const getMonthlyPaymentByCustomerId = async (customer_id: string) => {
-  const knex = getDbConnection()
-  try {
-    return await knex('yaazoru.monthlyPayment').select().where({ customer_id })
-  } catch (err) {
-    throw err
-  }
+const getMonthlyPaymentsByCustomerId = async (customer_id: string,offset: number): Promise<{ monthlyPayments: MonthlyPayment.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const monthlyPayments = await knex('yaazoru.monthlyPayment')
+            .select('*')
+            .where({ customer_id })
+            .orderBy('monthlyPayment_id')
+            .limit(limit)
+            .offset(offset)
+
+        const [{ count }] = await knex('yaazoru.monthlyPayment')
+            .count('*')
+            .where({ customer_id })
+
+        return {
+            monthlyPayments,
+            total: parseInt(count as string, 10)
+        };
+    } catch (err) {
+        throw err
+    }
 }
 
-const getMonthlyPaymentByStatus = async (status: 'active' | 'inactive') => {
-  const knex = getDbConnection()
-  try {
-    return await knex('yaazoru.monthlyPayment').select().where({ status })
-  } catch (err) {
-    throw err
-  }
+const getMonthlyPaymentsByStatus = async (status: 'active' | 'inactive',offset: number): Promise<{ monthlyPayments: MonthlyPayment.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const monthlyPayments = await knex('yaazoru.monthlyPayment')
+            .select('*')
+            .where({ status })
+            .orderBy('monthlyPayment_id')
+            .limit(limit)
+            .offset(offset)
+
+        const [{ count }] = await knex('yaazoru.monthlyPayment')
+            .count('*')
+            .where({ status })
+
+        return {
+            monthlyPayments,
+            total: parseInt(count as string, 10)
+        };
+    } catch (err) {
+        throw err
+    }
 }
 
-const getMonthlyPaymentByOrganization = async (belongsOrganization: string) => {
-  const knex = getDbConnection()
-  try {
-    return await knex('yaazoru.monthlyPayment').select().where({ belongsOrganization })
-  } catch (err) {
-    throw err
-  }
+const getMonthlyPaymentsByOrganization = async (belongsOrganization: string, offset: number): Promise<{ monthlyPayments: MonthlyPayment.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const monthlyPayments = await knex('yaazoru.monthlyPayment')
+            .select('*')
+            .where({ belongsOrganization })
+            .orderBy('monthlyPayment_id')
+            .limit(limit)
+            .offset(offset);
+
+        const [{ count }] = await knex('yaazoru.monthlyPayment')
+            .count('*')
+            .where({ belongsOrganization });
+
+        return {
+            monthlyPayments,
+            total: parseInt(count as string, 10)
+        }
+    } catch (err) {
+        throw err
+    }
 }
 
 const updateMonthlyPayment = async (
@@ -155,13 +214,13 @@ const doesMonthlyPaymentExist = async (monthlyPayment_id: string): Promise<boole
 
 export {
   createMonthlyPayment,
-  getMonthlyPayment,
+  getMonthlyPayments,
   getMonthlyPaymentById,
-  getMonthlyPaymentByCustomerId,
+  getMonthlyPaymentsByCustomerId,
   updateMonthlyPayment,
   deleteMonthlyPayment,
   /* findCustomer,*/
   doesMonthlyPaymentExist,
-  getMonthlyPaymentByStatus,
-  getMonthlyPaymentByOrganization,
+  getMonthlyPaymentsByStatus,
+  getMonthlyPaymentsByOrganization,
 }

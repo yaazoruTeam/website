@@ -1,5 +1,6 @@
 import { HttpError, Payments } from '../model'
 import getDbConnection from './connection'
+const limit = Number(process.env.LIMIT) || 10
 
 const createPayments = async (payments: Payments.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -21,11 +22,22 @@ const createPayments = async (payments: Payments.Model, trx?: any) => {
   }
 }
 
-const getPayments = async (): Promise<Payments.Model[]> => {
+const getPayments = async (offset: number): Promise<{ payments: Payments.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex.select().table('yaazoru.payments')
-  } catch (err) {
+    const payments = await knex('yaazoru.payments')
+      .select('*')
+      .orderBy('payments_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.payments').count('*')
+    return {
+      payments,
+      total: parseInt(count as string, 10)
+    }
+  }
+  catch (err) {
     throw err
   }
 }
@@ -39,14 +51,29 @@ const getPaymentsId = async (payments_id: string) => {
   }
 }
 
-const getPaymentsByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+const getPaymentsByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number): Promise<{ payments: Payments.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.payments').where({ monthlyPayment_id })
+    const payments = await knex('yaazoru.payments')
+      .select('*')
+      .where({ monthlyPayment_id })
+      .orderBy('payments_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.payments')
+      .where({ monthlyPayment_id })
+      .count('*')
+
+    return {
+      payments,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
 }
+
 
 const updatePayments = async (payments_id: string, payments: Payments.Model) => {
   const knex = getDbConnection()
@@ -122,10 +149,16 @@ const doesPaymentsExist = async (payments_id: string): Promise<boolean> => {
 
 export {
   createPayments,
+
   getPayments,
+
   getPaymentsId,
+
   getPaymentsByMonthlyPaymentId,
+
   updatePayments,
+
   deletePayments,
-  /* findCustomer,*/ doesPaymentsExist,
+
+  doesPaymentsExist,
 }

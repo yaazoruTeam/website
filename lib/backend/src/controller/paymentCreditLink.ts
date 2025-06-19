@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, PaymentCreditLink } from '../model'
 import * as db from '../db'
 
+const limit = Number(process.env.LIMIT) || 10
 const createPaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
   try {
     PaymentCreditLink.sanitizeBodyExisting(req)
@@ -47,8 +48,17 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
 
 const getPaymentCreditLinks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const paymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLink()
-    res.status(200).json(paymentCreditLink)
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const { paymentCreditLinks, total } = await db.PaymentCreditLink.getPaymentCreditLinks(offset)
+
+    res.status(200).json({
+      data: paymentCreditLinks,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }
@@ -58,7 +68,7 @@ const getPaymentCreditLinkId = async (req: Request, res: Response, next: NextFun
   try {
     PaymentCreditLink.sanitizeIdExisting(req)
     const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(
-      req.params.id,
+      req.params.id
     )
     if (!existPaymentCreditLink) {
       const error: HttpError.Model = {
@@ -73,15 +83,12 @@ const getPaymentCreditLinkId = async (req: Request, res: Response, next: NextFun
     next(error)
   }
 }
-const getPaymentCreditLinkByMonthlyPaymentId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const getPaymentCreditLinksByMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    PaymentCreditLink.sanitizeIdExisting(req)
-    const existMonthlyPayment =
-      await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(req.params.id)
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const existMonthlyPayment = await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(req.params.id)
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
@@ -89,24 +96,24 @@ const getPaymentCreditLinkByMonthlyPaymentId = async (
       }
       throw error
     }
-    const paymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLinkByMonthlyPaymentId(
-      req.params.id,
-    )
-    res.status(200).json(paymentCreditLink)
+    const { paymentCreditLinks, total } = await db.PaymentCreditLink.getPaymentCreditLinksByMonthlyPaymentId(req.params.id, offset)
+
+    res.status(200).json({
+      data: paymentCreditLinks,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }
 }
-const getPaymentCreditLinkByCreditDetailsId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const getPaymentCreditLinksByCreditDetailsId = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    PaymentCreditLink.sanitizeIdExisting(req)
-    const existCreditDetails = await db.PaymentCreditLink.doesCreditDetailsExistInPaymentCreditLink(
-      req.params.id,
-    )
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const existCreditDetails = await db.PaymentCreditLink.doesCreditDetailsExistInPaymentCreditLink(req.params.id)
     if (!existCreditDetails) {
       const error: HttpError.Model = {
         status: 404,
@@ -114,10 +121,14 @@ const getPaymentCreditLinkByCreditDetailsId = async (
       }
       throw error
     }
-    const paymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLinkByCreditDetailsId(
-      req.params.id,
-    )
-    res.status(200).json(paymentCreditLink)
+    const { paymentCreditLinks, total } = await db.PaymentCreditLink.getPaymentCreditLinksByCreditDetailsId(req.params.id, offset)
+
+    res.status(200).json({
+      data: paymentCreditLinks,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }
@@ -171,19 +182,15 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
 const deletePaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
   try {
     PaymentCreditLink.sanitizeIdExisting(req)
-    const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(
-      req.params.id,
-    )
+    const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(req.params.id)
     if (!existPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'PaymentCreditLink does not exist.',
+        message: 'PaymentCreditLink does not exist.'
       }
       throw error
     }
-    const deletePaymentCreditLink = await db.PaymentCreditLink.deletePaymentCreditLink(
-      req.params.id,
-    )
+    const deletePaymentCreditLink = await db.PaymentCreditLink.deletePaymentCreditLink(req.params.id)
     res.status(200).json(deletePaymentCreditLink)
   } catch (error: any) {
     next(error)
@@ -193,8 +200,8 @@ export {
   createPaymentCreditLink,
   getPaymentCreditLinks,
   getPaymentCreditLinkId,
-  getPaymentCreditLinkByMonthlyPaymentId,
-  getPaymentCreditLinkByCreditDetailsId,
+  getPaymentCreditLinksByMonthlyPaymentId,
+  getPaymentCreditLinksByCreditDetailsId,
   updatePaymentCreditLink,
-  deletePaymentCreditLink,
+  deletePaymentCreditLink
 }

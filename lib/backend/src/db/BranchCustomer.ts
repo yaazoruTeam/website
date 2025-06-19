@@ -1,5 +1,8 @@
 import { BranchCustomer } from '../model'
 import getDbConnection from './connection'
+import * as dotenv from 'dotenv'
+dotenv.config()
+const limit = Number(process.env.LIMIT) || 10
 
 const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {
   const knex = getDbConnection()
@@ -16,13 +19,23 @@ const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {
   }
 }
 
-const getAllBranchCustomer = async (): Promise<BranchCustomer.Model[]> => {
-  const knex = getDbConnection()
-  try {
-    return await knex.select().table('yaazoru.branchCustomer')
-  } catch (err) {
-    throw err
-  }
+const getAllBranchCustomer = async (offset: number): Promise<{ branchCustomers: BranchCustomer.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const branchCustomers = await knex('yaazoru.branchCustomer')
+            .select('*')
+            .orderBy('branchCustomer_id')
+            .limit(limit)
+            .offset(offset)
+
+        const [{ count }] = await knex('yaazoru.branchCustomer').count('*')
+        return {
+            branchCustomers,
+            total: parseInt(count as string, 10)
+        }
+    } catch (err) {
+        throw err
+    }
 }
 
 const getBranchCustomerById = async (branchCustomer_id: string) => {
@@ -34,22 +47,50 @@ const getBranchCustomerById = async (branchCustomer_id: string) => {
   }
 }
 
-const getBranchCustomerByBranc_id = async (branch_id: string) => {
-  const knex = getDbConnection()
-  try {
-    return await knex('yaazoru.branchCustomer').where({ branch_id }).select()
-  } catch (err) {
-    throw err
-  }
+const getBranchCustomerByBranc_id = async (branch_id: string, offset: number): Promise<{ branchCustomers: BranchCustomer.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const branchCustomers = await knex('yaazoru.branchCustomer')
+            .select('*')
+            .where({ branch_id })
+            .orderBy('branchCustomer_id')
+            .limit(limit)
+            .offset(offset)
+
+        const [{ count }] = await knex('yaazoru.branchCustomer')
+            .where({ branch_id })
+            .count('*')
+
+        return {
+            branchCustomers,
+            total: parseInt(count as string, 10)
+        }
+    } catch (err) {
+        throw err
+    }
 }
 
-const getBranchCustomerByCuseomer_id = async (customer_id: string) => {
-  const knex = getDbConnection()
-  try {
-    return await knex('yaazoru.branchCustomer').where({ customer_id }).select()
-  } catch (err) {
-    throw err
-  }
+const getBranchCustomerByCuseomer_id = async (customer_id: string, offset: number): Promise<{ branchCustomers: BranchCustomer.Model[], total: number }> => {
+    const knex = getDbConnection()
+    try {
+        const branchCustomers = await knex('yaazoru.branchCustomer')
+            .select('*')
+            .where({ customer_id })
+            .orderBy('branchCustomer_id')
+            .limit(limit)
+            .offset(offset)
+
+        const [{ count }] = await knex('yaazoru.branchCustomer')
+            .where({ customer_id })
+            .count('*')
+
+        return {
+            branchCustomers,
+            total: parseInt(count as string, 10)
+        }
+    } catch (err) {
+        throw err
+    }
 }
 
 const updateBranchCustomer = async (

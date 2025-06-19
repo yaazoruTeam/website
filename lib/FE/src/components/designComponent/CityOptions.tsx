@@ -71,8 +71,8 @@ const CityOptions: React.FC<CityOptionsProps> = ({ cities, onCitySelect }) => {
             '&::-webkit-scrollbar': {
               display: 'none',
             },
-            '-ms-overflow-style': 'none',
-            'scrollbar-width': 'none',
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
           }}
         >
           {cities.map((city, index) => (
