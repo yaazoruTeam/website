@@ -277,5 +277,5 @@ export {
   searchCustomersByName,
   getUniqueCities,
   getCustomersByStatus,
-  getCustomersByDateRange,,
+  getCustomersByDateRange,
 }

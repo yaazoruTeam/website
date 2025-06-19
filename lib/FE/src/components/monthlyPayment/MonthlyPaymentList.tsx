@@ -82,7 +82,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     { label: t('nextCharge'), key: 'next_charge' },
     { label: t('update'), key: 'update_at' },
     isCustomerCard && { label: '', key: 'updateMonthlyPayment' },
-  ].filter(Boolean) as { label: string key: string }[]
+  ].filter(Boolean) as { label: string, key: string }[]
 
   const tableData = monthlyPayment.map((payment) => ({
     monthlyPayment_id: payment.monthlyPayment_id,

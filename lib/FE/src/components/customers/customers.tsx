@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import CustomersList from './customersList'
 import { useFetchCustomers } from './useFetchCustomers'
-import { Box } from '@mui/material'
 import ChatBot from '../ChatBot/ChatBot'
 
 const Customers: React.FC = () => {
