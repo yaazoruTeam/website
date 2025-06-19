@@ -1,12 +1,12 @@
-import { CreditDetails, HttpError } from "../model";
-import getConnection from "./connection";
+import { CreditDetails, HttpError } from '../model'
+import getDbConnection from './connection'
 
-const limit = Number(process.env.LIMIT) || 10;
+const limit = Number(process.env.LIMIT) || 10
 
 const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
+    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails')
     const [newCreditDetails] = await query
       .insert({
         customer_id: creditDetails.customer_id,
@@ -16,64 +16,64 @@ const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any
         created_at: creditDetails.created_at,
         update_at: creditDetails.update_at,
       })
-      .returning("*");
-    return newCreditDetails;
+      .returning('*')
+    return newCreditDetails
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const getCreditDetails = async (offset: number): Promise<{ creditDetails: CreditDetails.Model[], total: number }> => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
     const creditDetails = await knex('yaazoru.creditDetails')
       .select('*')
       .orderBy('credit_id')
       .limit(limit)
-      .offset(offset);
+      .offset(offset)
 
-    const [{ count }] = await knex('yaazoru.creditDetails').count('*');
+    const [{ count }] = await knex('yaazoru.creditDetails').count('*')
     return {
       creditDetails,
       total: parseInt(count as string, 10)
-    };
+    }
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const getCreditDetailsById = async (credit_id: string) => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    return await knex("yaazoru.creditDetails").where({ credit_id }).first();
+    return await knex('yaazoru.creditDetails').where({ credit_id }).first()
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const updateCreditDetails = async (
   credit_id: string,
   creditDetails: CreditDetails.Model,
-  trx?: any
+  trx?: any,
 ) => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails');
+    const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails')
     const updateCreditDetails = await query
       .where({ credit_id })
       .update(creditDetails)
-      .returning("*");
+      .returning('*')
     if (updateCreditDetails.length === 0) {
-      throw { status: 404, message: "CreditDetails not found" };
+      throw { status: 404, message: 'CreditDetails not found' }
     }
-    return updateCreditDetails[0];
+    return updateCreditDetails[0]
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 // const deleteCrCreditDetails = async (credit_id: string) => {
-//   const knex = getConnection();
+//   const knex = getDbConnection();
 //   try {
 //     const updateCreditDetails = await knex("yaazoru.creditDetails")
 //       .where({ credit_id })
@@ -93,30 +93,27 @@ const updateCreditDetails = async (
 // };
 
 const doesCreditDetailsExist = async (credit_id: string): Promise<boolean> => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    const result = await knex("yaazoru.creditDetails")
-      .select("credit_id")
+    const result = await knex('yaazoru.creditDetails')
+      .select('credit_id')
       .where({ credit_id })
-      .first();
-    return !!result;
+      .first()
+    return !!result
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 const doesTokenExist = async (token: string): Promise<boolean> => {
-  const knex = getConnection();
+  const knex = getDbConnection()
   try {
-    const result = await knex("yaazoru.creditDetails")
-      .select("token")
-      .where({ token })
-      .first();
-    return !!result;
+    const result = await knex('yaazoru.creditDetails').select('token').where({ token }).first()
+    return !!result
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
 export {
   createCreditDetails,
@@ -126,4 +123,4 @@ export {
   //   deleteCrCreditDetails,
   doesCreditDetailsExist,
   doesTokenExist,
-};
+}

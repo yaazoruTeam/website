@@ -176,5 +176,10 @@
   "durationCall": "duration of the call",
   "timeCall": "time of call",
   "costInShekels": "cost in shekels",
-  "penniesPerMinute": "pennies per minute"
+  "penniesPerMinute": "pennies per minute",
+  "customerComments": "customer comments",
+  "WriteComment": "write a comment",
+  "closed": "closed",
+  "AddingEmoji": "adding emoji",
+  "send": "send"
 }

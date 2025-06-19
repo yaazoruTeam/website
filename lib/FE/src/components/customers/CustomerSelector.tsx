@@ -1,41 +1,41 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
-import { Autocomplete, CircularProgress, useMediaQuery, Box, TextField, InputAdornment } from "@mui/material";
-import { useFetchCustomers } from "./useFetchCustomers";
-import { Customer } from "../../model/src";
-import AddCustomerForm, { AddCustomerFormInputs } from "./AddCustomerForm";
-import CustomModal from "../designComponent/Modal";
-import { useTranslation } from "react-i18next";
-import { addCustomer } from "./addCustomerLogic";
-import { useDebounce } from "../../utils/useDebounce";
-import { CustomButton } from "../designComponent/Button";
-import { RecordCustomer } from "../../stories/RecordCustomer/RecordCustomer";
-import { CustomTextField } from "../designComponent/Input";
-import { useForm } from "react-hook-form";
-import CustomTypography from "../designComponent/Typography";
-import { colors } from "../../styles/theme";
-import { PencilSquareIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import React, { useEffect, useState, useRef, useMemo } from 'react'
+import { Autocomplete, CircularProgress, useMediaQuery, Box, TextField, InputAdornment } from '@mui/material'
+import { useFetchCustomers } from './useFetchCustomers'
+import { Customer } from '../../model/src'
+import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm'
+import CustomModal from '../designComponent/Modal'
+import { useTranslation } from 'react-i18next'
+import { addCustomer } from './addCustomerLogic'
+import { useDebounce } from '../../utils/useDebounce'
+import { CustomButton } from '../designComponent/Button'
+import { RecordCustomer } from '../../stories/RecordCustomer/RecordCustomer'
+import { CustomTextField } from '../designComponent/Input'
+import { useForm } from 'react-hook-form'
+import CustomTypography from '../designComponent/Typography'
+import { colors } from '../../styles/theme'
+import { PencilSquareIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 
 interface CustomerSelectorProps {
-    onCustomerSelect: (customer: Customer.Model) => void;
-    initialCustomer?: Customer.Model;
+  onCustomerSelect: (customer: Customer.Model) => void
+  initialCustomer?: Customer.Model
 }
 
 interface SelectCustomerFormInputs {
-    full_name: string;
-    email?: string;
-    phone_number?: string;
+    full_name: string
+    email?: string
+    phone_number?: string
 }
 const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, initialCustomer }) => {
-    const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState("");
-    const debouncedSearchTerm = useDebounce(searchTerm, 500);
-    const [page, setPage] = useState(1);
-    const [allCustomers, setAllCustomers] = useState<Customer.Model[]>([]);
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer || null);
-    const [openModal, setOpenModal] = useState(false);
-    const isMobile = useMediaQuery('(max-width:600px)');
-    const hasMore = useRef(true);
-    const loadingMoreRef = useRef(false);
+    const { t } = useTranslation()
+    const [searchTerm, setSearchTerm] = useState('')
+    const debouncedSearchTerm = useDebounce(searchTerm, 500)
+    const [page, setPage] = useState(1)
+    const [allCustomers, setAllCustomers] = useState<Customer.Model[]>([])
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer.Model | null>(initialCustomer || null)
+    const [openModal, setOpenModal] = useState(false)
+    const isMobile = useMediaQuery('(max-width:600px)')
+    const hasMore = useRef(true)
+    const loadingMoreRef = useRef(false)
 
     const filterType = useMemo(() => {
         return debouncedSearchTerm
@@ -62,69 +62,69 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
     }, [debouncedSearchTerm]);
 
     useEffect(() => {
-        if (!customers) return;
+        if (!customers) return
         if (customers.length === 0) {
-            console.log('No more customers to load');
+            console.log('No more customers to load')
             if (page > 1) {
-                hasMore.current = false;
+                hasMore.current = false
             }
-            return;
+            return
         }
-        console.log('customers:', customers);
+        console.log('customers:', customers)
 
 
-        const ids = new Set(allCustomers.map(c => c.customer_id));
-        const newCustomers = customers.filter(c => !ids.has(c.customer_id));
-        setAllCustomers(prev => [...prev, ...newCustomers]);
-        loadingMoreRef.current = false;
+        const ids = new Set(allCustomers.map(c => c.customer_id))
+        const newCustomers = customers.filter(c => !ids.has(c.customer_id))
+        setAllCustomers(prev => [...prev, ...newCustomers])
+        loadingMoreRef.current = false
 
-    }, [customers]);
+    }, [customers])
 
     const handleListboxScroll = (event: React.UIEvent<HTMLUListElement>) => {
-        const listboxNode = event.currentTarget;
-        const bottom = listboxNode.scrollTop + listboxNode.clientHeight >= listboxNode.scrollHeight - 100;
+        const listboxNode = event.currentTarget
+        const bottom = listboxNode.scrollTop + listboxNode.clientHeight >= listboxNode.scrollHeight - 100
         if (
             bottom &&
             !isLoading &&
             hasMore.current &&
             !loadingMoreRef.current
         ) {
-            console.log('Loading more customers...');
+            console.log('Loading more customers...')
 
-            loadingMoreRef.current = true;
-            setPage(prev => prev + 1);
+            loadingMoreRef.current = true
+            setPage(prev => prev + 1)
         }
-    };
+    }
 
     const handleAddCustomer = async (data: AddCustomerFormInputs) => {
         try {
-            const newCustomer = await addCustomer(data);
-            setSelectedCustomer(newCustomer);
-            onCustomerSelect(newCustomer);
-            setOpenModal(false);
+            const newCustomer = await addCustomer(data)
+            setSelectedCustomer(newCustomer)
+            onCustomerSelect(newCustomer)
+            setOpenModal(false)
         } catch (err) {
-            alert(`שגיאה: ${err}`);
-            setOpenModal(false);
+            alert(`שגיאה: ${err}`)
+            setOpenModal(false)
         }
-    };
+    }
     const handleSelectCustomer = (customer: Customer.Model) => {
-        setSelectedCustomer(customer);
-        onCustomerSelect(customer);
-    };
+        setSelectedCustomer(customer)
+        onCustomerSelect(customer)
+    }
 
     return (
         <>
             <Box
                 sx={{
                     width: '100%',
-                    height: "100%",
+                    height: '100%',
                     padding: 3.5,
                     backgroundColor: colors.c6,
                     borderRadius: 1,
-                    display: "inline-flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-end",
+                    display: 'inline-flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-end',
                     gap: 3.5,
                     direction: 'rtl'
                 }}
@@ -143,55 +143,55 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                     <Box
                         sx={{
                             width: '100%',
-                            alignSelf: "stretch",
-                            justifyContent: "flex-end",
-                            alignItems: "flex-start",
+                            alignSelf: 'stretch',
+                            justifyContent: 'flex-end',
+                            alignItems: 'flex-start',
                             gap: 3.5,
-                            display: "inline-flex",
+                            display: 'inline-flex',
                         }}
                     >
                         <Box
                             sx={{
                                 width: 393.33,
                                 height: 90,
-                                flexDirection: "column",
-                                alignItems: "flex-end",
+                                flexDirection: 'column',
+                                alignItems: 'flex-end',
                                 gap: 1,
-                                display: "flex",
+                                display: 'flex',
                                 justifyContent: 'flex-end',
                                 textAlign: 'right',
                                 direction: 'rtl'
                             }}
                         >
                             <Autocomplete
-                                sx={{ width: isMobile ? "100%" : 400, direction: "rtl" }}
+                                sx={{ width: isMobile ? '100%' : 400, direction: 'rtl' }}
                                 options={optionsWithAdd}
                                 getOptionLabel={(option) =>
-                                    "isAddNew" in option
-                                        ? ""
-                                        : `${option.first_name ?? ""} ${option.last_name ?? ""}`.trim()
+                                    'isAddNew' in option
+                                        ? ''
+                                        : `${option.first_name ?? ''} ${option.last_name ?? ''}`.trim()
                                 }
                                 value={selectedCustomer}
                                 onChange={(_, value) => {
-                                    if (value && "isAddNew" in value) {
-                                        setOpenModal(true);
-                                        return;
+                                    if (value && 'isAddNew' in value) {
+                                        setOpenModal(true)
+                                        return
                                     }
-                                    setSelectedCustomer(value);
-                                    if (value) onCustomerSelect(value);
+                                    setSelectedCustomer(value)
+                                    if (value) onCustomerSelect(value)
                                 }}
                                 filterOptions={(options) => options}
                                 loading={isLoading}
-                                loadingText={t("loading")}
+                                loadingText={t('loading')}
                                 noOptionsText={
-                                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                        <span>{t("noCustomersFound")}</span>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        <span>{t('noCustomersFound')}</span>
 
                                         <CustomButton
                                             label={t('addingNewCustomer')}
                                             size={isMobile ? 'small' : 'large'}
-                                            state="default"
-                                            buttonType="third"
+                                            state='default'
+                                            buttonType='third'
                                             sx={{
                                                 justifyContent: 'center'
                                             }}
@@ -203,83 +203,83 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                                     <TextField
                                         {...params}
                                         // label לא בשימוש כדי שלא יהיה label צף
-                                        placeholder={t("typeCustomerName")}
+                                        placeholder={t('typeCustomerName')}
                                         onChange={e => setSearchTerm(e.target.value)}
                                         InputProps={{
                                             ...params.InputProps,
                                             endAdornment: (
                                                 <>
                                                     {selectedCustomer
-                                                        ? <InputAdornment position="end">
+                                                        ? <InputAdornment position='end'>
                                                             <PencilSquareIcon style={{ width: 24, height: 24, color: colors.c11 }} />
                                                         </InputAdornment>
-                                                        : <InputAdornment position="end">
+                                                        : <InputAdornment position='end'>
                                                             <PlusCircleIcon style={{ width: 24, height: 24, color: colors.c11 }} />
                                                         </InputAdornment>
                                                     }
-                                                    {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {isLoading ? <CircularProgress color='inherit' size={20} /> : null}
                                                     {params.InputProps.endAdornment}
                                                 </>
                                             ),
                                             disableUnderline: true,
                                             sx: {
                                                 color: colors.c11,
-                                                fontSize: "16px",
-                                                fontFeatureSettings: "'liga' off, 'clig' off",
-                                                lineHeight: "120%",
-                                                fontStyle: "normal",
+                                                fontSize: '16px',
+                                                fontFeatureSettings:  "'/liga/' off, 'clig' off'",
+                                                lineHeight: '120%',
+                                                fontStyle: 'normal',
                                                 fontWeight: 400,
-                                                wordWrap: "break-word",
-                                                textAlign: "right",
-                                                direction: "rtl",
+                                                wordWrap: 'break-word',
+                                                textAlign: 'right',
+                                                direction: 'rtl',
                                             },
                                         }}
-                                        variant="standard"
+                                        variant='standard'
                                         fullWidth
                                         sx={{
-                                            borderRadius: "6px",
+                                            borderRadius: '6px',
                                             background: colors.feild,
-                                            alignSelf: "stretch",
-                                            height: "44px",
-                                            width: "100%",
-                                            "& .MuiInputBase-root": {
-                                                height: "44px",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                paddingRight: "12px",
-                                                paddingLeft: "12px",
+                                            alignSelf: 'stretch',
+                                            height: '44px',
+                                            width: '100%',
+                                            '& .MuiInputBase-root': {
+                                                height: '44px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                paddingRight: '12px',
+                                                paddingLeft: '12px',
                                             },
-                                            "& input": {
-                                                textAlign: "right",
-                                                direction: "rtl",
+                                            '& input': {
+                                                textAlign: 'right',
+                                                direction: 'rtl',
                                                 padding: 0,
                                             },
-                                            "@media (max-width: 600px)": {
-                                                width: "100%",
-                                                padding: "8px",
-                                                gap: "8px",
+                                            '@media (max-width: 600px)': {
+                                                width: '100%',
+                                                padding: '8px',
+                                                gap: '8px',
                                             },
-                                            "@media (min-width: 600px)": {
-                                                width: "100%",
-                                                padding: "10px",
+                                            '@media (min-width: 600px)': {
+                                                width: '100%',
+                                                padding: '10px',
                                             },
                                         }}
                                     />
                                 )}
                                 renderOption={(props, option) => {
-                                    if ("isAddNew" in option) {
+                                    if ('isAddNew' in option) {
                                         return (
-                                            <li {...props} key="add-new-customer">
+                                            <li {...props} key='add-new-customer'>
                                                 <CustomButton
                                                     label={t('addingNewCustomer')}
                                                     size={isMobile ? 'small' : 'large'}
-                                                    state="default"
-                                                    buttonType="third"
+                                                    state='default'
+                                                    buttonType='third'
                                                     sx={{ justifyContent: 'center', width: '100%' }}
                                                     onClick={() => setOpenModal(true)}
                                                 />
                                             </li>
-                                        );
+                                        )
                                     }
                                     return (
                                         <li {...props} key={option.customer_id}>
@@ -290,15 +290,15 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                                                 onClick={() => handleSelectCustomer(option)}
                                             />
                                         </li>
-                                    );
+                                    )
                                 }}
                                 ListboxProps={{
                                     onScroll: handleListboxScroll,
-                                    style: { maxHeight: 350, direction: "rtl" },
+                                    style: { maxHeight: 350, direction: 'rtl' },
                                 }}
                                 isOptionEqualToValue={(option, value) =>
-                                    !("isAddNew" in option) &&
-                                    !("isAddNew" in value) &&
+                                    !('isAddNew' in option) &&
+                                    !('isAddNew' in value) &&
                                     option.customer_id === value.customer_id
                                 } clearOnBlur={false}
                                 openOnFocus
@@ -310,17 +310,17 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                             sx={{
                                 width: 393.33,
                                 height: 90,
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "flex-end",
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'flex-end',
                                 gap: 1,
-                                display: "inline-flex",
+                                display: 'inline-flex',
                                 visibility: selectedCustomer ? 'visible' : 'hidden',
                             }}
                         >
                             <CustomTextField
                                 control={control}
-                                name="customerPhone"
+                                name='customerPhone'
                                 label={t('phone')}
                                 placeholder={selectedCustomer?.phone_number || t('phone')}
                                 disabled
@@ -330,17 +330,17 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                             sx={{
                                 width: 393.33,
                                 height: 90,
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "flex-end",
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'flex-end',
                                 gap: 1,
-                                display: "inline-flex",
+                                display: 'inline-flex',
                                 visibility: selectedCustomer ? 'visible' : 'hidden',
                             }}
                         >
                             <CustomTextField
                                 control={control}
-                                name="customerEmail"
+                                name='customerEmail'
                                 label={t('email')}
                                 placeholder={selectedCustomer?.email || t('email')}
                                 disabled
@@ -353,18 +353,18 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
             <CustomModal open={openModal} onClose={() => setOpenModal(false)}>
                 <Box
                     sx={{
-                        width: isMobile ? "100%" : 400,
-                        backgroundColor: "#fff",
+                        width: isMobile ? '100%' : 400,
+                        backgroundColor: '#fff',
                         borderRadius: 2,
                         p: 3,
-                        direction: "rtl",
+                        direction: 'rtl',
                     }}
                 >
                     <AddCustomerForm onSubmit={handleAddCustomer} />
                 </Box>
             </CustomModal>
         </>
-    );
-};
+    )
+}
 
-export default CustomerSelector;
+export default CustomerSelector

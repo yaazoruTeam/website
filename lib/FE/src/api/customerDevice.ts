@@ -1,37 +1,39 @@
-import axios, { AxiosResponse } from 'axios';
-import { handleTokenRefresh } from './token';
-import { CustomerDevice } from '../model/src';
+import axios, { AxiosResponse } from 'axios'
+import { handleTokenRefresh } from './token'
+import { CustomerDevice } from '../model/src'
 
-// const baseUrl = `${process.env.BASE_URL}/customer`;
-const baseUrl = 'http://localhost:3006/controller/customerDevice';
+// const baseUrl = `${process.env.BASE_URL}/customer`
+const baseUrl = 'http://localhost:3006/controller/customerDevice'
 
 export interface PaginatedCustomerDeviceResponse {
-    data: CustomerDevice.Model[];
-    total: number;
-    page?: number;
-    totalPages: number;
+  data: CustomerDevice.Model[]
+  total: number
+  page?: number
+  totalPages: number
 }
 
 // GET
 export const getAllCustomerDevicesByCustomerId = async (customer_id: string, page: number): Promise<PaginatedCustomerDeviceResponse> => {
-    try {
-        const newToken = await handleTokenRefresh();
-        if (!newToken) {
-            return { data: [], total: 0, totalPages: 0 };
-        }
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('No token found!');
-        }
-        const response: AxiosResponse<PaginatedCustomerDeviceResponse> = await axios.get(`${baseUrl}/allDevices/${customer_id}?page=${page}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching device by customer id", error);
-        throw error;
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return { data: [], total: 0, totalPages: 0 }
     }
-};
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<PaginatedCustomerDeviceResponse> = await axios.get(
+      `${baseUrl}/allDevices/${customer_id}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    return response.data
+  } catch (error) {
+    console.error('Error fetching device by customer id', error)
+    throw error
+  }
+}
