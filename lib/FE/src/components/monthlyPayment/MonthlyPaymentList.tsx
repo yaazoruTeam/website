@@ -21,7 +21,6 @@ interface MonthlyPaymentListProps {
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false, page = 1, totalPages = 1, total = 0, onPageChange }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [customerNames, setCustomerNames] = useState<{ [key: string]: string }>({})
   const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({})
   const [searchCustomer, setSearchCustomer] = useState<string>('')
   const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment)
@@ -60,8 +59,15 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     })
 
     setFilteredPayments(filtered)
-  }, [searchCustomer, monthlyPayment, customerData])
+  }, [searchCustomer,monthlyPayment, customerData])
 
+      console.log('searchCustomer changed:', searchCustomer);
+
+    useEffect(() => {
+      console.log('searchCustomer changed:', searchCustomer);
+      
+    
+  }, [searchCustomer])
   const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
     navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`, {
       state: {
@@ -84,7 +90,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     isCustomerCard && { label: '', key: 'updateMonthlyPayment' },
   ].filter(Boolean) as { label: string, key: string }[]
 
-  const tableData = monthlyPayment.map((payment) => ({
+  const tableData = filteredPayments.map((payment) => ({
     monthlyPayment_id: payment.monthlyPayment_id,
     customer_name: (
       <Link

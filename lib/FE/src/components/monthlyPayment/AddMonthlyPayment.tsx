@@ -121,14 +121,6 @@ const AddMonthlyPayment: React.FC = () => {
     }
   }, [paymentData, itemsData.length, customerData, timeData, addMonthlyPayment]) // זה יתעדכן כשתהיה עדכון ב-paymentData
 
-  //     const handleSave = async () => {
-  //     if (!customerData || !itemsData.length || !paymentData || !timeData) {
-  //         alert("לא כל הנתונים מוכנים!")
-  //         return
-  //     }
-  //     await addMonthlyPayment()
-  // }
-
   useEffect(() => {
     console.log('נתוני הזמן המעודכנים:', timeData)
   }, [timeData])
@@ -180,7 +172,7 @@ const AddMonthlyPayment: React.FC = () => {
           size={isMobile ? 'small' : 'large'}
           state='default'
           buttonType='first'
-          onClick={charge}//{handleSave}
+          onClick={charge}
         />
       </Box>
     </>
