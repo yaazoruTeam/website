@@ -61,13 +61,6 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     setFilteredPayments(filtered)
   }, [searchCustomer,monthlyPayment, customerData])
 
-      console.log('searchCustomer changed:', searchCustomer);
-
-    useEffect(() => {
-      console.log('searchCustomer changed:', searchCustomer);
-      
-    
-  }, [searchCustomer])
   const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
     navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`, {
       state: {
