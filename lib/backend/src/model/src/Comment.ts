@@ -4,7 +4,7 @@ export enum EntityType {
   Branch = "branch",
 }
 interface Model {
-  comment_id: number;
+  comment_id: string;
   entity_id: string;
   entity_type: EntityType;
   content: string;
