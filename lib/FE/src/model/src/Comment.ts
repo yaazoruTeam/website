@@ -5,7 +5,7 @@ export enum EntityType {
 }
 
 interface Model {
-  comment_id: String;
+  comment_id: string;
   entity_id: string;
   entity_type: EntityType;
   content: string;
