@@ -81,14 +81,34 @@ export const createComment = async (
   }
 };
 
-export const uploadFile = async (file: File): Promise<{ fileUrl: string }> => {
-  const formData = new FormData();
-  formData.append("file", file); 
+export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
+  try {
+    const newToken = await handleTokenRefresh();
+    if (!newToken) {
+      throw new Error("Failed to refresh token");
+    }
 
-  const response = await axios.post(`${baseUrl}/upload`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found!");
+    }
+
+    const formData = new FormData();
+    formData.append("audio", audioBlob);
+
+    const response = await axios.post<{ transcription: string }>(
+      `${baseUrl}/transcribe`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data.transcription;
+  } catch (error) {
+    console.error("Error transcribing audio:", error);
+    throw error;
+  }
 };

@@ -184,6 +184,10 @@
   "FailedToLoadComments.PleaseTryAgainLater.": "Failed to load comments. Please try again later.",
   "FailedToSendComment.PleaseTryAgain.": "Failed to send comment. Please try again.",
   "FailedToUploadFile.PleaseTryAgain.": "Failed to upload file. Please try again.",
+  "CouldNotStartRecording.CheckMicrophonePermissions.": "Could not start recording. Check microphone permissions.",
+  "ErrorTranscribingRecording.PleaseTryAgain.": "Error transcribing recording. please try again.",
+  "stopRecording": "stop recotding",
+  "record": "record",
   "AttachFile": "attach a file",
   "ImageSent": "Image sent"
 }

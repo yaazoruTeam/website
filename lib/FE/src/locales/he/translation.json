@@ -188,6 +188,10 @@
     "FailedToLoadComments.PleaseTryAgainLater.": "טעינת ההערות נכשלה. אנא נסה שוב מאוחר יותר.",
     "FailedToSendComment.PleaseTryAgain.": "שליחת ההערה נכשלה. אנא נסה שוב.",
     "FailedToUploadFile.PleaseTryAgain.": "העלאת הקובץ נכשלה. אנא נסה שוב.",
+    "CouldNotStartRecording.CheckMicrophonePermissions.": "לא ניתן היה להתחיל בהקלטה. בדוק את הרשאות המיקרופון.",
+    "ErrorTranscribingRecording.PleaseTryAgain.": "שגיאה בהמרת ההקלטה לטקסט. אנא נסה שוב.",
+    "stopRecording": "הפסקת הקלטה",
+    "record": "הקלטה",
     "AttachFile": "צרף קובץ",
     "ImageSent": "תמונה נשלחה"
 }

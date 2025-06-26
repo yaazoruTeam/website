@@ -1,8 +1,7 @@
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { MicrophoneIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { FaceSmileIcon } from "@heroicons/react/24/outline";
-import { PaperClipIcon } from "@heroicons/react/24/outline";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { colors } from "../../styles/theme";
 import { Alert, Box, IconButton, Snackbar, TextField } from "@mui/material";
@@ -14,6 +13,7 @@ import {
   getCommentsByEntityTypeAndEntityId,
   createComment,
 } from "../../api/comment";
+import AudioRecorderInput from "./AudioRecorderInput";
 import { formatDateToString } from "../designComponent/FormatDate";
 import profilePicture from "../../assets/profilePicture.svg";
 import EmojiPicker from "emoji-picker-react";
@@ -24,13 +24,15 @@ interface ChatBotProps {
   entityId: string;
 }
 
+interface ClientComment extends Comment.Model {
+  isPending?: boolean;
+  isAudio?: boolean;
+  audioDuration?: number;
+  audioUrl?: string;
+}
+
 const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
-  const [comments, setComments] = useState<
-    Array<
-      | Comment.Model
-      | (Omit<Comment.Model, "comment_id"> & { comment_id: string })
-    >
-  >([]);
+  const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiPickerPosition, setEmojiPickerPosition] = useState<{
@@ -40,6 +42,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isRecordingState, setIsRecordingState] = useState(false);
+  const currentTempAudioCommentIdRef = useRef<string | null>(null);
 
   const { t } = useTranslation();
 
@@ -62,7 +66,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     };
 
     fetchComments();
-  }, [ENTITY_TYPE, ENTITY_ID]);
+  }, [ENTITY_TYPE, ENTITY_ID, t]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -110,14 +114,13 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     if (!inputText.trim()) return;
 
     const tempCommentId = `temp-${Date.now()}`;
-    const tempComment: Omit<Comment.Model, "comment_id"> & {
-      comment_id: string;
-    } = {
+    const tempComment: ClientComment = {
       comment_id: tempCommentId,
       entity_type: ENTITY_TYPE,
       entity_id: ENTITY_ID,
       content: inputText,
       created_at: new Date(),
+      isAudio: false,
     };
 
     setComments((prev) => [...prev, tempComment]);
@@ -144,59 +147,78 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const tempCommentId = `temp-file-${Date.now()}`;
-    const tempFileComment: Omit<Comment.Model, "comment_id"> & {
-      comment_id: string;
-    } = {
-      comment_id: tempCommentId,
-      entity_type: ENTITY_TYPE,
-      entity_id: ENTITY_ID,
-      content: file.type.startsWith("image/")
-        ? `[${t("ImageSent")}]`
-        : `📎 ${file.name}`,
-      created_at: new Date(),
-    };
-
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setComments((prev) => [
-          ...prev,
-          { ...tempFileComment, content: "" /* file_url */ },
-        ]);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setComments((prev) => [...prev, tempFileComment]);
-    }
-
-    e.target.value = "";
-
-    try {
-      const fileCommentDataToSend: CreateCommentDto = {
+  const handleAudioRecorded = useCallback(
+    async (audioBlob: Blob, transcription: string, duration: number) => {
+      const tempId = `temp-audio-${Date.now()}`;
+      currentTempAudioCommentIdRef.current = tempId;
+      const initialContent = isRecordingState
+        ? "🔴 מקליט..."
+        : "⌛ תמלול בהמתנה...";
+      const tempAudioComment: ClientComment = {
+        comment_id: tempId,
         entity_type: ENTITY_TYPE,
         entity_id: ENTITY_ID,
-        content: tempFileComment.content,
-        created_at: tempFileComment.created_at.toISOString(),
+        content: initialContent,
+        created_at: new Date(),
+        isPending: true,
+        isAudio: true,
+        audioDuration: duration,
+        audioUrl: URL.createObjectURL(audioBlob),
       };
 
-      const sentComment = await createComment(fileCommentDataToSend);
-      setComments((prev) =>
-        prev.map((c) => (c.comment_id === tempCommentId ? sentComment : c))
-      );
-    } catch (err) {
-      console.error("Error uploading file:", err);
-      setError(t("FailedToUploadFile.PleaseTryAgain."));
-      setComments((prev) => prev.filter((c) => c.comment_id !== tempCommentId));
+      setComments((prev) => [...prev, tempAudioComment]);
+
+      try {
+        const finalComment: CreateCommentDto = {
+          entity_type: ENTITY_TYPE,
+          entity_id: ENTITY_ID,
+          content: transcription,
+          created_at: new Date().toISOString(),
+        };
+
+        const sentComment = await createComment(finalComment);
+
+        setComments((prev) =>
+          prev.map((c) =>
+            c.comment_id === tempId
+              ? {
+                  ...sentComment,
+                  isAudio: true,
+                  audioUrl: tempAudioComment.audioUrl,
+                  audioDuration: duration,
+                  isPending: false,
+                }
+              : c
+          )
+        );
+      } catch (err) {
+        console.error("Error transcribing/sending audio comment:", err);
+        setError(t("FailedToSendAudioComment.PleaseTryAgain."));
+        setComments((prev) =>
+          prev.filter((c) => String(c.comment_id) !== tempId)
+        );
+      } finally {
+        currentTempAudioCommentIdRef.current = null;
+      }
+    },
+    [ENTITY_TYPE, ENTITY_ID, t]
+  );
+
+  const handleRecordingStateChange = useCallback((isRecording: boolean) => {
+    setIsRecordingState(isRecording);
+    if (isRecording) {
+      setInputText("");
     }
-  };
+  }, []);
 
   const handleCloseError = () => {
     setError(null);
+  };
+
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
   return (
@@ -266,7 +288,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
 
           const formattedDateForDisplay = formatDateToString(date);
 
-          const formattedTime = date.toLocaleTimeString("en-US", {
+          const formattedTime = new Date(date).toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
             hour12: true,
@@ -355,24 +377,86 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
                     flexGrow: 1,
                   }}
                 >
-                  <Box
-                    sx={{
-                      maxWidth: "100%",
-                      borderRadius: 1.5,
-                      backgroundColor: colors.c6,
-                      border: `1px solid ${colors.c37}`,
-                      color: colors.c11,
-                      textAlign: "right",
-                      fontFamily: "Heebo",
-                      fontSize: 16,
-                      whiteSpace: "pre-wrap",
-                      wordWrap: "break-word",
-                      direction: "rtl",
-                      padding: "10px 14px",
-                    }}
-                  >
-                    {comment.content}
-                  </Box>
+                  {comment.isAudio ? (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        maxWidth: "100%",
+                        p: 1.5,
+                        borderRadius: 1.5,
+                        backgroundColor: colors.c6,
+                        border: `1px solid ${colors.c37}`,
+                        minWidth: 160,
+                        position: "relative",
+                      }}
+                    >
+                      {comment.isAudio && (
+                        <MicrophoneIcon
+                          style={{
+                            width: 20,
+                            height: 20,
+                            color: colors.c37,
+                            flexShrink: 0,
+                          }}
+                        />
+                      )}
+                      <CustomTypography
+                        text={
+                          isRecordingState &&
+                          String(comment.comment_id) ===
+                            currentTempAudioCommentIdRef.current
+                            ? "🔴 מקליט..."
+                            : comment.isPending
+                            ? "⌛ תמלול בהמתנה..."
+                            : comment.content
+                        }
+                        variant="h4"
+                        weight="medium"
+                        color={colors.c11}
+                        sx={{
+                          wordWrap: "break-word",
+                          flexGrow: 1,
+                        }}
+                      />
+                      {comment.audioDuration !== undefined &&
+                        (isRecordingState || !comment.isPending) && (
+                          <CustomTypography
+                            text={formatDuration(comment.audioDuration)}
+                            variant="h4"
+                            weight="regular"
+                            color={colors.c37}
+                            sx={{
+                              wordWrap: "break-word",
+                              lineHeight: 1,
+                              flexShrink: 0,
+                            }}
+                          />
+                        )}
+                    </Box>
+                  ) : (
+                    <Box
+                      sx={{
+                        maxWidth: "100%",
+                        borderRadius: 1.5,
+                        backgroundColor: colors.c6,
+                        border: `1px solid ${colors.c37}`,
+                        color: colors.c11,
+                        textAlign: "right",
+                        fontFamily: "Heebo",
+                        fontSize: 16,
+                        whiteSpace: "pre-wrap",
+                        wordWrap: "break-word",
+                        direction: "rtl",
+                        padding: "10px 14px",
+                      }}
+                    >
+                      {comment.isPending && !comment.isAudio
+                        ? `⌛ ${comment.content}`
+                        : comment.content}{" "}
+                    </Box>
+                  )}
 
                   {/* שעה מתחת להודעה בצד ימין */}
                   <Box
@@ -450,25 +534,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
             if (e.key === "Enter") sendComment();
           }}
         />
-        <input
-          type="file"
-          id="fileInput"
-          accept="image/*, .pdf, .doc, .docx"
-          style={{ display: "none" }}
-          onChange={handleFileUpload}
-        />
-        <PaperClipIcon
-          style={{
-            width: 18,
-            height: 18,
-            color: colors.c38,
-            cursor: "pointer",
-          }}
-          title={t("AttachFile")}
-          onClick={() => {
-            document.getElementById("fileInput")?.click();
-          }}
-        />
         {/* אייקון חיוך */}
         <FaceSmileIcon
           style={{
@@ -479,6 +544,11 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           }}
           title={t("AddingEmoji")}
           onClick={() => setShowEmojiPicker((prev) => !prev)}
+        />
+        <AudioRecorderInput
+          onAudioRecorded={handleAudioRecorded}
+          onError={setError}
+          onRecordingStateChange={handleRecordingStateChange}
         />
         <IconButton
           onClick={sendComment}
