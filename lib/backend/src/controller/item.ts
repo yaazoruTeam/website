@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, ItemForMonthlyPayment } from '../model'
 import * as db from '../db'
 
+const limit = Number(process.env.LIMIT) || 10
+
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     ItemForMonthlyPayment.sanitizeBodyExisting(req)
@@ -25,12 +27,21 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const getItems = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const item = await db.Item.getItems()
-    res.status(200).json(item)
-  } catch (error: any) {
-    next(error)
-  }
+    try {
+        const page = parseInt(req.query.page as string, 10) || 1
+        const offset = (page - 1) * limit
+
+        const { items, total } = await db.Item.getItems(offset)
+
+        res.status(200).json({
+            data: items,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total,
+        })
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 const getItemId = async (req: Request, res: Response, next: NextFunction) => {
@@ -52,21 +63,30 @@ const getItemId = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const getAllItemsByMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    ItemForMonthlyPayment.sanitizeIdExisting(req)
-    const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(req.params.id)
-    if (!existMonthlyPayment) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'monthlyPayment does not exist.',
-      }
-      throw error
+    try {
+        ItemForMonthlyPayment.sanitizeIdExisting(req)
+        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(req.params.id)
+        if (!existMonthlyPayment) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'monthlyPayment does not exist.',
+            }
+            throw error
+        }
+        const page = parseInt(req.query.page as string, 10) || 1
+        const offset = (page - 1) * limit
+
+        const { items, total } = await db.Item.getAllItemByMonthlyPaymentId(req.params.id, offset)
+
+        res.status(200).json({
+            data: items,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total,
+        })
+    } catch (error: any) {
+        next(error)
     }
-    const items = await db.Item.getAllItemByMonthlyPaymentId(req.params.id)
-    res.status(200).json(items)
-  } catch (error: any) {
-    next(error)
-  }
 }
 
 const updateItem = async (req: Request, res: Response, next: NextFunction) => {

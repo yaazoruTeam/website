@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '../db'
 import { CreditDetails, HttpError } from '../model'
 
+const limit = Number(process.env.LIMIT) || 10
+
 const createCreditDetails = async (
   req: Request,
   res: Response,
@@ -40,8 +42,17 @@ const createCreditDetails = async (
 
 const getCreditDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const creditDetails = await db.CreditDetails.getCreditDetails()
-    res.status(200).json(creditDetails)
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const { creditDetails, total } = await db.CreditDetails.getCreditDetails(offset)
+
+    res.status(200).json({
+      data: creditDetails,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total
+    })
   } catch (error: any) {
     next(error)
   }

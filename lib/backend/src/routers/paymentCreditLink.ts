@@ -9,11 +9,11 @@ paymentCreditLinkRouter.get('/', paymentCreditLinkController.getPaymentCreditLin
 paymentCreditLinkRouter.get('/:id', paymentCreditLinkController.getPaymentCreditLinkId)
 paymentCreditLinkRouter.get(
   '/monthlyPayment/:id',
-  paymentCreditLinkController.getPaymentCreditLinkByMonthlyPaymentId,
+  paymentCreditLinkController.getPaymentCreditLinksByMonthlyPaymentId,
 )
 paymentCreditLinkRouter.get(
   '/creditDetails/:id',
-  paymentCreditLinkController.getPaymentCreditLinkByCreditDetailsId,
+  paymentCreditLinkController.getPaymentCreditLinksByCreditDetailsId,
 )
 paymentCreditLinkRouter.put('/:id', paymentCreditLinkController.updatePaymentCreditLink)
 paymentCreditLinkRouter.delete('/:id', paymentCreditLinkController.deletePaymentCreditLink)

@@ -1,5 +1,7 @@
 import { HttpError, PaymentCreditLink } from '../model'
 import getDbConnection from './connection'
+const limit = Number(process.env.LIMIT) || 10
+
 
 const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -18,10 +20,20 @@ const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Mode
   }
 }
 
-const getPaymentCreditLink = async (): Promise<PaymentCreditLink.Model[]> => {
+const getPaymentCreditLinks = async (offset: number): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex.select().table('yaazoru.paymentCreditLink')
+    const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
+      .select('*')
+      .orderBy('paymentCreditLink_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.paymentCreditLink').count('*')
+    return {
+      paymentCreditLinks,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
@@ -36,19 +48,68 @@ const getPaymentCreditLinkId = async (paymentCreditLink_id: string) => {
   }
 }
 
-const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number) => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.paymentCreditLink').where({ monthlyPayment_id }).first()
+    const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
+      .select('*')
+      .orderBy('paymentCreditLink_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.paymentCreditLink').count('*')
+    return {
+      paymentCreditLinks,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
 }
 
-const getPaymentCreditLinkByCreditDetailsId = async (credit_id: string) => {
+// לפי monthlyPayment_id עם pagination
+const getPaymentCreditLinksByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.paymentCreditLink').where({ credit_id }).first()
+    const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
+      .select('*')
+      .where({ monthlyPayment_id })
+      .orderBy('paymentCreditLink_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.paymentCreditLink')
+      .where({ monthlyPayment_id })
+      .count('*')
+
+    return {
+      paymentCreditLinks,
+      total: parseInt(count as string, 10)
+    }
+  } catch (err) {
+    throw err
+  }
+}
+
+// לפי creditDetails_id עם pagination
+const getPaymentCreditLinksByCreditDetailsId = async (creditDetails_id: string, offset: number): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[], total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
+      .select('*')
+      .where({ creditDetails_id })
+      .orderBy('paymentCreditLink_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.paymentCreditLink')
+      .where({ creditDetails_id })
+      .count('*')
+
+    return {
+      paymentCreditLinks,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
@@ -93,28 +154,28 @@ const deletePaymentCreditLink = async (paymentCreditLink_id: string) => {
   }
 }
 
-// const findCustomer = async (criteria: { customer_id?: string; email?: string; id_number?: string; }) => {
-//     const knex = getDbConnection();
+// const findCustomer = async (criteria: { customer_id?: string email?: string id_number?: string }) => {
+//     const knex = getDbConnection()
 //     try {
 //         return await knex('yaazoru.customers')
 //             .where(function () {
 //                 if (criteria.email) {
-//                     this.orWhere({ email: criteria.email });
+//                     this.orWhere({ email: criteria.email })
 //                 }
 //                 if (criteria.id_number) {
-//                     this.orWhere({ id_number: criteria.id_number });
+//                     this.orWhere({ id_number: criteria.id_number })
 //                 }
 //             })
 //             .andWhere(function () {
 //                 if (criteria.customer_id) {
-//                     this.whereNot({ customer_id: criteria.customer_id });
+//                     this.whereNot({ customer_id: criteria.customer_id })
 //                 }
 //             })
-//             .first();
+//             .first()
 //     } catch (err) {
-//         throw err;
+//         throw err
 //     }
-// };
+// }
 
 const doesPaymentCreditLinkExist = async (paymentCreditLink_id: string): Promise<boolean> => {
   const knex = getDbConnection()
@@ -158,13 +219,22 @@ const doesCreditDetailsExistInPaymentCreditLink = async (credit_id: string): Pro
 
 export {
   createPaymentCreditLink,
-  getPaymentCreditLink,
+
+  getPaymentCreditLinks,
+
   getPaymentCreditLinkId,
-  getPaymentCreditLinkByCreditDetailsId,
-  getPaymentCreditLinkByMonthlyPaymentId,
+
+  getPaymentCreditLinksByMonthlyPaymentId,
+
+  getPaymentCreditLinksByCreditDetailsId,
+
   updatePaymentCreditLink,
+
   deletePaymentCreditLink,
-  /* findCustomer,*/ doesPaymentCreditLinkExist,
+
+  doesPaymentCreditLinkExist,
+
   doesMonthlyPaimentExistInPaymentCreditLink,
+
   doesCreditDetailsExistInPaymentCreditLink,
 }
