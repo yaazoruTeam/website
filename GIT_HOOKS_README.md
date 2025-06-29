@@ -68,3 +68,7 @@ To test if the hook is working:
 2. Stage the file with `git add`
 3. Commit with `git commit`
 4. You should see prettier running before the commit completes
+
+
+
+1234567890
