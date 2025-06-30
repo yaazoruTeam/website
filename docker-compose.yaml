@@ -8,6 +8,7 @@ services:
       - ./lib/backend/package.json:/app/package.json
       - ./lib/backend/tsconfig.json:/app/tsconfig.json
       - C:/dev/yaazoru/lib:/app/lib
+      - /app/node_modules
     ports:
       - "3006:3006"
     command: sh -c "npm install && npm run build-schema && PORT=3006 npm run dev"
@@ -20,6 +21,7 @@ services:
       - DB_NAME=yaazoru
       - DB_PASSWORD=${DB_PASSWORD}
       - DATABASE_URL=postgres://postgres:password@database:5432/mydb
+      - GOOGLE_APPLICATION_CREDENTIALS_JSON=${GOOGLE_APPLICATION_CREDENTIALS_JSON}
     # depends_on:
     #   - database
     extra_hosts:
