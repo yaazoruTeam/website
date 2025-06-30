@@ -187,7 +187,7 @@
   "FailedToUploadFile.PleaseTryAgain.": "Failed to upload file. Please try again.",
   "CouldNotStartRecording.CheckMicrophonePermissions.": "Could not start recording. Check microphone permissions.",
   "ErrorTranscribingRecording.PleaseTryAgain.": "Error transcribing recording. please try again.",
-  "stopRecording": "stop recotding",
+  "stopRecording": "stop recording",
   "record": "record",
   "AttachFile": "attach a file",
   "ImageSent": "Image sent"
