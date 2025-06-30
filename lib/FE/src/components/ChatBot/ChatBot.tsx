@@ -31,6 +31,12 @@ interface ClientComment extends Comment.Model {
   audioUrl?: string;
 }
 
+let tempIdCounter = 0;
+const generateTempId = (): string => {
+  tempIdCounter++;
+  return `temp-${Date.now()}-${tempIdCounter}`;
+};
+
 const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
@@ -111,7 +117,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
   const sendComment = async () => {
     if (!inputText.trim()) return;
 
-    const tempCommentId = -Date.now();
+    const tempCommentId = generateTempId();
     const tempComment: ClientComment = {
       comment_id: tempCommentId,
       entity_type: ENTITY_TYPE,
@@ -147,8 +153,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
 
   const handleAudioRecorded = useCallback(
     async (audioBlob: Blob, transcription: string, duration: number) => {
-      const tempId = -Date.now();
-      currentTempAudioCommentIdRef.current = String(tempId);
+      const tempId = generateTempId();
+      currentTempAudioCommentIdRef.current = tempId;
       const initialContent = isRecordingState
         ? "🔴 מקליט..."
         : "⌛ תמלול בהמתנה...";
@@ -403,8 +409,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
                       <CustomTypography
                         text={
                           isRecordingState &&
-                          comment.comment_id ===
-                            Number(currentTempAudioCommentIdRef.current)
+                          comment.comment_id === currentTempAudioCommentIdRef.current
                             ? "🔴 מקליט..."
                             : comment.isPending
                             ? "⌛ תמלול בהמתנה..."
