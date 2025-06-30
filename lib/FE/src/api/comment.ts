@@ -6,6 +6,19 @@ import { CreateCommentDto } from "../model/src/Dtos";
 
 const baseUrl = "http://localhost:3006/controller/comment";
 
+const parseDate = (dateValue: unknown): Date => {
+  if (dateValue instanceof Date) {
+    return dateValue;
+  }
+  if (typeof dateValue === 'string') {
+    return new Date(dateValue);
+  }
+  if (typeof dateValue === 'number') {
+    return new Date(dateValue);
+  }
+  console.warn('Invalid date value received:', dateValue);
+  return new Date();
+};
 export interface PaginatedCommentsResponse {
   data: Comment.Model[];
   total: number;
@@ -68,7 +81,7 @@ export const createComment = async (
     );
     return {
       ...response.data,
-      created_at: new Date(response.data.created_at as unknown as string),
+      created_at: parseDate(response.data.created_at),
     };
   } catch (error) {
     console.error("Error creating comment", error);
