@@ -194,5 +194,7 @@
     "stopRecording": "הפסקת הקלטה",
     "record": "הקלטה",
     "AttachFile": "צרף קובץ",
-    "ImageSent": "תמונה נשלחה"
+    "ImageSent": "תמונה נשלחה",
+    "recordingInProgress": "🔴 מקליט...",
+    "transcriptionPending": "⌛ תמלול בהמתנה..."
 }

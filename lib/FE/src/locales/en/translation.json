@@ -191,5 +191,7 @@
   "stopRecording": "stop recording",
   "record": "record",
   "AttachFile": "attach a file",
-  "ImageSent": "Image sent"
+  "ImageSent": "Image sent",
+  "recordingInProgress": "🔴 Recording...",
+  "transcriptionPending": "⌛ Transcription pending..."
 }

@@ -56,10 +56,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
       setComments(prev => {
         const existingIds = new Set(prev.map(c => c.comment_id));
         const filtered = newComments.filter(c => !existingIds.has(c.comment_id));
-        const sorted = filtered.sort((a, b) => 
+        const allComments = [...filtered, ...prev];
+        const sortedComments = allComments.sort((a, b) => 
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
-        return [...sorted, ...prev];
+        
+        return sortedComments;
       });
     } else {
       const sorted = newComments.sort((a, b) => 
@@ -143,7 +145,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
       comment_id: tempId,
       entity_type: entityType,
       entity_id: entityId,
-      content: isRecordingState ? "🔴 מקליט..." : "⌛ תמלול בהמתנה...",
+      content: isRecordingState ? t("recordingInProgress") : t("transcriptionPending"),
       created_at: new Date(),
       isPending: true,
       isAudio: true,
