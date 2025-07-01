@@ -2,6 +2,8 @@ import { HttpError } from ".";
 
 export type EntityType = 'customer' | 'device' | 'branch';
 
+const ALLOWED_ENTITY_TYPES: EntityType[] = ['customer', 'device', 'branch'];
+
 interface Model {
     comment_id?: number;
     entity_id: string;
@@ -29,10 +31,10 @@ function sanitize(comment: Model, hasId: boolean): Model {
         throw error;
     }
 
-    if (!comment.entity_type || ['customer', 'device', 'branch'].indexOf(comment.entity_type) === -1) {
+    if (!comment.entity_type || !ALLOWED_ENTITY_TYPES.includes(comment.entity_type)) {
         const error: HttpError.Model = {
             status: 400,
-            message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: customer, device, branch.`
+            message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: ${ALLOWED_ENTITY_TYPES.join(', ')}.`
         };
         throw error;
     }
@@ -56,4 +58,5 @@ function sanitize(comment: Model, hasId: boolean): Model {
     return newComment;
 }
 
-export { Model, sanitize };
+export type { Model };
+export { sanitize, ALLOWED_ENTITY_TYPES };

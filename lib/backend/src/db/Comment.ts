@@ -1,10 +1,11 @@
-import { Comment } from '../model';
-import getDbConnection from './connection';
-import config from '../config';
+import { Comment } from '../model'
+import getDbConnection from './connection'
+import config from '../config'
+import { Knex } from 'knex'
 
 const limit = config.database.limit;
 
-const createComment = async (comment: Comment.Model, trx?: any) => {
+const createComment = async (comment: Comment.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.comments') : knex('yaazoru.comments')

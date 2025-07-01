@@ -15,10 +15,10 @@ function sanitize(comment: Model, hasId: boolean): Model {
 
   if (hasId && !comment.comment_id) {
     const error: HttpError.Model = {
-            status: 400,
-            message: 'Comment ID is required and must be a valid number.'
-        }
-        throw error;
+      status: 400,
+      message: 'Comment ID is required and must be a valid number.'
+    }
+    throw error;
   }
 
     if (!comment.entity_id || !isString(comment.entity_id)) {
@@ -34,11 +34,8 @@ function sanitize(comment: Model, hasId: boolean): Model {
     ['customer', 'device', 'branch'].indexOf(comment.entity_type) === -1
   ) {
     const error: HttpError.Model = {
-           
       status: 400,
-           
       message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: customer, device, branch.`
-       ,
     }
         throw error;
   }
@@ -56,7 +53,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
     entity_id: comment.entity_id.trim(),
     entity_type: comment.entity_type,
     content: comment.content.trim(),
-    created_at: comment.created_at,
+    created_at: comment.created_at || new Date(),
   }
 
   return newComment
