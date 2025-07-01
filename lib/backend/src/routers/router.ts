@@ -19,9 +19,37 @@ import authRouter from './auth'
 import { errorHandler } from '../middleware/errorHandler'
 import { hasRole } from '../middleware/auth'
 import commentRouter from './comments'
+import {  changeNetworkPreference, getEndpointUsage, getMobileInfo, getMobiles, getPackagesWithInfo, resetLine, resetVoicemailPin, searchUserByIccid, searchUsers, sendApn, sendMobileAction, sendPing, terminateMobile, toggleLineStatus, updateMobileSubscription } from '../telecom/ping'
+// import { sendApn } from 'service/telecom'
 
 const router = Router()
 const ROUTE_PATH = '/controller'
+sendPing()
+// confirmIccid('89972123300003289709')
+// getMobileByIccidFromList('89972123300003289709')
+// getDids('400061870')
+// generalSearch('89972123300003289709')
+// sendMobileAction()
+// getActionMobileInfo()
+// getMobiles(400094893)
+// getUsers()
+// searchUserByIccid('89972123300003312030')//✅נתונים של מידע
+// getDidInfoByEndpoint(400055892)
+// getUserSubscriptions(400061870)
+//  getEndpointUsage(400086408)
+// getMobileInfo(400090993)//✅נתונים של מידע
+// terminateMobile(400090692)//endpointId//ביטול קו
+// sendApn(400086408)//endpointId//שליחת APN
+// resetVoicemailPin(400086408)//endpointId//איפוס סיסמת תא קולי//✅✅✅✅✅
+// toggleLineStatus(400086408, false)//endpointId,action(להדליק קו או לכבות)//הדלקת קו/השעיית קו✅✅✅✅✅????
+// softResetSim(400055892)//endpointId//איפוס SIM רך??
+// hardResetSim(400055892)//endpointId//איפוס SIM קשה??
+updateMobileSubscription(400090993,400000291)//endpointId,service_id//עדכון מנוי נייד//החלפת תוכנית
+// getPackagesWithInfo()//-reseller_domain_id-לבדוק מאיפה זה מגיע, פונקציה לקבלת של התוכניות צריך את זה בשביל לקבל את כל סוגי התוכניות בשביל החלפת תוכנית
+// searchUsers(89972123300003312030)
+//  resetLine(400090992)                                                                                                                      
+                                                                                                                            
+// changeNetworkPreference(400090993, 'hot_partner')
 
 router.use(`${ROUTE_PATH}/customer`, customerRouter)
 router.use(`${ROUTE_PATH}/device`, deviceRouter)

@@ -3,21 +3,48 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const BRAND_TOKEN: string = process.env.BRAND_TOKEN || ''
-const BRAND_ID: number = parseInt(process.env.BRAND_ID || '0', 10)
+// קריאת משתני סביבה
+const {
+  BRAND_TOKEN = '',
+  BRAND_ID = '0',
+  ACCOUNT_TOKEN = '',
+  AUTH_ID = '0'
+} = process.env
 
-const generateHash = (): string => {
-  return `${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+// המרה לסוגים הנכונים
+const brandId = parseInt(BRAND_ID, 10)
+const authId = parseInt(AUTH_ID, 10)
+
+// בדיקת משתנים נדרשים
+if (!BRAND_TOKEN || !brandId || !ACCOUNT_TOKEN || !authId) {
+  throw new Error('Missing required environment variables in .env file')
 }
 
-const calculateMD5 = (input: string): string => {
-  return crypto.createHash('md5').update(input).digest('hex')
-}
+// יצירת hash אקראי
+const generateHash = (): string =>
+  `${Date.now()}_${Math.random().toString(36).slice(2, 15)}`
 
-interface Auth {
+// חישוב MD5
+const calculateMD5 = (input: string): string =>
+  crypto.createHash('md5').update(input).digest('hex')
+
+// יצירת אובייקט auth מלא
+const createAuth = (): {
   auth_id: number
   hash: string
   auth: string
+} => {
+  const hash = generateHash()
+  const innerAuth = calculateMD5(BRAND_TOKEN + hash)
+  const finalAuth = calculateMD5(ACCOUNT_TOKEN + innerAuth)
+
+  return {
+    auth_id: authId,
+    hash,
+    auth: finalAuth
+  }
 }
 
-export { BRAND_TOKEN, BRAND_ID, generateHash, calculateMD5, Auth }
+export {
+  createAuth
+}
