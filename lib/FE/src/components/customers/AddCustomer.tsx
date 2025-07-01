@@ -1,29 +1,27 @@
-import React from 'react';
-import { Box } from '@mui/material';
-import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm';
-import CustomTypography from '../designComponent/Typography';
-import { colors } from '../../styles/theme';
-import { useTranslation } from 'react-i18next';
-import { addCustomer } from './addCustomerLogic';
-
+import React from 'react'
+import { Box } from '@mui/material'
+import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm'
+import CustomTypography from '../designComponent/Typography'
+import { colors } from '../../styles/theme'
+import { useTranslation } from 'react-i18next'
+import { addCustomer } from './addCustomerLogic'
 
 const AddCustomer: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const handleAddCustomer = async (data: AddCustomerFormInputs) => {
     try {
-      const newCustomer = await addCustomer(data);
-      alert('הלקוח נוסף בהצלחה');
-      console.log(newCustomer);
-      window.location.reload();
+      const newCustomer = await addCustomer(data)
+      alert('הלקוח נוסף בהצלחה')
+      console.log(newCustomer)
+      window.location.reload()
     } catch (err: any) {
       if (err.status === 409) {
-        alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`);
+        alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`)
       }
-      alert(`שגיאה: ${err}`);
+      alert(`שגיאה: ${err}`)
     }
-  };
-
+  }
 
   return (
     <Box
@@ -43,7 +41,7 @@ const AddCustomer: React.FC = () => {
           alignItems: 'flex-start',
           gap: 3.5,
           display: 'flex',
-          width: '100%'
+          width: '100%',
         }}
       >
         <Box
@@ -52,20 +50,15 @@ const AddCustomer: React.FC = () => {
             alignItems: 'center',
             gap: 3.5,
             display: 'flex',
-            width: '100%'
+            width: '100%',
           }}
         >
-          <CustomTypography
-            text={t('addCustomer')}
-            variant='h1'
-            weight='bold'
-            color={colors.c8}
-          />
+          <CustomTypography text={t('addCustomer')} variant='h1' weight='bold' color={colors.c8} />
         </Box>
       </Box>
       <AddCustomerForm onSubmit={handleAddCustomer} />
     </Box>
-  );
-};
+  )
+}
 
-export default AddCustomer;
+export default AddCustomer

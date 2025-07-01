@@ -24,7 +24,8 @@ export interface AddCustomerFormInputs {
 
 const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValues, setSubmitHandler }) => {
     const { t } = useTranslation();
-    const { control, handleSubmit } = useForm<AddCustomerFormInputs>({
+    
+    const { control, handleSubmit, formState: { errors } } = useForm<AddCustomerFormInputs>({
         defaultValues: initialValues || {
             first_name: "",
             last_name: "",
@@ -39,10 +40,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
 
     useEffect(() => {
         if (setSubmitHandler) {
-            const submit = handleSubmit((data) => {
-                onSubmit(data);
-            });
-            setSubmitHandler(submit);
+            setSubmitHandler(handleSubmit(onSubmit));
         }
     }, [handleSubmit, onSubmit, setSubmitHandler]);
 
@@ -51,53 +49,48 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
 
     return (
         <Box
-            style={{
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{
                 width: '100%',
                 height: '100%',
-                borderRadius: 12,
+                borderRadius: 1.5,
+                display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                display: 'inline-flex',
-            }}
-            sx={{
                 direction: 'rtl'
             }}
         >
-            <Box style={{
-                alignSelf: 'stretch',
+            <Box sx={{
                 height: '100%',
-                boxShadow: '0px 4px 10px rgba(41.60, 59.76, 109.70, 0.04)',
+                boxShadow: 1,
+                display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'flex-end',
-                alignItems: 'flex-start',
-                display: 'flex'
+                justifyContent: 'flex-end'
             }}>
-                <Box style={{
-                    alignSelf: 'stretch',
+                <Box sx={{
                     height: '100%',
-                    padding: 28,
-                    background: 'white',
-                    borderRadius: 6,
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    alignItems: 'flex-start',
-                    gap: 28,
+                    p: 3.5,
+                    bgcolor: 'background.paper',
+                    borderRadius: 0.75,
                     display: 'flex',
-
+                    flexDirection: 'column',
+                    gap: 3.5
                 }}>
-                    <Box style={{
-                        alignSelf: 'stretch',
+                    <Box sx={{
+                        display: 'flex',
                         justifyContent: 'flex-end',
-                        alignItems: 'flex-start',
-                        gap: 28,
-                        display: 'inline-flex'
+                        gap: 3.5,
+                        flexWrap: isMobile ? 'wrap' : 'nowrap'
                     }}>
                         <CustomTextField
                             name="first_name"
                             label={t('firstName')}
                             rules={{
                                 required: t('requiredField'),
+                                maxLength: {
+                                    value: 50,
+                                    message: t('maxLength', { max: 50 })
+                                }
                             }}
                             control={control}
                         />
@@ -107,6 +100,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                             label={t('lastName')}
                             rules={{
                                 required: t('requiredField'),
+                                maxLength: {
+                                    value: 50,
+                                    message: t('maxLength', { max: 50 })
+                                }
                             }}
                         />
                         <CustomTextField
@@ -115,23 +112,18 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                             label={t('IdNumber')}
                             rules={{
                                 required: t('requiredField'),
-                                minLength: {
-                                    value: 9,
-                                    message: t('errorIdNumber'),
-                                },
-                                maxLength: {
-                                    value: 9,
-                                    message: t('errorIdNumber'),
-                                },
+                                pattern: {
+                                    value: /^\d{9}$/,
+                                    message: t('errorIdNumber')
+                                }
                             }}
                         />
                     </Box>
-                    <Box style={{
-                        alignSelf: 'stretch',
+                    <Box sx={{
+                        display: 'flex',
                         justifyContent: 'flex-end',
-                        alignItems: 'flex-start',
-                        gap: 28,
-                        display: 'inline-flex'
+                        gap: 3.5,
+                        flexWrap: isMobile ? 'wrap' : 'nowrap'
                     }}>
                         <CustomTextField
                             control={control}
@@ -139,18 +131,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                             label={t('phone')}
                             rules={{
                                 required: t('requiredField'),
-                                minLength: {
-                                    value: 9,
-                                    message: t('warningPhone'),
-                                },
-                                maxLength: {
-                                    value: 15,
-                                    message: t('errorPhone'),
-                                },
                                 pattern: {
-                                    value: /^\d+$/,
-                                    message: t('errorPhoneDigit'),
-                                },
+                                    value: /^[\d\s\-\+\(\)]{9,15}$/,
+                                    message: t('errorPhone')
+                                }
                             }}
                         />
                         <CustomTextField
@@ -158,18 +142,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                             name="additional_phone"
                             label={t('additionalPhone')}
                             rules={{
-                                minLength: {
-                                    value: 9,
-                                    message: t('warningPhone'),
-                                },
-                                maxLength: {
-                                    value: 15,
-                                    message: t('errorPhone'),
-                                },
                                 pattern: {
-                                    value: /^\d+$/,
-                                    message: t('errorPhoneDigit'),
-                                },
+                                    value: /^[\d\s\-\+\(\)]{9,15}$/,
+                                    message: t('errorPhone')
+                                }
                             }}
                         />
                         <CustomTextField
@@ -178,22 +154,20 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                             label={t('email')}
                             type="email"
                             rules={{
-                                required: t('warningEmail'),
+                                required: t('requiredField'),
                                 pattern: {
-                                    
-                                    value: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                                     message: t('errorEmail')
                                 }
                             }}
                         />
                     </Box>
-                    <Box style={{
-                        width: '66%',
-                        alignSelf: 'stretch',
+                    <Box sx={{
+                        width: { xs: '100%', md: '66%' },
+                        display: 'flex',
                         justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        gap: 28,
-                        display: 'inline-flex'
+                        gap: 3.5,
+                        flexWrap: isMobile ? 'wrap' : 'nowrap'
                     }}>
                         <CustomTextField
                             control={control}
@@ -223,7 +197,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSubmit, initialValu
                                 state="default"
                                 size={isMobile ? 'small' : 'large'}
                                 buttonType="first"
-                                onClick={handleSubmit(onSubmit)}
+                                type="submit"
                             />
                         </Box>
                     )}
