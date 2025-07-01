@@ -50,7 +50,17 @@ export const getCommentsByEntityTypeAndEntityId = async (
         },
       },
     )
-    return response.data
+    
+    // Parse dates in the response data
+    const parsedData = {
+      ...response.data,
+      data: response.data.data.map(comment => ({
+        ...comment,
+        created_at: parseDate(comment.created_at)
+      }))
+    };
+    
+    return parsedData
   } catch (error) {
     console.error('Error fetching comments', error)
     throw error

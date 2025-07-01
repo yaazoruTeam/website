@@ -260,8 +260,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
         )}
 
         {comments.map((comment, index) => {
-          const currentDate = new Date(comment.created_at).toDateString();
-          const previousDate = index > 0 ? new Date(comments[index - 1].created_at).toDateString() : null;
+          const currentDate = comment.created_at.toDateString();
+          const previousDate = index > 0 ? comments[index - 1].created_at.toDateString() : null;
           const showDateSeparator = currentDate !== previousDate;
 
           return (

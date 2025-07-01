@@ -27,7 +27,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   currentTempAudioCommentId,
   formatDuration,
 }) => {
-  const formattedTime = new Date(comment.created_at).toLocaleTimeString("en-US", {
+  const formattedTime = comment.created_at.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
