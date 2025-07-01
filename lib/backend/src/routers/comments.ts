@@ -3,7 +3,7 @@ import * as commentsController from '../controller/comment';
 import { hasRole } from '../middleware/auth';
 import multer from 'multer';
 
-const commentRouter = Router();
+const commentRouter = Router()
 
 const upload = multer();
 
@@ -15,4 +15,4 @@ commentRouter.get('/:id', hasRole('admin', 'branch'), commentsController.getComm
 commentRouter.put('/:id', hasRole('admin', 'branch'), commentsController.updateComment);
 commentRouter.delete('/:id', hasRole('admin'), commentsController.deleteComment);
 
-export default commentRouter;
+export default commentRouter

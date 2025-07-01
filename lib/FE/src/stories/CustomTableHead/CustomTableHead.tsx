@@ -1,9 +1,9 @@
-import React from "react";
-import { TableHead, TableRow, TableCell } from "@mui/material";
-import { colors } from "../../styles/theme";
+import React from 'react'
+import { TableHead, TableRow, TableCell } from '@mui/material'
+import { colors } from '../../styles/theme'
 
 interface CustomTableHeadProps {
-  headers: string[];
+  headers: string[]
 }
 
 const CustomTableHead: React.FC<CustomTableHeadProps> = ({ headers }) => {
@@ -14,17 +14,17 @@ const CustomTableHead: React.FC<CustomTableHeadProps> = ({ headers }) => {
           <TableCell
             key={index}
             sx={{
-              textAlign: "right",
+              textAlign: 'right',
               color: colors.c11,
               fontSize: 17,
-              fontFamily: "Heebo",
-              fontWeight: "500",
-            //   wordWrap: "break-word",
+              fontFamily: 'Heebo',
+              fontWeight: '500',
+              //   wordWrap: "break-word",
               paddingLeft: 2,
               paddingRight: 2,
               paddingTop: 1,
               paddingBottom: 1,
-              width: "180px",
+              width: '180px',
             }}
           >
             {header}
@@ -32,7 +32,7 @@ const CustomTableHead: React.FC<CustomTableHeadProps> = ({ headers }) => {
         ))}
       </TableRow>
     </TableHead>
-  );
-};
+  )
+}
 
-export default CustomTableHead;
+export default CustomTableHead

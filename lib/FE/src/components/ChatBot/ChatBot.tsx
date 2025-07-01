@@ -45,7 +45,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
   const [isRecordingState, setIsRecordingState] = useState(false);
   const currentTempAudioCommentIdRef = useRef<string | null>(null);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const ENTITY_TYPE = entityType;
   const ENTITY_ID = entityId;
@@ -74,41 +74,39 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
 
   useEffect(() => {
     if (showEmojiPicker && inputRef.current) {
-      const inputRect = inputRef.current.getBoundingClientRect();
-      const pickerHeight = 350;
-      const pickerWidth = 300;
-      const margin = 10;
+      const inputRect = inputRef.current.getBoundingClientRect()
+      const pickerHeight = 350
+      const pickerWidth = 300
+      const margin = 10
 
       setEmojiPickerPosition({
         top: inputRect.top - pickerHeight - margin,
         left: inputRect.right - pickerWidth,
-      });
+      })
     } else {
-      setEmojiPickerPosition(null);
+      setEmojiPickerPosition(null)
     }
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
         inputRef.current &&
         !inputRef.current.contains(event.target as Node) &&
-        !document
-          .getElementById("emoji-portal-root")
-          ?.contains(event.target as Node)
+        !document.getElementById('emoji-portal-root')?.contains(event.target as Node)
       ) {
-        setShowEmojiPicker(false);
+        setShowEmojiPicker(false)
       }
-    };
+    }
 
     if (showEmojiPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside)
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showEmojiPicker]);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showEmojiPicker])
 
   const sendComment = async () => {
     if (!inputText.trim()) return;
@@ -145,7 +143,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
       setError(t("FailedToSendComment.PleaseTryAgain."));
       setComments((prev) => prev.filter((c) => c.comment_id !== tempCommentId));
     }
-  };
+  }
 
   const handleAudioRecorded = useCallback(
     async (audioBlob: Blob, transcription: string, duration: number) => {
@@ -223,11 +221,11 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
 
   return (
     <Box
-      className="chat-container"
+      className='chat-container'
       sx={{
-        position: "relative",
+        position: 'relative',
         width: 420,
-        margin: "0 auto",
+        margin: '0 auto',
         marginBottom: 50,
         padding: 3,
         paddingTop: 8,
@@ -235,17 +233,17 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
       }}
     >
       <IconButton
-        title={t("closed")}
+        title={t('closed')}
         disableRipple
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 10,
           left: 10,
           padding: 0,
-          backgroundColor: "transparent",
-          "&:hover": { backgroundColor: "transparent" },
-          "&:focus": { backgroundColor: "transparent" },
-          "&:active": { backgroundColor: "transparent" },
+          backgroundColor: 'transparent',
+          '&:hover': { backgroundColor: 'transparent' },
+          '&:focus': { backgroundColor: 'transparent' },
+          '&:active': { backgroundColor: 'transparent' },
         }}
       >
         <XMarkIcon
@@ -264,23 +262,23 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           p: 2.5,
           background: colors.c5,
           borderRadius: 3,
-          textAlign: "center",
+          textAlign: 'center',
         }}
       >
         <CustomTypography
-          text={t("customerComments")}
-          variant="h2"
-          weight="bold"
+          text={t('customerComments')}
+          variant='h2'
+          weight='bold'
           color={colors.c11}
         />
       </Box>
       <Box
-        className="chat-messages"
+        className='chat-messages'
         sx={{
           paddingRight: 1,
           paddingLeft: 1,
           paddingBottom: 3,
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         {comments.map((comment) => {
@@ -292,23 +290,23 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
             hour: "2-digit",
             minute: "2-digit",
             hour12: true,
-          });
+          })
 
           return (
             <React.Fragment key={comment.comment_id}>
               {/* פס תאריך */}
               <Box
                 sx={{
-                  width: "100%",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  display: "inline-flex",
-                  margin: "20px 0 10px",
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  display: 'inline-flex',
+                  margin: '20px 0 10px',
                 }}
               >
                 <Box
                   sx={{
-                    flex: "1 1 0",
+                    flex: '1 1 0',
                     height: 1.07,
                     opacity: 0.2,
                     background: colors.c38,
@@ -321,20 +319,20 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
                   weight="medium"
                   sx={{
                     width: 167.89,
-                    textAlign: "center",
-                    justifyContent: "center",
-                    display: "flex",
-                    flexDirection: "column",
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
                     color: colors.c38,
                     fontSize: 14,
-                    fontFamily: "Heebo",
-                    fontWeight: "400",
-                    wordWrap: "break-word",
+                    fontFamily: 'Heebo',
+                    fontWeight: '400',
+                    wordWrap: 'break-word',
                   }}
                 />
                 <Box
                   sx={{
-                    flex: "1 1 0",
+                    flex: '1 1 0',
                     height: 1.07,
                     opacity: 0.2,
                     background: colors.c38,
@@ -346,34 +344,34 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
               {/* בלוק ההודעה עם תמונה בצד ימין */}
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "flex-start",
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
                   gap: 1,
                   paddingTop: 2,
                   marginBottom: 2,
-                  width: "100%",
-                  boxSizing: "border-box",
+                  width: '100%',
+                  boxSizing: 'border-box',
                 }}
               >
                 {/* תמונת פרופיל מימין */}
                 <Box
-                  component="img"
+                  component='img'
                   src={profilePicture}
-                  alt="profile"
+                  alt='profile'
                   sx={{
                     width: 32,
                     height: 32,
-                    borderRadius: "50%",
+                    borderRadius: '50%',
                   }}
                 />
 
                 {/* תוכן ההודעה + שעה מתחת */}
                 <Box
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
                     flexGrow: 1,
                   }}
                 >
@@ -467,9 +465,9 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
                       flexDirection: "column",
                       color: colors.c38,
                       fontSize: 14,
-                      fontFamily: "Heebo",
-                      fontWeight: "400",
-                      wordWrap: "break-word",
+                      fontFamily: 'Heebo',
+                      fontWeight: '400',
+                      wordWrap: 'break-word',
                       marginTop: 1,
                     }}
                   >
@@ -478,22 +476,22 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
                 </Box>
               </Box>
             </React.Fragment>
-          );
+          )
         })}
         <div ref={messagesEndRef} />
       </Box>
       <Box
         sx={{
-          position: "relative",
+          position: 'relative',
           padding: 1,
-          background: "white",
-          overflow: "hidden",
+          background: 'white',
+          overflow: 'hidden',
           borderRadius: 0.8,
           outline: `1px ${colors.c39} solid`,
-          outlineOffset: "-1px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          outlineOffset: '-1px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           gap: 1,
           marginTop: 2,
         }}
@@ -502,32 +500,32 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           ref={inputRef}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder={t("WriteComment")}
-          variant="standard"
+          placeholder={t('WriteComment')}
+          variant='standard'
           sx={{
             flex: 1,
-            textAlign: "right",
-            background: "transparent",
-            border: "none",
+            textAlign: 'right',
+            background: 'transparent',
+            border: 'none',
             fontSize: 18,
-            fontFamily: "Heebo",
+            fontFamily: 'Heebo',
             fontWeight: 400,
             color: colors.c10,
-            outline: "none",
-            direction: "rtl",
-            "& .MuiInputBase-input::placeholder": {
+            outline: 'none',
+            direction: 'rtl',
+            '& .MuiInputBase-input::placeholder': {
               color: colors.c10,
               opacity: 1,
             },
-            "& .MuiInputBase-root": {
-              "&::before": {
-                borderBottom: "none !important",
+            '& .MuiInputBase-root': {
+              '&::before': {
+                borderBottom: 'none !important',
               },
-              "&::after": {
-                borderBottom: "none !important",
+              '&::after': {
+                borderBottom: 'none !important',
               },
-              border: "none",
-              outline: "none",
+              border: 'none',
+              outline: 'none',
             },
           }}
           onKeyDown={(e) => {
@@ -540,9 +538,9 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
             width: 18,
             height: 18,
             color: colors.c38,
-            cursor: "pointer",
+            cursor: 'pointer',
           }}
-          title={t("AddingEmoji")}
+          title={t('AddingEmoji')}
           onClick={() => setShowEmojiPicker((prev) => !prev)}
         />
         <AudioRecorderInput
@@ -554,28 +552,28 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           onClick={sendComment}
           sx={{
             backgroundColor: colors.c37,
-            border: "none",
+            border: 'none',
             borderRadius: 0.4,
             width: 20,
             height: 20,
             padding: 0,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            "&:hover": {
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            '&:hover': {
               backgroundColor: colors.c37,
             },
           }}
-          title={t("send")}
+          title={t('send')}
         >
           <PaperAirplaneIcon
             style={{
               width: 13,
               height: 13,
-              color: "white",
-              cursor: "pointer",
-              transform: "rotate(-45deg)",
+              color: 'white',
+              cursor: 'pointer',
+              transform: 'rotate(-45deg)',
               marginBottom: 1,
               marginLeft: 2,
             }}
@@ -587,19 +585,17 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           ReactDOM.createPortal(
             <Box
               sx={{
-                position: "fixed",
+                position: 'fixed',
                 top: emojiPickerPosition.top,
                 left: emojiPickerPosition.left,
                 zIndex: 9999,
               }}
             >
               <EmojiPicker
-                onEmojiClick={(emojiData) =>
-                  setInputText((prev) => prev + emojiData.emoji)
-                }
+                onEmojiClick={(emojiData) => setInputText((prev) => prev + emojiData.emoji)}
               />
             </Box>,
-            document.getElementById("emoji-portal-root") as HTMLElement
+            document.getElementById('emoji-portal-root') as HTMLElement,
           )}
       </Box>
       {/* הודעת שגיאה בתחתית המסך */}
@@ -617,7 +613,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
         </Alert>
       </Snackbar>
     </Box>
-  );
-};
+  )
+}
 
-export default ChatBot;
+export default ChatBot

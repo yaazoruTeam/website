@@ -1,12 +1,12 @@
-import { StoryFn, Meta } from '@storybook/react';
-import CustomerStatus from '../components/designComponent/StatusCard';
+import { StoryFn, Meta } from '@storybook/react'
+import CustomerStatus from '../components/designComponent/StatusCard'
 
 export default {
   title: 'Components/CustomerStatus',
   component: CustomerStatus,
-} as Meta;
+} as Meta
 
-const Template: StoryFn = () => <CustomerStatus />;
+const Template: StoryFn = () => <CustomerStatus />
 
-export const Default = Template.bind({});
-Default.args = {};
+export const Default = Template.bind({})
+Default.args = {}
