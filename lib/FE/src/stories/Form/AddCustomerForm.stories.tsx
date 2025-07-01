@@ -1,13 +1,13 @@
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryFn } from '@storybook/react'
 
-import AddCustomerForm from "../../components/customers/AddCustomerForm";
+import AddCustomerForm from '../../components/customers/AddCustomerForm'
 
 export default {
-  title: "Stories/AddCustomerForm",
+  title: 'Stories/AddCustomerForm',
   component: AddCustomerForm,
-} as Meta<typeof AddCustomerForm>;
+} as Meta<typeof AddCustomerForm>
 
-const Template: StoryFn<typeof AddCustomerForm> = () => <AddCustomerForm onSubmit={()=>{}}/>;
+const Template: StoryFn<typeof AddCustomerForm> = () => <AddCustomerForm onSubmit={() => {}} />
 
-export const Form = Template.bind({});
-Form.args = {};
+export const Form = Template.bind({})
+Form.args = {}
