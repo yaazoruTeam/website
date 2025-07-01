@@ -14,7 +14,8 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
     client = new SpeechClient({ credentials });
   } catch (e) {
     console.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:", e);
-    process.exit(1);
+    console.warn("Falling back to default authentication method");
+    client = new SpeechClient();
   }
 } else {
   client = new SpeechClient();
