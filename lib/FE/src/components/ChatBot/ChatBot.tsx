@@ -1,52 +1,76 @@
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
-import { XMarkIcon } from '@heroicons/react/24/outline'
-import { FaceSmileIcon } from '@heroicons/react/24/outline'
-import { PaperClipIcon } from '@heroicons/react/24/outline'
-import React, { useState, useEffect, useRef } from 'react'
-import ReactDOM from 'react-dom'
-import { colors } from '../../styles/theme'
-import { Box, IconButton, TextField } from '@mui/material'
-import CustomTypography from '../designComponent/Typography'
-import profilePicture from '../../assets/profilePicture.svg'
-import EmojiPicker from 'emoji-picker-react'
-import { useTranslation } from 'react-i18next'
+import { MicrophoneIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { FaceSmileIcon } from "@heroicons/react/24/outline";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import ReactDOM from "react-dom";
+import { colors } from "../../styles/theme";
+import { Alert, Box, IconButton, Snackbar, TextField } from "@mui/material";
+import CustomTypography from "../designComponent/Typography";
+import { Comment } from "../../model";
+import { EntityType } from "../../model/src/Comment";
+import { CreateCommentDto } from "../../model/src/Dtos";
+import {
+  getCommentsByEntityTypeAndEntityId,
+  createComment,
+} from "../../api/comment";
+import AudioRecorderInput from "./AudioRecorderInput";
+import { formatDateToString } from "../designComponent/FormatDate";
+import profilePicture from "../../assets/profilePicture.svg";
+import EmojiPicker from "emoji-picker-react";
+import { useTranslation } from "react-i18next";
 
-interface Message {
-  text: string
-  imageUrl?: string
-  timestamp: string
+interface ChatBotProps {
+  entityType: EntityType;
+  entityId: string;
 }
 
-const ChatBot: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [inputText, setInputText] = useState('')
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+interface ClientComment extends Comment.Model {
+  isPending?: boolean;
+  isAudio?: boolean;
+  audioDuration?: number;
+  audioUrl?: string;
+}
+
+const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
+  const [comments, setComments] = useState<ClientComment[]>([]);
+  const [inputText, setInputText] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiPickerPosition, setEmojiPickerPosition] = useState<{
-    top: number
-    left: number
-  } | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+    top: number;
+    left: number;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isRecordingState, setIsRecordingState] = useState(false);
+  const currentTempAudioCommentIdRef = useRef<string | null>(null);
 
   const { t } = useTranslation()
 
-  useEffect(() => {
-    // TODO: כשתהיה לך גישה לשרת - החליפי את הקוד הזה בקריאת axios.get('/api/messages')
-    const fakeData: Message[] = [
-      {
-        text: 'נולום ארווס סאפיאן - פוסיליס קוויס, אקווזמן קוואזי במר מודוף. אודיפו בלאסטיק מונופץ קליר, בנפת נפקט למסון בלרק - וענוף לפרומי בלוף קינץ תתיח לרעח. לת צשחמי ליבם סולגק. בראיט ולחת צורק מונחף, בגורמי מגמש. תרבנך וסתעד לכנו סתשם השמה - לתכי מורגם בורק? לתיג ישבעס.',
-        timestamp: new Date().toISOString(),
-      },
-      {
-        text: 'ושבעגט ליבם סולגק. בראיט ולחת צורק מונחף, בגורמי מגמש. תרבנך וסתעד לכנו סתשם השמה - לתכי מורגם בורק? לתיג ישבעס.',
-        timestamp: new Date().toISOString(),
-      },
-    ]
+  const ENTITY_TYPE = entityType;
+  const ENTITY_ID = entityId;
 
-    // הדמיית עיכוב בשרת
-    setTimeout(() => {
-      setMessages(fakeData)
-    }, 500)
-  }, [])
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await getCommentsByEntityTypeAndEntityId(
+          ENTITY_TYPE,
+          ENTITY_ID,
+          1
+        );
+        setComments(response.data);
+      } catch (err) {
+        console.error("Failed to fetch comments:", err);
+        setError(t("FailedToLoadComments.PleaseTryAgainLater."));
+      }
+    };
+
+    fetchComments();
+  }, [ENTITY_TYPE, ENTITY_ID, t]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [comments]);
 
   useEffect(() => {
     if (showEmojiPicker && inputRef.current) {
@@ -84,26 +108,116 @@ const ChatBot: React.FC = () => {
     }
   }, [showEmojiPicker])
 
-  const sendMessage = async () => {
-    if (!inputText.trim()) return
+  const sendComment = async () => {
+    if (!inputText.trim()) return;
 
-    const newMessage: Message = {
-      text: inputText,
-      timestamp: new Date().toISOString(),
-    }
+    const tempCommentId = `temp-${Date.now()}`;
+    const tempComment: ClientComment = {
+      comment_id: tempCommentId,
+      entity_type: ENTITY_TYPE,
+      entity_id: ENTITY_ID,
+      content: inputText,
+      created_at: new Date(),
+      isAudio: false,
+    };
 
-    setMessages((prev) => [...prev, newMessage])
-    setInputText('')
-    setShowEmojiPicker(false)
+    setComments((prev) => [...prev, tempComment]);
+    setInputText("");
+    setShowEmojiPicker(false);
 
-    // TODO: כשתתחברי לשרת - שלחי את ההודעה לשרת עם axios.post('/api/messages', newMessage)
     try {
-      console.log('הודעה נשלחה (סימולציה):', newMessage)
-      // await axios.post('/api/messages', newMessage);
+      const commentDataToSend: CreateCommentDto = {
+        entity_type: ENTITY_TYPE,
+        entity_id: ENTITY_ID,
+        content: tempComment.content,
+        created_at: tempComment.created_at.toISOString(),
+      };
+
+      const sentComment = await createComment(commentDataToSend);
+
+      setComments((prev) =>
+        prev.map((c) => (c.comment_id === tempCommentId ? sentComment : c))
+      );
     } catch (err) {
-      console.error('שגיאה בשליחה לשרת:', err)
+      console.error("Error sending comment to server:", err);
+      setError(t("FailedToSendComment.PleaseTryAgain."));
+      setComments((prev) => prev.filter((c) => c.comment_id !== tempCommentId));
     }
   }
+
+  const handleAudioRecorded = useCallback(
+    async (audioBlob: Blob, transcription: string, duration: number) => {
+      const tempId = `temp-audio-${Date.now()}`;
+      currentTempAudioCommentIdRef.current = tempId;
+      const initialContent = isRecordingState
+        ? "🔴 מקליט..."
+        : "⌛ תמלול בהמתנה...";
+      const tempAudioComment: ClientComment = {
+        comment_id: tempId,
+        entity_type: ENTITY_TYPE,
+        entity_id: ENTITY_ID,
+        content: initialContent,
+        created_at: new Date(),
+        isPending: true,
+        isAudio: true,
+        audioDuration: duration,
+        audioUrl: URL.createObjectURL(audioBlob),
+      };
+
+      setComments((prev) => [...prev, tempAudioComment]);
+
+      try {
+        const finalComment: CreateCommentDto = {
+          entity_type: ENTITY_TYPE,
+          entity_id: ENTITY_ID,
+          content: transcription,
+          created_at: new Date().toISOString(),
+        };
+
+        const sentComment = await createComment(finalComment);
+
+        setComments((prev) =>
+          prev.map((c) =>
+            c.comment_id === tempId
+              ? {
+                  ...sentComment,
+                  isAudio: true,
+                  audioUrl: tempAudioComment.audioUrl,
+                  audioDuration: duration,
+                  isPending: false,
+                }
+              : c
+          )
+        );
+      } catch (err) {
+        console.error("Error transcribing/sending audio comment:", err);
+        setError(t("FailedToSendAudioComment.PleaseTryAgain."));
+        setComments((prev) =>
+          prev.filter((c) => String(c.comment_id) !== tempId)
+        );
+      } finally {
+        currentTempAudioCommentIdRef.current = null;
+      }
+    },
+    [ENTITY_TYPE, ENTITY_ID, t]
+  );
+
+  const handleRecordingStateChange = useCallback((isRecording: boolean) => {
+    setIsRecordingState(isRecording);
+    if (isRecording) {
+      setInputText("");
+    }
+  }, []);
+
+  const handleCloseError = () => {
+    setError(null);
+  };
+
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   return (
     <Box
@@ -167,22 +281,19 @@ const ChatBot: React.FC = () => {
           overflowY: 'auto',
         }}
       >
-        {messages.map((msg, i) => {
-          const date = new Date(msg.timestamp)
+        {comments.map((comment) => {
+          const date = comment.created_at;
 
-          const formattedDate = `${String(date.getDate()).padStart(
-            2,
-            '0',
-          )}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getFullYear()).slice(2)}`
+          const formattedDateForDisplay = formatDateToString(date);
 
-          const formattedTime = date.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
+          const formattedTime = new Date(date).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
             hour12: true,
           })
 
           return (
-            <React.Fragment key={i}>
+            <React.Fragment key={comment.comment_id}>
               {/* פס תאריך */}
               <Box
                 sx={{
@@ -203,9 +314,9 @@ const ChatBot: React.FC = () => {
                   }}
                 />
                 <CustomTypography
-                  text={formattedDate}
-                  variant='h5'
-                  weight='medium'
+                  text={formattedDateForDisplay}
+                  variant="h5"
+                  weight="medium"
                   sx={{
                     width: 167.89,
                     textAlign: 'center',
@@ -264,42 +375,95 @@ const ChatBot: React.FC = () => {
                     flexGrow: 1,
                   }}
                 >
-                  <Box
-                    sx={{
-                      maxWidth: '100%',
-                      borderRadius: 1.5,
-                      backgroundColor: colors.c6,
-                      border: `1px solid ${colors.c37}`,
-                      color: colors.c11,
-                      textAlign: 'right',
-                      fontFamily: 'Heebo',
-                      fontSize: 16,
-                      whiteSpace: 'pre-wrap',
-                      wordWrap: 'break-word',
-                      direction: 'rtl',
-                      padding: '10px 14px',
-                    }}
-                  >
-                    {msg.imageUrl ? (
-                      <Box
-                        component='img'
-                        src={msg.imageUrl}
-                        alt='uploaded'
-                        sx={{ maxWidth: '100%', borderRadius: 1.5 }}
+                  {comment.isAudio ? (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        maxWidth: "100%",
+                        p: 1.5,
+                        borderRadius: 1.5,
+                        backgroundColor: colors.c6,
+                        border: `1px solid ${colors.c37}`,
+                        minWidth: 160,
+                        position: "relative",
+                      }}
+                    >
+                      {comment.isAudio && (
+                        <MicrophoneIcon
+                          style={{
+                            width: 20,
+                            height: 20,
+                            color: colors.c37,
+                            flexShrink: 0,
+                          }}
+                        />
+                      )}
+                      <CustomTypography
+                        text={
+                          isRecordingState &&
+                          String(comment.comment_id) ===
+                            currentTempAudioCommentIdRef.current
+                            ? "🔴 מקליט..."
+                            : comment.isPending
+                            ? "⌛ תמלול בהמתנה..."
+                            : comment.content
+                        }
+                        variant="h4"
+                        weight="medium"
+                        color={colors.c11}
+                        sx={{
+                          wordWrap: "break-word",
+                          flexGrow: 1,
+                        }}
                       />
-                    ) : (
-                      msg.text
-                    )}
-                  </Box>
+                      {comment.audioDuration !== undefined &&
+                        (isRecordingState || !comment.isPending) && (
+                          <CustomTypography
+                            text={formatDuration(comment.audioDuration)}
+                            variant="h4"
+                            weight="regular"
+                            color={colors.c37}
+                            sx={{
+                              wordWrap: "break-word",
+                              lineHeight: 1,
+                              flexShrink: 0,
+                            }}
+                          />
+                        )}
+                    </Box>
+                  ) : (
+                    <Box
+                      sx={{
+                        maxWidth: "100%",
+                        borderRadius: 1.5,
+                        backgroundColor: colors.c6,
+                        border: `1px solid ${colors.c37}`,
+                        color: colors.c11,
+                        textAlign: "right",
+                        fontFamily: "Heebo",
+                        fontSize: 16,
+                        whiteSpace: "pre-wrap",
+                        wordWrap: "break-word",
+                        direction: "rtl",
+                        padding: "10px 14px",
+                      }}
+                    >
+                      {comment.isPending && !comment.isAudio
+                        ? `⌛ ${comment.content}`
+                        : comment.content}{" "}
+                    </Box>
+                  )}
 
                   {/* שעה מתחת להודעה בצד ימין */}
                   <Box
                     sx={{
-                      textAlign: 'right',
-                      justifyContent: 'center',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      color: '#989BA1',
+                      textAlign: "right",
+                      justifyContent: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                      color: colors.c38,
                       fontSize: 14,
                       fontFamily: 'Heebo',
                       fontWeight: '400',
@@ -314,6 +478,7 @@ const ChatBot: React.FC = () => {
             </React.Fragment>
           )
         })}
+        <div ref={messagesEndRef} />
       </Box>
       <Box
         sx={{
@@ -364,50 +529,7 @@ const ChatBot: React.FC = () => {
             },
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') sendMessage()
-          }}
-        />
-        <input
-          type='file'
-          id='fileInput'
-          accept='image/*'
-          style={{ display: 'none' }}
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (!file) return
-
-            if (file.type.startsWith('image/')) {
-              const reader = new FileReader()
-              reader.onloadend = () => {
-                const newMessage: Message = {
-                  text: '',
-                  imageUrl: reader.result as string,
-                  timestamp: new Date().toISOString(),
-                }
-                setMessages((prev) => [...prev, newMessage])
-              }
-              reader.readAsDataURL(file)
-            } else {
-              const newMessage: Message = {
-                text: `📎 ${file.name}`,
-                timestamp: new Date().toISOString(),
-              }
-              setMessages((prev) => [...prev, newMessage])
-            }
-
-            e.target.value = ''
-          }}
-        />
-        <PaperClipIcon
-          style={{
-            width: 18,
-            height: 18,
-            color: colors.c38,
-            cursor: 'pointer',
-          }}
-          title='צרף קובץ'
-          onClick={() => {
-            document.getElementById('fileInput')?.click()
+            if (e.key === "Enter") sendComment();
           }}
         />
         {/* אייקון חיוך */}
@@ -421,8 +543,13 @@ const ChatBot: React.FC = () => {
           title={t('AddingEmoji')}
           onClick={() => setShowEmojiPicker((prev) => !prev)}
         />
+        <AudioRecorderInput
+          onAudioRecorded={handleAudioRecorded}
+          onError={setError}
+          onRecordingStateChange={handleRecordingStateChange}
+        />
         <IconButton
-          onClick={sendMessage}
+          onClick={sendComment}
           sx={{
             backgroundColor: colors.c37,
             border: 'none',
@@ -450,8 +577,7 @@ const ChatBot: React.FC = () => {
               marginBottom: 1,
               marginLeft: 2,
             }}
-            title={t('send')}
-            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            title={t("send")}
           />
         </IconButton>
         {showEmojiPicker &&
@@ -472,6 +598,20 @@ const ChatBot: React.FC = () => {
             document.getElementById('emoji-portal-root') as HTMLElement,
           )}
       </Box>
+      {/* הודעת שגיאה בתחתית המסך */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

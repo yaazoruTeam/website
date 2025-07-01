@@ -26,7 +26,7 @@ const Customers: React.FC = () => {
           page={page} limit={limit}
           onPageChange={setPage}
           onFilterChange={setFilterType} />
-      <ChatBot />
+        <ChatBot entityType="customer" entityId="1"/>
     </>
   )
 }
