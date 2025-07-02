@@ -2,21 +2,33 @@ import axios, { AxiosResponse } from 'axios'
 import { Device } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-// const baseUrl = `${process.env.BASE_URL}/customer`;
+// const baseUrl = `${process.env.BASE_URL}/customer`
 const baseUrl = 'http://localhost:3006/controller/device'
 
+export interface PaginatedDeviceResponse {
+  data: Device.Model[]
+  total: number
+  page?: number
+  totalPages: number
+}
+
 // GET
-export const getDeices = async (): Promise<Device.Model[]> => {
+export const getDevices = async (page: number): Promise<PaginatedDeviceResponse> => {
   try {
     const newToken = await handleTokenRefresh()
     if (!newToken) {
-      return []
+      return {
+        data: [],
+        total: 0,
+        page,
+        totalPages: 0
+      }
     }
     const token = localStorage.getItem('token')
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<Device.Model[]> = await axios.get(baseUrl, {
+    const response: AxiosResponse<PaginatedDeviceResponse> = await axios.get(`${baseUrl}?page=${page}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

@@ -1,10 +1,11 @@
 import { Comment } from '@/model/src'
 import getDbConnection from './connection'
-import * as dotenv from 'dotenv'
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+import config from '../config'
+import { Knex } from 'knex'
 
-const createComment = async (comment: Comment.Model, trx?: any) => {
+const limit = config.database.limit;
+
+const createComment = async (comment: Comment.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.comments') : knex('yaazoru.comments')

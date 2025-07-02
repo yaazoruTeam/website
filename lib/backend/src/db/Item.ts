@@ -1,5 +1,6 @@
 import { HttpError, ItemForMonthlyPayment, Payments } from '@/model/src'
 import getDbConnection from './connection'
+const limit = Number(process.env.LIMIT) || 10
 
 const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -23,10 +24,20 @@ const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
   }
 }
 
-const getItems = async (): Promise<ItemForMonthlyPayment.Model[]> => {
+const getItems = async (offset: number): Promise<{ items: ItemForMonthlyPayment.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex.select().table('yaazoru.item')
+    const items = await knex('yaazoru.item')
+      .select('*')
+      .orderBy('item_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.item').count('*')
+    return {
+      items,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
@@ -41,13 +52,33 @@ const getItemId = async (item_id: string) => {
   }
 }
 
-const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string) => {
+const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number): Promise<{ items: ItemForMonthlyPayment.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.item').where({ monthlyPayment_id })
+    const items = await knex('yaazoru.item')
+      .where({ monthlyPayment_id })
+      .orderBy('item_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.item')
+      .where({ monthlyPayment_id })
+      .count('*')
+
+    return {
+      items,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }
+}
+
+const getAllItemsByMonthlyPaymentIdNoPagination = async (monthlyPayment_id: string): Promise<ItemForMonthlyPayment.Model[]> => {
+  const knex = getDbConnection()
+  return await knex('yaazoru.item')
+    .where({ monthlyPayment_id })
+    .orderBy('item_id')
 }
 
 const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, trx?: any) => {
@@ -117,10 +148,17 @@ const doesItemExist = async (item_id: string): Promise<boolean> => {
 
 export {
   createItem,
+
   getItems,
+
   getItemId,
+
   getAllItemByMonthlyPaymentId,
+  getAllItemsByMonthlyPaymentIdNoPagination,
+
   updateItem,
+
   deleteItem,
-  /* findCustomer,*/ doesItemExist,
+
+  doesItemExist,
 }

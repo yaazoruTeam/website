@@ -1,6 +1,8 @@
 import { CreditDetails, HttpError } from '@/model/src'
 import getDbConnection from './connection'
 
+const limit = Number(process.env.LIMIT) || 10
+
 const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
   const knex = getDbConnection()
   try {
@@ -21,10 +23,20 @@ const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any
   }
 }
 
-const getCreditDetails = async (): Promise<CreditDetails.Model[]> => {
+const getCreditDetails = async (offset: number): Promise<{ creditDetails: CreditDetails.Model[], total: number }> => {
   const knex = getDbConnection()
   try {
-    return await knex.select().table('yaazoru.creditDetails')
+    const creditDetails = await knex('yaazoru.creditDetails')
+      .select('*')
+      .orderBy('credit_id')
+      .limit(limit)
+      .offset(offset)
+
+    const [{ count }] = await knex('yaazoru.creditDetails').count('*')
+    return {
+      creditDetails,
+      total: parseInt(count as string, 10)
+    }
   } catch (err) {
     throw err
   }

@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@/db'
 import { CustomerDevice, HttpError } from '@/model/src'
+import * as dotenv from 'dotenv'
+dotenv.config()
+const limit = Number(process.env.LIMIT) || 10
 
 const createCustomerDevice = async (
   req: Request,
@@ -19,17 +22,22 @@ const createCustomerDevice = async (
   }
 }
 
-const getCustomersDevices = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const customersDevices = await db.CustomerDevice.getCustomersDevices()
-    res.status(200).json(customersDevices)
-  } catch (error: any) {
-    next(error)
-  }
+const getCustomersDevices = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const page = parseInt(req.query.page as string, 10) || 1
+        const offset = (page - 1) * limit
+
+        const { customerDevices, total } = await db.CustomerDevice.getCustomersDevices(offset)
+
+        res.status(200).json({
+            data: customerDevices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        })
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 const getCustomerDeviceById = async (
@@ -54,34 +62,37 @@ const getCustomerDeviceById = async (
   }
 }
 
-const getAllDevicesByCustomerId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    CustomerDevice.sanitizeIdExisting(req)
-    const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
-    if (!existCustomer) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Customer does not exist.',
-      }
-      throw error
+const getAllDevicesByCustomerId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const page = parseInt(req.query.page as string, 10) || 1
+        const offset = (page - 1) * limit
+
+        CustomerDevice.sanitizeIdExisting(req)
+        const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
+        if (!existCustomer) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Customer does not exist.',
+            }
+            throw error
+        }
+        const { customerDevices, total } = await db.CustomerDevice.getCustomerDeviceByCustomerId(req.params.id, offset)
+        if (customerDevices.length === 0) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'This customer has no devices.'
+            }
+            throw error
+        }
+        res.status(200).json({
+            data: customerDevices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total,
+        })
+    } catch (error: any) {
+        next(error)
     }
-    const allCustomerDevice: CustomerDevice.Model[] =
-      await db.CustomerDevice.getCustomerDeviceByCustomerId(req.params.id)
-    if (allCustomerDevice.length === 0) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'This customer has no devices.',
-      }
-      throw error
-    }
-    res.status(200).json(allCustomerDevice)
-  } catch (error: any) {
-    next(error)
-  }
 }
 
 const getCustomerIdByDeviceId = async (
@@ -90,6 +101,9 @@ const getCustomerIdByDeviceId = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+        const page = parseInt(req.query.page as string, 10) || 1
+        const offset = (page - 1) * limit
+
     CustomerDevice.sanitizeIdExisting(req)
     const device_id = req.params.id
     const deviceExist = await db.Device.doesDeviceExist(device_id)
@@ -100,8 +114,13 @@ const getCustomerIdByDeviceId = async (
       }
       throw error
     }
-    const [customerDevice] = await db.CustomerDevice.getCustomerDeviceByDeviceId(device_id)
-    res.status(200).json(customerDevice)
+    const { customerDevices, total } = await db.CustomerDevice.getCustomerDeviceByDeviceId(device_id, offset)
+    res.status(200).json({
+            data: customerDevices,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total,
+        })
   } catch (error: any) {
     next(error)
   }

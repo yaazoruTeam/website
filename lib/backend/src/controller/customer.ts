@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@/db'
 import { Customer, HttpError } from '@/model/src'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+const limit = Number(process.env.LIMIT) || 10
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -17,9 +21,20 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
 
 const getCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const customers = await db.Customer.getCustomers()
-    res.status(200).json(customers)
+    const page = parseInt(req.query.page as string)
+    const offset = (page - 1) * limit
+
+    const { customers, total } = await db.Customer.getCustomers(offset)
+
+    res.status(200).json({
+      data: customers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total
+    })
   } catch (error: any) {
+    console.log('Error in getCustomers: in controller: ', error)
+
     next(error)
   }
 }
@@ -42,50 +57,64 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
-const getCustomersByCity = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+const getCustomersByCity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { city } = req.params
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
     if (!city) {
       const error: HttpError.Model = {
         status: 400,
-        message: 'City parameter is required.',
+        message: 'City parameter is required.'
       }
       throw error
     }
-    const customers = await db.Customer.getCustomersByCity(city)
-    if (!customers.length) {
+
+    const { customers, total } = await db.Customer.getCustomersByCity(city, offset)
+
+    if (customers.length === 0) {
       const error: HttpError.Model = {
         status: 404,
-        message: `No customers found in city: ${city}`,
+        message: `No customers found in city: ${city}`
       }
       throw error
     }
-    res.status(200).json(customers)
-  } catch (error: any) {
+
+    res.status(200).json({
+      data: customers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total
+    })
+  } catch (error) {
     next(error)
   }
 }
 
-const getCustomersByStatus = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+
+const getCustomersByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { status } = req.params
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
     if (status !== 'active' && status !== 'inactive') {
       const error: HttpError.Model = {
         status: 400,
-        message: "Invalid status. Allowed values: 'active' or 'inactive'.",
+        message: 'Invalid status. Allowed values: \'active\' or \'inactive\'.'
       }
       throw error
     }
-    const customers = await db.Customer.getCustomersByStatus(status)
-    res.status(200).json(customers)
+    const { customers, total } = await db.Customer.getCustomersByStatus(status, offset)
+    // const total = await db.Customer.countCustomersByStatus(status)
+
+    res.status(200).json({
+      data: customers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total
+    })
   } catch (error: any) {
     next(error)
   }
@@ -98,6 +127,9 @@ const getCustomersByDateRange = async (
 ): Promise<void> => {
   try {
     const { startDate, endDate } = req.query
+    const page = parseInt(req.query.page as string, 10) || 1
+    // const limit = parseInt(req.query.limit as string, 10) || 10
+    const offset = (page - 1) * limit
 
     if (!startDate || !endDate) {
       const error: HttpError.Model = {
@@ -107,11 +139,13 @@ const getCustomersByDateRange = async (
       throw error
     }
 
-    const customers = await db.Customer.getCustomersByDateRange(
+    const { customers, total } = await db.Customer.getCustomersByDateRange(
       startDate as string,
-      endDate as string,
+      endDate as string, offset,
     )
-    if (!customers.length) {
+    // const total = await db.Customer.countCustomersByDateRange(startDate as string, endDate as string)
+
+    if (customers.length === 0) {
       const error: HttpError.Model = {
         status: 404,
         message: `No customers found between ${startDate} and ${endDate}`,
@@ -119,7 +153,12 @@ const getCustomersByDateRange = async (
       throw error
     }
 
-    res.status(200).json(customers)
+    res.status(200).json({
+      data: customers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total
+    })
   } catch (error: any) {
     next(error)
   }
@@ -182,6 +221,38 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
     throw err
   }
 }
+const getCities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const cities = await db.Customer.getUniqueCities()
+    res.status(200).json(cities)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const searchCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const searchTerm = req.query.q as string
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    if (!searchTerm) {
+      res.status(400).json({ message: 'Missing search term' })
+      return
+    }
+
+    const { customers, total } = await db.Customer.searchCustomersByName(searchTerm, offset)
+
+    res.status(200).json({
+      data: customers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 export {
   createCustomer,
@@ -190,6 +261,8 @@ export {
   updateCustomer,
   deleteCustomer,
   getCustomersByCity,
+  getCities,
   getCustomersByStatus,
   getCustomersByDateRange,
+  searchCustomers,
 }
