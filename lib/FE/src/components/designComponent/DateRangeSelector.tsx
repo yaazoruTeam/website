@@ -176,52 +176,46 @@
 // 28/04/25===============================================================================
 
 // DateRangeSelector.tsx
-import React, { useState } from "react";
-import { Box, Button } from "@mui/material";
-import { DateRange, DateRangePicker } from "@mui/x-date-pickers-pro";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs, { Dayjs } from "dayjs";
-import "dayjs/locale/he";
+import React, { useState } from 'react'
+import { Box, Button } from '@mui/material'
+import { DateRange, DateRangePicker } from '@mui/x-date-pickers-pro'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/he'
 
 interface DateRangeSelectorProps {
-  anchorEl: HTMLElement | null;
-  onDateRangeSelect: (startDate: Date, endDate: Date) => void;
-  onClose: () => void;
+  anchorEl: HTMLElement | null
+  onDateRangeSelect: (startDate: Date, endDate: Date) => void
+  onClose: () => void
 }
 
-const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({
-  onDateRangeSelect,
-}) => {
-  const [dateRange, setDateRange] = useState<DateRange<Dayjs>>([null, null]);
+const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({ onDateRangeSelect }) => {
+  const [dateRange, setDateRange] = useState<DateRange<Dayjs>>([null, null])
 
   const handleApply = () => {
     if (dateRange[0] && dateRange[1]) {
-      const start = dateRange[0].toDate();//"DD-MM-YYYY"
-      const end = dateRange[1].toDate();//format("DD-MM-YYYY");
-      onDateRangeSelect(start, end);
+      const start = dateRange[0].toDate() //"DD-MM-YYYY"
+      const end = dateRange[1].toDate() //format("DD-MM-YYYY");
+      onDateRangeSelect(start, end)
     }
-  };
+  }
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="he">
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='he'>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <DateRangePicker
           calendars={1}
           value={dateRange}
           onChange={(newValue) => setDateRange(newValue)}
-          localeText={{ start: "תאריך התחלה", end: "תאריך סיום" }}
+          localeText={{ start: 'תאריך התחלה', end: 'תאריך סיום' }}
         />
-        <Button
-          variant="contained"
-          onClick={handleApply}
-          disabled={!dateRange[0] || !dateRange[1]}
-        >
+        <Button variant='contained' onClick={handleApply} disabled={!dateRange[0] || !dateRange[1]}>
           סנן לפי טווח תאריכים
         </Button>
       </Box>
     </LocalizationProvider>
-  );
-};
+  )
+}
 
-export default DateRangeSelector;
+export default DateRangeSelector

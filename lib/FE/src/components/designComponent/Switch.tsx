@@ -1,11 +1,11 @@
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import { colors } from '../../styles/theme';
+import React from 'react'
+import { styled } from '@mui/material/styles'
+import Switch from '@mui/material/Switch'
+import { colors } from '../../styles/theme'
 
 interface CustomSwitchProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
+  checked: boolean
+  onChange: (checked: boolean) => void
 }
 
 const StyledSwitch = styled(Switch)(() => ({
@@ -50,16 +50,10 @@ const StyledSwitch = styled(Switch)(() => ({
     borderRadius: 20,
     opacity: 1,
   },
-}));
+}))
 
 const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange }) => {
-  return (
+  return <StyledSwitch checked={checked} onChange={(e) => onChange(e.target.checked)} />
+}
 
-    <StyledSwitch
-      checked={checked}
-      onChange={(e) => onChange(e.target.checked)}
-    />
-  );
-};
-
-export default CustomSwitch;
+export default CustomSwitch

@@ -5,7 +5,7 @@ import { colors } from "../../styles/theme";
 import CustomTypography from "./Typography";
 
 interface FilterResetButtonProps {
-  onReset: () => void;
+  onReset: () => void
 }
 
 const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
@@ -21,15 +21,15 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
       <Button
         onClick={onReset}
         sx={{
-          width: "50%",
-          height: "50px",
+          width: '50%',
+          height: '50px',
           marginTop: 0,
           opacity: 0.5,
           borderRadius: 4,
           outline: `1px solid ${colors.c22}`,
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "center",
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
         }}
       >
         <Box sx={{ paddingTop: 1.2, alignItems: "center" }}>
@@ -42,7 +42,7 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
         </Box>
       </Button>
     </Box>
-  );
-};
+  )
+}
 
-export default FilterResetButton;
+export default FilterResetButton
