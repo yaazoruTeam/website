@@ -184,7 +184,6 @@
   "send": "send",
   "deviceManagement": "Device Management",
   "addingNewDevice": "Add New Device",
-  "addNewDevice": "Add New Device",
   "deviceNumber": "Device Number",
   "simNumber": "SIM Number",
   "imei": "IMEI",

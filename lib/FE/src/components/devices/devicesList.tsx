@@ -78,7 +78,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
       {showAddDevice ? (
         <Box>
           {/* TODO: Create AddDevice component or use deviceForm */}
-          <CustomTypography text={t('addNewDevice')} variant='h2' weight='bold' color={colors.c11} />
+          <CustomTypography text={t('addingNewDevice')} variant='h2' weight='bold' color={colors.c11} />
         </Box>
       ) : (
         <>
