@@ -185,5 +185,16 @@
   "WriteComment": "כתיבת תגובה",
   "closed": "סגור",
   "AddingEmoji": "הוספת אימוג'י",
-  "send": "שלח"
+  "send": "שלח",
+  "deviceManagement": "ניהול מכשירים",
+  "addingNewDevice": "הוספת מכשיר חדש",
+  "addNewDevice": "הוספת מכשיר חדש",
+  "deviceNumber": "מספר מכשיר",
+  "simNumber": "מספר סים",
+  "imei": "IMEI",
+  "deviceStatus": "סטטוס מכשיר",
+  "deviceModel": "דגם מכשיר",
+  "mehalchaNumber": "מספר במהלכא",
+  "openingDate": "תאריך פתיחה",
+  "purchaseDate": "תאריך רכישה"
 }

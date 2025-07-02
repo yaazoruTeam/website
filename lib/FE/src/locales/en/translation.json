@@ -181,5 +181,16 @@
   "WriteComment": "write a comment",
   "closed": "closed",
   "AddingEmoji": "adding emoji",
-  "send": "send"
+  "send": "send",
+  "deviceManagement": "Device Management",
+  "addingNewDevice": "Add New Device",
+  "addNewDevice": "Add New Device",
+  "deviceNumber": "Device Number",
+  "simNumber": "SIM Number",
+  "imei": "IMEI",
+  "deviceStatus": "Device Status",
+  "deviceModel": "Device Model",
+  "mehalchaNumber": "Mehalcha Number",
+  "openingDate": "Opening Date",
+  "purchaseDate": "Purchase Date"
 }
