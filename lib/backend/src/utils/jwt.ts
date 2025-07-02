@@ -1,6 +1,6 @@
-import { JwtPayload } from '../model'
+import { JwtPayload } from '@model'
 import jwt from 'jsonwebtoken'
-import config from '../config'
+import config from '@/config'
 
 const JWT_SECRET = config.jwt.secret
 

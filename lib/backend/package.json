@@ -5,9 +5,9 @@
     "main": "src/index.ts",
     "scripts": {
         "test": "jest",
-        "build-schema": "ts-node ./src/db/buildSchema",
-        "dev": "set PORT=3006 && ts-node ./src",
-        "payment-servic-dev": "ts-node ./src/services/monthlyPayment"
+        "build-schema": "ts-node -r tsconfig-paths/register ./src/db/buildSchema",
+        "dev": "set PORT=3006 && ts-node -r tsconfig-paths/register ./src",
+        "payment-service-dev": "ts-node ./src/services/monthlyPayment"
     },
     "dependencies": {
         "@google-cloud/speech": "^7.2.0",
@@ -27,6 +27,7 @@
         "pg-hstore": "^2.3.4",
         "safer-buffer": "^2.1.2",
         "sequelize": "^6.37.5",
+        "tsconfig-paths": "^4.2.0",
         "xlsx": "^0.18.5"
     },
     "author": "",

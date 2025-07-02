@@ -1,6 +1,6 @@
 import axios from 'axios'
 import generateAccessTokenTranzila from './tranzilaAuth'
-import config from '../config'
+import config from '@/config'
 
 const appPublicKey = config.tranzila.publicKey
 const appPrivateKey = config.tranzila.privateKey
