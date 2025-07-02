@@ -58,7 +58,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   }))
 
   const onClickDevice = (device: any) => {
-    console.log(device.device_id)
     navigate(`/device/card/${device.device_id}`)
   }
 
