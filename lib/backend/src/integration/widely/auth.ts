@@ -1,11 +1,7 @@
 import crypto from 'crypto'
+import dotenv from 'dotenv'
 
-// הסר את dotenv כי המשתנים מוגדרים ב-docker-compose.yaml
-console.log('Environment variables from docker-compose:')
-console.log('BRAND_TOKEN:', process.env.BRAND_TOKEN)
-console.log('BRAND_ID:', process.env.BRAND_ID)
-console.log('ACCOUNT_TOKEN:', process.env.ACCOUNT_TOKEN)
-console.log('AUTH_ID:', process.env.AUTH_ID)
+dotenv.config()
 
 // קריאת משתני סביבה
 const {
