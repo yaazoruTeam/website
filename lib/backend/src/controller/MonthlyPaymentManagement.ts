@@ -5,7 +5,7 @@ import {
   ItemForMonthlyPayment,
   MonthlyPayment,
   MonthlyPaymentManagement,
-} from '@/model/src'
+} from '@model'
 import * as db from '@/db'
 import getDbConnection from '@/db/connection'
 import { updateItems } from './item'

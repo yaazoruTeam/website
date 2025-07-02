@@ -1,4 +1,4 @@
-import { BranchCustomer } from '@/model/src'
+import { BranchCustomer } from '@model'
 import getDbConnection from './connection'
 import * as dotenv from 'dotenv'
 dotenv.config()

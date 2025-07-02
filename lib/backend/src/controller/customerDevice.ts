@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@/db'
-import { CustomerDevice, HttpError } from '@/model/src'
+import { CustomerDevice, HttpError } from '@model'
 import * as dotenv from 'dotenv'
 dotenv.config()
 const limit = Number(process.env.LIMIT) || 10

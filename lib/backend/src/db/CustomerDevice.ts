@@ -1,4 +1,4 @@
-import { CustomerDevice } from '@/model/src'
+import { CustomerDevice } from '@model'
 import getDbConnection from './connection'
 import * as dotenv from 'dotenv'
 dotenv.config()

@@ -1,4 +1,4 @@
-import { BranchUser } from '@/model/src'
+import { BranchUser } from '@model'
 import getDbConnection from './connection'
 const limit = Number(process.env.LIMIT) || 10
 

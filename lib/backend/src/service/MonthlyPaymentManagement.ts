@@ -1,5 +1,5 @@
 import getDbConnection from '../db/connection'
-import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from 'model/src'
+import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from '@model'
 import * as db from 'db'
 
 const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentManagement.Model) => {

@@ -1,4 +1,4 @@
-import { Customer, HttpError } from '@/model/src'
+import { Customer, HttpError } from '@model'
 import getDbConnection from './connection'
 import * as dotenv from 'dotenv'
 

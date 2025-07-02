@@ -7,12 +7,12 @@ import { createBranchSchema } from './branch'
 import { createBranchCustomerSchema } from './branchCustomer'
 import { createBranchUserSchema } from './branchUser'
 import { createCreditDetailsSchema } from './creditDetails'
-import { createTransactionDetailsSchema } from './transactionDetails'
 import { createMonthlyPayment } from './monthlyPayment'
 import { createPayments } from './payments'
 import { createItem } from './itemForMonthlyPayment'
 import { createPaymentCreditLink } from './paymentCreditLink'
 import { createCommentsSchema } from './comments'
+import getDbConnection from '@db/connection'
 
 const createSchema = async () => {
     console.log("Creating schema...");

@@ -1,4 +1,4 @@
-import { Comment } from '@/model/src'
+import { Comment } from '@model'
 import getDbConnection from './connection'
 import config from '../config'
 import { Knex } from 'knex'

@@ -1,4 +1,4 @@
-import { CreditDetails, HttpError } from '@/model/src'
+import { CreditDetails, HttpError } from '@model'
 import getDbConnection from './connection'
 
 const limit = Number(process.env.LIMIT) || 10

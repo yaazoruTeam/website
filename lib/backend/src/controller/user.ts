@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@/db'
-import { User, HttpError } from '@/model/src'
+import { User, HttpError } from '@model'
 import { hashPassword } from '@/utils/password'
 
 const limit = Number(process.env.LIMIT) || 10

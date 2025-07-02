@@ -1,4 +1,4 @@
-import { HttpError, ItemForMonthlyPayment, Payments } from '@/model/src'
+import { HttpError, ItemForMonthlyPayment, Payments } from '@model'
 import getDbConnection from './connection'
 const limit = Number(process.env.LIMIT) || 10
 

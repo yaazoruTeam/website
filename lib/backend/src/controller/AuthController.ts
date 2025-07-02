@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { HttpError, User } from '@/model/src'
+import { HttpError, User } from '@model'
 import * as db from '@/db'
 import { generateToken, verifyToken } from '@/utils/jwt'
 import { comparePasswords } from '@/utils/password'

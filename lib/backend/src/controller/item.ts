@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { HttpError, ItemForMonthlyPayment } from '@/model/src'
+import { HttpError, ItemForMonthlyPayment } from '@model'
 import * as db from '@/db'
 
 const limit = Number(process.env.LIMIT) || 10
