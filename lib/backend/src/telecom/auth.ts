@@ -17,7 +17,8 @@ const authId = parseInt(AUTH_ID, 10)
 
 // בדיקת משתנים נדרשים
 if (!BRAND_TOKEN || !brandId || !ACCOUNT_TOKEN || !authId) {
-  throw new Error('Missing required environment variables in .env file')
+  console.warn('Warning: Missing required environment variables in .env file. Please configure BRAND_TOKEN, BRAND_ID, ACCOUNT_TOKEN, and AUTH_ID.')
+  console.log('Current values:', { BRAND_TOKEN: BRAND_TOKEN ? '✅' : '❌', BRAND_ID, ACCOUNT_TOKEN: ACCOUNT_TOKEN ? '✅' : '❌', AUTH_ID })
 }
 
 // יצירת hash אקראי

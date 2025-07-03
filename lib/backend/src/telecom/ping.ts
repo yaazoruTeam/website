@@ -8,8 +8,8 @@ const ACCOUNT_TOKEN: string = process.env.ACCOUNT_TOKEN || ''
 const ACCOUNT_ID: string = process.env.ACCOUNT_ID || ''
 const AUTH_ID: string = process.env.AUTH_ID || ''
 
-const PING_URL = 'https://widelyapp-api-01.widelymobile.com:3001/api/v2/widely_app/app_action'
-const API_URL = 'https://widelyapp-api-02.widelymobile.com:3001/api/v2/temp_prev/' // ACCOUNT_ACTION
+const APP_ACTION = 'https://widelyapp-api-01.widelymobile.com:3001/api/v2/widely_app/app_action'
+const ACCOUNT_ACTION = 'https://widelyapp-api-02.widelymobile.com:3001/api/v2/temp_prev/' // ACCOUNT_ACTION
 
 const sendPing = async () => {
     const requestBody = {
@@ -19,7 +19,7 @@ const sendPing = async () => {
     }
 
     try {
-        const response = await axios.post(PING_URL, requestBody, {
+        const response = await axios.post(APP_ACTION, requestBody, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -33,6 +33,104 @@ const sendPing = async () => {
         console.error('❌ Ping Error:', error.response?.data || error.message)
     }
 }
+
+const sendOtp = async (/*phoneNumber: string*/) => {
+    const requestBody = {
+        auth: {
+            auth_id: 1,
+            hash: "1580299148XGeoA28Gt6",
+            auth: "a307e925b9f1433220208955aa0c086c"
+        }, // ב-app_action זה MD5(brand_token + hash)
+        func_name: 'send_otp',
+        data: {
+            number: '+19734466600',
+            method: 'SMS', // או 'CALL' אם רוצים שיחת טלפון
+        }
+    };
+
+    try {
+        const response = await axios.post(APP_ACTION, requestBody, {
+            headers: { 'Content-Type': 'application/json' },
+            httpsAgent: new https.Agent({ rejectUnauthorized: false })
+        });
+
+        console.log('✅ OTP sent successfully:', response.data);
+    } catch (error: any) {
+        console.error('❌ OTP send failed:', error.response?.data || error.message);
+    }
+};
+// { status: 'OK', error_code: 200, message: 'OTP sent', data: {} }
+const validateOtp = async (/*phoneNumber: string*/) => {
+    const requestBody = {
+        auth: {
+            auth_id: 1,
+            hash: "1580299148XGeoA28Gt6",
+            auth: "a307e925b9f1433220208955aa0c086c"
+        }, // ב-app_action זה MD5(brand_token + hash)
+        func_name: 'validate_otp',
+        data: {
+            number: '+19734466600',
+            code: 8954
+        }
+    };
+
+    try {
+        const response = await axios.post(APP_ACTION, requestBody, {
+            headers: { 'Content-Type': 'application/json' },
+            httpsAgent: new https.Agent({ rejectUnauthorized: false })
+        });
+
+        console.log('✅ OTP validated successfully:', response.data);
+    } catch (error: any) {
+        console.error('❌ OTP validation failed:', error.response?.data || error.message);
+    }
+};
+// {
+//   status: 'OK',
+//   error_code: 200,
+//   message: 'Request succeed',
+//   data: { otp_auth_id: 400046520 }
+// }
+const createAccount = async (/*phoneNumber: string*/) => {
+    const requestBody = {
+        auth: {
+            auth_id: 1,
+            hash: "1580299148XGeoA28Gt6",
+            auth: "a307e925b9f1433220208955aa0c086c"
+        }, // ב-app_action זה MD5(brand_token + hash)
+        func_name: 'create_account',
+        data: {
+            number: '+19734466600',
+            otp_auth_id: 400046520,
+            name: 'test'
+        }
+    };
+
+    try {
+        const response = await axios.post(APP_ACTION, requestBody, {
+            headers: { 'Content-Type': 'application/json' },
+            httpsAgent: new https.Agent({ rejectUnauthorized: false })
+        });
+
+        console.log('✅ create account successfully:', response.data);
+    } catch (error: any) {
+        console.error('❌ create account failed:', error.response?.data || error.message);
+    }
+};
+// {
+//   status: 'OK',
+//   error_code: 200,                                          
+//   message: 'Request succeed',
+//   data: {                                                   
+//     auth_id: 400011893,                                     
+//     token: 'b04e3340-64b1-48cd-b4d8-18fa6db6ea47',          
+//     widely_permission_level: 10,
+//     has_admin: false,                                       
+//     user_exist: false,                                      
+//     user_name: '8jLbpfNJnMvWYJbCT',                         
+//     password: 'vzaJYI3zNfg11lOaBRs3behjF53F4QPox'
+//   }                                                         
+// } 
 
 
 // const confirmIccid = async (iccid: string) => {
@@ -55,7 +153,7 @@ const sendPing = async () => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: {
 //                 'Content-Type': 'application/json'
 //             },
@@ -86,7 +184,7 @@ const sendPing = async () => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({ rejectUnauthorized: false })
 //         })
@@ -125,7 +223,7 @@ const sendPing = async () => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({
 //                 rejectUnauthorized: false // לפיתוח בלבד
@@ -161,7 +259,7 @@ const sendPing = async () => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({
 //                 rejectUnauthorized: false
@@ -200,7 +298,7 @@ const sendPing = async () => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // לפיתוח בלבד
 //         })
@@ -224,7 +322,7 @@ const sendMobileAction = async (endpointId: number, action: string) => {// לב�
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // רק בפיתוח
         })
@@ -255,7 +353,7 @@ const sendMobileAction = async (endpointId: number, action: string) => {// לב�
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // רק בפיתוח
 //         })
@@ -278,7 +376,7 @@ const getMobiles = async (domain_user_id: number) => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // רק בפיתוח
         })
@@ -309,7 +407,7 @@ const getMobiles = async (domain_user_id: number) => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // לפיתוח
 //         })
@@ -339,7 +437,7 @@ const searchUserByIccid = async (iccid: string) => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // בפיתוח
         })
@@ -387,7 +485,7 @@ const searchUsers = async (iccid: number) => {
 
     try {
         const response = await axios.post(
-            API_URL,
+            ACCOUNT_ACTION,
             requestBody,
             {
                 headers: { 'Content-Type': 'application/json' },
@@ -419,7 +517,7 @@ const searchUsers = async (iccid: number) => {
 //     }
 
 //     try {
-//         const response = await axios.post(API_URL, requestBody, {
+//         const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //             headers: { 'Content-Type': 'application/json' },
 //             httpsAgent: new https.Agent({
 //                 rejectUnauthorized: false // לפיתוח
@@ -448,7 +546,7 @@ const getEndpointUsage = async (endpoint_id: number) => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({
                 rejectUnauthorized: false
@@ -479,7 +577,7 @@ const getMobileInfo = async (endpoint_id: number) => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({
                 rejectUnauthorized: false
@@ -506,7 +604,7 @@ const terminateMobile = async (endpoint_id: number) => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({
                 rejectUnauthorized: false // לפיתוח בלבד
@@ -548,7 +646,7 @@ export const createMobile = async ({
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // לפיתוח בלבד
         })
@@ -632,7 +730,7 @@ const sendApn = async (endpoint_id: number) => {
     //   }
 
     //   try {
-    //     const response = await axios.post(API_URL, requestBody, {
+    //     const response = await axios.post(ACCOUNT_ACTION, requestBody, {
     //       headers: { 'Content-Type': 'application/json' },
     //       httpsAgent: new https.Agent({
     //         rejectUnauthorized: false // רק לפיתוח
@@ -672,7 +770,7 @@ const sendApn = async (endpoint_id: number) => {
 //   }
 
 //   try {
-//     const response = await axios.post(API_URL, requestBody, {
+//     const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //       headers: { 'Content-Type': 'application/json' },
 //       httpsAgent: new https.Agent({ rejectUnauthorized: false })
 //     })
@@ -704,7 +802,7 @@ const resetVoicemailPin = async (endpoint_id: number) => {
     //   }
 
     //   try {
-    //     const response = await axios.post(API_URL, requestBody, {
+    //     const response = await axios.post(ACCOUNT_ACTION, requestBody, {
     //       headers: { 'Content-Type': 'application/json' },
     //       httpsAgent: new https.Agent({ rejectUnauthorized: false })
     //     })
@@ -738,7 +836,7 @@ const resetVoicemailPin = async (endpoint_id: number) => {
 //   }
 
 //   try {
-//     const response = await axios.post(API_URL, requestBody, {
+//     const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //       headers: { 'Content-Type': 'application/json' },
 //       httpsAgent: new https.Agent({ rejectUnauthorized: false })
 //     })
@@ -764,7 +862,7 @@ const toggleLineStatus = async (endpoint_id: number, enable: boolean) => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false }) // רק לפיתוח
         })
@@ -795,7 +893,7 @@ const toggleLineStatus = async (endpoint_id: number, enable: boolean) => {
 //   }
 
 //   try {
-//     const response = await axios.post(API_URL, requestBody, {
+//     const response = await axios.post(ACCOUNT_ACTION, requestBody, {
 //       headers: { 'Content-Type': 'application/json' },
 //       httpsAgent: new https.Agent({ rejectUnauthorized: false })
 //     })
@@ -838,13 +936,13 @@ const updateMobileSubscription = async (endpoint_id: number, service_id: number)
         func_name: 'prov_update_mobile_subscription',
         data: {
             endpoint_id,
-             service_id
+            service_id
             // extra_packages
         }
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false })
         })
@@ -869,7 +967,7 @@ const getPackagesWithInfo = async () => {
     }
 
     try {
-        const response = await axios.post(API_URL, requestBody, {
+        const response = await axios.post(ACCOUNT_ACTION, requestBody, {
             headers: { 'Content-Type': 'application/json' },
             httpsAgent: new https.Agent({ rejectUnauthorized: false })
         })
@@ -929,7 +1027,7 @@ const changeNetworkPreference = async (
     //   }
 
     //   try {
-    //     const response = await axios.post(API_URL, requestBody, {
+    //     const response = await axios.post(ACCOUNT_ACTION, requestBody, {
     //       headers: { 'Content-Type': 'application/json' },
     //       httpsAgent: new https.Agent({ rejectUnauthorized: false })
     //     })
@@ -970,7 +1068,10 @@ export {
     getPackagesWithInfo,
     searchUsers,
     resetLine,
-    changeNetworkPreference
+    changeNetworkPreference,
+    sendOtp,
+    validateOtp,
+    createAccount
 }
 
 

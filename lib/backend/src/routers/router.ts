@@ -19,7 +19,7 @@ import authRouter from './auth'
 import { errorHandler } from '../middleware/errorHandler'
 import { hasRole } from '../middleware/auth'
 import commentRouter from './comments'
-import {  changeNetworkPreference, getEndpointUsage, getMobileInfo, getMobiles, getPackagesWithInfo, resetLine, resetVoicemailPin, searchUserByIccid, searchUsers, sendApn, sendMobileAction, sendPing, terminateMobile, toggleLineStatus, updateMobileSubscription } from '../telecom/ping'
+import {  changeNetworkPreference, createAccount, getEndpointUsage, getMobileInfo, getMobiles, getPackagesWithInfo, resetLine, resetVoicemailPin, searchUserByIccid, searchUsers, sendApn, sendMobileAction, sendOtp, sendPing, terminateMobile, toggleLineStatus, updateMobileSubscription, validateOtp } from '../telecom/ping'
 // import { sendApn } from 'service/telecom'
 
 const router = Router()
@@ -44,13 +44,17 @@ sendPing()
 // toggleLineStatus(400086408, false)//endpointId,action(להדליק קו או לכבות)//הדלקת קו/השעיית קו✅✅✅✅✅????
 // softResetSim(400055892)//endpointId//איפוס SIM רך??
 // hardResetSim(400055892)//endpointId//איפוס SIM קשה??
-updateMobileSubscription(400090993,400000291)//endpointId,service_id//עדכון מנוי נייד//החלפת תוכנית
+// updateMobileSubscription(400090993,400000291)//endpointId,service_id//עדכון מנוי נייד//החלפת תוכנית
 // getPackagesWithInfo()//-reseller_domain_id-לבדוק מאיפה זה מגיע, פונקציה לקבלת של התוכניות צריך את זה בשביל לקבל את כל סוגי התוכניות בשביל החלפת תוכנית
 // searchUsers(89972123300003312030)
 //  resetLine(400090992)                                                                                                                      
                                                                                                                             
 // changeNetworkPreference(400090993, 'hot_partner')
 
+
+// sendOtp()
+// validateOtp()
+// createAccount()
 router.use(`${ROUTE_PATH}/customer`, customerRouter)
 router.use(`${ROUTE_PATH}/device`, deviceRouter)
 router.use(`${ROUTE_PATH}/customerDevice`, customerDeviceRouter)
