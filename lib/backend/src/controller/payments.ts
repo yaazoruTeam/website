@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { HttpError, Payments } from '../model'
-import * as db from '../db'
+import { HttpError, Payments } from '@model'
+import * as db from '@/db'
 
 const limit = Number(process.env.LIMIT) || 10
 

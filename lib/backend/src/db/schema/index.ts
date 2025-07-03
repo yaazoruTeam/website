@@ -7,35 +7,58 @@ import { createBranchSchema } from './branch'
 import { createBranchCustomerSchema } from './branchCustomer'
 import { createBranchUserSchema } from './branchUser'
 import { createCreditDetailsSchema } from './creditDetails'
-import { createTransactionDetailsSchema } from './transactionDetails'
 import { createMonthlyPayment } from './monthlyPayment'
 import { createPayments } from './payments'
 import { createItem } from './itemForMonthlyPayment'
 import { createPaymentCreditLink } from './paymentCreditLink'
 import { createCommentsSchema } from './comments'
+import getDbConnection from '@db/connection'
 
 const createSchema = async () => {
-  console.log('Creating schema...')
-  try {
-    await createYaazoruSchema()
-    await createCustomerSchema()
-    await createDeviceSchema()
-    await createCustomerDeviceSchema()
-    await createUserSchema()
-    await createBranchSchema()
-    await createBranchCustomerSchema()
-    await createBranchUserSchema()
-    await createCreditDetailsSchema()
-    await createTransactionDetailsSchema()
-    await createMonthlyPayment()
-    await createPayments()
-    await createItem()
-    await createPaymentCreditLink()
-    await createCommentsSchema()
-    console.log('Schema created successfully')
-  } catch (err) {
-    console.error('Error creating schema', err)
-  }
+    console.log("Creating schema...");
+    try {
+        await waitForPostgres();
+        await createYaazoruSchema();
+        await createCustomerSchema();
+        await createDeviceSchema();
+        await createCustomerDeviceSchema();
+        await createUserSchema();
+        await createBranchSchema();
+        await createBranchCustomerSchema();
+        await createBranchUserSchema();
+        await createCreditDetailsSchema();
+        await createMonthlyPayment();
+        await createPayments();
+        await createItem();
+        await createPaymentCreditLink();
+        await createCommentsSchema();
+        console.log("Schema created successfully");
+    } catch (err) {
+        console.error("Error creating schema", err);
+    }
 }
 
-export { createSchema }
+const waitForPostgres = async () => {
+  const knex = getDbConnection();
+  let retries = 10;
+console.log('start');
+
+  while (retries > 0) {
+    try {
+      await knex.raw('SELECT 1');
+      console.log("✅ Connected to Postgres (via Knex)");
+      return;
+    } catch (err:any) {
+      console.warn("⏳ Waiting for Postgres to be ready...", err.message);
+      retries--;
+      await new Promise(res => setTimeout(res, 3000));
+    }
+  }
+
+  throw new Error("❌ Postgres not ready after several attempts.");
+};
+
+
+export {
+    createSchema,
+}
