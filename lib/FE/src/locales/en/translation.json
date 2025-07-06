@@ -182,6 +182,8 @@
   "closed": "closed",
   "AddingEmoji": "adding emoji",
   "send": "send",
+  "apply": "Apply",
+  "clear": "Clear",
   "months": {
     "january": "January",
     "february": "February",

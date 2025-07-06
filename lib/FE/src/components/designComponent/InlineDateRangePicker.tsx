@@ -161,13 +161,13 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
             onClick={handleApply}
             disabled={!startDate || !endDate}
           >
-            {t('apply') || 'אישור'}
+            {t('apply')}
           </StyledButton>
           <StyledButton 
             buttonvariant="clear"
             onClick={handleClear}
           >
-            {t('clear') || 'נקה'}
+            {t('clear')}
           </StyledButton>
         </ButtonContainer>
       </Box>
