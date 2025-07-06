@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FormControl, Select, MenuItem, Box/*, InputBase*/, OutlinedInput } from '@mui/material'
+import { FormControl, Select, MenuItem, Box /*, InputBase*/, OutlinedInput } from '@mui/material'
 import CityOptions from '../designComponent/CityOptions'
-import DateRangePickerComponent from '../designComponent/DateRangeSelector'
+import DateRangePickerComponent from '../designComponent/InlineDateRangePicker'
 import StatusCard from '../designComponent/StatusCard'
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  CalendarIcon,
-} from '@heroicons/react/24/outline'
+import { ChevronDownIcon, ChevronLeftIcon, CalendarIcon } from '@heroicons/react/24/outline'
 import { colors } from '../../styles/theme'
 import { getCities } from '../../api/customerApi'
 
@@ -31,7 +27,6 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   resetTrigger,
 }) => {
   const [open, setOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedCity, setSelectedCity] = useState<string>('')
   const [options, setOptions] = useState<string[]>([])
   const selectRef = useRef<HTMLDivElement | null>(null)
@@ -58,8 +53,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   useEffect(() => {
     if (resetTrigger) {
       setSelectedCity('')
-      // setSelectedStatus('')
-      // setDateRange(null)
+
     }
   }, [resetTrigger])
 
@@ -74,7 +68,6 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
 
   const handleSelectClick = (event: React.SyntheticEvent<Element, Event>) => {
     if (event.currentTarget instanceof HTMLElement) {
-      setAnchorEl(event.currentTarget)
       setOpen((prev) => !prev)
     }
   }
@@ -85,9 +78,11 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     onCitySelect?.(city)
   }
 
-  const handleDateRangeSelect = (start: Date, end: Date) => {
+  const handleDateRangeSelect = (start: Date | null, end: Date | null) => {
     setOpen(false)
-    onDateRangeSelect?.(start, end)
+    if (start && end) {
+      onDateRangeSelect?.(start, end)
+    }
   }
 
   const handleStatusSelect = async (status: 'active' | 'inactive') => {
@@ -139,7 +134,6 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
               zIndex: 5,
             }}
             input={<OutlinedInput />}
-
             endAdornment={
               searchType === 'city' || searchType === 'status' || searchType === 'other' ? (
                 open ? (
@@ -191,8 +185,10 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
       {searchType === 'status' && open && <StatusCard onStatusSelect={handleStatusSelect} />}
       {searchType === 'date' && open && (
         <DateRangePickerComponent
-          anchorEl={anchorEl}
-          onDateRangeSelect={handleDateRangeSelect}
+          onDateRangeChange={handleDateRangeSelect}
+          resetTrigger={resetTrigger}
+          placeholder={placeholder}
+          isOpen={open}
           onClose={() => setOpen(false)}
         />
       )}

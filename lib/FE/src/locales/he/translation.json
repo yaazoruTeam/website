@@ -185,5 +185,28 @@
   "WriteComment": "כתיבת תגובה",
   "closed": "סגור",
   "AddingEmoji": "הוספת אימוג'י",
-  "send": "שלח"
+  "send": "שלח",
+  "months": {
+    "january": "ינואר",
+    "february": "פברואר",
+    "march": "מרץ",
+    "april": "אפריל",
+    "may": "מאי",
+    "june": "יוני",
+    "july": "יולי",
+    "august": "אוגוסט",
+    "september": "ספטמבר",
+    "october": "אוקטובר",
+    "november": "נובמבר",
+    "december": "דצמבר"
+  },
+  "days": {
+    "sunday": "א",
+    "monday": "ב",
+    "tuesday": "ג",
+    "wednesday": "ד",
+    "thursday": "ה",
+    "friday": "ו",
+    "saturday": "ז"
+  }
 }
