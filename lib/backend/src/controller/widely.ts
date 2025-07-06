@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError } from '../model'
-import { searchUser } from '../integration/widely/searchUsere'
+import { callingWidely } from '../integration/widely/callingWidely'
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { simNumber } = req.body
-        
+
         if (!simNumber) {
             const error: HttpError.Model = {
                 status: 400,
@@ -15,7 +15,11 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
         }
 
         // קריאה לשירות האינטגרציה עם WIDELY
-        const result: any = await searchUser(simNumber)
+        const result: any = await callingWidely(
+            'searchUser',
+            { account_id: 400000441, search_string: simNumber }
+        )
+console.log('result', result  );
 
         res.status(result.status).json(result.data)
     } catch (error: any) {

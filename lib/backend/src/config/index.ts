@@ -12,6 +12,9 @@ export const config = {
     server: {
         port: Number(process.env.PORT) || 3000,
     },
+    widely: {
+        urlAccountAction: process.env.ACCOUNT_ACTION || '',
+    },
     // etc.
 };
 
