@@ -14,6 +14,8 @@ const callingWidely = async (func_name: string, data: any) => {
             config.widely.urlAccountAction,
             requestBody
         );
+        
+        return response.data;
 
     } catch (error) {
         console.error("Error in callingWidely:", error);
