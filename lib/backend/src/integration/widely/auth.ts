@@ -1,24 +1,13 @@
 import crypto from 'crypto'
-import dotenv from 'dotenv'
+import { config } from '../../config'
 
-dotenv.config()
-
-// קריאת משתני סביבה
+// שימוש במשתנים מה-config המרכזי
 const {
-  BRAND_TOKEN = '',
-  BRAND_ID = '0',
-  ACCOUNT_TOKEN = '',
-  AUTH_ID = '0'
-} = process.env
-
-// המרה לסוגים הנכונים
-const brandId = parseInt(BRAND_ID, 10)
-const authId = parseInt(AUTH_ID, 10)
-
-// בדיקת משתנים נדרשים
-if (!BRAND_TOKEN || !brandId || !ACCOUNT_TOKEN || !authId) {
-  console.warn('Warning: Missing required environment variables in .env file. Please configure BRAND_TOKEN, BRAND_ID, ACCOUNT_TOKEN, and AUTH_ID.')
-}
+  brandToken: BRAND_TOKEN,
+  brandId,
+  accountToken: ACCOUNT_TOKEN,
+  authId
+} = config.widely
 
 // יצירת hash אקראי
 const generateHash = (): string =>

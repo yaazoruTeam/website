@@ -1,7 +1,10 @@
 import express, { Request, Response } from 'express'
+import dotenv from 'dotenv'
 import { router } from './routers/router'
 import { errorHandler } from './middleware/errorHandler'
-// import { sendPing } from "./telecom/ping";
+
+// Load environment variables
+dotenv.config()
 
 const cors = require('cors')
 
