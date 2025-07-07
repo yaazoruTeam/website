@@ -19,7 +19,6 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
             'search_users',
             { account_id: 400000441, search_string: simNumber }
         )
-console.log(result);
 
         res.status(result.error_code).json(result.data)
     } catch (error: any) {
