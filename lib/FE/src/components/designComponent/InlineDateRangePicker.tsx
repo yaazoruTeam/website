@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import CalendarHeaderComponent from './CalendarHeaderComponent'
 import CalendarGrid from './CalendarGrid'
 import { generateCalendarDays } from './calendarUtils'
+import { colors } from '../../styles/theme'
 
 interface InlineDateRangePickerProps {
   onDateRangeChange: (start: Date | null, end: Date | null) => void
@@ -17,9 +18,9 @@ const CalendarContainer = styled(Box)({
   width: '100%',
   maxWidth: '100%',
   padding: '8px 12px',
-  background: 'white',
+  background: colors.c6,
   borderRadius: '16px',
-  outline: '1px solid rgba(11, 57, 81, 0.36)',
+  outline: `1px solid ${colors.c22}`,
   outlineOffset: '-1px',
   display: 'flex',
   flexDirection: 'column',
@@ -44,15 +45,15 @@ const StyledButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' }>(({ but
   borderRadius: '4px',
   textTransform: 'none',
   ...(buttonvariant === 'apply' ? {
-    backgroundColor: '#0A425F',
-    color: 'white',
-    '&:hover': { backgroundColor: '#083647' },
-    '&:disabled': { backgroundColor: '#ccc', color: '#666' },
+    backgroundColor: colors.c2,
+    color: colors.c6,
+    '&:hover': { backgroundColor: colors.c43 },
+    '&:disabled': { backgroundColor: colors.c44, color: colors.c41 },
   } : {
     backgroundColor: 'transparent',
-    color: '#858585',
-    border: '1px solid #858585',
-    '&:hover': { backgroundColor: 'rgba(133, 133, 133, 0.08)' },
+    color: colors.c42,
+    border: `1px solid ${colors.c42}`,
+    '&:hover': { backgroundColor: colors.c46 },
   }),
 }))
 

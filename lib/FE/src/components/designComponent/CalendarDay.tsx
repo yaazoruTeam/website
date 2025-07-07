@@ -1,5 +1,6 @@
 import React from 'react'
 import { styled, Box } from '@mui/material'
+import { colors } from '../../styles/theme'
 
 const DayCell = styled(Box)<{ 
   isSelected?: boolean; 
@@ -21,14 +22,14 @@ const DayCell = styled(Box)<{
   fontFamily: 'Heebo, Arial, sans-serif',
   cursor: 'pointer',
   borderRadius: isSelected ? '50%' : '0',
-  backgroundColor: isSelected ? '#FF7F07' : isInRange ? 'rgba(255, 127, 7, 0.1)' : 'transparent',
-  color: isSelected ? 'white' : 
-         isToday ? '#FF7F07' : 
-         isOtherMonth ? '#858585' : 
-         isHoliday ? '#0A425F' : '#858585',
-  border: isToday && !isSelected ? '1px solid #FF7F07' : 'none',
+  backgroundColor: isSelected ? colors.c3 : isInRange ? colors.c45 : 'transparent',
+  color: isSelected ? colors.c6 : 
+         isToday ? colors.c3 : 
+         isOtherMonth ? colors.c42 : 
+         isHoliday ? colors.c2 : colors.c42,
+  border: isToday && !isSelected ? `1px solid ${colors.c3}` : 'none',
   '&:hover': {
-    backgroundColor: isSelected ? '#FF7F07' : 'rgba(255, 127, 7, 0.1)',
+    backgroundColor: isSelected ? colors.c3 : colors.c45,
   },
 }))
 

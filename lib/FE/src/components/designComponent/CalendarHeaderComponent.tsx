@@ -1,7 +1,9 @@
 import React from 'react'
-import { Box, Typography, IconButton } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from 'react-i18next'
+import { colors } from '../../styles/theme'
+import CustomTypography from './Typography'
 
 interface CalendarHeaderComponentProps {
   currentMonth: Date
@@ -35,29 +37,25 @@ const CalendarHeaderComponent: React.FC<CalendarHeaderComponentProps> = ({
       marginTop: '4px',
     }}>
       <Box sx={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
-        <Typography sx={{ 
-          color: '#121212', 
-          fontSize: '13px', 
-          fontFamily: 'Heebo, Arial, sans-serif', 
-          fontWeight: 400 
-        }}>
-          {currentMonth.getFullYear()}
-        </Typography>
-        <Typography sx={{ 
-          color: '#121212', 
-          fontSize: '13px', 
-          fontFamily: 'Heebo, Arial, sans-serif', 
-          fontWeight: 400 
-        }}>
-          {getMonthName(currentMonth.getMonth())}
-        </Typography>
+        <CustomTypography
+          text={currentMonth.getFullYear().toString()}
+          variant="h5"
+          weight="regular"
+          color={colors.c40}
+        />
+        <CustomTypography
+          text={getMonthName(currentMonth.getMonth())}
+          variant="h5"
+          weight="regular"
+          color={colors.c40}
+        />
       </Box>
       <Box sx={{ display: 'flex', gap: '2px' }}>
         <IconButton onClick={onPrevMonth} size="small" sx={{ padding: '1px' }}>
-          <ChevronRightIcon style={{ width: 14, height: 14, color: '#121212' }} />
+          <ChevronRightIcon style={{ width: 14, height: 14, color: colors.c40 }} />
         </IconButton>
         <IconButton onClick={onNextMonth} size="small" sx={{ padding: '1px' }}>
-          <ChevronLeftIcon style={{ width: 14, height: 14, color: '#121212' }} />
+          <ChevronLeftIcon style={{ width: 14, height: 14, color: colors.c40 }} />
         </IconButton>
       </Box>
     </Box>

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Box, styled } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import CalendarDay from './CalendarDay' 
+import CalendarDay from './CalendarDay'
+import { colors } from '../../styles/theme' 
 const DayOfWeekHeader = styled(Box)({
   display: 'flex',
   justifyContent: 'space-between',
@@ -16,7 +17,7 @@ const DayOfWeekCell = styled(Box)({
   padding: '2px 1px',
   fontSize: '13px',
   fontWeight: 400,
-  color: '#121212',
+  color: colors.c40,
   fontFamily: 'Heebo, Arial, sans-serif',
   minWidth: '16px',
   maxWidth: '16px',
@@ -79,7 +80,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
       <DayOfWeekHeader>
         {getDayNames().map((day, index) => (
           <DayOfWeekCell key={index} sx={{ 
-            color: index === 6 ? '#0A425F' : '#121212'
+            color: index === 6 ? colors.c2 : colors.c40
           }}>
             {day}
           </DayOfWeekCell>

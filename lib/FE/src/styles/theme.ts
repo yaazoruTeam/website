@@ -42,6 +42,13 @@ const colors = {
   c37: '#1D75DD',
   c38: '#989BA1', //neutral gray
   c39: '#DDDDDD', //neutral light gray
+  c40: '#121212', // Main text color
+  c41: '#666', // Disabled text
+  c42: '#858585', // Secondary text
+  c43: '#083647', // Button hover state
+  c44: '#ccc', // Disabled button background
+  c45: 'rgba(255, 127, 7, 0.1)', // Selected range background
+  c46: 'rgba(133, 133, 133, 0.08)', // Hover state for buttons
 }
 
 // הגדרת הצבעים של ה-theme
