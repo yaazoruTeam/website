@@ -1,4 +1,4 @@
-import { Device, HttpError } from '../model'
+import { Device, HttpError } from '@model'
 import getDbConnection from './connection'
 import * as dotenv from 'dotenv'
 dotenv.config()

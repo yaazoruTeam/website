@@ -1,4 +1,4 @@
-import { HttpError, MonthlyPayment } from '../model'
+import { HttpError, MonthlyPayment } from '@model'
 import getDbConnection from './connection'
 import * as dotenv from 'dotenv'
 

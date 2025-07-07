@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { HttpError, MonthlyPayment } from '../model/src'
-import * as db from '../db'
+import { HttpError, MonthlyPayment } from '@model'
+import * as db from '@/db'
 import dotenv from 'dotenv'
 dotenv.config()
 

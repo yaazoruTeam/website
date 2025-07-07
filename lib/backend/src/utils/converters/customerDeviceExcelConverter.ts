@@ -1,4 +1,4 @@
-import { CustomerDeviceExcel } from 'model'
+import { CustomerDeviceExcel } from '@model'
 
 const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
   return {

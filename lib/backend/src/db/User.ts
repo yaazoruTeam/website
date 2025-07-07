@@ -1,4 +1,4 @@
-import { HttpError, User } from '../model'
+import { HttpError, User } from '@model'
 import getDbConnection from './connection'
 const limit = Number(process.env.LIMIT) || 10
 
