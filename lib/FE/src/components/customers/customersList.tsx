@@ -4,6 +4,7 @@ import AddCustomer from './AddCustomer'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import CustomTypography from '../designComponent/Typography'
+import NoResultsMessage from '../designComponent/NoResultsMessage'
 import { useTranslation } from 'react-i18next'
 import { Customer } from '../../model/src'
 import CustomTable from '../designComponent/CustomTable'
@@ -19,9 +20,11 @@ interface CustomersListProps {
   limit: number
   onPageChange: (page: number) => void
   onFilterChange: (filter: any) => void
+  noResults?: boolean
+  noResultsType?: string
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange, onFilterChange }) => {
+const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange, onFilterChange, noResults = false, noResultsType = 'general' }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
   const [showAddCustomer, setShowAddCustomer] = useState(false)
@@ -29,9 +32,15 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
 
+  const handleCloseNoResults = () => {
+    // Clear filters and refresh the list
+    onFilterChange(null)
+    onPageChange(1)
+    setResetTrigger(true)
+    setTimeout(() => setResetTrigger(false), 0)
+  }
+
   const handleResetFilters = () => {
-    // setFilteredCustomers(customers)
-    // setDateRange(null)
     onFilterChange(null)
     onPageChange(1)
     setResetTrigger(true)
@@ -162,19 +171,26 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, l
               gap: 3,
             }}
           >
-            <CustomTable
-              columns={columns}
-              data={tableData}
-              onRowClick={onClickCustomer}
-              showSummary={{
-                total,
-                page,
-                totalPages,
-                limit,
-                onPageChange,
-              }}
-              alignLastColumnLeft={true}
-            />
+            {noResults ? (
+              <NoResultsMessage
+                messageType={noResultsType as 'date' | 'status' | 'general'}
+                onClose={handleCloseNoResults}
+              />
+            ) : (
+              <CustomTable
+                columns={columns}
+                data={tableData}
+                onRowClick={onClickCustomer}
+                showSummary={{
+                  total,
+                  page,
+                  totalPages,
+                  limit,
+                  onPageChange,
+                }}
+                alignLastColumnLeft={true}
+              />
+            )}
           </Box>
         </>
       )}

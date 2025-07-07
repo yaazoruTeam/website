@@ -174,7 +174,7 @@
   "addNumber": "להוסיף מספר",
   "phoneNumber": "מספר טלפון",
   "StatusNumbers": "סטטוס מספרים",
-    "noCustomersFound": "לא נמצאו לקוחות.",
+    "noCustomersFound": "לא נמצאו לקוחות",
   "return": "< חזרה",
   "country": "ארץ",
   "durationCall": "משך השיחה",
@@ -188,6 +188,9 @@
   "send": "שלח",
   "apply": "אישור",
   "clear": "נקה",
+  "noCustomersFoundDate": "לא נמצאו לקוחות בטווח תאריכים הרצוי...",
+  "noCustomersFoundStatus": "לא נמצאו לקוחות עם הסטטוס הנבחר...",
+  "noCustomersFoundGeneral": "לא נמצאו לקוחות...",
   "months": {
     "january": "ינואר",
     "february": "פברואר",

@@ -49,6 +49,7 @@ const colors = {
   c44: '#ccc', // Disabled button background
   c45: 'rgba(255, 127, 7, 0.1)', // Selected range background
   c46: 'rgba(133, 133, 133, 0.08)', // Hover state for buttons
+  c47: 'rgba(0, 0, 0, 0.1)', // Light shadow color
 }
 
 // הגדרת הצבעים של ה-theme

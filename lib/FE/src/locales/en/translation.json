@@ -184,6 +184,9 @@
   "send": "send",
   "apply": "Apply",
   "clear": "Clear",
+  "noCustomersFoundDate": "No customers found in the desired date range...",
+  "noCustomersFoundStatus": "No customers found with the selected status...",
+  "noCustomersFoundGeneral": "No customers found...",
   "months": {
     "january": "January",
     "february": "February",
