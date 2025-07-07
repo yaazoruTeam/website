@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2024",
     "module": "CommonJS",
     "rootDir": "./src",
     "outDir": "./dist",
@@ -9,12 +9,8 @@
     "baseUrl": "./src",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": [
-    "src/**/*"
-, "src/tests/ReadExcelDevicesForDonors.test.ts"  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*", "src/tests/ReadExcelDevicesForDonors.test.ts"],
+  "exclude": ["node_modules"]
 }

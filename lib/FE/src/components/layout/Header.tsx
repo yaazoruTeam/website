@@ -1,127 +1,129 @@
-import React, { useEffect, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { colors } from "../../styles/theme";
-import { Box } from "@mui/material";
-import { CustomButton } from "../designComponent/Button";
-import { useNavigate } from "react-router-dom";
-import { getUserById } from "../../api/userApi";
-import CustomTypography from "../designComponent/Typography";
-import { ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from 'react'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { colors } from '../../styles/theme'
+import { Box } from '@mui/material'
+import { CustomButton } from '../designComponent/Button'
+import { useNavigate } from 'react-router-dom'
+import { getUserById } from '../../api/userApi'
+import CustomTypography from '../designComponent/Typography'
+import { ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from 'react-i18next'
 
 const Header: React.FunctionComponent = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [token, setToken] = useState<string>('');
-  const [userName, setUserName] = useState<string | null>(null);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [token, setToken] = useState<string>('')
+  const [userName, setUserName] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem('token')
     if (storedToken) {
-      setToken(storedToken);
+      setToken(storedToken)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (token) {
-      getUserFromToken(token);
+      getUserFromToken(token)
     }
-  }, [token]);
+  }, [token])
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setToken('');
-    setUserName(null);
-  };
+    localStorage.removeItem('token')
+    setToken('')
+    setUserName(null)
+  }
 
   const getUserFromToken = async (token: string) => {
     try {
-      const payload = token.split('.')[1];
-      const decodedPayload = JSON.parse(atob(payload));
-      const user_id: string = decodedPayload.user_id;
-      const user = await getUserById(user_id);
-      setUserName(user.first_name);
-      return user;
+      const payload = token.split('.')[1]
+      const decodedPayload = JSON.parse(atob(payload))
+      const user_id: string = decodedPayload.user_id
+      const user = await getUserById(user_id)
+      setUserName(user.first_name)
+      return user
     } catch (error) {
-      console.error('Error decoding token', error);
-      return null;
+      console.error('Error decoding token', error)
+      return null
     }
-  };
+  }
   return (
     <AppBar
-      position="static"
+      position='static'
       sx={{
         backgroundColor: colors.c6,
-        height: "108px",
-        boxShadow: "none",
-        justifyContent: "center",
-        padding: "0 16px",
+        height: '108px',
+        boxShadow: 'none',
+        justifyContent: 'center',
+        padding: '0 16px',
       }}
     >
       <Toolbar
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           // marginLeft: "2%",
-          height: "100%",
+          height: '100%',
         }}
       >
-        <Box sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          marginLeft: '2%',
-         marginRight: '8%',
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            marginLeft: '2%',
+            marginRight: '8%',
+          }}
+        >
           <Box>
             <TextField
-              variant="standard"
+              variant='standard'
               placeholder={t('topNavigation-Search')}
               fullWidth
               sx={{
                 marginRight: '15%',
-                width: "100%",
+                width: '100%',
                 // height: '50px',
-                borderRadius: "43px",
+                borderRadius: '43px',
                 backgroundColor: colors.c21,
-                "& .MuiInput-underline:before": { borderBottom: "none" },
-                "& .MuiInput-underline:after": { borderBottom: "none" },
-                "& .MuiInputBase-input": {
-                  backgroundColor: "transparent",
-                  textAlign: "right",
-                  direction: "rtl",
-                  padding: "12px 16px",
-                  fontSize: "18px",
-                  fontFamily: "Heebo",
+                '& .MuiInput-underline:before': { borderBottom: 'none' },
+                '& .MuiInput-underline:after': { borderBottom: 'none' },
+                '& .MuiInputBase-input': {
+                  backgroundColor: 'transparent',
+                  textAlign: 'right',
+                  direction: 'rtl',
+                  padding: '12px 16px',
+                  fontSize: '18px',
+                  fontFamily: 'Heebo',
                   fontWeight: 400,
                   color: colors.c2,
                 },
-                "& input::placeholder": {
+                '& input::placeholder': {
                   color: colors.c10,
                   opacity: 1,
                 },
-                "@media (max-width: 600px)": {
-                  width: "100%",
+                '@media (max-width: 600px)': {
+                  width: '100%',
                 },
               }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment
-                    position="end"
+                    position='end'
                     sx={{
-                      marginRight: "24px",
+                      marginRight: '24px',
                     }}
                   >
                     <MagnifyingGlassIcon
                       style={{
-                        width: "16px",
-                        height: "16px",
+                        width: '16px',
+                        height: '16px',
                         color: colors.c22,
                       }}
                     />
@@ -130,7 +132,7 @@ const Header: React.FunctionComponent = () => {
               }}
             />
           </Box>
-          < Box>
+          <Box>
             {!token ? (
               <CustomButton
                 label={t('login')}
@@ -138,8 +140,8 @@ const Header: React.FunctionComponent = () => {
                   background: colors.c6,
                   color: colors.c11,
                   border: `1px ${colors.c22} solid`,
-                  "&:hover": {
-                    background: "#f9fafc",
+                  '&:hover': {
+                    background: '#f9fafc',
                   },
                 }}
                 onClick={() => navigate('/login')}
@@ -154,7 +156,6 @@ const Header: React.FunctionComponent = () => {
                   display: 'inline-flex',
                 }}
               >
-
                 <Box
                   sx={{
                     marginLeft: '16px',
@@ -171,27 +172,31 @@ const Header: React.FunctionComponent = () => {
                 >
                   <CustomTypography
                     text={t('logout')}
-                    variant="h4"
-                    weight="regular"
+                    variant='h4'
+                    weight='regular'
                     color={colors.c8}
                   />
-                  <ArrowRightStartOnRectangleIcon style={{ width: '24px', height: '24px', color: colors.c8 }} />
+                  <ArrowRightStartOnRectangleIcon
+                    style={{ width: '24px', height: '24px', color: colors.c8 }}
+                  />
                 </Box>
-                <Box sx={{
-                  marginLeft: '30px',
-                  width: '45.5px',
-                  height: '45.5px',
-                  position: 'relative',
-                  backgroundColor: colors.c16,
-                  borderRadius: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+                <Box
+                  sx={{
+                    marginLeft: '30px',
+                    width: '45.5px',
+                    height: '45.5px',
+                    position: 'relative',
+                    backgroundColor: colors.c16,
+                    borderRadius: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
                   <CustomTypography
                     text={userName ? userName?.charAt(0) : ''}
-                    variant="h1"
-                    weight="medium"
+                    variant='h1'
+                    weight='medium'
                     color={colors.c2}
                   />
                 </Box>
@@ -201,8 +206,7 @@ const Header: React.FunctionComponent = () => {
         </Box>
       </Toolbar>
     </AppBar>
-  );
-};
+  )
+}
 
-export default Header;
-
+export default Header

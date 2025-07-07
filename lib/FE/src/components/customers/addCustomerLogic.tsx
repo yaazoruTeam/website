@@ -1,6 +1,6 @@
-import { createCustomer } from '../../api/customerApi';
-import { Customer } from '../../model/src';
-import { AddCustomerFormInputs } from './AddCustomerForm';
+import { createCustomer } from '../../api/customerApi'
+import { Customer } from '../../model/src'
+import { AddCustomerFormInputs } from './AddCustomerForm'
 
 export const addCustomer = async (data: AddCustomerFormInputs): Promise<Customer.Model> => {
   const customerData: Customer.Model = {
@@ -18,7 +18,7 @@ export const addCustomer = async (data: AddCustomerFormInputs): Promise<Customer
     status: '',
     created_at: new Date(Date.now()),
     updated_at: new Date(Date.now()),
-  };
-  
-  return await createCustomer(customerData);
-};
+  }
+
+  return await createCustomer(customerData)
+}

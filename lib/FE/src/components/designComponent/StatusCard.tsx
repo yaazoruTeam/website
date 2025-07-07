@@ -1,101 +1,96 @@
-import React, { useState } from "react";
-import { Box } from "@mui/material";
-import { colors } from "../../styles/theme";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import StatusTag from "./Status";
-import CustomTypography from "./Typography";
-import { useTranslation } from "react-i18next";
+import React from 'react'
+import { Box } from '@mui/material'
+import { colors } from '../../styles/theme'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import StatusTag from './Status'
+import CustomTypography from './Typography'
+import { useTranslation } from 'react-i18next'
 
 interface StatusCardProps {
-  onStatusSelect: (status: "active" | "inactive") => Promise<void>;
+  onStatusSelect: (status: 'active' | 'inactive') => Promise<void>
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
-  const [selectedStatus, setSelectedStatus] = useState<
-    "active" | "inactive" | null
-  >(null);
+  const { t } = useTranslation()
 
-  const { t } = useTranslation();
-
-  const handleClick = async (status: "active" | "inactive") => {
-    await onStatusSelect(status);
-  };
+  const handleClick = async (status: 'active' | 'inactive') => {
+    await onStatusSelect(status)
+  }
 
   return (
     <Box
       sx={{
         background: colors.c6,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "white",
+        width: '100%',
+        height: '100%',
         borderRadius: 4,
-        border: `1px solid ${colors.c22}`,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        boxShadow: "none",
-        gridArea: "1 / 1",
-        justifyContent: "center",
+        outline: `1px solid ${colors.c22}`,
+        outlineOffset: '-1px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        boxShadow: 'none',
+        gridArea: '1 / 1',
+        justifyContent: 'center',
         paddingBottom: 0.5,
-        position: "relative",
+        position: 'relative',
         zIndex: 10,
       }}
     >
       <Box
         sx={{
-          py: "14px",
+          py: '14px',
           borderRadius: 1,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <CustomTypography
-          text={t("customerStatus")}
-          weight="regular"
-          variant="h1"
+          text={t('customerStatus')}
+          weight='regular'
+          variant='h1'
           sx={{
             color: colors.c11,
             fontSize: 16,
-            fontFamily: "Heebo",
+            fontFamily: 'Heebo',
             fontWeight: 400,
             paddingRight: 5.3,
-            marginTop: -0.3
+            marginTop: -0.3,
           }}
         ></CustomTypography>
       </Box>
       <ChevronDownIcon
         style={{
-          width: "16px",
-          height: "16px",
-          color: "#032B40",
-          position: "absolute",
+          width: '16px',
+          height: '16px',
+          color: '#032B40',
+          position: 'absolute',
           top: 16,
           left: 10,
-          pointerEvents: "none",
+          pointerEvents: 'none',
         }}
       />
       <Box
         sx={{
           height: 50,
-          display: "flex",
+          display: 'flex',
           gap: 1,
-          justifyContent: "center",
+          justifyContent: 'center',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
-
         }}
       >
-        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("active")}>
-          <StatusTag status="active" />
+        <Box sx={{ cursor: 'pointer' }} onClick={() => handleClick('active')}>
+          <StatusTag status='active' />
         </Box>
-        <Box sx={{ cursor: "pointer" }} onClick={() => handleClick("inactive")}>
-          <StatusTag status="inactive" />
+        <Box sx={{ cursor: 'pointer' }} onClick={() => handleClick('inactive')}>
+          <StatusTag status='inactive' />
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default StatusCard;
+export default StatusCard

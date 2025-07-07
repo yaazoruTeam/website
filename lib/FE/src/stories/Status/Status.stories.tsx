@@ -1,25 +1,25 @@
-import React from "react";
-import { Meta, StoryFn } from "@storybook/react";
-import Status from "./Status";
+import React from 'react'
+import { Meta, StoryFn } from '@storybook/react'
+import Status from './Status'
 
 export default {
-  title: "Components/Status",
+  title: 'Components/Status',
   component: Status,
-} as Meta<typeof Status>;
+} as Meta<typeof Status>
 
-const Template: StoryFn<typeof Status> = (args) => <Status {...args} />;
+const Template: StoryFn<typeof Status> = (args) => <Status {...args} />
 
-export const Active = Template.bind({});
+export const Active = Template.bind({})
 Active.args = {
-  status: "פעיל",
-};
+  status: 'פעיל',
+}
 
-export const Inactive = Template.bind({});
+export const Inactive = Template.bind({})
 Inactive.args = {
-  status: "לא פעיל",
-};
+  status: 'לא פעיל',
+}
 
-export const Pending = Template.bind({});
+export const Pending = Template.bind({})
 Pending.args = {
-  status: "בהמתנה",
-};
+  status: 'בהמתנה',
+}
