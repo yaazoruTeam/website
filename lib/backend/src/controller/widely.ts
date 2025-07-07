@@ -3,7 +3,7 @@ import { HttpError, Widely } from '../model'
 import { callingWidely } from '../integration/widely/callingWidely'
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {        
+    try {
         const { simNumber } = req.body
 
         if (!simNumber) {
@@ -26,4 +26,50 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
     }
 }
 
-export { searchUsers }
+const getMobiles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { domain_user_id } = req.body
+
+        if (!domain_user_id) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: 'domain_user_id is required.',
+            }
+            throw error
+        }
+
+        const result: Widely.Model = await callingWidely(
+            'get_mobiles',
+            { domain_user_id: domain_user_id }
+        )
+
+        res.status(result.error_code).json(result.data)
+    } catch (error: any) {
+        next(error)
+    }
+}
+
+const getMobileInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { endpoint_id } = req.body
+
+        if (!endpoint_id) {
+            const error: HttpError.Model = {
+                status: 400,
+                message: 'endpoint_id is required.',
+            }
+            throw error
+        }
+
+        const result: Widely.Model = await callingWidely(
+            'get_mobile_info',
+            { endpoint_id: endpoint_id }
+        )
+
+        res.status(result.error_code).json(result.data)
+    } catch (error: any) {
+        next(error)
+    }
+}
+
+export { searchUsers, getMobiles, getMobileInfo }
