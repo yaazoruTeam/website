@@ -1,7 +1,9 @@
+import { HttpError } from '.';
+
 export type EntityType = 'customer' | 'device' | 'branch'
 
 interface Model {
-  comment_id: number
+  comment_id?: number
   entity_id: string
   entity_type: EntityType
   content: string
@@ -12,25 +14,38 @@ function sanitize(comment: Model, hasId: boolean): Model {
   const isString = (val: any) => typeof val === 'string' && val.trim() !== ''
 
   if (hasId && !comment.comment_id) {
-    throw { status: 400, message: 'Missing "comment_id".' }
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Comment ID is required and must be a valid number.'
+    }
+    throw error;
   }
 
-  if (!comment.entity_id || !isString(comment.entity_id)) {
-    throw { status: 400, message: 'Missing or invalid "entity_id".' }
-  }
+    if (!comment.entity_id || !isString(comment.entity_id)) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: 'Entity ID is required and must be a non-empty string.'
+        };
+        throw error;
+    }
 
   if (
     !comment.entity_type ||
     ['customer', 'device', 'branch'].indexOf(comment.entity_type) === -1
   ) {
-    throw {
+    const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid "entity_type". Must be one of: customer, device, branch.',
+      message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: customer, device, branch.`
     }
+        throw error;
   }
 
   if (!isString(comment.content)) {
-    throw { status: 400, message: 'Missing or invalid "content".' }
+    const error: HttpError.Model = {
+            status: 400,
+            message: 'Comment content is required and must be a non-empty string.'
+        }
+        throw error;
   }
 
   const newComment: Model = {
@@ -38,7 +53,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
     entity_id: comment.entity_id.trim(),
     entity_type: comment.entity_type,
     content: comment.content.trim(),
-    created_at: comment.created_at,
+    created_at: comment.created_at || new Date(),
   }
 
   return newComment

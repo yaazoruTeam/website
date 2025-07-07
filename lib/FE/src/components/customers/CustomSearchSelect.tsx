@@ -53,7 +53,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   useEffect(() => {
     if (resetTrigger) {
       setSelectedCity('')
-
+      setOpen(false)
     }
   }, [resetTrigger])
 
