@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FormControl, Select, MenuItem, Box/*, InputBase*/, OutlinedInput } from '@mui/material'
+import { FormControl, Select, MenuItem, Box /*, InputBase*/, OutlinedInput } from '@mui/material'
 import CityOptions from '../designComponent/CityOptions'
 import DateRangePickerComponent from '../designComponent/DateRangeSelector'
 import StatusCard from '../designComponent/StatusCard'
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  CalendarIcon,
-} from '@heroicons/react/24/outline'
+import { ChevronDownIcon, ChevronLeftIcon, CalendarIcon } from '@heroicons/react/24/outline'
 import { colors } from '../../styles/theme'
 import { getCities } from '../../api/customerApi'
 
@@ -58,8 +54,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   useEffect(() => {
     if (resetTrigger) {
       setSelectedCity('')
-      // setSelectedStatus('')
-      // setDateRange(null)
+      setOpen(false) // סוגר את ה-dropdown כחלק מה-reset
     }
   }, [resetTrigger])
 
@@ -139,7 +134,6 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
               zIndex: 5,
             }}
             input={<OutlinedInput />}
-
             endAdornment={
               searchType === 'city' || searchType === 'status' || searchType === 'other' ? (
                 open ? (
