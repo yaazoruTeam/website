@@ -19,7 +19,7 @@ const callingWidely = async (func_name: string, data: any) => {
                     "Content-Type": "application/json",
                 },
                 httpsAgent: new https.Agent({
-                    rejectUnauthorized: false // ⛔️ אל תבדוק תעודת SSL רק לפיתוח!!!
+                    rejectUnauthorized: config.env === "development" ? false : true // Disable SSL validation only in development
                 })
             }
         );
