@@ -5,7 +5,7 @@ interface Model {
   monthlyPayment_id: string;
   amount: number;
   date: Date;
-  status: "failed" | "sucess"; //...
+  status: "failed" | "success"; //...
   created_at: Date;
   update_at: Date;
 }

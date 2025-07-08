@@ -16,7 +16,7 @@ const createPayments = async () => {
           table.string('monthlyPayment_id').notNullable()
           table.integer('amount').notNullable()
           table.date('date').notNullable()
-          table.enum('status', ['failed', 'sucess']).notNullable().defaultTo('active')
+          table.enum('status', ['failed', 'success']).notNullable().defaultTo('active')
           table.date('created_at').notNullable()
           table.date('update_at').notNullable()
         })
