@@ -123,7 +123,7 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
   }
   if (
     !transactionDetails.credit.expiry_year ||
-    transactionDetails.credit.expiry_month
+    !transactionDetails.credit.expiry_month
   ) {
     const error: HttpError.Model = {
       status: 400,
