@@ -1,0 +1,30 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "Yaazoru Website Project",
+  "private": true,
+  "scripts": {
+    "install-all": "npm install && cd lib/FE && npm install && cd ../backend && npm install",
+    "format": "cd lib/FE && npm run format && cd ../backend && npx prettier --write .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2"
+  },
+  "workspaces": [
+    "lib/FE",
+    "lib/backend"
+  ],
+  "lint-staged": {
+    "lib/FE/**/*.{js,jsx,ts,tsx,json,css,md}": [
+      "cd lib/FE && npx prettier --write"
+    ],
+    "lib/backend/**/*.{js,ts,json,md}": [
+      "cd lib/backend && npx prettier --write"
+    ],
+    "lib/model/**/*.{js,ts,json,md}": [
+      "npx prettier --write"
+    ]
+  }
+}
