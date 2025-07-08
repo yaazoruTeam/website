@@ -153,7 +153,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
         
         // זיהוי רשת על בסיס mcc_mnc
-        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || mobileInfo?.registartion_info?.mcc_mnc || ''
+        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || mobileInfo?.registration_info?.mcc_mnc || ''
         let networkConnection = 'לא זמין'
         
         switch (mccMnc) {
@@ -176,10 +176,10 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
             endpoint_id: endpoint_id,
             network_connection: networkConnection, // לאיפה הפלאפון מחובר
             data_usage_gb: parseFloat(dataUsage.toFixed(3)), // גיגה בשימוש
-            imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || mobileInfo?.registartion_info?.imei || 'לא זמין', // IMEI1
-            status: mobileInfo?.registration_info?.status || mobileInfo?.registartion_info?.status || 'לא זמין', // סטטוס
+            imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || mobileInfo?.registration_info?.imei || 'לא זמין', // IMEI1
+            status: mobileInfo?.registration_info?.status || mobileInfo?.registration_info?.status || 'לא זמין', // סטטוס
             imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'נעול' : 'לא נעול', // נעילת IMEI
-            msisdn: mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || mobileInfo?.registartion_info?.msisdn || 'לא זמין', // מספר הטלפון
+            msisdn: mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || mobileInfo?.registration_info?.msisdn || 'לא זמין', // מספר הטלפון
             iccid: mobileInfo?.sim_data?.iccid || mobileInfo?.iccid || 'לא זמין', // ICCID
             device_info: {
                 brand: mobileInfo?.device_info?.brand || 'לא זמין',

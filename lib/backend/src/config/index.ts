@@ -28,7 +28,7 @@ export const config = {
     },
     tranzila: {
         publicKey: process.env.TRANZILA_PUBLIC_KEY || '',
-        privateKey: process.env.TRANZILA_PRIVET_KEY || '',
+        privateKey: process.env.TRANZILA_PRIVATE_KEY || '',
         terminalName: process.env.TRANZILA_TERMINAL_NAME || '',
     },
     server: {
