@@ -121,7 +121,7 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!transactionDetails.credit.expiry_year || transactionDetails.credit.expiry_month) {
+  if (!transactionDetails.credit.expiry_year || !transactionDetails.credit.expiry_month) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit-date".',

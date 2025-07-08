@@ -1,4 +1,4 @@
-import { HttpError } from '.';
+import { HttpError } from '.'
 
 export type EntityType = 'customer' | 'device' | 'branch'
 
@@ -16,18 +16,18 @@ function sanitize(comment: Model, hasId: boolean): Model {
   if (hasId && !comment.comment_id) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Comment ID is required and must be a valid number.'
+      message: 'Comment ID is required and must be a valid number.',
     }
-    throw error;
+    throw error
   }
 
-    if (!comment.entity_id || !isString(comment.entity_id)) {
-        const error: HttpError.Model = {
-            status: 400,
-            message: 'Entity ID is required and must be a non-empty string.'
-        };
-        throw error;
+  if (!comment.entity_id || !isString(comment.entity_id)) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Entity ID is required and must be a non-empty string.',
     }
+    throw error
+  }
 
   if (
     !comment.entity_type ||
@@ -35,17 +35,17 @@ function sanitize(comment: Model, hasId: boolean): Model {
   ) {
     const error: HttpError.Model = {
       status: 400,
-      message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: customer, device, branch.`
+      message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: customer, device, branch.`,
     }
-        throw error;
+    throw error
   }
 
   if (!isString(comment.content)) {
     const error: HttpError.Model = {
-            status: 400,
-            message: 'Comment content is required and must be a non-empty string.'
-        }
-        throw error;
+      status: 400,
+      message: 'Comment content is required and must be a non-empty string.',
+    }
+    throw error
   }
 
   const newComment: Model = {

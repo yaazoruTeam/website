@@ -22,12 +22,15 @@ export const getMonthlyPayment = async (page = 1): Promise<PaginatedMonthlyPayme
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedMonthlyPayments> = await axios.get(`${baseUrl}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedMonthlyPayments> = await axios.get(
+      `${baseUrl}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching monthly payments', error)
@@ -66,7 +69,8 @@ export const getMonthlyPaymentById = async (
 
 // GET(customer_id)
 export const getMonthlyPaymentByCustomerId = async (
-  customer_id: string, page = 1,
+  customer_id: string,
+  page = 1,
 ): Promise<PaginatedMonthlyPayments> => {
   try {
     const newToken = await handleTokenRefresh()
@@ -95,7 +99,8 @@ export const getMonthlyPaymentByCustomerId = async (
 
 // GET(status)
 export const getMonthlyPaymentByStatus = async (
-  status: 'active' | 'inactive', page = 1,
+  status: 'active' | 'inactive',
+  page = 1,
 ): Promise<PaginatedMonthlyPayments> => {
   try {
     const newToken = await handleTokenRefresh()
@@ -124,7 +129,8 @@ export const getMonthlyPaymentByStatus = async (
 
 // GET(organization)
 export const getMonthlyPaymentByOrganization = async (
-  organization: string, page = 1,
+  organization: string,
+  page = 1,
 ): Promise<PaginatedMonthlyPayments> => {
   try {
     const newToken = await handleTokenRefresh()

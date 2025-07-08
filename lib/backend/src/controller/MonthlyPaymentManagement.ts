@@ -107,19 +107,19 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       throw error
     }
 
-        await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx)
+    await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx)
 
-        const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id)
-        await updateItems(existingItems, items, trx)
+    const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id)
+    await updateItems(existingItems, items, trx)
 
-        await trx.commit()
-        console.log('Monthly payment updated successfully!')
-        res.status(200).json({ message: 'Monthly payment updated successfully!' })
-    } catch (error: any) {
-        await trx.rollback()
-        console.error('Transaction failed, all actions rolled back:', error)
-        next(error)
-    }
+    await trx.commit()
+    console.log('Monthly payment updated successfully!')
+    res.status(200).json({ message: 'Monthly payment updated successfully!' })
+  } catch (error: any) {
+    await trx.rollback()
+    console.error('Transaction failed, all actions rolled back:', error)
+    next(error)
+  }
 }
 
 export { createMonthlyPayment, updateMonthlyPayment }

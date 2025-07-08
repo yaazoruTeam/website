@@ -22,12 +22,15 @@ export const getUsers = async (page: number = 1): Promise<PaginatedUsersResponse
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedUsersResponse> = await axios.get(`${baseUrl}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedUsersResponse> = await axios.get(
+      `${baseUrl}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching users', error)

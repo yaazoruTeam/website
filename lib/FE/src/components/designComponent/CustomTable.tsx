@@ -1,5 +1,14 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
+} from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,16 +16,30 @@ import { colors } from '../../styles/theme'
 import CustomTypography from './Typography'
 
 interface CustomTableProps {
-  columns: { label: string, key: string }[]
+  columns: { label: string; key: string }[]
   data: { [key: string]: any }[]
   onRowClick?: (rowData: any, rowIndex: number) => void
-  showSummary?: { page: number, limit: number, total: number, totalPages: number, onPageChange: (page: number) => void }
+  showSummary?: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    onPageChange: (page: number) => void
+  }
   alignLastColumnLeft?: boolean
   expandedRowIndex?: number | null
   renderExpandedRow?: (rowData: any, rowIndex: number) => React.ReactNode
 }
 
-const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {
+const CustomTable: React.FC<CustomTableProps> = ({
+  columns,
+  data,
+  onRowClick,
+  showSummary,
+  alignLastColumnLeft,
+  expandedRowIndex,
+  renderExpandedRow,
+}) => {
   const { t } = useTranslation()
 
   return (
@@ -54,7 +77,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
           {data.length > 0 ? (
             data.map((row, index) => {
               const actualIndex = showSummary
-                ? ((showSummary.page ? showSummary.page - 1 : 0) * showSummary.limit + index)
+                ? (showSummary.page ? showSummary.page - 1 : 0) * showSummary.limit + index
                 : index
               return (
                 <React.Fragment key={index}>
@@ -93,8 +116,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                           }}
                         >
                           {typeof row[key] === 'string' ||
-                            typeof row[key] === 'number' ||
-                            typeof row[key] === 'boolean' ? (
+                          typeof row[key] === 'number' ||
+                          typeof row[key] === 'boolean' ? (
                             <CustomTypography
                               variant='h4'
                               weight='regular'
@@ -239,7 +262,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                         width: '16px',
                         height: '16px',
                         color: colors.c11,
-                        pointerEvents: showSummary.page === showSummary.totalPages ? 'none' : 'auto',
+                        pointerEvents:
+                          showSummary.page === showSummary.totalPages ? 'none' : 'auto',
                         opacity: showSummary.page === showSummary.totalPages ? 0.5 : 1,
                         cursor: 'pointer',
                       }}

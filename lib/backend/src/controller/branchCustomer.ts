@@ -47,25 +47,25 @@ const createBranchCustomer = async (
 }
 
 const getAllBranchCustomer = async (
-  req: Request, 
-  res: Response, 
-  next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ): Promise<void> => {
-    try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+  try {
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { branchCustomers, total } = await db.BranchCustomer.getAllBranchCustomer(offset)
+    const { branchCustomers, total } = await db.BranchCustomer.getAllBranchCustomer(offset)
 
-        res.status(200).json({
-            data: branchCustomers,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total
-        })
-    } catch (error: any) {
-        next(error)
-    }
+    res.status(200).json({
+      data: branchCustomers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const getBranchCustomerById = async (
@@ -96,8 +96,8 @@ const getBranchCustomerByBranch_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
     BranchCustomer.sanitizeIdExisting(req)
     const existBranch = await db.BranchCustomer.doesBranchExist(req.params.id)
@@ -108,13 +108,16 @@ const getBranchCustomerByBranch_id = async (
       }
       throw error
     }
-    const { branchCustomers, total } = await db.BranchCustomer.getBranchCustomerByBranc_id(req.params.id, offset)
+    const { branchCustomers, total } = await db.BranchCustomer.getBranchCustomerByBranc_id(
+      req.params.id,
+      offset,
+    )
     res.status(200).json({
-            data: branchCustomers,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total
-        })
+      data: branchCustomers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }
@@ -126,8 +129,8 @@ const getBranchCustomerByCustomer_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
     BranchCustomer.sanitizeIdExisting(req)
     const existCustomer = await db.BranchCustomer.doesCustomerExist(req.params.id)
@@ -138,13 +141,16 @@ const getBranchCustomerByCustomer_id = async (
       }
       throw error
     }
-    const { branchCustomers, total } = await db.BranchCustomer.getBranchCustomerByCuseomer_id(req.params.id, offset)
+    const { branchCustomers, total } = await db.BranchCustomer.getBranchCustomerByCuseomer_id(
+      req.params.id,
+      offset,
+    )
     res.status(200).json({
-            data: branchCustomers,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total
-        })
+      data: branchCustomers,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }

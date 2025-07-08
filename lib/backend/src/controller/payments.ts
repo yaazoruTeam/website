@@ -27,21 +27,21 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const getAllPayments = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+  try {
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { payments, total } = await db.Payments.getPayments(offset)
+    const { payments, total } = await db.Payments.getPayments(offset)
 
-        res.status(200).json({
-            data: payments,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total,
-        })
-    } catch (error: any) {
-        next(error)
-    }
+    res.status(200).json({
+      data: payments,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const getPaymentsId = async (req: Request, res: Response, next: NextFunction) => {
@@ -63,30 +63,33 @@ const getPaymentsId = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 const getPaymentsByMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        Payments.sanitizeIdExisting(req)
-        const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(req.params.id)
-        if (!existMonthlyPayment) {
-            const error: HttpError.Model = {
-                status: 404,
-                message: 'monthlyPayment does not exist.',
-            }
-            throw error
-        }
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
-
-        const { payments, total } = await db.Payments.getPaymentsByMonthlyPaymentId(req.params.id, offset)
-
-        res.status(200).json({
-            data: payments,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total,
-        })
-    } catch (error: any) {
-        next(error)
+  try {
+    Payments.sanitizeIdExisting(req)
+    const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(req.params.id)
+    if (!existMonthlyPayment) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'monthlyPayment does not exist.',
+      }
+      throw error
     }
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const { payments, total } = await db.Payments.getPaymentsByMonthlyPaymentId(
+      req.params.id,
+      offset,
+    )
+
+    res.status(200).json({
+      data: payments,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const updatePayments = async (req: Request, res: Response, next: NextFunction) => {

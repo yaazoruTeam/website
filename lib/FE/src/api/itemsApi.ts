@@ -23,12 +23,15 @@ export const getItems = async (page: number = 1): Promise<PaginatedItemsResponse
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedItemsResponse> = await axios.get(`${baseUrl}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedItemsResponse> = await axios.get(
+      `${baseUrl}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching items', error)
@@ -38,7 +41,8 @@ export const getItems = async (page: number = 1): Promise<PaginatedItemsResponse
 
 // GET לפי monthlyPayment_id עם pagination
 export const getItemsByMonthlyPaymentId = async (
-  monthlyPayment_id: string, page: number = 1,
+  monthlyPayment_id: string,
+  page: number = 1,
 ): Promise<PaginatedItemsResponse> => {
   try {
     const newToken = await handleTokenRefresh()

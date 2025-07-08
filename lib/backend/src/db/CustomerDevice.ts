@@ -24,25 +24,26 @@ const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: 
   }
 }
 
-const getCustomersDevices = async (offset: number): Promise<{ customerDevices: CustomerDevice.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const customerDevices = await knex('yaazoru.customerDevice')
-            .select('*')
-            .orderBy('customerDevice_id')
-            .limit(limit)
-            .offset(offset)
+const getCustomersDevices = async (
+  offset: number,
+): Promise<{ customerDevices: CustomerDevice.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const customerDevices = await knex('yaazoru.customerDevice')
+      .select('*')
+      .orderBy('customerDevice_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.customerDevice').count('*')
+    const [{ count }] = await knex('yaazoru.customerDevice').count('*')
 
-        return {
-            customerDevices,
-            total: parseInt(count as string, 10)
-        }
+    return {
+      customerDevices,
+      total: parseInt(count as string, 10),
     }
-    catch (err) {
-        throw err
-    }
+  } catch (err) {
+    throw err
+  }
 }
 
 const getCustomerDeviceById = async (customerDevice_id: string) => {
@@ -54,50 +55,52 @@ const getCustomerDeviceById = async (customerDevice_id: string) => {
   }
 }
 
-const getCustomerDeviceByCustomerId = async (customer_id: string, offset: number): Promise<{ customerDevices: CustomerDevice.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const customerDevices = await knex('yaazoru.customerDevice')
-            .select('*')
-            .where({ customer_id })
-            .orderBy('customerDevice_id')
-            .limit(limit)
-            .offset(offset)
+const getCustomerDeviceByCustomerId = async (
+  customer_id: string,
+  offset: number,
+): Promise<{ customerDevices: CustomerDevice.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const customerDevices = await knex('yaazoru.customerDevice')
+      .select('*')
+      .where({ customer_id })
+      .orderBy('customerDevice_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.customerDevice')
-            .where({ customer_id })
-            .count('*')
+    const [{ count }] = await knex('yaazoru.customerDevice').where({ customer_id }).count('*')
 
-        return {
-            customerDevices,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    return {
+      customerDevices,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
-const getCustomerDeviceByDeviceId = async (device_id: string, offset: number): Promise<{ customerDevices: CustomerDevice.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const customerDevices = await knex('yaazoru.customerDevice')
-            .select('*')
-            .where({ device_id })
-            .orderBy('customerDevice_id')
-            .limit(limit)
-            .offset(offset)
+const getCustomerDeviceByDeviceId = async (
+  device_id: string,
+  offset: number,
+): Promise<{ customerDevices: CustomerDevice.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const customerDevices = await knex('yaazoru.customerDevice')
+      .select('*')
+      .where({ device_id })
+      .orderBy('customerDevice_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.customerDevice')
-            .where({ device_id })
-            .count('*')
+    const [{ count }] = await knex('yaazoru.customerDevice').where({ device_id }).count('*')
 
-        return {
-            customerDevices,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    return {
+      customerDevices,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
 const updateCustomerDevice = async (
@@ -135,7 +138,7 @@ const deleteCustomerDevice = async (customerDevice_id: string) => {
   }
 }
 
-const findCustomerDevice = async (criteria: { customerDevice_id?: string, device_id?: string }) => {
+const findCustomerDevice = async (criteria: { customerDevice_id?: string; device_id?: string }) => {
   const knex = getDbConnection()
   try {
     return await knex('yaazoru.customerDevice')

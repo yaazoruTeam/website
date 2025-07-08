@@ -9,9 +9,6 @@
     }
   ],
   "compilerOptions": {
-    "types": [
-      "react",
-      "react-dom"
-    ]
+    "types": ["react", "react-dom"]
   }
 }

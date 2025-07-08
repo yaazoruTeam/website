@@ -31,7 +31,9 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
   }
 }
 
-const getCustomers = async (offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomers = async (
+  offset: number,
+): Promise<{ customers: Customer.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const customers = await knex('yaazoru.customers')
@@ -40,12 +42,11 @@ const getCustomers = async (offset: number): Promise<{ customers: Customer.Model
       .offset(offset)
       .orderBy('customer_id')
 
-    const [{ count }] = await knex('yaazoru.customers')
-      .count('*')
+    const [{ count }] = await knex('yaazoru.customers').count('*')
 
     return {
       customers,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     console.log('Error in getCustomers: in db:', err)
@@ -62,7 +63,10 @@ const getCustomerById = async (customer_id: string) => {
   }
 }
 
-const getCustomersByCity = async (city: string, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomersByCity = async (
+  city: string,
+  offset: number,
+): Promise<{ customers: Customer.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const customers = await knex('yaazoru.customers')
@@ -71,20 +75,21 @@ const getCustomersByCity = async (city: string, offset: number): Promise<{ custo
       .orderBy('customer_id')
       .limit(limit)
       .offset(offset)
-    const [{ count }] = await knex('yaazoru.customers')
-      .count('*')
-      .where({ city })
+    const [{ count }] = await knex('yaazoru.customers').count('*').where({ city })
 
     return {
       customers,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
   }
 }
 
-const getCustomersByStatus = async (status: 'active' | 'inactive', offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomersByStatus = async (
+  status: 'active' | 'inactive',
+  offset: number,
+): Promise<{ customers: Customer.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const customers = await knex('yaazoru.customers')
@@ -93,19 +98,21 @@ const getCustomersByStatus = async (status: 'active' | 'inactive', offset: numbe
       .orderBy('customer_id')
       .limit(limit)
       .offset(offset)
-    const [{ count }] = await knex('yaazoru.customers')
-      .count('*')
-      .where({ status })
+    const [{ count }] = await knex('yaazoru.customers').count('*').where({ status })
     return {
       customers,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
   }
 }
 
-const getCustomersByDateRange = async (startDate: string, endDate: string, offset: number): Promise<{ customers: Customer.Model[], total: number }> => {
+const getCustomersByDateRange = async (
+  startDate: string,
+  endDate: string,
+  offset: number,
+): Promise<{ customers: Customer.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const customers = await knex('yaazoru.customers')
@@ -119,7 +126,7 @@ const getCustomersByDateRange = async (startDate: string, endDate: string, offse
       .whereBetween('created_at', [startDate, endDate])
     return {
       customers,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
@@ -212,7 +219,7 @@ const getUniqueCities = async (): Promise<string[]> => {
       .andWhere('city', '!=', '')
       .orderBy('city')
 
-    return rows.map(row => row.city)
+    return rows.map((row) => row.city)
   } catch (error) {
     throw error
   }
@@ -220,8 +227,8 @@ const getUniqueCities = async (): Promise<string[]> => {
 
 const searchCustomersByName = async (
   searchTerm: string,
-  offset: number
-): Promise<{ customers: Customer.Model[], total: number }> => {
+  offset: number,
+): Promise<{ customers: Customer.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const trimmed = searchTerm.trim()
@@ -232,10 +239,9 @@ const searchCustomersByName = async (
     const terms = trimmed.split(/\s+/)
 
     const buildWhereClause = (query: any) => {
-      terms.forEach(term => {
+      terms.forEach((term) => {
         query.andWhere((qb: any) => {
-          qb.whereILike('first_name', `%${term}%`)
-            .orWhereILike('last_name', `%${term}%`)
+          qb.whereILike('first_name', `%${term}%`).orWhereILike('last_name', `%${term}%`)
         })
       })
     }
@@ -257,13 +263,12 @@ const searchCustomersByName = async (
 
     return {
       customers,
-      total: parseInt(totalCount as string, 10)
+      total: parseInt(totalCount as string, 10),
     }
   } catch (err) {
     throw err
   }
 }
-
 
 export {
   createCustomer,

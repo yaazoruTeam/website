@@ -21,19 +21,22 @@ export const getDevices = async (page: number): Promise<PaginatedDeviceResponse>
         data: [],
         total: 0,
         page,
-        totalPages: 0
+        totalPages: 0,
       }
     }
     const token = localStorage.getItem('token')
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedDeviceResponse> = await axios.get(`${baseUrl}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedDeviceResponse> = await axios.get(
+      `${baseUrl}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching devices', error)

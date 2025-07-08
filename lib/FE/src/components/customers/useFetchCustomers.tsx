@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react'
-import { getCustomers, getCustomersByCity, getCustomersByStatus, getCustomersByDateRange, getCustomersByName } from '../../api/customerApi'
+import {
+  getCustomers,
+  getCustomersByCity,
+  getCustomersByStatus,
+  getCustomersByDateRange,
+  getCustomersByName,
+} from '../../api/customerApi'
 import { Customer } from '../../model'
 
 interface UseFetchCustomersProps {
-  page: number,
+  page: number
   filterType?: {
-    type: 'city' | 'status' | 'date' | 'search',
-    value: any,
-  },
+    type: 'city' | 'status' | 'date' | 'search'
+    value: any
+  }
 }
 
 export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) => {
@@ -34,7 +40,11 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           data = res.data
           total = res.total
         } else if (filterType.type === 'date') {
-          const res = await getCustomersByDateRange(filterType.value.start, filterType.value.end, page)
+          const res = await getCustomersByDateRange(
+            filterType.value.start,
+            filterType.value.end,
+            page,
+          )
           data = res.data
           total = res.total
         } else if (filterType.type === 'search') {

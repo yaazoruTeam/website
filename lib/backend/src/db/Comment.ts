@@ -3,7 +3,7 @@ import getDbConnection from './connection'
 import config from '../config'
 import { Knex } from 'knex'
 
-const limit = config.database.limit;
+const limit = config.database.limit
 
 const createComment = async (comment: Comment.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()

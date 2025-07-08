@@ -40,7 +40,6 @@ router.use(`${ROUTE_PATH}/auth`, authRouter)
 router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 
-
 router.get(`${ROUTE_PATH}/excel`, hasRole('admin'), excelController.handleReadExcelFile)
 
 // router.post(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDetailsController.createTransactionDetails);
