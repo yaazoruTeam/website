@@ -26,7 +26,11 @@ export const config = {
         limit: Number(process.env.LIMIT) || 10,
         // Add other database-related config here
     },
-    // Add other configuration sections as needed
+    tranzila: {
+        publicKey: process.env.TRANZILA_PUBLIC_KEY || '',
+        privateKey: process.env.TRANZILA_PRIVET_KEY || '',
+        terminalName: process.env.TRANZILA_TERMINAL_NAME || '',
+    },
     server: {
         port: Number(process.env.PORT) || 3000,
     },

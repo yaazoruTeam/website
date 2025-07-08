@@ -1,15 +1,12 @@
 import express, { Request, Response } from 'express'
-import dotenv from 'dotenv'
 import { router } from './routers/router'
 import { errorHandler } from './middleware/errorHandler'
-
-// Load environment variables
-dotenv.config()
+import config from './config'
 
 const cors = require('cors')
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = config.server.port
 
 // Middleware
 app.use(cors())
