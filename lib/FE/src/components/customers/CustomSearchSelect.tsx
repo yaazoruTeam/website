@@ -54,8 +54,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   useEffect(() => {
     if (resetTrigger) {
       setSelectedCity('')
-      // setSelectedStatus('')
-      // setDateRange(null)
+      setOpen(false) // סוגר את ה-dropdown כחלק מה-reset
     }
   }, [resetTrigger])
 

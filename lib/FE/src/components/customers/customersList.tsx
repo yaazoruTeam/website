@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { formatDateToString } from '../designComponent/FormatDate'
 import CustomSearchSelect from './CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
+
 interface CustomersListProps {
   customers: Customer.Model[]
   total: number
@@ -37,8 +38,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
   const [resetTrigger, setResetTrigger] = useState(false)
 
   const handleResetFilters = () => {
-    // setFilteredCustomers(customers)
-    // setDateRange(null)
     onFilterChange(null)
     onPageChange(1)
     setResetTrigger(true)
