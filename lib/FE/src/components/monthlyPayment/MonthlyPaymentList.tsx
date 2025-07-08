@@ -18,17 +18,26 @@ interface MonthlyPaymentListProps {
   onPageChange?: (page: number) => void
 }
 
-const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false, page = 1, totalPages = 1, total = 0, onPageChange }) => {
+const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
+  monthlyPayment,
+  isCustomerCard = false,
+  page = 1,
+  totalPages = 1,
+  total = 0,
+  onPageChange,
+}) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({})
+  const [customerData, setCustomerData] = useState<{ [key: string]: { name: string; id: string } }>(
+    {},
+  )
   const [searchCustomer, setSearchCustomer] = useState<string>('')
   const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment)
   const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10
 
   useEffect(() => {
     const fetchCustomerNames = async () => {
-      const data: { [key: string]: { name: string, id: string } } = {}
+      const data: { [key: string]: { name: string; id: string } } = {}
       for (const payment of monthlyPayment) {
         const customer = await getCustomerById(payment.customer_id)
         data[payment.customer_id] = {
@@ -49,7 +58,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
       return
     }
 
-    const filtered = monthlyPayment.filter(payment => {
+    const filtered = monthlyPayment.filter((payment) => {
       const customer = customerData[payment.customer_id]
       if (!customer) return false
       return (
@@ -59,14 +68,14 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     })
 
     setFilteredPayments(filtered)
-  }, [searchCustomer,monthlyPayment, customerData])
+  }, [searchCustomer, monthlyPayment, customerData])
 
   const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
     navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`, {
       state: {
         fromCustomerCard: isCustomerCard,
-        customerId: monthlyPayment.customer_id
-      }
+        customerId: monthlyPayment.customer_id,
+      },
     })
   }
 
@@ -81,7 +90,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     { label: t('nextCharge'), key: 'next_charge' },
     { label: t('update'), key: 'update_at' },
     isCustomerCard && { label: '', key: 'updateMonthlyPayment' },
-  ].filter(Boolean) as { label: string, key: string }[]
+  ].filter(Boolean) as { label: string; key: string }[]
 
   const tableData = filteredPayments.map((payment) => ({
     monthlyPayment_id: payment.monthlyPayment_id,
@@ -129,7 +138,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
           justifyContent: 'flex-start',
           alignItems: 'flex-start',
           gap: 4,
-          direction: 'rtl'
+          direction: 'rtl',
         }}
       >
         <Box
@@ -142,23 +151,22 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
             gap: 3,
           }}
         >
-          {!isCustomerCard ? <CustomTable
-            columns={columns}
-            data={tableData}
-            onRowClick={onClickMonthlyPayment}
-            showSummary={{
-              page,
-              limit,
-              total,
-              totalPages,
-              onPageChange: onPageChange || (() => { })
-            }}
-          /> :
+          {!isCustomerCard ? (
             <CustomTable
               columns={columns}
               data={tableData}
+              onRowClick={onClickMonthlyPayment}
+              showSummary={{
+                page,
+                limit,
+                total,
+                totalPages,
+                onPageChange: onPageChange || (() => {}),
+              }}
             />
-          }
+          ) : (
+            <CustomTable columns={columns} data={tableData} />
+          )}
         </Box>
       </Box>
     </>

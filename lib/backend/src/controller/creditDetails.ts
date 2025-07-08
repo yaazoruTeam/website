@@ -51,7 +51,7 @@ const getCreditDetails = async (req: Request, res: Response, next: NextFunction)
       data: creditDetails,
       page,
       totalPages: Math.ceil(total / limit),
-      total
+      total,
     })
   } catch (error: any) {
     next(error)

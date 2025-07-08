@@ -49,13 +49,15 @@ const MonthlyPaymentComponent: React.FC = () => {
         <AddMonthlyPayment />
       ) : (
         <>
-          <Box sx={{
-            direction: 'rtl',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
+          <Box
+            sx={{
+              direction: 'rtl',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <CustomTypography
               text={t('standingOrders')}
               variant='h1'

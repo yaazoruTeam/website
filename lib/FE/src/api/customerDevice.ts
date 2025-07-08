@@ -13,7 +13,10 @@ export interface PaginatedCustomerDeviceResponse {
 }
 
 // GET
-export const getAllCustomerDevicesByCustomerId = async (customer_id: string, page: number): Promise<PaginatedCustomerDeviceResponse> => {
+export const getAllCustomerDevicesByCustomerId = async (
+  customer_id: string,
+  page: number,
+): Promise<PaginatedCustomerDeviceResponse> => {
   try {
     const newToken = await handleTokenRefresh()
     if (!newToken) {
@@ -30,7 +33,8 @@ export const getAllCustomerDevicesByCustomerId = async (customer_id: string, pag
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-      })
+      },
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching device by customer id', error)

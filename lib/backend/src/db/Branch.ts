@@ -4,7 +4,6 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 const limit = Number(process.env.LIMIT) || 10
 
-
 const createBranch = async (branch: Branch.Model) => {
   const knex = getDbConnection()
   try {
@@ -23,23 +22,25 @@ const createBranch = async (branch: Branch.Model) => {
   }
 }
 
-const getBranches = async (offset: number): Promise<{ branches: Branch.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const branches = await knex('yaazoru.branches')
-            .select('*')
-            .orderBy('branch_id')
-            .limit(limit)
-            .offset(offset)
+const getBranches = async (
+  offset: number,
+): Promise<{ branches: Branch.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const branches = await knex('yaazoru.branches')
+      .select('*')
+      .orderBy('branch_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.branches').count('*')
-        return {
-            branches,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    const [{ count }] = await knex('yaazoru.branches').count('*')
+    return {
+      branches,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
 const getBranchById = async (branch_id: string) => {
@@ -51,27 +52,28 @@ const getBranchById = async (branch_id: string) => {
   }
 }
 
-const getBranchesByCity = async (city: string, offset: number): Promise<{ branches: Branch.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const branches = await knex('yaazoru.branches')
-            .select('*')
-            .where({ city })
-            .orderBy('branch_id')
-            .limit(limit)
-            .offset(offset)
+const getBranchesByCity = async (
+  city: string,
+  offset: number,
+): Promise<{ branches: Branch.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const branches = await knex('yaazoru.branches')
+      .select('*')
+      .where({ city })
+      .orderBy('branch_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.branches')
-            .where({ city })
-            .count('*')
+    const [{ count }] = await knex('yaazoru.branches').where({ city }).count('*')
 
-        return {
-            branches,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    return {
+      branches,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
 const updateBranch = async (branch_id: string, branch: Branch.Model) => {

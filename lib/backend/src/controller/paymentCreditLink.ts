@@ -68,7 +68,7 @@ const getPaymentCreditLinkId = async (req: Request, res: Response, next: NextFun
   try {
     PaymentCreditLink.sanitizeIdExisting(req)
     const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(
-      req.params.id
+      req.params.id,
     )
     if (!existPaymentCreditLink) {
       const error: HttpError.Model = {
@@ -83,12 +83,17 @@ const getPaymentCreditLinkId = async (req: Request, res: Response, next: NextFun
     next(error)
   }
 }
-const getPaymentCreditLinksByMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
+const getPaymentCreditLinksByMonthlyPaymentId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const existMonthlyPayment = await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(req.params.id)
+    const existMonthlyPayment =
+      await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(req.params.id)
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
@@ -96,7 +101,8 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (req: Request, res: Respon
       }
       throw error
     }
-    const { paymentCreditLinks, total } = await db.PaymentCreditLink.getPaymentCreditLinksByMonthlyPaymentId(req.params.id, offset)
+    const { paymentCreditLinks, total } =
+      await db.PaymentCreditLink.getPaymentCreditLinksByMonthlyPaymentId(req.params.id, offset)
 
     res.status(200).json({
       data: paymentCreditLinks,
@@ -108,12 +114,18 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (req: Request, res: Respon
     next(error)
   }
 }
-const getPaymentCreditLinksByCreditDetailsId = async (req: Request, res: Response, next: NextFunction) => {
+const getPaymentCreditLinksByCreditDetailsId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const existCreditDetails = await db.PaymentCreditLink.doesCreditDetailsExistInPaymentCreditLink(req.params.id)
+    const existCreditDetails = await db.PaymentCreditLink.doesCreditDetailsExistInPaymentCreditLink(
+      req.params.id,
+    )
     if (!existCreditDetails) {
       const error: HttpError.Model = {
         status: 404,
@@ -121,7 +133,8 @@ const getPaymentCreditLinksByCreditDetailsId = async (req: Request, res: Respons
       }
       throw error
     }
-    const { paymentCreditLinks, total } = await db.PaymentCreditLink.getPaymentCreditLinksByCreditDetailsId(req.params.id, offset)
+    const { paymentCreditLinks, total } =
+      await db.PaymentCreditLink.getPaymentCreditLinksByCreditDetailsId(req.params.id, offset)
 
     res.status(200).json({
       data: paymentCreditLinks,
@@ -182,15 +195,19 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
 const deletePaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
   try {
     PaymentCreditLink.sanitizeIdExisting(req)
-    const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(req.params.id)
+    const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(
+      req.params.id,
+    )
     if (!existPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'PaymentCreditLink does not exist.'
+        message: 'PaymentCreditLink does not exist.',
       }
       throw error
     }
-    const deletePaymentCreditLink = await db.PaymentCreditLink.deletePaymentCreditLink(req.params.id)
+    const deletePaymentCreditLink = await db.PaymentCreditLink.deletePaymentCreditLink(
+      req.params.id,
+    )
     res.status(200).json(deletePaymentCreditLink)
   } catch (error: any) {
     next(error)
@@ -203,5 +220,5 @@ export {
   getPaymentCreditLinksByMonthlyPaymentId,
   getPaymentCreditLinksByCreditDetailsId,
   updatePaymentCreditLink,
-  deletePaymentCreditLink
+  deletePaymentCreditLink,
 }

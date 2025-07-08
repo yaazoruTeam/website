@@ -21,7 +21,14 @@ interface CustomersListProps {
   onFilterChange: (filter: any) => void
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange, onFilterChange }) => {
+const CustomersList: React.FC<CustomersListProps> = ({
+  customers,
+  total,
+  page,
+  limit,
+  onPageChange,
+  onFilterChange,
+}) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
   const [showAddCustomer, setShowAddCustomer] = useState(false)

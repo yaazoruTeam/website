@@ -3,22 +3,22 @@ import { HttpError, ItemForMonthlyPayment } from ".";
 interface Model {
   transaction_id: string;
   // credit_id: string;
-  customer_name: string;//שם לקוח
-  dates: string;//תאריכים
-  amount: number;//(חודשי)סכום
-  total_sum: number;//סה"כ
-  belongs_to_organization: string;//שייל לאירגון
-  last_attempt: Date;//נסיון אחרון
-  last_success: Date;//הצלחה אחרונה
-  next_charge: Date;//החיוב הבא
-  update: Date;//עידכון
-  items: ItemForMonthlyPayment.Model[];//פריטים
+  customer_name: string; //שם לקוח
+  dates: string; //תאריכים
+  amount: number; //(חודשי)סכום
+  total_sum: number; //סה"כ
+  belongs_to_organization: string; //שייל לאירגון
+  last_attempt: Date; //נסיון אחרון
+  last_success: Date; //הצלחה אחרונה
+  next_charge: Date; //החיוב הבא
+  update: Date; //עידכון
+  items: ItemForMonthlyPayment.Model[]; //פריטים
   credit: {
     token: string;
     expiry_month: string;
     expiry_year: string;
     cvv: string;
-  }
+  };
   status: "active" | "inactive";
 }
 
@@ -121,7 +121,10 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
     };
     throw error;
   }
-  if (!transactionDetails.credit.expiry_year || transactionDetails.credit.expiry_month) {
+  if (
+    !transactionDetails.credit.expiry_year ||
+    transactionDetails.credit.expiry_month
+  ) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit-date".',
@@ -152,9 +155,9 @@ function sanitize(transactionDetails: Model, hasId: boolean): Model {
       cvv: transactionDetails.credit.cvv,
       expiry_month: transactionDetails.credit.expiry_month,
       expiry_year: transactionDetails.credit.expiry_year,
-      token: transactionDetails.credit.token
+      token: transactionDetails.credit.token,
     },
-    status: transactionDetails.status || 'active',
+    status: transactionDetails.status || "active",
   };
   return newTransactionDetails;
 }
@@ -180,8 +183,4 @@ const sanitizeBodyExisting = (req: any) => {
 };
 
 export type { Model };
-export {
-  sanitize,
-  sanitizeIdExisting,
-  sanitizeBodyExisting,
-};
+export { sanitize, sanitizeIdExisting, sanitizeBodyExisting };

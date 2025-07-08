@@ -24,7 +24,9 @@ const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
   }
 }
 
-const getItems = async (offset: number): Promise<{ items: ItemForMonthlyPayment.Model[], total: number }> => {
+const getItems = async (
+  offset: number,
+): Promise<{ items: ItemForMonthlyPayment.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const items = await knex('yaazoru.item')
@@ -36,7 +38,7 @@ const getItems = async (offset: number): Promise<{ items: ItemForMonthlyPayment.
     const [{ count }] = await knex('yaazoru.item').count('*')
     return {
       items,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
@@ -52,7 +54,10 @@ const getItemId = async (item_id: string) => {
   }
 }
 
-const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number): Promise<{ items: ItemForMonthlyPayment.Model[], total: number }> => {
+const getAllItemByMonthlyPaymentId = async (
+  monthlyPayment_id: string,
+  offset: number,
+): Promise<{ items: ItemForMonthlyPayment.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const items = await knex('yaazoru.item')
@@ -61,24 +66,22 @@ const getAllItemByMonthlyPaymentId = async (monthlyPayment_id: string, offset: n
       .limit(limit)
       .offset(offset)
 
-    const [{ count }] = await knex('yaazoru.item')
-      .where({ monthlyPayment_id })
-      .count('*')
+    const [{ count }] = await knex('yaazoru.item').where({ monthlyPayment_id }).count('*')
 
     return {
       items,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
   }
 }
 
-const getAllItemsByMonthlyPaymentIdNoPagination = async (monthlyPayment_id: string): Promise<ItemForMonthlyPayment.Model[]> => {
+const getAllItemsByMonthlyPaymentIdNoPagination = async (
+  monthlyPayment_id: string,
+): Promise<ItemForMonthlyPayment.Model[]> => {
   const knex = getDbConnection()
-  return await knex('yaazoru.item')
-    .where({ monthlyPayment_id })
-    .orderBy('item_id')
+  return await knex('yaazoru.item').where({ monthlyPayment_id }).orderBy('item_id')
 }
 
 const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, trx?: any) => {
@@ -148,17 +151,11 @@ const doesItemExist = async (item_id: string): Promise<boolean> => {
 
 export {
   createItem,
-
   getItems,
-
   getItemId,
-
   getAllItemByMonthlyPaymentId,
   getAllItemsByMonthlyPaymentIdNoPagination,
-
   updateItem,
-
   deleteItem,
-
   doesItemExist,
 }
