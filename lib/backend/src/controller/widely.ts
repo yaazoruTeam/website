@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '../model'
 import { callingWidely } from '../integration/widely/callingWidely'
+import { config } from '../config'
 
 // General function for parameter validation
 const validateRequiredParam = (param: any, paramName: string): void => {
@@ -14,19 +15,20 @@ const validateRequiredParam = (param: any, paramName: string): void => {
 }
 
 // General function for validating results and creating errors
-const validateWidelyResult = (result: Widely.Model, errorMessage: string): void => {
-    if (result.error_code !== 200 || !result.data || result.data.length === 0) {
+const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
+    if (result.error_code !== 200) {
         const error: HttpError.Model = {
-            status: 404,
+            status: result.error_code || 500,
             message: errorMessage,
         }
         throw error
     }
-}
-
-// Special function for validating getMobileInfo (doesn't check length)
-const validateMobileInfoResult = (result: Widely.Model, errorMessage: string): void => {
-    if (result.error_code !== 200 || !result.data) {
+    
+    const hasData = checkLength ? 
+        (result.data && result.data.length > 0) : 
+        (result.data !== null && result.data !== undefined)
+    
+    if (!hasData) {
         const error: HttpError.Model = {
             status: 404,
             message: errorMessage,
@@ -49,12 +51,21 @@ const getNetworkConnection = (mccMnc: string): string => {
 const searchUsersData = async (simNumber: string): Promise<any> => {
     const result: Widely.Model = await callingWidely(
         'search_users',
-        { account_id: 400000441, search_string: simNumber }
+        { account_id: config.widely.accountId, search_string: simNumber }
     )
     
     validateWidelyResult(result, 'User not found for the provided simNumber.')
     
-    return result.data[0]
+    const userData = result.data[0]
+    if (!userData) {
+        const error: HttpError.Model = {
+            status: 404,
+            message: 'User not found for the provided simNumber.',
+        }
+        throw error
+    }
+    
+    return userData
 }
 
 const getMobilesData = async (domain_user_id: string): Promise<any> => {
@@ -65,7 +76,16 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
     
     validateWidelyResult(result, 'No mobiles found for the user.')
     
-    return result.data[0]
+    const mobileData = result.data[0]
+    if (!mobileData) {
+        const error: HttpError.Model = {
+            status: 404,
+            message: 'No mobiles found for the user.',
+        }
+        throw error
+    }
+    
+    return mobileData
 }
 
 const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
@@ -74,7 +94,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
         { endpoint_id: endpoint_id }
     )
     
-    validateMobileInfoResult(result, 'Mobile info not found.')
+    validateWidelyResult(result, 'Mobile info not found.', false)
     
     // Check if the data is an array or object
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data;
@@ -125,10 +145,26 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         // Step 1: Search for user based on SIM number
         const user = await searchUsersData(simNumber)
         const domain_user_id = user.domain_user_id
+        
+        if (!domain_user_id) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'User domain_user_id not found.',
+            }
+            throw error
+        }
 
         // Step 2: Get user's devices
         const mobile = await getMobilesData(domain_user_id)
         const endpoint_id = mobile.endpoint_id
+        
+        if (!endpoint_id) {
+            const error: HttpError.Model = {
+                status: 404,
+                message: 'Mobile endpoint_id not found.',
+            }
+            throw error
+        }
 
         // Step 3: Get detailed device information
         const mobileInfo = await getMobileInfoData(endpoint_id)
