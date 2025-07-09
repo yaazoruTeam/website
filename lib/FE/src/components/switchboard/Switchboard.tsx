@@ -1,14 +1,14 @@
-import { useTranslation } from "react-i18next";
-import CustomTypography from "../designComponent/Typography";
-import { Box } from "@mui/material";
-import { CustomButton } from "../designComponent/Button";
-import { CustomTextField } from "../designComponent/Input";
-import { Cog8ToothIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useForm } from "react-hook-form";
-import { colors } from "../../styles/theme";
-import CustomTable from "../designComponent/CustomTable";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next'
+import CustomTypography from '../designComponent/Typography'
+import { Box } from '@mui/material'
+import { CustomButton } from '../designComponent/Button'
+import { CustomTextField } from '../designComponent/Input'
+import { Cog8ToothIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { useForm } from 'react-hook-form'
+import { colors } from '../../styles/theme'
+import CustomTable from '../designComponent/CustomTable'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Switchboard: React.FC = () => {
   const { t } = useTranslation()
@@ -104,4 +104,4 @@ const Switchboard: React.FC = () => {
   )
 }
 
-export default Switchboard;
+export default Switchboard
