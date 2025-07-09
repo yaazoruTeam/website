@@ -1,14 +1,9 @@
 import axios from 'axios'
 import generateAccessTokenTranzila from './tranzilaAuth'
-import * as dotenv from 'dotenv'
-import path from 'path'
+import config from '../config'
 
-dotenv.config({ path: path.resolve(__dirname, './env') })
-
-const appPublicKey = process.env.TRANZILA_PUBLIC_KEY || ''
-const appPrivateKey = process.env.TRANZILA_PRIVET_KEY || ''
-console.log('appPublicKey', appPublicKey)
-console.log('appPrivateKey', appPrivateKey)
+const appPublicKey = config.tranzila.publicKey
+const appPrivateKey = config.tranzila.privateKey
 
 const axiosInstance = axios.create({
   httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),

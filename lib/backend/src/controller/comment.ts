@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '../db'
 import { Comment } from '../model'
 import { HttpError } from 'model'
-import * as dotenv from 'dotenv'
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+import config from '../config'
+const limit = config.database.limit
 
 const createComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

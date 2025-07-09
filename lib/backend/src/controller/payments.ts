@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError, Payments } from '../model'
 import * as db from '../db'
+import config from '../config'
 
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 const createPayments = async (req: Request, res: Response, next: NextFunction) => {
   try {

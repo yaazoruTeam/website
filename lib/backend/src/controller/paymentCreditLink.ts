@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError, PaymentCreditLink } from '../model'
 import * as db from '../db'
+import config from '../config'
 
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 const createPaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
   try {
     PaymentCreditLink.sanitizeBodyExisting(req)

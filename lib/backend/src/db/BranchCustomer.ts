@@ -1,8 +1,7 @@
 import { BranchCustomer } from '../model'
 import getDbConnection from './connection'
-import * as dotenv from 'dotenv'
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+import config from '../config'
+const limit = config.database.limit
 
 const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {
   const knex = getDbConnection()

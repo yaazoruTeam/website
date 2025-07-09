@@ -1,7 +1,8 @@
 import { JwtPayload } from '../model'
 import jwt from 'jsonwebtoken'
+import config from '../config'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'
+const JWT_SECRET = config.jwt.secret
 
 const generateToken = (userId: string, role: string): string => {
   const payload = { user_id: userId, role: role }

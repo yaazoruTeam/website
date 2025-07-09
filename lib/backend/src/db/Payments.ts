@@ -1,6 +1,7 @@
 import { HttpError, Payments } from '../model'
 import getDbConnection from './connection'
-const limit = Number(process.env.LIMIT) || 10
+import config from '../config'
+const limit = config.database.limit
 
 const createPayments = async (payments: Payments.Model, trx?: any) => {
   const knex = getDbConnection()

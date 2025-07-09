@@ -1,4 +1,5 @@
 import knex, { Knex } from 'knex'
+import config from '../config'
 
 let connection: Knex<any, unknown[]> | null = null
 
@@ -7,11 +8,11 @@ function getDbConnection(): Knex<any, unknown[]> {
     connection = knex({
       client: 'pg',
       connection: {
-        host: process.env.DB_HOST,
-        port: parseInt(process.env.DB_PORT as string),
-        user: process.env.DB_USER,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
+        host: config.database.host,
+        port: config.database.port,
+        user: config.database.user,
+        database: config.database.name,
+        password: config.database.password,
         ssl: false,
       },
       pool: { min: 0, max: 7 },
