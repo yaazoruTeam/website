@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { HttpError, MonthlyPayment } from '../model/src'
+import { HttpError, MonthlyPayment } from '../model'
 import * as db from '../db'
 import config from '../config'
 

@@ -4,8 +4,6 @@ import config from '../config'
 
 const appPublicKey = config.tranzila.publicKey
 const appPrivateKey = config.tranzila.privateKey
-console.log('appPublicKey', appPublicKey)
-console.log('appPrivateKey', appPrivateKey)
 
 const axiosInstance = axios.create({
   httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
