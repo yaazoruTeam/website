@@ -2,20 +2,57 @@ import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '../model'
 import { callingWidely } from '../integration/widely/callingWidely'
 
-// פונקציות עזר שמחזירות נתונים
+// General function for parameter validation
+const validateRequiredParam = (param: any, paramName: string): void => {
+    if (!param) {
+        const error: HttpError.Model = {
+            status: 400,
+            message: `${paramName} is required.`,
+        }
+        throw error
+    }
+}
+
+// General function for validating results and creating errors
+const validateWidelyResult = (result: Widely.Model, errorMessage: string): void => {
+    if (result.error_code !== 200 || !result.data || result.data.length === 0) {
+        const error: HttpError.Model = {
+            status: 404,
+            message: errorMessage,
+        }
+        throw error
+    }
+}
+
+// Special function for validating getMobileInfo (doesn't check length)
+const validateMobileInfoResult = (result: Widely.Model, errorMessage: string): void => {
+    if (result.error_code !== 200 || !result.data) {
+        const error: HttpError.Model = {
+            status: 404,
+            message: errorMessage,
+        }
+        throw error
+    }
+}
+
+// Function for network identification
+const getNetworkConnection = (mccMnc: string): string => {
+    const networkMap: { [key: string]: string } = {
+        '425_03': 'Pelephone',
+        '425_02': 'Partner',
+        '425_07': 'HOT'
+    }
+    return networkMap[mccMnc] || `Not available (${mccMnc})`
+}
+
+// Helper functions that return data
 const searchUsersData = async (simNumber: string): Promise<any> => {
     const result: Widely.Model = await callingWidely(
         'search_users',
         { account_id: 400000441, search_string: simNumber }
     )
     
-    if (result.error_code !== 200 || !result.data || result.data.length === 0) {
-        const error: HttpError.Model = {
-            status: 404,
-            message: 'User not found for the provided simNumber.',
-        }
-        throw error
-    }
+    validateWidelyResult(result, 'User not found for the provided simNumber.')
     
     return result.data[0]
 }
@@ -26,13 +63,7 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
         { domain_user_id: domain_user_id }
     )
     
-    if (result.error_code !== 200 || !result.data || result.data.length === 0) {
-        const error: HttpError.Model = {
-            status: 404,
-            message: 'No mobiles found for the user.',
-        }
-        throw error
-    }
+    validateWidelyResult(result, 'No mobiles found for the user.')
     
     return result.data[0]
 }
@@ -43,15 +74,9 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
         { endpoint_id: endpoint_id }
     )
     
-    if (result.error_code !== 200 || !result.data) {
-        const error: HttpError.Model = {
-            status: 404,
-            message: 'Mobile info not found.',
-        }
-        throw error
-    }
+    validateMobileInfoResult(result, 'Mobile info not found.')
     
-    // בדיקה אם הנתונים הם מערך או אובייקט
+    // Check if the data is an array or object
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data;
     return mobileData
 }
@@ -59,22 +84,10 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { simNumber } = req.body
+        validateRequiredParam(simNumber, 'simNumber')
 
-        if (!simNumber) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'simNumber is required.',
-            }
-            throw error
-        }
-
-        // קריאה לשירות האינטגרציה עם WIDELY
-        const result: Widely.Model = await callingWidely(
-            'search_users',
-            { account_id: 400000441, search_string: simNumber }
-        )
-
-        res.status(result.error_code).json(result.data)
+        const userData = await searchUsersData(simNumber)
+        res.status(200).json(userData)
     } catch (error: any) {
         next(error)
     }
@@ -83,21 +96,10 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
 const getMobiles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { domain_user_id } = req.body
+        validateRequiredParam(domain_user_id, 'domain_user_id')
 
-        if (!domain_user_id) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'domain_user_id is required.',
-            }
-            throw error
-        }
-
-        const result: Widely.Model = await callingWidely(
-            'get_mobiles',
-            { domain_user_id: domain_user_id }
-        )
-
-        res.status(result.error_code).json(result.data)
+        const mobileData = await getMobilesData(domain_user_id)
+        res.status(200).json(mobileData)
     } catch (error: any) {
         next(error)
     }
@@ -106,21 +108,10 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
 const getMobileInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { endpoint_id } = req.body
+        validateRequiredParam(endpoint_id, 'endpoint_id')
 
-        if (!endpoint_id) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'endpoint_id is required.',
-            }
-            throw error
-        }
-
-        const result: Widely.Model = await callingWidely(
-            'get_mobile_info',
-            { endpoint_id: endpoint_id }
-        )
-
-        res.status(result.error_code).json(result.data)
+        const mobileInfoData = await getMobileInfoData(endpoint_id)
+        res.status(200).json(mobileInfoData)
     } catch (error: any) {
         next(error)
     }
@@ -129,62 +120,41 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
 const getAllUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { simNumber } = req.body
+        validateRequiredParam(simNumber, 'simNumber')
 
-        if (!simNumber) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'simNumber is required.',
-            }
-            throw error
-        }
-
-        // שלב 1: חיפוש משתמש על בסיס מספר הסים
+        // Step 1: Search for user based on SIM number
         const user = await searchUsersData(simNumber)
         const domain_user_id = user.domain_user_id
 
-        // שלב 2: קבלת המכשירים של המשתמש
+        // Step 2: Get user's devices
         const mobile = await getMobilesData(domain_user_id)
         const endpoint_id = mobile.endpoint_id
 
-        // שלב 3: קבלת מידע מפורט על המכשיר
+        // Step 3: Get detailed device information
         const mobileInfo = await getMobileInfoData(endpoint_id)
 
-        // חילוץ נתוני דאטה מהמקום הנכון עם בדיקות בטיחות
+        // Extract data usage from the correct location with safety checks
         const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
         
-        // זיהוי רשת על בסיס mcc_mnc
-        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || mobileInfo?.registration_info?.mcc_mnc || ''
-        let networkConnection = 'לא זמין'
-        
-        switch (mccMnc) {
-            case '425_03':
-                networkConnection = 'פלאפון'
-                break
-            case '425_02':
-                networkConnection = 'פרטנר'
-                break
-            case '425_07':
-                networkConnection = 'HOT'
-                break
-            default:
-                networkConnection = `לא זמין (${mccMnc})`
-        }
+        // Network identification based on mcc_mnc
+        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
+        const networkConnection = getNetworkConnection(mccMnc)
 
-        // הכנת הנתונים להחזרה
+        // Prepare data for response
         const responseData = {
-            simNumber: simNumber,
-            endpoint_id: endpoint_id,
-            network_connection: networkConnection, // לאיפה הפלאפון מחובר
-            data_usage_gb: parseFloat(dataUsage.toFixed(3)), // גיגה בשימוש
-            imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || mobileInfo?.registration_info?.imei || 'לא זמין', // IMEI1
-            status: mobileInfo?.registration_info?.status || mobileInfo?.registration_info?.status || 'לא זמין', // סטטוס
-            imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'נעול' : 'לא נעול', // נעילת IMEI
-            msisdn: mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || mobileInfo?.registration_info?.msisdn || 'לא זמין', // מספר הטלפון
-            iccid: mobileInfo?.sim_data?.iccid || mobileInfo?.iccid || 'לא זמין', // ICCID
+            simNumber,
+            endpoint_id,
+            network_connection: networkConnection,
+            data_usage_gb: parseFloat(dataUsage.toFixed(3)),
+            imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
+            status: mobileInfo?.registration_info?.status || 'Not available',
+            imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'Locked' : 'Not locked',
+            msisdn: mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || 'Not available',
+            iccid: mobileInfo?.sim_data?.iccid || mobileInfo?.iccid || 'Not available',
             device_info: {
-                brand: mobileInfo?.device_info?.brand || 'לא זמין',
-                model: mobileInfo?.device_info?.model || 'לא זמין',
-                name: mobileInfo?.device_info?.name || 'לא זמין'
+                brand: mobileInfo?.device_info?.brand || 'Not available',
+                model: mobileInfo?.device_info?.model || 'Not available',
+                name: mobileInfo?.device_info?.name || 'Not available'
             }
         }
 
