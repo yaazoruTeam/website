@@ -12,21 +12,23 @@ services:
     ports:
       - "3006:3006"
     command: sh -c "npm install && npm run build-schema && PORT=3006 npm run dev"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-development}
       - POSTGRES_DB=postgres
       - DB_HOST=host.docker.internal
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_NAME=yaazoru
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DATABASE_URL=postgres://postgres:password@database:5432/mydb
-      - BRAND_TOKEN=da2ab7d7-810a-41b2-be51-6547d6fdc841
-      - BRAND_ID=1
-      - ACCOUNT_TOKEN=ea647db2-80d6-4675-8ac1-b5772986c359
-      - AUTH_ID=400011999
-      - ACCOUNT_ACTION=https://widelyapp-api-02.widelymobile.com:3001/api/v2/temp_prev
-      - LIMIT=50
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@database:5432/mydb
+      - BRAND_TOKEN=${BRAND_TOKEN}
+      - BRAND_ID=${BRAND_ID}
+      - ACCOUNT_TOKEN=${ACCOUNT_TOKEN}
+      - AUTH_ID=${AUTH_ID}
+      - ACCOUNT_ACTION=${ACCOUNT_ACTION}
+      - LIMIT=${LIMIT}
     # depends_on:
     #   - database
     extra_hosts:
@@ -45,17 +47,21 @@ services:
     ports:
       - "3005:3005"
     command: sh -c "npm install && PORT=3005 npm start"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-development}
     networks:
       - yaazoru-internal
   database:
     image: postgres:15
     container_name: postgres-db
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: yaazoru
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: yaazoru
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
