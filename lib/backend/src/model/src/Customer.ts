@@ -132,10 +132,10 @@ function sanitize(customer: Model, hasId: boolean): Model {
     city: customer.city.trim(),
     address1: customer.address1.trim(),
     address2: customer.address2,
-    zipCode: customer.zipCode,
+    zipCode: customer.zipCode || '',
     status: customer.status || 'active',
-    created_at: customer.created_at,
-    updated_at: customer.updated_at,
+    created_at: customer.created_at || new Date(Date.now()),
+    updated_at: customer.updated_at || new Date(Date.now()),
   }
   return newCustomer
 }
@@ -145,15 +145,15 @@ const sanitizeExistingCustomer = (customerExis: Model, customer: Model) => {
     const error: HttpError.Model = {
       status: 409,
       message: 'id_number already exists',
-    }
-    throw error
+    };
+    throw error;
   }
   if (customerExis.email === customer.email) {
     const error: HttpError.Model = {
       status: 409,
       message: 'email already exists',
-    }
-    throw error
+    };
+    throw error;
   }
 }
 

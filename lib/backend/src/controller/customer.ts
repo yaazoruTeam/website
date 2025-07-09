@@ -196,38 +196,23 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 }
 
 const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
-  try {
     let customerEx
     if (hasId) {
-      customerEx = await db.Customer.findCustomer({
-        customer_id: customer.customer_id,
-        email: customer.email,
-        id_number: customer.id_number,
-      })
+        customerEx = await db.Customer.findCustomer({
+            customer_id: customer.customer_id,
+            email: customer.email,
+            id_number: customer.id_number,
+        });
     } else {
-      customerEx = await db.Customer.findCustomer({
-        email: customer.email,
-        id_number: customer.id_number,
-      })
+        customerEx = await db.Customer.findCustomer({
+            email: customer.email,
+            id_number: customer.id_number,
+        });
     }
     if (customerEx) {
-      try {
-        Customer.sanitizeExistingCustomer(customerEx, customer)
-      } catch (err) {
-        throw err
-      }
+        Customer.sanitizeExistingCustomer(customerEx, customer);
     }
-  } catch (err) {
-    throw err
-  }
-}
-const getCities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const cities = await db.Customer.getUniqueCities()
-    res.status(200).json(cities)
-  } catch (error) {
-    next(error)
-  }
+
 }
 
 const searchCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -254,6 +239,7 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
+
 export {
   createCustomer,
   getCustomers,
@@ -264,5 +250,6 @@ export {
   getCities,
   getCustomersByStatus,
   getCustomersByDateRange,
+    existingCustomer,
   searchCustomers,
 }
