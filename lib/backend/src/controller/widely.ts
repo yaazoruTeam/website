@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError } from '../model'
+import { HttpError, Widely } from '../model'
 import { callingWidely } from '../integration/widely/callingWidely'
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -15,12 +15,12 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
         }
 
         // קריאה לשירות האינטגרציה עם WIDELY
-        const result: any = await callingWidely(
-            'searchUser',
+        const result: Widely.Model = await callingWidely(
+            'search_users',
             { account_id: 400000441, search_string: simNumber }
         )
 
-        res.status(result.status).json(result.data)
+        res.status(result.error_code).json(result.data)
     } catch (error: any) {
         next(error)
     }

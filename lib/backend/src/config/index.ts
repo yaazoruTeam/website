@@ -1,10 +1,15 @@
 import * as dotenv from 'dotenv';
+import path from 'path';
 
-// Load environment variables once
-dotenv.config();
+// Load environment variables from the correct path
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // Validate required environment variables
 const requiredEnvVars = {
+    BRAND_TOKEN: process.env.BRAND_TOKEN,
+    BRAND_ID: process.env.BRAND_ID,
+    ACCOUNT_TOKEN: process.env.ACCOUNT_TOKEN,
+    AUTH_ID: process.env.AUTH_ID,
     ACCOUNT_ACTION: process.env.ACCOUNT_ACTION,
 };
 
@@ -16,6 +21,7 @@ Object.entries(requiredEnvVars).forEach(([key, value]) => {
 });
 
 export const config = {
+    env: process.env.NODE_ENV || 'development',
     database: {
         limit: Number(process.env.LIMIT) || 10,
         // Add other database-related config here
@@ -25,7 +31,12 @@ export const config = {
         port: Number(process.env.PORT) || 3000,
     },
     widely: {
-        urlAccountAction: process.env.ACCOUNT_ACTION as string, // כעת אנו יודעים שזה קיים
+        brandToken: process.env.BRAND_TOKEN as string,
+        brandId: Number(process.env.BRAND_ID) || 1,
+        accountToken: process.env.ACCOUNT_TOKEN as string,
+        authId: Number(process.env.AUTH_ID) || 0,
+        urlAccountAction: process.env.ACCOUNT_ACTION as string,
+        urlAppAction: process.env.APP_ACTION as string,
     },
     // etc.
 };
