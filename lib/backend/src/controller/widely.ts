@@ -3,7 +3,7 @@ import { HttpError, Widely } from '../model'
 import { callingWidely } from '../integration/widely/callingWidely'
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {        
+    try {
         const { simNumber } = req.body
 
         if (!simNumber) {
