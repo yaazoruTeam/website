@@ -1,10 +1,8 @@
 import crypto from 'crypto'
-import dotenv from 'dotenv'
+import config from '../config'
 
-dotenv.config()
-
-const BRAND_TOKEN: string = process.env.BRAND_TOKEN || ''
-const BRAND_ID: number = parseInt(process.env.BRAND_ID || '0', 10)
+const BRAND_TOKEN: string = config.widely.brandToken
+const BRAND_ID: number = config.widely.brandId
 
 const generateHash = (): string => {
   return `${Date.now()}_${Math.random().toString(36).substring(2, 15)}`

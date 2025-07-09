@@ -11,6 +11,7 @@ const requiredEnvVars = {
     ACCOUNT_TOKEN: process.env.ACCOUNT_TOKEN,
     AUTH_ID: process.env.AUTH_ID,
     ACCOUNT_ACTION: process.env.ACCOUNT_ACTION,
+    APP_ACTION: process.env.APP_ACTION,
 };
 
 // Check for missing required variables
@@ -24,11 +25,21 @@ export const config = {
     env: process.env.NODE_ENV || 'development',
     database: {
         limit: Number(process.env.LIMIT) || 10,
-        // Add other database-related config here
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT as string),
+        user: process.env.DB_USER,
+        name: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
     },
-    // Add other configuration sections as needed
     server: {
         port: Number(process.env.PORT) || 3000,
+    },
+    jwt: {
+        secret: process.env.JWT_SECRET || 'your_jwt_secret_key',
+    },
+    tranzila: {
+        publicKey: process.env.TRANZILA_PUBLIC_KEY || '',
+        privateKey: process.env.TRANZILA_PRIVET_KEY || '',
     },
     widely: {
         brandToken: process.env.BRAND_TOKEN as string,
@@ -38,7 +49,6 @@ export const config = {
         urlAccountAction: process.env.ACCOUNT_ACTION as string,
         urlAppAction: process.env.APP_ACTION as string,
     },
-    // etc.
 };
 
 export default config;

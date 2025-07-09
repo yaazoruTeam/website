@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError, MonthlyPayment } from '../model/src'
 import * as db from '../db'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../config'
 
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
   try {
