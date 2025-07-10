@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for building and serving React frontend
 
 # Stage 1: Build the React application
-FROM node:16-alpine AS build
+FROM node:18-alpine AS build
 
 # Set working directory
 WORKDIR /app
