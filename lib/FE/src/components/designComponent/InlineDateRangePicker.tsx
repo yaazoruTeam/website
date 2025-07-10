@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Button, styled } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import CalendarHeaderComponent from './CalendarHeaderComponent'
 import CalendarGrid from './CalendarGrid'
 import { generateCalendarDays } from './calendarUtils'
-import { colors } from '../../styles/theme'
+import { CalendarContainer, FlexColumnWithGap, CalendarButtonContainer, CalendarButton } from './CalendarStyles'
 
 interface InlineDateRangePickerProps {
   onDateRangeChange: (start: Date | null, end: Date | null) => void
@@ -13,49 +12,6 @@ interface InlineDateRangePickerProps {
   isOpen?: boolean
   onClose?: () => void
 }
-
-const CalendarContainer = styled(Box)({
-  width: '100%',
-  maxWidth: '100%',
-  padding: '8px 12px',
-  background: colors.c6,
-  borderRadius: '16px',
-  outline: `1px solid ${colors.c22}`,
-  outlineOffset: '-1px',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-start',
-  alignItems: 'stretch',
-  gap: '2px',
-  boxSizing: 'border-box',
-})
-
-const ButtonContainer = styled(Box)({
-  display: 'flex',
-  gap: '4px',
-  marginTop: '6px',
-  marginBottom: '4px',
-})
-
-const StyledButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' }>(({ buttonvariant }) => ({
-  minWidth: 'auto',
-  padding: '4px 8px',
-  fontSize: '11px',
-  fontFamily: 'Heebo, Arial, sans-serif',
-  borderRadius: '4px',
-  textTransform: 'none',
-  ...(buttonvariant === 'apply' ? {
-    backgroundColor: colors.c2,
-    color: colors.c6,
-    '&:hover': { backgroundColor: colors.c43 },
-    '&:disabled': { backgroundColor: colors.c44, color: colors.c41 },
-  } : {
-    backgroundColor: 'transparent',
-    color: colors.c42,
-    border: `1px solid ${colors.c42}`,
-    '&:hover': { backgroundColor: colors.c46 },
-  }),
-}))
 
 const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   onDateRangeChange,
@@ -141,7 +97,7 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
       zIndex: 10,
       marginTop: 0,
     }}>
-      <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      <FlexColumnWithGap sx={{ width: '100%' }}>
         <CalendarHeaderComponent
           currentMonth={currentMonth}
           onPrevMonth={handlePrevMonth}
@@ -156,22 +112,22 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
           onDateClick={handleDateClick}
         />
 
-        <ButtonContainer>
-          <StyledButton 
+        <CalendarButtonContainer>
+          <CalendarButton 
             buttonvariant="apply"
             onClick={handleApply}
             disabled={!startDate || !endDate}
           >
             {t('apply')}
-          </StyledButton>
-          <StyledButton 
+          </CalendarButton>
+          <CalendarButton 
             buttonvariant="clear"
             onClick={handleClear}
           >
             {t('clear')}
-          </StyledButton>
-        </ButtonContainer>
-      </Box>
+          </CalendarButton>
+        </CalendarButtonContainer>
+      </FlexColumnWithGap>
     </CalendarContainer>
   )
 }

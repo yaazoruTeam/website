@@ -1,5 +1,10 @@
-import { styled, Box, IconButton } from '@mui/material'
+import { styled, Box, IconButton, Button } from '@mui/material'
 import { colors } from '../../styles/theme'
+
+// Common constants
+export const STANDARD_GAP = '2px'
+export const CALENDAR_FONT_FAMILY = 'Heebo, Arial, sans-serif'
+export const CALENDAR_FONT_SIZE = '13px'
 
 // Base flex components - reusable across the app
 const FlexBase = styled(Box)({
@@ -11,16 +16,14 @@ const FlexBase = styled(Box)({
 export const CalendarDayBase = styled(FlexBase)(({ theme }) => ({
   flex: 1,
   padding: theme.spacing(0.5),
-  display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
   cursor: 'pointer',
   outline: 'none',
   aspectRatio: 1,
   minHeight: 32,
   minWidth: 32,
-  fontFamily: 'Heebo, Arial, sans-serif',
-  fontSize: '13px',
+  fontFamily: CALENDAR_FONT_FAMILY,
+  fontSize: CALENDAR_FONT_SIZE,
   fontWeight: 400,
   transition: theme.transitions.create(['background-color', 'color', 'opacity', 'transform'], {
     duration: theme.transitions.duration.shorter,
@@ -38,7 +41,7 @@ export const CalendarDayBase = styled(FlexBase)(({ theme }) => ({
 
 // Common layout patterns
 export const FlexRow = styled(FlexBase)({
-  gap: '2px',
+  gap: STANDARD_GAP,
 })
 
 export const FlexRowSpaceBetween = styled(FlexBase)({
@@ -51,10 +54,8 @@ export const FlexColumn = styled(Box)({
   flexDirection: 'column',
 })
 
-export const FlexColumnWithGap = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2px',
+export const FlexColumnWithGap = styled(FlexColumn)({
+  gap: STANDARD_GAP,
 })
 
 // Calendar specific components
@@ -68,6 +69,8 @@ export const CalendarIconButton = styled(IconButton)({
 })
 
 export const CalendarContainer = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
   width: '100%',
   maxWidth: '100%',
   padding: '8px 12px',
@@ -75,11 +78,9 @@ export const CalendarContainer = styled(Box)({
   borderRadius: '16px',
   outline: `1px solid ${colors.c22}`,
   outlineOffset: '-1px',
-  display: 'flex',
-  flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'stretch',
-  gap: '2px',
+  gap: STANDARD_GAP,
   boxSizing: 'border-box',
 })
 
@@ -88,33 +89,54 @@ export const DayOfWeekHeader = styled(FlexBase)({
   justifyContent: 'space-between',
   paddingTop: '4px',
   paddingBottom: '4px',
-  marginBottom: '2px',
+  marginBottom: STANDARD_GAP,
 })
 
 export const DayOfWeekCell = styled(Box)({
   flex: '1 1 0',
   textAlign: 'center',
   padding: '2px 1px',
-  fontSize: '13px',
+  fontSize: CALENDAR_FONT_SIZE,
   fontWeight: 400,
   color: colors.c40,
-  fontFamily: 'Heebo, Arial, sans-serif',
+  fontFamily: CALENDAR_FONT_FAMILY,
   minWidth: '16px',
   maxWidth: '16px',
 })
 
-export const WeekRow = styled(FlexBase)({
-  justifyContent: 'space-between',
+export const WeekRow = styled(FlexRowSpaceBetween)({
   margin: '1px 0',
-  width: '100%',
 })
 
 // Calendar header components
-export const CalendarHeaderContainer = styled(FlexBase)({
-  justifyContent: 'space-between',
-  width: '100%',
+export const CalendarHeaderContainer = styled(FlexRowSpaceBetween)({
   marginBottom: '4px',
   marginTop: '4px',
 })
 
-// Using FlexRow for both date and buttons containers since they're identical
+// Calendar button components
+export const CalendarButtonContainer = styled(FlexRow)({
+  marginTop: '6px',
+  marginBottom: '4px',
+  gap: '4px',
+})
+
+export const CalendarButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' }>(({ buttonvariant }) => ({
+  minWidth: 'auto',
+  padding: '4px 8px',
+  fontSize: '11px',
+  fontFamily: CALENDAR_FONT_FAMILY,
+  borderRadius: '4px',
+  textTransform: 'none',
+  ...(buttonvariant === 'apply' ? {
+    backgroundColor: colors.c2,
+    color: colors.c6,
+    '&:hover': { backgroundColor: colors.c43 },
+    '&:disabled': { backgroundColor: colors.c44, color: colors.c41 },
+  } : {
+    backgroundColor: 'transparent',
+    color: colors.c42,
+    border: `1px solid ${colors.c42}`,
+    '&:hover': { backgroundColor: colors.c46 },
+  }),
+}))
