@@ -59,6 +59,9 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           setError(null) // Clear error for 404 - this is just "no results"
           setNoResults(true) // Set no results flag
           
+          // TODO: Temporary code waiting for site specification
+          // These lines are temporary and waiting for final website requirements
+          
           // Set specific message type based on filter
           if (filterType?.type === 'date') {
             setNoResultsType('date')
