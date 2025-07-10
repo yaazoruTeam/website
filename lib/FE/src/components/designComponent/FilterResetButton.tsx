@@ -34,7 +34,7 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
       >
         <Box sx={{ paddingTop: 1.2, alignItems: "center" }}>
           <CustomTypography
-            text={t("resetFilters")}
+            text={t("reset")}
             variant="h4"
             weight="regular"
             color={colors.c11}

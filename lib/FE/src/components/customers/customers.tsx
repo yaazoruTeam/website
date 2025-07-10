@@ -13,9 +13,10 @@ const Customers: React.FC = () => {
   >(null);
   const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10;
 
-  const { customers, total, isLoading, error } = useFetchCustomers({ page, filterType: filterType ?? undefined })
+  const { customers, total, isLoading, error, noResults, noResultsType } = useFetchCustomers({ page, filterType: filterType ?? undefined })
 
   if (isLoading) return <div>Loading customers...</div>
+  
   if (error) return <div>{error}</div>
 
   return (
@@ -23,9 +24,12 @@ const Customers: React.FC = () => {
       <CustomersList
           customers={customers}
           total={total}
-          page={page} limit={limit}
+          page={page} 
+          limit={limit}
           onPageChange={setPage}
-          onFilterChange={setFilterType} />
+          onFilterChange={setFilterType}
+          noResults={noResults}
+          noResultsType={noResultsType} />
       <ChatBot />
     </>
   )
