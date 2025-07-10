@@ -11,7 +11,7 @@ COPY package*.json ./
 
 # Install dependencies
 ENV NODE_ENV=production
-RUN npm install
+RUN npm ci
 
 # Copy source code
 COPY . ./
