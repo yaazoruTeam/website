@@ -22,17 +22,15 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const getDayNames = (): string[] => {
-    return [
-      t('days.sunday'),
-      t('days.monday'),
-      t('days.tuesday'),
-      t('days.wednesday'),
-      t('days.thursday'),
-      t('days.friday'),
-      t('days.saturday'),
-    ]
-  }
+  const dayNames = [
+    t('days.sunday'),
+    t('days.monday'),
+    t('days.tuesday'),
+    t('days.wednesday'),
+    t('days.thursday'),
+    t('days.friday'),
+    t('days.saturday'),
+  ]
 
   const isDateSelected = (date: Date): boolean => {
     if (!startDate && !endDate) return false
@@ -55,7 +53,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   return (
     <Box>
       <DayOfWeekHeader>
-        {getDayNames().map((day, index) => (
+        {dayNames.map((day, index) => (
           <DayOfWeekCell
             key={index}
             sx={{
