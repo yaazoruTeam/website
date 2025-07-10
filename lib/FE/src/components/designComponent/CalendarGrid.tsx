@@ -1,34 +1,9 @@
 import React from 'react'
-import { Box, styled } from '@mui/material'
+import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import CalendarDay from './CalendarDay'
-import { colors } from '../../styles/theme' 
-const DayOfWeekHeader = styled(Box)({
-  display: 'flex',
-  justifyContent: 'space-between',
-  paddingTop: '4px',
-  paddingBottom: '4px',
-  marginBottom: '2px',
-})
-
-const DayOfWeekCell = styled(Box)({
-  flex: '1 1 0',
-  textAlign: 'center',
-  padding: '2px 1px',
-  fontSize: '13px',
-  fontWeight: 400,
-  color: colors.c40,
-  fontFamily: 'Heebo, Arial, sans-serif',
-  minWidth: '16px',
-  maxWidth: '16px',
-})
-
-const WeekRow = styled(Box)({
-  display: 'flex',
-  justifyContent: 'space-between',
-  margin: '1px 0',
-  width: '100%',
-})
+import { colors } from '../../styles/theme'
+import { DayOfWeekHeader, DayOfWeekCell, WeekRow, FlexColumnWithGap } from './CalendarStyles'
 
 interface CalendarGridProps {
   weeks: Date[][]
@@ -43,10 +18,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   currentMonth,
   startDate,
   endDate,
-  onDateClick
+  onDateClick,
 }) => {
   const { t } = useTranslation()
-  
+
   const getDayNames = (): string[] => {
     return [
       t('days.sunday'),
@@ -55,14 +30,16 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
       t('days.wednesday'),
       t('days.thursday'),
       t('days.friday'),
-      t('days.saturday')
+      t('days.saturday'),
     ]
   }
 
   const isDateSelected = (date: Date): boolean => {
     if (!startDate && !endDate) return false
-    return Boolean((startDate && date.getTime() === startDate.getTime()) || 
-                  (endDate && date.getTime() === endDate.getTime()))
+    return Boolean(
+      (startDate && date.getTime() === startDate.getTime()) ||
+        (endDate && date.getTime() === endDate.getTime()),
+    )
   }
 
   const isDateInRange = (date: Date): boolean => {
@@ -79,15 +56,18 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
     <Box>
       <DayOfWeekHeader>
         {getDayNames().map((day, index) => (
-          <DayOfWeekCell key={index} sx={{ 
-            color: index === 6 ? colors.c2 : colors.c40
-          }}>
+          <DayOfWeekCell
+            key={index}
+            sx={{
+              color: index === 6 ? colors.c2 : colors.c40,
+            }}
+          >
             {day}
           </DayOfWeekCell>
         ))}
       </DayOfWeekHeader>
-      
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '5px' }}>
+
+      <FlexColumnWithGap sx={{ marginTop: '5px' }}>
         {weeks.map((week, weekIndex) => (
           <WeekRow key={weekIndex}>
             {week.map((date, dayIndex) => (
@@ -103,7 +83,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             ))}
           </WeekRow>
         ))}
-      </Box>
+      </FlexColumnWithGap>
     </Box>
   )
 }
