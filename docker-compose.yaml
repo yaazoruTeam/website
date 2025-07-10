@@ -27,19 +27,12 @@ services:
     networks:
       - yaazoru-internal
   frontend:
-    image: node:20
+    build:
+      context: ./lib/FE
+      dockerfile: Dockerfile
     container_name: react-frontend
-    working_dir: /app
-    volumes:
-      - ./lib/frontend/public:/app/public
-      - ./lib/frontend/src:/app/src
-      - ./lib/frontend/package.json:/app/package.json
-      - ./lib/frontend/tsconfig.json:/app/tsconfig.json
     ports:
-      - "3005:3005"
-    command: sh -c "npm install && PORT=3005 npm start"
-    environment:
-      - NODE_ENV=development
+      - "8080:80"
     networks:
       - yaazoru-internal
   database:
