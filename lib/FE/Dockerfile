@@ -10,6 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
+ENV NODE_ENV=production
 RUN npm install
 
 # Copy source code
