@@ -20,8 +20,6 @@ export const CalendarDayBase = styled(FlexBase)(({ theme }) => ({
   cursor: 'pointer',
   outline: 'none',
   aspectRatio: 1,
-  minHeight: 32,
-  minWidth: 32,
   fontFamily: CALENDAR_FONT_FAMILY,
   fontSize: CALENDAR_FONT_SIZE,
   fontWeight: 400,
