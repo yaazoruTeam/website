@@ -10,8 +10,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-ENV NODE_ENV=production
 RUN npm ci
+ENV NODE_ENV=production
 
 # Copy source code
 COPY . ./
