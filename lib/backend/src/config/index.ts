@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 
 // Load environment variables from the correct path
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
 // Validate required environment variables
 const requiredEnvVars = {
@@ -45,6 +45,7 @@ export const config = {
         brandToken: process.env.BRAND_TOKEN as string,
         brandId: Number(process.env.BRAND_ID) || 1,
         accountToken: process.env.ACCOUNT_TOKEN as string,
+        accountId: Number(process.env.ACCOUNT_ID) || 1,
         authId: Number(process.env.AUTH_ID) || 0,
         urlAccountAction: process.env.ACCOUNT_ACTION as string,
         urlAppAction: process.env.APP_ACTION as string,
