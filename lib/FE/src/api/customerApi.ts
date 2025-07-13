@@ -129,8 +129,12 @@ export const getCustomersByDateRange = async (startDate: Date, endDate: Date, pa
     if (!token) {
       throw new Error('No token found!')
     }
+    
+    const startDateStr = startDate.toISOString().split('T')[0]
+    const endDateStr = endDate.toISOString().split('T')[0]
+        
     const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(
-      `${baseUrl}/dates?startDate=${startDate}&endDate=${endDate}&page=${page}`,
+      `${baseUrl}/dates?startDate=${startDateStr}&endDate=${endDateStr}&page=${page}`,
       {
         headers: {
           'Content-Type': 'application/json',
