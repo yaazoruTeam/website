@@ -18,6 +18,7 @@ import * as MonthlyPaymentManagement from "./MonthlyPaymentManagement";
 import * as Comment from "./Comment";
 import { CreateCommentDto } from "./Dtos";
 import { EntityType } from "./Comment";
+import * as Widely from './Widely'
 
 export {
   Customer,
@@ -40,4 +41,5 @@ export {
   Comment,
   CreateCommentDto,
   EntityType,
-};
+  Widely
+}
