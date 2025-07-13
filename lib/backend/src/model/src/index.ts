@@ -19,6 +19,7 @@ import * as Comment from "./Comment";
 import { CreateCommentDto } from "./Dtos";
 import { EntityType } from "./Comment";
 import * as Widely from './Widely'
+import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 
 export {
   Customer,
@@ -41,5 +42,6 @@ export {
   Comment,
   CreateCommentDto,
   EntityType,
-  Widely
+  Widely,
+  WidelyDeviceDetails
 }

@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '../db'
 import { User, HttpError } from '../model'
 import { hashPassword } from '../utils/password'
+import config from '../config'
 
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

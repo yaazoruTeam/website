@@ -1,9 +1,8 @@
 import { HttpError, MonthlyPayment } from '../model'
 import getDbConnection from './connection'
-import * as dotenv from 'dotenv'
+import config from '../config'
 
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 
 const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: any) => {
