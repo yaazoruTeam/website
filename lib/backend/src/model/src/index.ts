@@ -17,6 +17,7 @@ import * as PaymentCreditLink from './PaymentCreditLink'
 import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
+import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 
 export {
   Customer,
@@ -37,5 +38,6 @@ export {
   PaymentCreditLink,
   MonthlyPaymentManagement,
   Comment,
-  Widely
+  Widely,
+  WidelyDeviceDetails
 }
