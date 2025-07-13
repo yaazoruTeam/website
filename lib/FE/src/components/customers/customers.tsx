@@ -28,8 +28,10 @@ const Customers: React.FC = () => {
           page={page} 
           limit={limit}
           onPageChange={setPage}
-          onFilterChange={setFilterType} />
-        <ChatBot entityType={EntityType.Customer} entityId="1"/>
+          onFilterChange={setFilterType}
+          noResults={noResults}
+          noResultsType={noResultsType} />
+      <ChatBot entityType={EntityType.Customer} entityId='1'/>
     </>
   )
 }
