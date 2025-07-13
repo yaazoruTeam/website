@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '../db'
 import { Customer, HttpError } from '../model'
-import * as dotenv from 'dotenv'
+import config from '../config'
 
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -30,7 +29,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
       data: customers,
       page,
       totalPages: Math.ceil(total / limit),
-      total
+      total,
     })
   } catch (error: any) {
     console.log('Error in getCustomers: in controller: ', error)
@@ -57,7 +56,11 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
-const getCustomersByCity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getCustomersByCity = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { city } = req.params
     const page = parseInt(req.query.page as string, 10) || 1
@@ -66,7 +69,7 @@ const getCustomersByCity = async (req: Request, res: Response, next: NextFunctio
     if (!city) {
       const error: HttpError.Model = {
         status: 400,
-        message: 'City parameter is required.'
+        message: 'City parameter is required.',
       }
       throw error
     }
@@ -76,7 +79,7 @@ const getCustomersByCity = async (req: Request, res: Response, next: NextFunctio
     if (customers.length === 0) {
       const error: HttpError.Model = {
         status: 404,
-        message: `No customers found in city: ${city}`
+        message: `No customers found in city: ${city}`,
       }
       throw error
     }
@@ -85,15 +88,18 @@ const getCustomersByCity = async (req: Request, res: Response, next: NextFunctio
       data: customers,
       page,
       totalPages: Math.ceil(total / limit),
-      total
+      total,
     })
   } catch (error) {
     next(error)
   }
 }
 
-
-const getCustomersByStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getCustomersByStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { status } = req.params
     const page = parseInt(req.query.page as string, 10) || 1
@@ -102,7 +108,7 @@ const getCustomersByStatus = async (req: Request, res: Response, next: NextFunct
     if (status !== 'active' && status !== 'inactive') {
       const error: HttpError.Model = {
         status: 400,
-        message: 'Invalid status. Allowed values: \'active\' or \'inactive\'.'
+        message: "Invalid status. Allowed values: 'active' or 'inactive'.",
       }
       throw error
     }
@@ -113,7 +119,7 @@ const getCustomersByStatus = async (req: Request, res: Response, next: NextFunct
       data: customers,
       page,
       totalPages: Math.ceil(total / limit),
-      total
+      total,
     })
   } catch (error: any) {
     next(error)
@@ -141,7 +147,8 @@ const getCustomersByDateRange = async (
 
     const { customers, total } = await db.Customer.getCustomersByDateRange(
       startDate as string,
-      endDate as string, offset,
+      endDate as string,
+      offset,
     )
     // const total = await db.Customer.countCustomersByDateRange(startDate as string, endDate as string)
 
@@ -157,7 +164,7 @@ const getCustomersByDateRange = async (
       data: customers,
       page,
       totalPages: Math.ceil(total / limit),
-      total
+      total,
     })
   } catch (error: any) {
     next(error)
@@ -196,23 +203,22 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 }
 
 const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
-    let customerEx
-    if (hasId) {
-        customerEx = await db.Customer.findCustomer({
-            customer_id: customer.customer_id,
-            email: customer.email,
-            id_number: customer.id_number,
-        });
-    } else {
-        customerEx = await db.Customer.findCustomer({
-            email: customer.email,
-            id_number: customer.id_number,
-        });
-    }
-    if (customerEx) {
-        Customer.sanitizeExistingCustomer(customerEx, customer);
-    }
-
+  let customerEx
+  if (hasId) {
+    customerEx = await db.Customer.findCustomer({
+      customer_id: customer.customer_id,
+      email: customer.email,
+      id_number: customer.id_number,
+    })
+  } else {
+    customerEx = await db.Customer.findCustomer({
+      email: customer.email,
+      id_number: customer.id_number,
+    })
+  }
+  if (customerEx) {
+    Customer.sanitizeExistingCustomer(customerEx, customer)
+  }
 }
 
 const searchCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -232,13 +238,12 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
       data: customers,
       page,
       totalPages: Math.ceil(total / limit),
-      total
+      total,
     })
   } catch (error) {
     next(error)
   }
 }
-
 
 export {
   createCustomer,
@@ -250,6 +255,6 @@ export {
   getCities,
   getCustomersByStatus,
   getCustomersByDateRange,
-    existingCustomer,
+  existingCustomer,
   searchCustomers,
 }

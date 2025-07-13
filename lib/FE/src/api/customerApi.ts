@@ -22,12 +22,15 @@ export const getCustomers = async (page: number): Promise<PaginatedCustomersResp
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(
+      `${baseUrl}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching customers', error)
@@ -61,7 +64,10 @@ export const getCustomerById = async (cusomer_id: string): Promise<Customer.Mode
 }
 
 //GET(city)
-export const getCustomersByCity = async (city: string, page: number = 1): Promise<PaginatedCustomersResponse> => {
+export const getCustomersByCity = async (
+  city: string,
+  page: number = 1,
+): Promise<PaginatedCustomersResponse> => {
   try {
     console.log('Fetching customers by city:', city, 'Page:', page)
 
@@ -73,12 +79,15 @@ export const getCustomersByCity = async (city: string, page: number = 1): Promis
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}/city/${city}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(
+      `${baseUrl}/city/${city}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     console.log('Response data:', response.data)
 
     return response.data
@@ -119,7 +128,11 @@ export const getCustomersByStatus = async (
 }
 
 //GET(dates)
-export const getCustomersByDateRange = async (startDate: Date, endDate: Date, page: number = 1): Promise<PaginatedCustomersResponse> => {
+export const getCustomersByDateRange = async (
+  startDate: Date,
+  endDate: Date,
+  page: number = 1,
+): Promise<PaginatedCustomersResponse> => {
   try {
     const newToken = await handleTokenRefresh()
     if (!newToken) {
@@ -129,14 +142,19 @@ export const getCustomersByDateRange = async (startDate: Date, endDate: Date, pa
     if (!token) {
       throw new Error('No token found!')
     }
+
+    const startDateStr = startDate.toISOString().split('T')[0]
+    const endDateStr = endDate.toISOString().split('T')[0]
+
     const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(
-      `${baseUrl}/dates?startDate=${startDate}&endDate=${endDate}&page=${page}`,
+      `${baseUrl}/dates?startDate=${startDateStr}&endDate=${endDateStr}&page=${page}`,
       {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-      })
+      },
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching customers by dates', error)
@@ -156,7 +174,10 @@ export const getCities = async (): Promise<string[]> => {
 }
 
 //GET(name) - search customers by name
-export const getCustomersByName = async (name: string, page: number = 1): Promise<PaginatedCustomersResponse> => {
+export const getCustomersByName = async (
+  name: string,
+  page: number = 1,
+): Promise<PaginatedCustomersResponse> => {
   try {
     const newToken = await handleTokenRefresh()
     if (!newToken) {
@@ -166,19 +187,21 @@ export const getCustomersByName = async (name: string, page: number = 1): Promis
     if (!token) {
       throw new Error('No token found!')
     }
-    const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(`${baseUrl}/search?q=${name}&page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response: AxiosResponse<PaginatedCustomersResponse> = await axios.get(
+      `${baseUrl}/search?q=${name}&page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching customers by name', error)
     throw error
   }
 }
-
 
 // POST
 export const createCustomer = async (customerData: Customer.Model): Promise<Customer.Model> => {
