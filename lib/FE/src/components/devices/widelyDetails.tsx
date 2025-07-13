@@ -9,7 +9,7 @@ const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | n
     useEffect(() => {
         const fetchWidelyDetails = async () => {
             const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber)
-            setWidelyDetails(details)            
+            setWidelyDetails(details)
         };
         fetchWidelyDetails()
     }, [simNumber])

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { handleTokenRefresh } from './token'
 import { WidelyDeviceDetails } from '../model'
 
-const baseUrl = 'http://localhost:3006/controller/widely'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/widely`
 
 // GET
 export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceDetails.Model> => {
