@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { HttpError, User, JwtPayload } from '../model/src'
+import config from '../config'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'
+const JWT_SECRET = config.jwt.secret
 
 const hasRole = (...roles: Array<User.Model['role']>) => {
   return (req: Request, res: Response, next: NextFunction) => {

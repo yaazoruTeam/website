@@ -1,6 +1,8 @@
 import { BranchUser } from '../model'
 import getDbConnection from './connection'
-const limit = Number(process.env.LIMIT) || 10
+import config from '../config'
+
+const limit = config.database.limit
 
 const createBranchUser = async (branchUser: BranchUser.Model) => {
   const knex = getDbConnection()
