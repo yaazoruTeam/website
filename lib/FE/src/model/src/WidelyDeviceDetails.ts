@@ -9,6 +9,7 @@ interface Model {
     endpoint_id: number;
     network_connection: string;
     data_usage_gb: number;
+    max_data_gb: number;
     imei1: string;
     status: string;
     imei_lock: string;

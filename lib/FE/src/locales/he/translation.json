@@ -198,5 +198,16 @@
     "AttachFile": "צרף קובץ",
     "ImageSent": "תמונה נשלחה",
     "recordingInProgress": "🔴 מקליט...",
-    "transcriptionPending": "⌛ תמלול בהמתנה..."
+    "transcriptionPending": "⌛ תמלול בהמתנה...",
+    "simData": "נתוני סים",
+    "simCurrent": "סים נוכחי",
+    "replacingProgram": "החלפת תוכנית",
+    "connection": "חיבור",
+    "pelephoneAndPartner": "פלאפון ופרטנר",
+    "HotAndPartner": "הוט ופרטנר",
+    "pelephone": "פלאפון",
+    "gigaUsed": "גיגה בשימוש",
+    "maximumGigabytePerMonth": "ג’יגה מקסימלית לחודש",
+    "IMEI 1": "IMEI 1",
+    "IMEI_lock":"נעילת IMEI"
 }

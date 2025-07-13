@@ -155,7 +155,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         }
 
         // Step 2: Get user's devices
-        const mobile = await getMobilesData(domain_user_id)
+        const mobile = await getMobilesData(domain_user_id)        
         const endpoint_id = mobile.endpoint_id
         
         if (!endpoint_id) {
@@ -172,6 +172,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         // Extract data usage from the correct location with safety checks
         const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
         
+        // Extract max data allowance (גיגה מקסימלית לחודש)
+        const maxDataAllowance = mobileInfo?.data_limit
+        
         // Network identification based on mcc_mnc
         const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
         const networkConnection = getNetworkConnection(mccMnc)
@@ -182,6 +185,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
             endpoint_id: parseInt(endpoint_id) || 0,
             network_connection: networkConnection,
             data_usage_gb: parseFloat(dataUsage.toFixed(3)),
+            max_data_gb: parseFloat(maxDataAllowance.toFixed(3)), 
             imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
             status: mobileInfo?.registration_info?.status || 'Not available',
             imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'Locked' : 'Not locked',
@@ -202,5 +206,3 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
 export { searchUsers, getMobiles, getMobileInfo, getAllUserData }
 
-
-                                        

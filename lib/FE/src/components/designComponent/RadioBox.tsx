@@ -13,8 +13,8 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, value, onChange }) =
   }
 
   return (
-    <FormControl>
-      <RadioGroup value={value} onChange={handleChange} row>
+    <FormControl sx={{ margin: 0, padding: 0, ml: 0, pl: 0 }}>
+      <RadioGroup value={value} onChange={handleChange} row sx={{ margin: 0, padding: 0, ml: 0, pl: 0 }}>
         {options.map((option) => {
           const isSelected = value === option.value
           return (
@@ -59,6 +59,12 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, value, onChange }) =
                 cursor: 'pointer',
                 background: 'transparent',
                 transition: 'background 0.2s ease-in-out',
+                margin: 0,
+                marginLeft: 0,
+                marginRight: 0,
+                '&:first-of-type': {
+                  marginLeft: 0
+                }
               }}
             />
           )
