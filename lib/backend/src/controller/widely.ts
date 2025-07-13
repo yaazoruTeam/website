@@ -179,7 +179,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         // Prepare data for response
         const responseData: WidelyDeviceDetails.Model = {
             simNumber,
-            endpoint_id,
+            endpoint_id: parseInt(endpoint_id) || 0,
             network_connection: networkConnection,
             data_usage_gb: parseFloat(dataUsage.toFixed(3)),
             imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
