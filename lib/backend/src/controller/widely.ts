@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely } from '../model'
+import { HttpError, Widely, WidelyDeviceDetails } from '../model'
 import { callingWidely } from '../integration/widely/callingWidely'
 import { config } from '../config'
 
@@ -177,7 +177,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         const networkConnection = getNetworkConnection(mccMnc)
 
         // Prepare data for response
-        const responseData = {
+        const responseData: WidelyDeviceDetails.Model = {
             simNumber,
             endpoint_id,
             network_connection: networkConnection,
