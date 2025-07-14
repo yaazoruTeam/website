@@ -12,6 +12,7 @@ const requiredEnvVars = {
     AUTH_ID: process.env.AUTH_ID,
     ACCOUNT_ACTION: process.env.ACCOUNT_ACTION,
     APP_ACTION: process.env.APP_ACTION,
+    GOOGLE_APPLICATION_CREDENTIALS_JSON: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
 };
 
 // Check for missing required variables
@@ -49,6 +50,9 @@ export const config = {
         authId: Number(process.env.AUTH_ID) || 0,
         urlAccountAction: process.env.ACCOUNT_ACTION as string,
         urlAppAction: process.env.APP_ACTION as string,
+    },
+    google: {
+        applicationCredentialsJson: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string,
     },
 };
 
