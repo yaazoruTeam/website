@@ -1,15 +1,15 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Box, Button } from "@mui/material";
-import { colors } from "../../styles/theme";
-import CustomTypography from "./Typography";
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { Box, Button } from '@mui/material'
+import { colors } from '../../styles/theme'
+import CustomTypography from './Typography'
 
 interface FilterResetButtonProps {
   onReset: () => void
 }
 
 const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <Box
@@ -32,13 +32,8 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
           alignItems: 'center',
         }}
       >
-        <Box sx={{ paddingTop: 1.2, alignItems: "center" }}>
-          <CustomTypography
-            text={t("reset")}
-            variant="h4"
-            weight="regular"
-            color={colors.c11}
-          />
+        <Box sx={{ paddingTop: 1.2, alignItems: 'center' }}>
+          <CustomTypography text={t('reset')} variant='h4' weight='regular' color={colors.c11} />
         </Box>
       </Button>
     </Box>

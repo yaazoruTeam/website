@@ -25,7 +25,16 @@ interface CustomersListProps {
   noResultsType?: string
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers, total, page, limit, onPageChange, onFilterChange, noResults = false, noResultsType = 'general' }) => {
+const CustomersList: React.FC<CustomersListProps> = ({
+  customers,
+  total,
+  page,
+  limit,
+  onPageChange,
+  onFilterChange,
+  noResults = false,
+  noResultsType = 'general',
+}) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
   const [showAddCustomer, setShowAddCustomer] = useState(false)
