@@ -9,6 +9,13 @@ import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
+import { 
+    WidelyContainer, 
+    WidelyHeaderSection, 
+    WidelyFormSection, 
+    WidelyConnectionSection,
+    WidelyInfoSection 
+} from '../designComponent/WidelyDetailsStyles'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
@@ -90,19 +97,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     }
 
     return (
-        <Box sx={{
-            p: '24px',
-            direction: 'rtl',
-            background: colors.c6,
-            // minHeight: '100vh'
-        }}>
+        <WidelyContainer>
             {/* כותרת עליונה */}
-            <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                mb: '40px'
-            }}>
+            <WidelyHeaderSection>
                 <CustomTypography
                     text={t('simData')}
                     variant="h3"
@@ -115,15 +112,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     weight="regular"
                     color={colors.c11}
                 />
-            </Box>
+            </WidelyHeaderSection>
 
-            <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                mb: '40px',
-            }}>
-
+            <WidelyFormSection>
                 <CustomTextField
                     control={control}
                     name="simNumber"
@@ -151,18 +142,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         { value: 'program3', label: 'תוכנית 3' }
                     ]}
                 />
-            </Box>
-            <Box sx={{
-                mb: '40px'
-            }}>
+            </WidelyFormSection>
+            
+            <WidelyConnectionSection>
                 <CustomTypography
                     text={t('connection')}
                     variant="h4"
                     weight="medium"
                     color={colors.c11}
-                    sx={{ mb: '16px' }}
                 />
-                <Box sx={{ marginLeft: '-16px' }}>
+                <Box>
                     <CustomRadioBox
                         onChange={(value) => setSelectedNetworkConnection(value)}
                         options={[
@@ -173,13 +162,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         value={selectedNetworkConnection}
                     />
                 </Box>
-            </Box>
-            <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                my: '40px'
-            }}>
+            </WidelyConnectionSection>
+            
+            <WidelyInfoSection>
                 {infoItems.map((item, index) => (
                     <Fragment key={index}>
                         <Box>
@@ -201,8 +186,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         )}
                     </Fragment>
                 ))}
-            </Box>
-        </Box>
+            </WidelyInfoSection>
+        </WidelyContainer>
     );
 }
 
