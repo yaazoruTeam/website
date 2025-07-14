@@ -1,12 +1,12 @@
 import express, { Request, Response } from 'express'
 import { router } from './routers/router'
 import { errorHandler } from './middleware/errorHandler'
-// import { sendPing } from "./telecom/ping";
+import config from './config'
 
 const cors = require('cors')
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = config.server.port
 
 // Middleware
 app.use(cors())

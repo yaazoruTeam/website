@@ -1,9 +1,8 @@
 import { Customer, HttpError } from '../model'
 import getDbConnection from './connection'
-import * as dotenv from 'dotenv'
+import config from '../config'
 
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 const createCustomer = async (customer: Customer.Model, trx?: any) => {
   const knex = getDbConnection()

@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '../db'
 import { Customer, HttpError } from '../model'
-import * as dotenv from 'dotenv'
+import config from '../config'
 
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+const limit = config.database.limit
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
