@@ -2,7 +2,7 @@ import { HttpError, Widely } from '../model/src'
 
 // General function for parameter validation
 const validateRequiredParam = (param: any, paramName: string): void => {
-    if (!param) {
+    if (param == null || param === '') {
         const error: HttpError.Model = {
             status: 400,
             message: `${paramName} is required.`,
@@ -35,3 +35,4 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
 }
 
 export { validateRequiredParam, validateWidelyResult }
+;

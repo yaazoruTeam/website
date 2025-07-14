@@ -11,13 +11,13 @@ const sendMobileAction = async (endpoint_id: string | number, action: string): P
     const result: Widely.Model = await callingWidely(
         'send_mobile_action',
         {
-            endpoint_id: endpoint_id,
-            action: action
+            endpoint_id,
+            action
         }
     )
 
     // Validate the result
-    validateWidelyResult(result, 'Failed to send mobile action')
+    validateWidelyResult(result, 'Failed to send mobile action', false)
 
     // Return the result
     return result
