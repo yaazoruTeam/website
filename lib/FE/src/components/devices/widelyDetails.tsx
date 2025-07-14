@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { getWidelyDetails } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
@@ -23,6 +23,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     })
 
+    // נתוני המידע שיוצגו בשורה התחתונה
+    const infoItems = widelyDetails ? [
+        { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
+        { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
+        { title: t('IMEI 1'), value: widelyDetails.imei1 },
+        { title: t('status'), value: widelyDetails.status },
+        { title: t('IMEI_lock'), value: widelyDetails.imei_lock }
+    ] : []
+
+    // עיצוב החוצץ בין הפריטים
+    const separatorStyle = {
+        backgroundColor: colors.c22,
+        width: '1px',
+        height: '26px',
+        mx: '40px'
+    }
+
     useEffect(() => {
         const fetchWidelyDetails = async () => {
             try {
@@ -37,19 +54,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
                 // setValue('replacingProgram', details.someDefaultProgram || 'program1');
             } catch (err) {
-                setError('שגיאה בטעינת פרטי המכשיר');
+                setError(t('errorLoadingDeviceDetails'));
                 console.error('Error fetching widely details:', err);
             } finally {
                 setLoading(false);
             }
         };
         fetchWidelyDetails();
-    }, [simNumber, setValue]);
+    }, [simNumber, setValue, t]);
 
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                <CustomTypography text="טוען..." variant="h3" weight="medium" />
+                <CustomTypography text={t('loading')} variant="h3" weight="medium" />
             </Box>
         );
     }
@@ -65,7 +82,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     if (!widelyDetails) {
         return (
             <Box sx={{ p: 2 }}>
-                <CustomTypography text="לא נמצאו פרטי מכשיר" variant="h4" weight="medium" />
+                <CustomTypography text={t('noDeviceDetailsFound')} variant="h4" weight="medium" />
             </Box>
         );
     }
@@ -161,106 +178,27 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 justifyContent: 'space-between',
                 my: '40px'
             }}>
-                <Box sx={{
-                }}>
-
-                    <CustomTypography
-                        text={t('gigaUsed')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={`${widelyDetails.data_usage_gb}GB`}
-                        variant="h3"
-                        weight="bold"
-                        color={colors.c11}
-                    />
-                </Box>
-                <Box
-                    sx={{
-                        backgroundColor: colors.c22,
-                        width: '1px',
-                        height: '26px',
-                        mx: '40px'
-                    }} />
-                <Box>
-                    <CustomTypography
-                        text={t('maximumGigabytePerMonth')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={`${widelyDetails.max_data_gb}GB`}
-                        variant="h3"
-                        weight="bold"
-                        color={colors.c11}
-                    />
-                </Box>
-                <Box
-                    sx={{
-                        backgroundColor: colors.c22,
-                        width: '1px',
-                        height: '26px',
-                        mx: '40px'
-                    }} />
-                <Box>
-                    <CustomTypography
-                        text={t('IMEI 1')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={widelyDetails.imei1}
-                        variant="h3"
-                        weight="bold"
-                        color={colors.c11}
-                    />
-                </Box>
-                <Box
-                    sx={{
-                        backgroundColor: colors.c22,
-                        width: '1px',
-                        height: '26px',
-                        mx: '40px'
-                    }} />
-                <Box>
-                    <CustomTypography
-                        text={t('status')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={widelyDetails.status}
-                        variant="h3"
-                        weight="bold"
-                        color={colors.c11}
-                    />
-                </Box>
-                <Box
-                    sx={{
-                        backgroundColor: colors.c22,
-                        width: '1px',
-                        height: '26px',
-                        mx: '40px'
-                    }} />
-                <Box>
-                    <CustomTypography
-                        text={t('IMEI_lock')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={widelyDetails.imei_lock}
-                        variant="h3"
-                        weight="bold"
-                        color={colors.c11}
-                    />
-                </Box>
+                {infoItems.map((item, index) => (
+                    <Fragment key={index}>
+                        <Box>
+                            <CustomTypography
+                                text={item.title}
+                                variant="h3"
+                                weight="regular"
+                                color={colors.c11}
+                            />
+                            <CustomTypography
+                                text={item.value}
+                                variant="h3"
+                                weight="bold"
+                                color={colors.c11}
+                            />
+                        </Box>
+                        {index < infoItems.length - 1 && (
+                            <Box sx={separatorStyle} />
+                        )}
+                    </Fragment>
+                ))}
             </Box>
         </Box>
     );
