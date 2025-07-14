@@ -51,10 +51,10 @@ export const updateMonthlyPayment = async (
     // if (!token) {
     //     throw new Error('No token found!');
     // }
-    const baseUrl = `${import.meta.env.VITE_BASE_URL}/updateMonthlyPayment/${monthlyPayment_id}`
+    const endpointUrl  = `${baseUrl}/updateMonthlyPayment/${monthlyPayment_id}`
 
     const response: AxiosResponse<MonthlyPaymentManagement.Model> = await axios.put(
-      baseUrl,
+      endpointUrl,
       monthlyPayment,
       //     {
       //     headers: {
