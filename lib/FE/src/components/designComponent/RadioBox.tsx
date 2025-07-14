@@ -61,9 +61,7 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, value, onChange }) =
                 cursor: 'pointer',
                 background: 'transparent',
                 transition: 'background 0.2s ease-in-out',
-                margin: 0,
-                marginLeft: 0,
-                marginRight: 0,
+                m: 0,
                 '&:first-of-type': {
                   marginLeft: 0
                 }
