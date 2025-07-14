@@ -209,5 +209,6 @@
     "gigaUsed": "גיגה בשימוש",
     "maximumGigabytePerMonth": "ג’יגה מקסימלית לחודש",
     "IMEI 1": "IMEI 1",
-    "IMEI_lock":"נעילת IMEI"
+    "IMEI_lock":"נעילת IMEI",
+    "addOneTimeGigabyte": "הוספת ג’יגה חד פעמי"
 }

@@ -23,11 +23,11 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
         }
         throw error
     }
-    
-    const hasData = checkLength ? 
-        (result.data && result.data.length > 0) : 
+
+    const hasData = checkLength ?
+        (result.data && result.data.length > 0) :
         (result.data !== null && result.data !== undefined)
-    
+
     if (!hasData) {
         const error: HttpError.Model = {
             status: 404,
@@ -53,9 +53,9 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
         'search_users',
         { account_id: config.widely.accountId, search_string: simNumber }
     )
-    
+
     validateWidelyResult(result, 'User not found for the provided simNumber.')
-    
+
     const userData = result.data[0]
     if (!userData) {
         const error: HttpError.Model = {
@@ -64,7 +64,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
         }
         throw error
     }
-    
+
     return userData
 }
 
@@ -73,9 +73,9 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
         'get_mobiles',
         { domain_user_id: domain_user_id }
     )
-    
+
     validateWidelyResult(result, 'No mobiles found for the user.')
-    
+
     const mobileData = result.data[0]
     if (!mobileData) {
         const error: HttpError.Model = {
@@ -84,7 +84,7 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
         }
         throw error
     }
-    
+
     return mobileData
 }
 
@@ -93,9 +93,9 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
         'get_mobile_info',
         { endpoint_id: endpoint_id }
     )
-    
+
     validateWidelyResult(result, 'Mobile info not found.', false)
-    
+
     // Check if the data is an array or object
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data;
     return mobileData
@@ -145,7 +145,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         // Step 1: Search for user based on SIM number
         const user = await searchUsersData(simNumber)
         const domain_user_id = user.domain_user_id
-        
+
         if (!domain_user_id) {
             const error: HttpError.Model = {
                 status: 404,
@@ -155,9 +155,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         }
 
         // Step 2: Get user's devices
-        const mobile = await getMobilesData(domain_user_id)        
+        const mobile = await getMobilesData(domain_user_id)
         const endpoint_id = mobile.endpoint_id
-        
+
         if (!endpoint_id) {
             const error: HttpError.Model = {
                 status: 404,
@@ -171,10 +171,10 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
         // Extract data usage from the correct location with safety checks
         const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
-        
+
         // Extract max data allowance (גיגה מקסימלית לחודש)
-        const maxDataAllowance = mobileInfo?.data_limit
-        
+        const maxDataAllowance = mobileInfo?.data_limit || 0
+
         // Network identification based on mcc_mnc
         const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
         const networkConnection = getNetworkConnection(mccMnc)
@@ -185,7 +185,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
             endpoint_id: parseInt(endpoint_id) || 0,
             network_connection: networkConnection,
             data_usage_gb: parseFloat(dataUsage.toFixed(3)),
-            max_data_gb: parseFloat(maxDataAllowance.toFixed(3)), 
+            max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
             imei1: mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
             status: mobileInfo?.registration_info?.status || 'Not available',
             imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'Locked' : 'Not locked',

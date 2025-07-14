@@ -15,10 +15,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { t } = useTranslation()
-    const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string }>({
+    const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string, addOneTimeGigabyte: string }>({
         defaultValues: {
             simNumber: simNumber,
-            replacingProgram: 'program1' // ערך ברירת מחדל
+            replacingProgram: 'program1', // ערך ברירת מחדל
+            addOneTimeGigabyte: 'program1' // ערך ברירת מחדל
         }
     })
 
@@ -69,16 +70,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         );
     }
 
-    // פונקציה להמרת סטטוס לתצוגה
-    // const getDisplayStatus = (status: string): 'active' | 'inactive' => {
-    //     return status.toLowerCase() === 'active' ? 'active' : 'inactive';
-    // };
-
-    // פונקציה להמרת סטטוס נעילה לתצוגה  
-    // const getLockDisplayStatus = (lockStatus: string): 'active' | 'imei_locked' => {
-    //     return lockStatus.toLowerCase() === 'locked' ? 'imei_locked' : 'active';
-    // };
-
     return (
         <Box sx={{
             p: '24px',
@@ -91,7 +82,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
-                mb:'40px'
+                mb: '40px'
             }}>
                 <CustomTypography
                     text={t('simData')}
@@ -113,7 +104,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 gap: 2,
                 mb: '40px',
             }}>
-                
+
                 <CustomTextField
                     control={control}
                     name="simNumber"
@@ -133,8 +124,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 <CustomSelect
                     //to do:Change to add a one-time gigabyte and make a server call
                     control={control}
-                    name="replacingProgram"
-                    label={t('replacingProgram')}
+                    name="addOneTimeGigabyte"
+                    label={t('addOneTimeGigabyte')}
                     options={[
                         { value: 'program1', label: 'תוכנית 1' },
                         { value: 'program2', label: 'תוכנית 2' },
@@ -165,10 +156,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 </Box>
             </Box>
             <Box sx={{
-                display:'flex',
+                display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                my:'40px'
+                my: '40px'
             }}>
                 <Box sx={{
                 }}>
@@ -187,13 +178,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
                 <Box
-                sx={{
-                    backgroundColor: colors.c22,
-                    width: '1px',
-                    height: '26px',
-                    mx:'40px'
-                }}/>
-                 <Box>
+                    sx={{
+                        backgroundColor: colors.c22,
+                        width: '1px',
+                        height: '26px',
+                        mx: '40px'
+                    }} />
+                <Box>
                     <CustomTypography
                         text={t('maximumGigabytePerMonth')}
                         variant="h3"
@@ -207,14 +198,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         color={colors.c11}
                     />
                 </Box>
-                  <Box
-                sx={{
-                    backgroundColor: colors.c22,
-                    width: '1px',
-                    height: '26px',
-                    mx:'40px'
-                }}/>
-                 <Box>
+                <Box
+                    sx={{
+                        backgroundColor: colors.c22,
+                        width: '1px',
+                        height: '26px',
+                        mx: '40px'
+                    }} />
+                <Box>
                     <CustomTypography
                         text={t('IMEI 1')}
                         variant="h3"
@@ -228,14 +219,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         color={colors.c11}
                     />
                 </Box>
-                  <Box
-                sx={{
-                    backgroundColor: colors.c22,
-                    width: '1px',
-                    height: '26px',
-                    mx:'40px'
-                }}/>
-                 <Box>
+                <Box
+                    sx={{
+                        backgroundColor: colors.c22,
+                        width: '1px',
+                        height: '26px',
+                        mx: '40px'
+                    }} />
+                <Box>
                     <CustomTypography
                         text={t('status')}
                         variant="h3"
@@ -249,13 +240,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         color={colors.c11}
                     />
                 </Box>
-                  <Box
-                sx={{
-                    backgroundColor: colors.c22,
-                    width: '1px',
-                    height: '26px',
-                    mx:'40px'
-                }}/>
+                <Box
+                    sx={{
+                        backgroundColor: colors.c22,
+                        width: '1px',
+                        height: '26px',
+                        mx: '40px'
+                    }} />
                 <Box>
                     <CustomTypography
                         text={t('IMEI_lock')}

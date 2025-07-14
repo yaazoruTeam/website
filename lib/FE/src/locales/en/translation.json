@@ -193,5 +193,6 @@
   "gigaUsed": "giga used",
   "maximumGigabytePerMonth": "maximum gigabyte per month",
   "IMEI 1": "IMEI 1",
-  "IMEI_lock": "IMEI lock"
+  "IMEI_lock": "IMEI lock",
+  "addOneTimeGigabyte": "add one-time gigabyte"
 }
