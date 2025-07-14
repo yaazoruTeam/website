@@ -2,8 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { TransactionDetails } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-// const baseUrl = `${process.env.BASE_URL}/transactionDetails`;
-const baseUrl = 'http://localhost:3006/controller/transactionDetails'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/transactionDetails`
 
 // POST
 export const createTransactionDetails = async (

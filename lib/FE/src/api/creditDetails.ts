@@ -2,8 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { CreditDetails } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-// const baseUrl = `${process.env.BASE_URL}/creditDetails`;
-const baseUrl = 'http://localhost:3006/controller/creditDetails'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/creditDetails`
 
 // POST
 export const createCreditDetails = async (
