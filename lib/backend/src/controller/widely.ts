@@ -96,8 +96,8 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
 const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
-       endpoint_id: endpoint_id
-       })
+    endpoint_id: endpoint_id
+    })
 
   validateWidelyResult(result, 'Mobile info not found.', false)
 
@@ -190,7 +190,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
       endpoint_id: parseInt(endpoint_id) || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
-            max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
+      max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
       imei1:
         mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
       status: mobileInfo?.registration_info?.status || 'Not available',

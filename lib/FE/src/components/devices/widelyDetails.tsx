@@ -11,15 +11,16 @@ import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
-      const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
+    const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
     const { t } = useTranslation()
     const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string, addOneTimeGigabyte: string }>({
         defaultValues: {
             simNumber: simNumber,
-            replacingProgram: 'program1', // ערך ברירת מחדל
-            addOneTimeGigabyte: 'program1' // ערך ברירת מחדל
+            replacingProgram: 'program1', //to do:Change to the first value from the list returned from the server call that retrieves all the data - the list of existing programs.
+            addOneTimeGigabyte: 'program1' //to do:Change to the first value from the list returned from the server call that retrieves all the data - the list of existing programs.
         }
     })
 
@@ -47,10 +48,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 setError(null);
                 const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber);
                 setWidelyDetails(details);
-                console.log('Widely details:', details);
 
                 // עדכון הערך בטופס
                 setValue('simNumber', details.simNumber);
+                // עדכון ערך החיבור הנבחר
+                setSelectedNetworkConnection(details.network_connection);
                 // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
                 // setValue('replacingProgram', details.someDefaultProgram || 'program1');
             } catch (err) {
@@ -162,13 +164,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
                 <Box sx={{ marginLeft: '-16px' }}>
                     <CustomRadioBox
-                        onChange={() => { }}
+                        onChange={(value) => setSelectedNetworkConnection(value)}
                         options={[
                             { label: t('pelephoneAndPartner'), value: 'pelephoneAndPartner' },
                             { label: t('HotAndPartner'), value: 'HotAndPartner' },
                             { label: t('pelephone'), value: 'pelephone' }
                         ]}
-                        value={widelyDetails.network_connection}
+                        value={selectedNetworkConnection}
                     />
                 </Box>
             </Box>
