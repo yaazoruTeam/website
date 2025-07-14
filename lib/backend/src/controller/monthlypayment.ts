@@ -26,21 +26,21 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
 }
 
 const getMonthlyPayments = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+  try {
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPayments(offset)
+    const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPayments(offset)
 
-        res.status(200).json({
-            data: monthlyPayments,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total,
-        })
-    } catch (error: any) {
-        next(error)
-    }
+    res.status(200).json({
+      data: monthlyPayments,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
@@ -62,95 +62,104 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
 }
 
 const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        MonthlyPayment.sanitizeIdExisting(req)
-        const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
-        if (!existCustomer) {
-            const error: HttpError.Model = {
-                status: 404,
-                message: 'customer does not exist.',
-            }
-            throw error
-        }
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+  try {
+    MonthlyPayment.sanitizeIdExisting(req)
+    const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
+    if (!existCustomer) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'customer does not exist.',
+      }
+      throw error
+    }
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByCustomerId(req.params.id, offset)
+    const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByCustomerId(
+      req.params.id,
+      offset,
+    )
 
-        if (monthlyPayments.length === 0) {
-            const error: HttpError.Model = {
-                status: 404,
-                message: 'There is no monthly payment for this customer.',
-            }
-            throw error
-        }
-        res.status(200).json({
-            data: monthlyPayments,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total,
-        })
+    if (monthlyPayments.length === 0) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'There is no monthly payment for this customer.',
+      }
+      throw error
+    }
+    res.status(200).json({
+      data: monthlyPayments,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }
 }
 const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { status } = req.params
-        if (status !== 'active' && status !== 'inactive') {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'Invalid status. Allowed values: \'active\', \'inactive\'.',
-            }
-            throw error
-        }
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
-
-        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByStatus(status, offset)
-
-        res.status(200).json({
-            data: monthlyPayments,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total,
-        })
-    } catch (error: any) {
-        next(error)
+  try {
+    const { status } = req.params
+    if (status !== 'active' && status !== 'inactive') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: "Invalid status. Allowed values: 'active', 'inactive'.",
+      }
+      throw error
     }
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByStatus(
+      status,
+      offset,
+    )
+
+    res.status(200).json({
+      data: monthlyPayments,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { organization } = req.params
-        if (!organization) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'Invalid organization.',
-            }
-            throw error
-        }
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
-
-        const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByOrganization(organization, offset)
-
-        if (monthlyPayments.length === 0) {
-            const error: HttpError.Model = {
-                status: 404,
-                message: `organization ${organization} not found`,
-            }
-            throw error
-        }
-        res.status(200).json({
-            data: monthlyPayments,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total,
-        })
-    } catch (error: any) {
-        next(error)
+  try {
+    const { organization } = req.params
+    if (!organization) {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid organization.',
+      }
+      throw error
     }
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
+
+    const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByOrganization(
+      organization,
+      offset,
+    )
+
+    if (monthlyPayments.length === 0) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: `organization ${organization} not found`,
+      }
+      throw error
+    }
+    res.status(200).json({
+      data: monthlyPayments,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {

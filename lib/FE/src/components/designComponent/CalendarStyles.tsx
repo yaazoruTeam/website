@@ -119,22 +119,26 @@ export const CalendarButtonContainer = styled(FlexRow)({
   gap: '4px',
 })
 
-export const CalendarButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' }>(({ buttonvariant }) => ({
-  minWidth: 'auto',
-  padding: '4px 8px',
-  fontSize: '11px',
-  fontFamily: CALENDAR_FONT_FAMILY,
-  borderRadius: '4px',
-  textTransform: 'none',
-  ...(buttonvariant === 'apply' ? {
-    backgroundColor: colors.c2,
-    color: colors.c6,
-    '&:hover': { backgroundColor: colors.c43 },
-    '&:disabled': { backgroundColor: colors.c44, color: colors.c41 },
-  } : {
-    backgroundColor: 'transparent',
-    color: colors.c42,
-    border: `1px solid ${colors.c42}`,
-    '&:hover': { backgroundColor: colors.c46 },
+export const CalendarButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' }>(
+  ({ buttonvariant }) => ({
+    minWidth: 'auto',
+    padding: '4px 8px',
+    fontSize: '11px',
+    fontFamily: CALENDAR_FONT_FAMILY,
+    borderRadius: '4px',
+    textTransform: 'none',
+    ...(buttonvariant === 'apply'
+      ? {
+          backgroundColor: colors.c2,
+          color: colors.c6,
+          '&:hover': { backgroundColor: colors.c43 },
+          '&:disabled': { backgroundColor: colors.c44, color: colors.c41 },
+        }
+      : {
+          backgroundColor: 'transparent',
+          color: colors.c42,
+          border: `1px solid ${colors.c42}`,
+          '&:hover': { backgroundColor: colors.c46 },
+        }),
   }),
-}))
+)

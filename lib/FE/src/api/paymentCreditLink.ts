@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { PaymentCreditLink } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-const baseUrl = 'http://localhost:3006/controller/paymentCreditLink'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/paymentCreditLink`
 
 // GET monthlyPayment_id
 export const getPaymentCreditLinkByMonthlyPaymentId = async (

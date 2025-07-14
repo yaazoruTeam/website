@@ -43,5 +43,5 @@ export {
   CreateCommentDto,
   EntityType,
   Widely,
-  WidelyDeviceDetails
+  WidelyDeviceDetails,
 }

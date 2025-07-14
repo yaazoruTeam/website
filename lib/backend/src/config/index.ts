@@ -1,8 +1,8 @@
-import * as dotenv from 'dotenv';
-import path from 'path';
+import * as dotenv from 'dotenv'
+import path from 'path'
 
 // Load environment variables from the correct path
-dotenv.config({ path: path.join(__dirname, '../../../.env') });
+dotenv.config({ path: path.join(__dirname, '../../../.env') })
 
 // Validate required environment variables
 const requiredEnvVars = {
@@ -17,10 +17,10 @@ const requiredEnvVars = {
 
 // Check for missing required variables
 Object.entries(requiredEnvVars).forEach(([key, value]) => {
-    if (!value) {
-        throw new Error(`Missing required environment variable: ${key}`);
-    }
-});
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`)
+  }
+})
 
 export const config = {
     env: process.env.NODE_ENV || 'development',
@@ -56,4 +56,4 @@ export const config = {
     },
 };
 
-export default config;
+export default config

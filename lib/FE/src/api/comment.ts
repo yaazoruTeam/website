@@ -4,7 +4,7 @@ import { handleTokenRefresh } from "./token";
 import { EntityType } from "../model/src/Comment";
 import { CreateCommentDto } from "../model/src/Dtos";
 
-const baseUrl = "http://localhost:3006/controller/comment";
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/comment`
 
 export interface PaginatedCommentsResponse {
   data: Comment.Model[];

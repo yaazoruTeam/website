@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { User } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-const baseUrl = 'http://localhost:3006/controller/user'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/user`
 
 export interface PaginatedUsersResponse {
   data: User.Model[]
