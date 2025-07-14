@@ -1,6 +1,6 @@
 import React from 'react'
 import { colors } from '../../styles/theme'
-import { CalendarDayBase } from './CalendarStyles'
+import { CalendarDayBase } from './styles/calendarStyles'
 
 interface CalendarDayProps {
   date: Date

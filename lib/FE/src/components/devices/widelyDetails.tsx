@@ -15,7 +15,7 @@ import {
     WidelyFormSection, 
     WidelyConnectionSection,
     WidelyInfoSection 
-} from '../designComponent/WidelyDetailsStyles'
+} from '../designComponent/styles/widelyStyles'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
