@@ -60,16 +60,23 @@ describe('Device Controller Tests', () => {
   describe('getDevices', () => {
         it('should retrieve all devices', async () => {
             const devices = [{ SIM_number: '12345', IMEI_1: '67890' }];
-            (db.Device.getDevices as jest.Mock).mockResolvedValue(devices);
+            req.query = { page: '1' };
+            (db.Device.getDevices as jest.Mock).mockResolvedValue({ devices, total: 1 });
 
             await getDevices(req as Request, res as Response, next);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(devices);
+            expect(res.json).toHaveBeenCalledWith({
+                data: devices,
+                page: 1,
+                totalPages: 1,
+                total: 1
+            });
         });
 
         it('should handle errors during device retrieval', async () => {
             const error = new Error('Database error');
+            req.query = { page: '1' };
             (db.Device.getDevices as jest.Mock).mockRejectedValue(error);
 
             await getDevices(req as Request, res as Response, next);
@@ -82,6 +89,8 @@ describe('Device Controller Tests', () => {
         it('should retrieve a device by ID', async () => {
             const device = { SIM_number: '12345', IMEI_1: '67890' };
             req.params = { id: '1' };
+            (Device.sanitizeIdExisting as jest.Mock).mockImplementation(() => {});
+            (db.Device.doesDeviceExist as jest.Mock).mockResolvedValue(true);
             (db.Device.getDeviceById as jest.Mock).mockResolvedValue(device);
 
             await getDeviceById(req as Request, res as Response, next);
@@ -116,13 +125,19 @@ describe('Device Controller Tests', () => {
     describe('getDevicesByStatus', () => {
         it('should retrieve devices by valid status', async () => {
             req.params = { status: 'active' };
+            req.query = { page: '1' };
             const devices = [{ id: '1' }];
-            (db.Device.getDevicesByStatus as jest.Mock).mockResolvedValue(devices);
+            (db.Device.getDevicesByStatus as jest.Mock).mockResolvedValue({ devices, total: 1 });
 
             await getDevicesByStatus(req as Request, res as Response, next);
 
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(devices);
+            expect(res.json).toHaveBeenCalledWith({
+                data: devices,
+                page: 1,
+                totalPages: 1,
+                total: 1
+            });
         });
 
         it('should reject invalid status value', async () => {
@@ -138,6 +153,7 @@ describe('Device Controller Tests', () => {
 
         it('should handle error during getDevicesByStatus', async () => {
             req.params = { status: 'inactive' };
+            req.query = { page: '1' };
             const error = new Error('DB error');
             (db.Device.getDevicesByStatus as jest.Mock).mockRejectedValue(error);
 
@@ -176,6 +192,8 @@ describe('Device Controller Tests', () => {
         it('should delete a device successfully', async () => {
             const deleted = { id: '1' };
             req.params = { id: '1' };
+            (Device.sanitizeIdExisting as jest.Mock).mockImplementation(() => {});
+            (db.Device.doesDeviceExist as jest.Mock).mockResolvedValue(true);
             (db.Device.deleteDevice as jest.Mock).mockResolvedValue(deleted);
 
             await deleteDevice(req as Request, res as Response, next);
@@ -186,6 +204,7 @@ describe('Device Controller Tests', () => {
 
         it('should return 404 if device does not exist', async () => {
             req.params = { id: '999' };
+            (Device.sanitizeIdExisting as jest.Mock).mockImplementation(() => {});
             (db.Device.doesDeviceExist as jest.Mock).mockResolvedValue(false);
 
             await deleteDevice(req as Request, res as Response, next);
@@ -198,6 +217,8 @@ describe('Device Controller Tests', () => {
 
         it('should handle errors during deleteDevice', async () => {
             req.params = { id: '1' };
+            (Device.sanitizeIdExisting as jest.Mock).mockImplementation(() => {});
+            (db.Device.doesDeviceExist as jest.Mock).mockResolvedValue(true);
             const error = new Error('Delete failed');
             (db.Device.deleteDevice as jest.Mock).mockRejectedValue(error);
 

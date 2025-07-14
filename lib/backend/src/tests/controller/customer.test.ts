@@ -71,17 +71,24 @@ describe("Customer Controller", () => {
   describe("getCustomers", () => {
     it("should return a list of customers with 200 status", async () => {
       const customers = [{ id: 1, name: "John Doe" }];
-      (db.Customer.getCustomers as jest.Mock).mockResolvedValue(customers);
+      req.query = { page: '1' };
+      (db.Customer.getCustomers as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomers(req as Request, res as Response, next);
 
       expect(db.Customer.getCustomers).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(customers);
+      expect(res.json).toHaveBeenCalledWith({
+        data: customers,
+        page: 1,
+        totalPages: 1,
+        total: 1
+      });
     });
 
     it("should call next with an error if fetching customers fails", async () => {
       const error = new Error("Database error");
+      req.query = { page: '1' };
       (db.Customer.getCustomers as jest.Mock).mockRejectedValue(error);
 
       await getCustomers(req as Request, res as Response, next);
@@ -138,21 +145,28 @@ describe("Customer Controller", () => {
   describe("getCustomersByCity", () => {
     it("should return customers by city with 200 status", async () => {
       req.params = { city: "New York" };
+      req.query = { page: '1' };
       const customers = [{ id: 1, name: "John Doe" }];
 
-      (db.Customer.getCustomersByCity as jest.Mock).mockResolvedValue(customers);
+      (db.Customer.getCustomersByCity as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomersByCity(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomersByCity).toHaveBeenCalledWith("New York");
+      expect(db.Customer.getCustomersByCity).toHaveBeenCalledWith("New York", 0);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(customers);
+      expect(res.json).toHaveBeenCalledWith({
+        data: customers,
+        page: 1,
+        totalPages: 1,
+        total: 1
+      });
     });
 
     it("should return 404 if no customers found in the city", async () => {
       req.params = { city: "Unknown City" };
+      req.query = { page: '1' };
 
-      (db.Customer.getCustomersByCity as jest.Mock).mockResolvedValue([]);
+      (db.Customer.getCustomersByCity as jest.Mock).mockResolvedValue({ customers: [], total: 0 });
 
       await getCustomersByCity(req as Request, res as Response, next);
 
@@ -165,6 +179,7 @@ describe("Customer Controller", () => {
     it("should call next with an error if fetching customers by city fails", async () => {
       const error = new Error("Database error");
       req.params = { city: "New York" };
+      req.query = { page: '1' };
 
       (db.Customer.getCustomersByCity as jest.Mock).mockRejectedValue(error);
 
@@ -178,19 +193,26 @@ describe("Customer Controller", () => {
   describe("getCustomersByStatus", () => {
     it("should return customers by status with 200 status", async () => {
       req.params = { status: "active" };
+      req.query = { page: '1' };
       const customers = [{ id: 1, name: "John Doe" }];
 
-      (db.Customer.getCustomersByStatus as jest.Mock).mockResolvedValue(customers);
+      (db.Customer.getCustomersByStatus as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomersByStatus(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomersByStatus).toHaveBeenCalledWith("active");
+      expect(db.Customer.getCustomersByStatus).toHaveBeenCalledWith("active", 0);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(customers);
+      expect(res.json).toHaveBeenCalledWith({
+        data: customers,
+        page: 1,
+        totalPages: 1,
+        total: 1
+      });
     });
 
     it("should return 400 for invalid status", async () => {
       req.params = { status: "invalid" };
+      req.query = { page: '1' };
 
       await getCustomersByStatus(req as Request, res as Response, next);
 
@@ -203,6 +225,7 @@ describe("Customer Controller", () => {
     it("should call next with an error if fetching customers by status fails", async () => {
       const error = new Error("Database error");
       req.params = { status: "active" };
+      req.query = { page: '1' };
 
       (db.Customer.getCustomersByStatus as jest.Mock).mockRejectedValue(error);
 
@@ -215,16 +238,21 @@ describe("Customer Controller", () => {
   // בדיקות עבור getCustomersByDateRange
   describe("getCustomersByDateRange", () => {
     it("should return customers by date range with 200 status", async () => {
-      req.query = { startDate: "2023-01-01", endDate: "2023-12-31" };
+      req.query = { startDate: "2023-01-01", endDate: "2023-12-31", page: '1' };
       const customers = [{ id: 1, name: "John Doe" }];
 
-      (db.Customer.getCustomersByDateRange as jest.Mock).mockResolvedValue(customers);
+      (db.Customer.getCustomersByDateRange as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomersByDateRange(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomersByDateRange).toHaveBeenCalledWith("2023-01-01", "2023-12-31");
+      expect(db.Customer.getCustomersByDateRange).toHaveBeenCalledWith("2023-01-01", "2023-12-31", 0);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(customers);
+      expect(res.json).toHaveBeenCalledWith({
+        data: customers,
+        page: 1,
+        totalPages: 1,
+        total: 1
+      });
     });
 
     it("should return 400 if startDate or endDate is missing", async () => {
@@ -239,9 +267,9 @@ describe("Customer Controller", () => {
     });
 
     it("should return 404 if no customers found in the date range", async () => {
-      req.query = { startDate: "2023-01-01", endDate: "2023-12-31" };
+      req.query = { startDate: "2023-01-01", endDate: "2023-12-31", page: '1' };
 
-      (db.Customer.getCustomersByDateRange as jest.Mock).mockResolvedValue([]);
+      (db.Customer.getCustomersByDateRange as jest.Mock).mockResolvedValue({ customers: [], total: 0 });
 
       await getCustomersByDateRange(req as Request, res as Response, next);
 
@@ -253,7 +281,7 @@ describe("Customer Controller", () => {
 
     it("should call next with an error if fetching customers by date range fails", async () => {
       const error = new Error("Database error");
-      req.query = { startDate: "2023-01-01", endDate: "2023-12-31" };
+      req.query = { startDate: "2023-01-01", endDate: "2023-12-31", page: '1' };
 
       (db.Customer.getCustomersByDateRange as jest.Mock).mockRejectedValue(error);
 

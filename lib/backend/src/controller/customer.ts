@@ -221,6 +221,15 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
   }
 }
 
+const getCities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const cities = await db.Customer.getUniqueCities()
+    res.status(200).json(cities)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const searchCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const searchTerm = req.query.q as string
