@@ -262,8 +262,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </Box>
-
-        </Box >
+        </Box>
     );
 }
 
