@@ -21,21 +21,21 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
 }
 
 const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+  try {
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { users, total } = await db.User.getUsers(offset)
+    const { users, total } = await db.User.getUsers(offset)
 
-        res.status(200).json({
-            data: users,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total
-        })
-    } catch (error: any) {
-        next(error)
-    }
+    res.status(200).json({
+      data: users,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
