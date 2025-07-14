@@ -35,7 +35,7 @@ export const terminateMobile = async (endpoint_id: number): Promise<Widely.Model
     if (!newToken) {
       return {} as Widely.Model
     }
-    const token = localStorage.getItem('token')
+    const token = newToken
     if (!token) {
       throw new Error('No token found!')
     }

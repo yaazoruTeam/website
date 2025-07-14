@@ -205,8 +205,7 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
     try {
         const { endpoint_id } = req.body
         validateRequiredParam(endpoint_id, 'endpoint_id')
-
-        // const userData = await searchUsersData(simNumber)
+        
         const result: Widely.Model = await callingWidely(
             'prov_terminate_mobile',
             { endpoint_id: endpoint_id }
