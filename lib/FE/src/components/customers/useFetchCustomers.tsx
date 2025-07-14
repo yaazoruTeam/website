@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react'
-import { getCustomers, getCustomersByCity, getCustomersByStatus, getCustomersByDateRange, getCustomersByName } from '../../api/customerApi'
+import {
+  getCustomers,
+  getCustomersByCity,
+  getCustomersByStatus,
+  getCustomersByDateRange,
+  getCustomersByName,
+} from '../../api/customerApi'
 import { Customer } from '../../model'
 
 interface UseFetchCustomersProps {
-  page: number,
+  page: number
   filterType?: {
-    type: 'city' | 'status' | 'date' | 'search',
-    value: any,
-  },
+    type: 'city' | 'status' | 'date' | 'search'
+    value: any
+  }
 }
 
 export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) => {
@@ -15,6 +21,8 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
   const [total, setTotal] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [noResults, setNoResults] = useState<boolean>(false)
+  const [noResultsType, setNoResultsType] = useState<string>('general')
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -34,7 +42,11 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           data = res.data
           total = res.total
         } else if (filterType.type === 'date') {
-          const res = await getCustomersByDateRange(filterType.value.start, filterType.value.end, page)
+          const res = await getCustomersByDateRange(
+            filterType.value.start,
+            filterType.value.end,
+            page,
+          )
           data = res.data
           total = res.total
         } else if (filterType.type === 'search') {
@@ -44,10 +56,40 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
         }
         setCustomers(data ?? [])
         setTotal(total ?? 0)
+        setError(null) // Clear any previous errors
+        setNoResults(false) // Clear no results flag when we have data
+        setNoResultsType('general') // Reset type
       } catch (error: any) {
-        setError(`Failed to fetch customers: ${error.message}`)
-        setCustomers([])
-        setTotal(0)
+        console.error('Error fetching customers:', error)
+
+        // Handle 404 as "no results found" rather than an error
+        if (error.response?.status === 404 || error.message?.includes('404')) {
+          setCustomers([])
+          setTotal(0)
+          setError(null) // Clear error for 404 - this is just "no results"
+          setNoResults(true) // Set no results flag
+
+          // TODO: Temporary code waiting for site specification
+          // These lines are temporary and waiting for final website requirements
+
+          // Set specific message type based on filter
+          if (filterType?.type === 'date') {
+            setNoResultsType('date')
+          } else if (filterType?.type === 'city') {
+            setNoResultsType('city')
+          } else if (filterType?.type === 'status') {
+            setNoResultsType('status')
+          } else {
+            setNoResultsType('general')
+          }
+        } else {
+          // Real errors (network, 500, etc.)
+          setError(`Failed to fetch customers: ${error.message}`)
+          setCustomers([])
+          setTotal(0)
+          setNoResults(false)
+          setNoResultsType('general')
+        }
       } finally {
         setIsLoading(false)
       }
@@ -56,5 +98,5 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
     fetchCustomers()
   }, [page, filterType])
 
-  return { customers, total, isLoading, error }
+  return { customers, total, isLoading, error, noResults, noResultsType }
 }

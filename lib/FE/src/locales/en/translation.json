@@ -193,5 +193,33 @@
   "AttachFile": "attach a file",
   "ImageSent": "Image sent",
   "recordingInProgress": "🔴 Recording...",
-  "transcriptionPending": "⌛ Transcription pending..."
+  "transcriptionPending": "⌛ Transcription pending...",
+  "apply": "Apply",
+  "clear": "Clear",
+  "noCustomersFoundDate": "No customers found in the desired date range...",
+  "noCustomersFoundStatus": "No customers found with the selected status...",
+  "noCustomersFoundGeneral": "No customers found...",
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
+  },
+  "days": {
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat"
+  }
 }
