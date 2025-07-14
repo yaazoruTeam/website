@@ -1,9 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { MonthlyPaymentManagement } from '../model/src'
-import { handleTokenRefresh } from './token'
 
-// const baseUrl = `${process.env.BASE_URL}/customer`;
-const baseUrl = 'http://localhost:3006/controller/addMonthlyPayment'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/addMonthlyPayment`
 
 // POST
 export const createMonthlyPayment = async (
@@ -53,10 +51,10 @@ export const updateMonthlyPayment = async (
     // if (!token) {
     //     throw new Error('No token found!');
     // }
-    const baseUrl = `http://localhost:3006/controller/updateMonthlyPayment/${monthlyPayment_id}`
+    const endpointUrl  = `${baseUrl}/updateMonthlyPayment/${monthlyPayment_id}`
 
     const response: AxiosResponse<MonthlyPaymentManagement.Model> = await axios.put(
-      baseUrl,
+      endpointUrl,
       monthlyPayment,
       //     {
       //     headers: {

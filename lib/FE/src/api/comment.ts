@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { Comment } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-const baseUrl = 'http://localhost:3006/controller/comment'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/comment`
 
 export interface PaginatedCommentsResponse {
   data: Comment.Model[]
