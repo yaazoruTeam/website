@@ -29,24 +29,23 @@ const createUser = async (user: User.Model) => {
   }
 }
 
-const getUsers = async (offset: number): Promise<{ users: User.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const users = await knex('yaazoru.users')
-            .select('*')
-            .orderBy('user_id')
-            .limit(limit)
-            .offset(offset)
+const getUsers = async (offset: number): Promise<{ users: User.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const users = await knex('yaazoru.users')
+      .select('*')
+      .orderBy('user_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.users').count('*')
-        return {
-            users,
-            total: parseInt(count as string, 10)
-        }
+    const [{ count }] = await knex('yaazoru.users').count('*')
+    return {
+      users,
+      total: parseInt(count as string, 10),
     }
-    catch (err) {
-        throw err
-    }
+  } catch (err) {
+    throw err
+  }
 }
 
 const getUserById = async (user_id: string) => {
@@ -127,25 +126,13 @@ const findUser = async (criteria: {
 }
 
 const doesUserExist = async (user_id: string): Promise<boolean> => {
-    const knex = getDbConnection()
-    try {
-        const result = await knex('yaazoru.users')
-            .select('user_id')
-            .where({ user_id })
-            .first()
-        return !!result
-    } catch (err) {
-        throw err
-    }
+  const knex = getDbConnection()
+  try {
+    const result = await knex('yaazoru.users').select('user_id').where({ user_id }).first()
+    return !!result
+  } catch (err) {
+    throw err
+  }
 }
 
-export {
-    createUser,
-    getUsers,
-    getUserById,
-    updateUser,
-    deleteUser,
-    findUser,
-    doesUserExist
-}
-
+export { createUser, getUsers, getUserById, updateUser, deleteUser, findUser, doesUserExist }

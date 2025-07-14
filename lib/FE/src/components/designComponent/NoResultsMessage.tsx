@@ -12,10 +12,7 @@ interface NoResultsMessageProps {
   buttonLabel?: string
 }
 
-const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ 
-  messageType, 
-  onClose,
-}) => {
+const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClose }) => {
   const { t } = useTranslation()
 
   const getMessage = () => {
@@ -69,12 +66,12 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({
           },
         }}
       >
-        <XMarkIcon 
-          style={{ 
-            width: '18px', 
-            height: '18px', 
-            color: colors.c6 
-          }} 
+        <XMarkIcon
+          style={{
+            width: '18px',
+            height: '18px',
+            color: colors.c6,
+          }}
         />
       </Box>
 
@@ -91,20 +88,10 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({
           marginBottom: 2,
         }}
       >
-        <CustomTypography
-          text="🔍"
-          variant='h1'
-          weight='regular'
-          color={colors.c3}
-        />
+        <CustomTypography text='🔍' variant='h1' weight='regular' color={colors.c3} />
       </Box>
 
-      <CustomTypography
-        text={getMessage()}
-        variant='h2'
-        weight='bold'
-        color={colors.c11}
-      />
+      <CustomTypography text={getMessage()} variant='h2' weight='bold' color={colors.c11} />
     </Box>
   )
 }
