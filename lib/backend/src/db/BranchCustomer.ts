@@ -18,23 +18,25 @@ const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {
   }
 }
 
-const getAllBranchCustomer = async (offset: number): Promise<{ branchCustomers: BranchCustomer.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const branchCustomers = await knex('yaazoru.branchCustomer')
-            .select('*')
-            .orderBy('branchCustomer_id')
-            .limit(limit)
-            .offset(offset)
+const getAllBranchCustomer = async (
+  offset: number,
+): Promise<{ branchCustomers: BranchCustomer.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const branchCustomers = await knex('yaazoru.branchCustomer')
+      .select('*')
+      .orderBy('branchCustomer_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.branchCustomer').count('*')
-        return {
-            branchCustomers,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    const [{ count }] = await knex('yaazoru.branchCustomer').count('*')
+    return {
+      branchCustomers,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
 const getBranchCustomerById = async (branchCustomer_id: string) => {
@@ -46,50 +48,52 @@ const getBranchCustomerById = async (branchCustomer_id: string) => {
   }
 }
 
-const getBranchCustomerByBranc_id = async (branch_id: string, offset: number): Promise<{ branchCustomers: BranchCustomer.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const branchCustomers = await knex('yaazoru.branchCustomer')
-            .select('*')
-            .where({ branch_id })
-            .orderBy('branchCustomer_id')
-            .limit(limit)
-            .offset(offset)
+const getBranchCustomerByBranc_id = async (
+  branch_id: string,
+  offset: number,
+): Promise<{ branchCustomers: BranchCustomer.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const branchCustomers = await knex('yaazoru.branchCustomer')
+      .select('*')
+      .where({ branch_id })
+      .orderBy('branchCustomer_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.branchCustomer')
-            .where({ branch_id })
-            .count('*')
+    const [{ count }] = await knex('yaazoru.branchCustomer').where({ branch_id }).count('*')
 
-        return {
-            branchCustomers,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    return {
+      branchCustomers,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
-const getBranchCustomerByCuseomer_id = async (customer_id: string, offset: number): Promise<{ branchCustomers: BranchCustomer.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const branchCustomers = await knex('yaazoru.branchCustomer')
-            .select('*')
-            .where({ customer_id })
-            .orderBy('branchCustomer_id')
-            .limit(limit)
-            .offset(offset)
+const getBranchCustomerByCuseomer_id = async (
+  customer_id: string,
+  offset: number,
+): Promise<{ branchCustomers: BranchCustomer.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const branchCustomers = await knex('yaazoru.branchCustomer')
+      .select('*')
+      .where({ customer_id })
+      .orderBy('branchCustomer_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.branchCustomer')
-            .where({ customer_id })
-            .count('*')
+    const [{ count }] = await knex('yaazoru.branchCustomer').where({ customer_id }).count('*')
 
-        return {
-            branchCustomers,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    return {
+      branchCustomers,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
 const updateBranchCustomer = async (

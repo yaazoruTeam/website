@@ -17,21 +17,21 @@ const createBranch = async (req: Request, res: Response, next: NextFunction): Pr
 }
 
 const getBranches = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+  try {
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { branches, total } = await db.Branch.getBranches(offset)
-        res.status(200).json({
-            data: branches,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total
-        })
-    } catch (error: any) {
-        next(error)
-    }
-};
+    const { branches, total } = await db.Branch.getBranches(offset)
+    res.status(200).json({
+      data: branches,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
+  } catch (error: any) {
+    next(error)
+  }
+}
 
 const getBranchById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -51,33 +51,37 @@ const getBranchById = async (req: Request, res: Response, next: NextFunction): P
   }
 }
 
-const getBranchesByCity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { city } = req.params
-        if (!city) {
-            const error: HttpError.Model = {
-                status: 400,
-                message: 'Invalid city.'
-            };
-            throw error;
-        }
-        const page = parseInt(req.query.page as string, 10) || 1
-        const offset = (page - 1) * limit
+const getBranchesByCity = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { city } = req.params
+    if (!city) {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid city.',
+      }
+      throw error
+    }
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-        const { branches, total } = await db.Branch.getBranchesByCity(city, offset)
-        if (branches.length === 0) {
-            const error: HttpError.Model = {
-                status: 404,
-                message: `No branches found in the city: ${city}`
-            }
-            throw error
-        }
-        res.status(200).json({
-            data: branches,
-            page,
-            totalPages: Math.ceil(total / limit),
-            total
-        });
+    const { branches, total } = await db.Branch.getBranchesByCity(city, offset)
+    if (branches.length === 0) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: `No branches found in the city: ${city}`,
+      }
+      throw error
+    }
+    res.status(200).json({
+      data: branches,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    })
   } catch (error: any) {
     next(error)
   }

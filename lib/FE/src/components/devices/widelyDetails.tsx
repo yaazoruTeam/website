@@ -1,17 +1,17 @@
-import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { getWidelyDetails } from "../../api/widely";
-import { WidelyDeviceDetails } from "../../model";
-import CustomTypography from "../designComponent/Typography";
-import { colors } from "../../styles/theme";
-import { useTranslation } from "react-i18next";
-import { CustomTextField } from "../designComponent/Input";
-import { useForm } from "react-hook-form";
-import CustomSelect from "../designComponent/CustomSelect";
-import CustomRadioBox from "../designComponent/RadioBox";
+import { Box } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { getWidelyDetails } from '../../api/widely'
+import { WidelyDeviceDetails } from '../../model'
+import CustomTypography from '../designComponent/Typography'
+import { colors } from '../../styles/theme'
+import { useTranslation } from 'react-i18next'
+import { CustomTextField } from '../designComponent/Input'
+import { useForm } from 'react-hook-form'
+import CustomSelect from '../designComponent/CustomSelect'
+import CustomRadioBox from '../designComponent/RadioBox'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
-    const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null);
+      const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { t } = useTranslation()

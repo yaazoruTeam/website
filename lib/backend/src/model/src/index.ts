@@ -39,5 +39,5 @@ export {
   MonthlyPaymentManagement,
   Comment,
   Widely,
-  WidelyDeviceDetails
+  WidelyDeviceDetails,
 }

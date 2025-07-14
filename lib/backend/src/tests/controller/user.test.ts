@@ -70,10 +70,12 @@ describe('User Controller', () => {
 
   describe('getUsers', () => {
     it('should return users list', async () => {
-      ;(db.User.getUsers as jest.Mock).mockResolvedValue([mockUser])
+      ;(db.User.getUsers as jest.Mock).mockResolvedValue({ users: [mockUser], total: 1 })
       const res = await request(app).get('/users')
       expect(res.status).toBe(200)
-      expect(res.body).toHaveLength(1)
+      expect(res.body.data).toHaveLength(1)
+      expect(res.body.page).toBe(1)
+      expect(res.body.total).toBe(1)
     })
 
     it('should handle DB error', async () => {

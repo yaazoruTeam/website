@@ -2,8 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { handleTokenRefresh } from './token'
 import { CustomerDevice } from '../model/src'
 
-// const baseUrl = `${process.env.BASE_URL}/customer`
-const baseUrl = 'http://localhost:3006/controller/customerDevice'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/customerDevice`
 
 export interface PaginatedCustomerDeviceResponse {
   data: CustomerDevice.Model[]

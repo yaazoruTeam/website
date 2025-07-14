@@ -3,7 +3,12 @@ import { useTranslation } from 'react-i18next'
 import CalendarHeaderComponent from './CalendarHeaderComponent'
 import CalendarGrid from './CalendarGrid'
 import { generateCalendarDays } from './calendarUtils'
-import { CalendarContainer, FlexColumnWithGap, CalendarButtonContainer, CalendarButton } from './CalendarStyles'
+import {
+  CalendarContainer,
+  FlexColumnWithGap,
+  CalendarButtonContainer,
+  CalendarButton,
+} from './CalendarStyles'
 
 interface InlineDateRangePickerProps {
   onDateRangeChange: (start: Date | null, end: Date | null) => void
@@ -17,7 +22,7 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   onDateRangeChange,
   resetTrigger = false,
   isOpen = false,
-  onClose
+  onClose,
 }) => {
   const { t } = useTranslation()
   const [startDate, setStartDate] = useState<Date | null>(null)
@@ -54,10 +59,10 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
     if (startDate && endDate) {
       const start = new Date(startDate)
       start.setHours(0, 0, 0, 0)
-      
+
       const end = new Date(endDate)
       end.setHours(23, 59, 59, 999)
-      
+
       onDateRangeChange(start, end)
     }
     onClose?.()
@@ -81,7 +86,7 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
 
   const calendarDays = generateCalendarDays(currentMonth)
   const weeks = []
-  
+
   for (let i = 0; i < calendarDays.length; i += 7) {
     weeks.push(calendarDays.slice(i, i + 7))
   }
@@ -91,12 +96,14 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   }
 
   return (
-    <CalendarContainer sx={{
-      gridArea: '1 / 1',
-      position: 'relative',
-      zIndex: 10,
-      marginTop: 0,
-    }}>
+    <CalendarContainer
+      sx={{
+        gridArea: '1 / 1',
+        position: 'relative',
+        zIndex: 10,
+        marginTop: 0,
+      }}
+    >
       <FlexColumnWithGap sx={{ width: '100%' }}>
         <CalendarHeaderComponent
           currentMonth={currentMonth}
@@ -113,17 +120,14 @@ const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
         />
 
         <CalendarButtonContainer>
-          <CalendarButton 
-            buttonvariant="apply"
+          <CalendarButton
+            buttonvariant='apply'
             onClick={handleApply}
             disabled={!startDate || !endDate}
           >
             {t('apply')}
           </CalendarButton>
-          <CalendarButton 
-            buttonvariant="clear"
-            onClick={handleClear}
-          >
+          <CalendarButton buttonvariant='clear' onClick={handleClear}>
             {t('clear')}
           </CalendarButton>
         </CalendarButtonContainer>

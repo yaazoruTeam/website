@@ -24,7 +24,9 @@ const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any
   }
 }
 
-const getCreditDetails = async (offset: number): Promise<{ creditDetails: CreditDetails.Model[], total: number }> => {
+const getCreditDetails = async (
+  offset: number,
+): Promise<{ creditDetails: CreditDetails.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const creditDetails = await knex('yaazoru.creditDetails')
@@ -36,7 +38,7 @@ const getCreditDetails = async (offset: number): Promise<{ creditDetails: Credit
     const [{ count }] = await knex('yaazoru.creditDetails').count('*')
     return {
       creditDetails,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
