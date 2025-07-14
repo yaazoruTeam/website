@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react'
-import { getCustomers, getCustomersByCity, getCustomersByStatus, getCustomersByDateRange, getCustomersByName } from '../../api/customerApi'
+import {
+  getCustomers,
+  getCustomersByCity,
+  getCustomersByStatus,
+  getCustomersByDateRange,
+  getCustomersByName,
+} from '../../api/customerApi'
 import { Customer } from '../../model'
 
 interface UseFetchCustomersProps {
-  page: number,
+  page: number
   filterType?: {
-    type: 'city' | 'status' | 'date' | 'search',
-    value: any,
-  },
+    type: 'city' | 'status' | 'date' | 'search'
+    value: any
+  }
 }
 
 export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) => {
@@ -36,7 +42,11 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           data = res.data
           total = res.total
         } else if (filterType.type === 'date') {
-          const res = await getCustomersByDateRange(filterType.value.start, filterType.value.end, page)
+          const res = await getCustomersByDateRange(
+            filterType.value.start,
+            filterType.value.end,
+            page,
+          )
           data = res.data
           total = res.total
         } else if (filterType.type === 'search') {
@@ -51,17 +61,17 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
         setNoResultsType('general') // Reset type
       } catch (error: any) {
         console.error('Error fetching customers:', error)
-        
+
         // Handle 404 as "no results found" rather than an error
         if (error.response?.status === 404 || error.message?.includes('404')) {
           setCustomers([])
           setTotal(0)
           setError(null) // Clear error for 404 - this is just "no results"
           setNoResults(true) // Set no results flag
-          
+
           // TODO: Temporary code waiting for site specification
           // These lines are temporary and waiting for final website requirements
-          
+
           // Set specific message type based on filter
           if (filterType?.type === 'date') {
             setNoResultsType('date')
