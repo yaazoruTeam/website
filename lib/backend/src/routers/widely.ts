@@ -8,5 +8,6 @@ widelyRouter.post('/search_users', hasRole('admin'), widelyController.searchUser
 widelyRouter.post('/get_mobiles', hasRole('admin'), widelyController.getMobiles)
 widelyRouter.post('/get_mobile_info', hasRole('admin'), widelyController.getMobileInfo)
 widelyRouter.post('/get_all_user_data', hasRole('admin'), widelyController.getAllUserData)
+widelyRouter.post('/terminate_mobile', hasRole('admin'), widelyController.terminateMobile)
 
 export default widelyRouter
