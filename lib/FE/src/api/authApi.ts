@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { User } from '../model/src'
 
-const baseUrl = 'http://localhost:3006/controller/auth'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/auth`
 
 // POST
 export const register = async (userData: User.Model): Promise<User.Model> => {

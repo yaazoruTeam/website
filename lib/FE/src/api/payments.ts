@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { Payments } from '../model/src'
 
-const baseUrl = 'http://localhost:3006/controller/payments'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/payments`
 
 export interface PaginatedPaymentsResponse {
   data: Payments.Model[];
