@@ -1,7 +1,7 @@
 import { HttpError, PaymentCreditLink } from '../model'
 import getDbConnection from './connection'
-const limit = Number(process.env.LIMIT) || 10
-
+import config from '../config'
+const limit = config.database.limit
 
 const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -20,7 +20,9 @@ const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Mode
   }
 }
 
-const getPaymentCreditLinks = async (offset: number): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[], total: number }> => {
+const getPaymentCreditLinks = async (
+  offset: number,
+): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
@@ -32,7 +34,7 @@ const getPaymentCreditLinks = async (offset: number): Promise<{ paymentCreditLin
     const [{ count }] = await knex('yaazoru.paymentCreditLink').count('*')
     return {
       paymentCreditLinks,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
@@ -48,7 +50,10 @@ const getPaymentCreditLinkId = async (paymentCreditLink_id: string) => {
   }
 }
 
-const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number) => {
+const getPaymentCreditLinkByMonthlyPaymentId = async (
+  monthlyPayment_id: string,
+  offset: number,
+) => {
   const knex = getDbConnection()
   try {
     const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
@@ -60,7 +65,7 @@ const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string,
     const [{ count }] = await knex('yaazoru.paymentCreditLink').count('*')
     return {
       paymentCreditLinks,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
@@ -68,7 +73,10 @@ const getPaymentCreditLinkByMonthlyPaymentId = async (monthlyPayment_id: string,
 }
 
 // לפי monthlyPayment_id עם pagination
-const getPaymentCreditLinksByMonthlyPaymentId = async (monthlyPayment_id: string, offset: number): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[], total: number }> => {
+const getPaymentCreditLinksByMonthlyPaymentId = async (
+  monthlyPayment_id: string,
+  offset: number,
+): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
@@ -84,7 +92,7 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (monthlyPayment_id: string
 
     return {
       paymentCreditLinks,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
@@ -92,7 +100,10 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (monthlyPayment_id: string
 }
 
 // לפי creditDetails_id עם pagination
-const getPaymentCreditLinksByCreditDetailsId = async (creditDetails_id: string, offset: number): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[], total: number }> => {
+const getPaymentCreditLinksByCreditDetailsId = async (
+  creditDetails_id: string,
+  offset: number,
+): Promise<{ paymentCreditLinks: PaymentCreditLink.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
     const paymentCreditLinks = await knex('yaazoru.paymentCreditLink')
@@ -108,7 +119,7 @@ const getPaymentCreditLinksByCreditDetailsId = async (creditDetails_id: string, 
 
     return {
       paymentCreditLinks,
-      total: parseInt(count as string, 10)
+      total: parseInt(count as string, 10),
     }
   } catch (err) {
     throw err
@@ -219,22 +230,13 @@ const doesCreditDetailsExistInPaymentCreditLink = async (credit_id: string): Pro
 
 export {
   createPaymentCreditLink,
-
   getPaymentCreditLinks,
-
   getPaymentCreditLinkId,
-
   getPaymentCreditLinksByMonthlyPaymentId,
-
   getPaymentCreditLinksByCreditDetailsId,
-
   updatePaymentCreditLink,
-
   deletePaymentCreditLink,
-
   doesPaymentCreditLinkExist,
-
   doesMonthlyPaimentExistInPaymentCreditLink,
-
   doesCreditDetailsExistInPaymentCreditLink,
 }

@@ -2,8 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { MonthlyPayment } from '../model/src'
 import { handleTokenRefresh } from './token'
 
-// const baseUrl = `${process.env.BASE_URL}/customer`
-const baseUrl = 'http://localhost:3006/controller/monthlyPayment'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/monthlyPayment`
 export interface PaginatedMonthlyPayments {
   data: MonthlyPayment.Model[]
   page: number

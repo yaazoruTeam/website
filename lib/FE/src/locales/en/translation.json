@@ -177,7 +177,6 @@
   "timeCall": "time of call",
   "costInShekels": "cost in shekels",
   "penniesPerMinute": "pennies per minute",
-  "resetFilters": "reset filters",
   "customerComments": "customer comments",
   "WriteComment": "write a comment",
   "closed": "closed",
@@ -193,5 +192,33 @@
   "deviceModel": "Device Model",
   "mehalchaNumber": "Mehalcha Number",
   "openingDate": "Opening Date",
-  "purchaseDate": "Purchase Date"
+  "purchaseDate": "Purchase Date",
+  "apply": "Apply",
+  "clear": "Clear",
+  "noCustomersFoundDate": "No customers found in the desired date range...",
+  "noCustomersFoundStatus": "No customers found with the selected status...",
+  "noCustomersFoundGeneral": "No customers found...",
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
+  },
+  "days": {
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat"
+  }
 }

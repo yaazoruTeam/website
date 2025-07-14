@@ -1,8 +1,7 @@
 import { Device, HttpError } from '../model'
 import getDbConnection from './connection'
-import * as dotenv from 'dotenv'
-dotenv.config()
-const limit = Number(process.env.LIMIT) || 10
+import config from '../config'
+const limit = config.database.limit
 
 const createDevice = async (device: Device.Model, trx?: any) => {
   const knex = getDbConnection()
@@ -23,25 +22,24 @@ const createDevice = async (device: Device.Model, trx?: any) => {
   }
 }
 
-const getDevices = async (offset: number): Promise<{ devices: Device.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const devices = await knex('yaazoru.devices')
-            .select('*')
-            .orderBy('device_id')
-            .limit(limit)
-            .offset(offset)
+const getDevices = async (offset: number): Promise<{ devices: Device.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const devices = await knex('yaazoru.devices')
+      .select('*')
+      .orderBy('device_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.devices').count('*')
+    const [{ count }] = await knex('yaazoru.devices').count('*')
 
-        return {
-            devices,
-            total: parseInt(count as string, 10)
-        }
+    return {
+      devices,
+      total: parseInt(count as string, 10),
     }
-    catch (err) {
-        throw err
-    }
+  } catch (err) {
+    throw err
+  }
 }
 
 const getDeviceById = async (device_id: string) => {
@@ -53,27 +51,28 @@ const getDeviceById = async (device_id: string) => {
   }
 }
 
-const getDevicesByStatus = async (status: 'active' | 'inactive', offset: number): Promise<{ devices: Device.Model[], total: number }> => {
-    const knex = getDbConnection()
-    try {
-        const devices = await knex('yaazoru.devices')
-            .select('*')
-            .where({ status })
-            .orderBy('device_id')
-            .limit(limit)
-            .offset(offset)
+const getDevicesByStatus = async (
+  status: 'active' | 'inactive',
+  offset: number,
+): Promise<{ devices: Device.Model[]; total: number }> => {
+  const knex = getDbConnection()
+  try {
+    const devices = await knex('yaazoru.devices')
+      .select('*')
+      .where({ status })
+      .orderBy('device_id')
+      .limit(limit)
+      .offset(offset)
 
-        const [{ count }] = await knex('yaazoru.devices')
-            .count('*')
-            .where({ status })
+    const [{ count }] = await knex('yaazoru.devices').count('*').where({ status })
 
-        return {
-            devices,
-            total: parseInt(count as string, 10)
-        }
-    } catch (err) {
-        throw err
+    return {
+      devices,
+      total: parseInt(count as string, 10),
     }
+  } catch (err) {
+    throw err
+  }
 }
 
 const updateDevice = async (device_id: string, device: Device.Model) => {
