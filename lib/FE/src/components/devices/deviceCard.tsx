@@ -6,22 +6,6 @@ import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
 import { Device, CustomerDevice } from '../../model/src'
 import DeviceCardContent from './DeviceCardContent'
 
-// interface Props {
-//   device: Device.Model
-//   customerDevice: CustomerDevice.Model
-//   isOpen?: boolean
-//   onClick?: () => void
-//   showForm?: boolean
-// }
-
-// const statusMap: Record<string, 'active' | 'inactive' | 'blocked' | 'canceled' | 'imei_locked'> = {
-//   active: 'active',
-//   inactive: 'inactive',
-//   blocked: 'blocked',
-//   canceled: 'canceled',
-//   imei_locked: 'imei_locked',
-// }
-
 const DeviceCard: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [device, setDevice] = useState<Device.Model | null>(null)
@@ -58,9 +42,6 @@ const DeviceCard: React.FC = () => {
 
     fetchDeviceData()
   }, [id])
-
-  // עכשיו יש לך גישה לנתוני המכשיר דרך המשתנה device
-  console.log('Device data:', device)
 
   if (loading) {
     return <Box>Loading device data...</Box>

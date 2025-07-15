@@ -4,11 +4,6 @@ import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-// import CustomTypography from '../designComponent/Typography'
-// import StatusTag from '../designComponent/Status'
-// import { CustomButton } from '../designComponent/Button'
-// import CustomSwitch from '../designComponent/Switch'
-// import { useMediaQuery } from '@mui/material'
 
 export interface deviceFormInputs {
   SIM_number: string
@@ -47,13 +42,6 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
       notes: '',
     },
   })
-  
-  /* משתנים לחלק של נתוני SIM - בהערות לעת עתה
-  const [isCameraAndGallery, setIsCameraAndGallery] = useState<boolean>(true)
-  const [isApplications, setIsApplications] = useState<boolean>(true)
-  const [isDeviceBlocked, setIsDeviceBlocked] = useState<boolean>(true)
-  const [isActiveSIM, setIsActiveSIM] = useState<boolean>(true)
-  */
 
   return (
     <Box
