@@ -1,21 +1,35 @@
-
-import { XMarkIcon } from "@heroicons/react/24/outline";
+// React and external libraries
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+
+// Material-UI
 import { Alert, Box, IconButton, Snackbar } from "@mui/material";
+
+// Heroicons
+import { 
+  XMarkIcon 
+} from "@heroicons/react/24/outline";
+
+// Internal components
 import CustomTypography from "../designComponent/Typography";
+import CommentItem from "./CommentItem";
+import CommentInput from "./CommentInput";
+import DateSeparator from "./DateSeparator";
+
+// Models and types
 import { Comment } from "../../model";
 import { EntityType } from "../../model/src/Comment";
-import { CreateCommentDto } from "../../model/src/Dtos";
+import { CreateCommentDto } from "../../model/src/CommentDtos";
+
+// API
 import {
   getCommentsByEntityTypeAndEntityId,
   createComment,
 } from "../../api/comment";
-import { useTranslation } from "react-i18next";
+
+// Styles and assets
 import { colors } from "../../styles/theme";
 import { chatStyles } from "./styles";
-import CommentItem from "./CommentItem";
-import CommentInput from "./CommentInput";
-import DateSeparator from "./DateSeparator";
 
 interface ChatBotProps {
   entityType: EntityType;
@@ -90,7 +104,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
 
   const addTempComment = (tempComment: ClientComment) => {
     setComments(prev => {
-      if (prev.some(c => c.comment_id === tempComment.comment_id)) return prev;
+      if (prev.some(c => String(c.comment_id) === String(tempComment.comment_id))) return prev;
       return [...prev, tempComment];
     });
     setShouldScrollToBottom(true);

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { Comment } from "../model/src";
 import { handleTokenRefresh } from "./token";
 import { EntityType } from "../model/src/Comment";
-import { CreateCommentDto } from "../model/src/Dtos";
+import { CreateCommentDto } from "../model/src/CommentDtos";
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/comment`
 
@@ -45,27 +45,22 @@ export const getCommentsByEntityTypeAndEntityId = async (
       `${baseUrl}/${entity_type}/${entity_id}?page=${page}`,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
-    )
-    
-    // Parse dates in the response data
-    const parsedData = {
-      ...response.data,
-      data: response.data.data.map(comment => ({
-        ...comment,
-        created_at: parseDate(comment.created_at)
-      }))
-    };
-    
-    return parsedData
+      }
+    );
+    const formattedData = response.data.data.map((commentItem) => ({
+      ...commentItem,
+      created_at: new Date(commentItem.created_at as unknown as string),
+    }));
+
+    return { ...response.data, data: formattedData };
   } catch (error) {
-    console.error('Error fetching comments', error)
-    throw error
+    console.error("Error fetching comments", error);
+    throw error;
   }
-}
+};
 
 export const createComment = async (
   commentData: CreateCommentDto
@@ -91,7 +86,7 @@ export const createComment = async (
     );
     return {
       ...response.data,
-      created_at: parseDate(response.data.created_at),
+      created_at: new Date(response.data.created_at as unknown as string),
     };
   } catch (error) {
     console.error("Error creating comment", error);
