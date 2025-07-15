@@ -1,32 +1,32 @@
-import { HttpError } from ".";
+import { HttpError } from '.';
 
 export enum EntityType {
   Customer = "customer",
   Device = "device",
   Branch = "branch",
-}
+};
 interface Model {
-  comment_id: string;
-  entity_id: string;
-  entity_type: EntityType;
-  content: string;
-  file_url?: string;
-  file_name?: string;
-  file_type?: string;
-  created_at: Date;
+  comment_id: string
+  entity_id: string
+  entity_type: EntityType
+  content: string
+  created_at: Date
+  file_url?: string
+  file_name?: string
+  file_type?: string
 }
 
 const isOptionalString = (val: any) =>
   val === undefined || (typeof val === "string" && val.trim() !== "");
 
 function sanitize(comment: Model, hasId: boolean): Model {
-  const isString = (val: any) => typeof val === "string" && val.trim() !== "";
+  const isString = (val: any) => typeof val === 'string' && val.trim() !== '';
 
   if (hasId && !comment.comment_id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Comment ID is required and must be a valid number.'
-    }
+    };
     throw error;
   }
 
@@ -38,15 +38,10 @@ function sanitize(comment: Model, hasId: boolean): Model {
     throw error;
   }
 
-  if (
-    !comment.entity_type ||
-    !Object.values(EntityType).includes(comment.entity_type)
-  ) {
+  if (!comment.entity_type || !Object.values(EntityType).includes(comment.entity_type)) {
     const error: HttpError.Model = {
       status: 400,
-      message: `Invalid "entity_type". Must be one of: ${Object.values(
-        EntityType
-      ).join(", ")}.`,
+      message: `Entity type "${comment.entity_type || 'undefined'}" is invalid. Allowed values are: ${Object.values(EntityType).join(', ')}.`
     };
     throw error;
   }

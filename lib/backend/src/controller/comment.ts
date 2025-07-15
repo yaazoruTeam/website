@@ -9,14 +9,15 @@ import config from '../config'
 let client: SpeechClient;
 dotenv.config();
 
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+const googleCredentials = config.google.applicationCredentialsJson;
+
+if (googleCredentials) {
   try {
-    const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+    const credentials = JSON.parse(googleCredentials);
     client = new SpeechClient({ credentials });
   } catch (e) {
     console.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:", e);
-    console.warn("Falling back to default authentication method");
-    client = new SpeechClient();
+    process.exit(1);
   }
 } else {
   client = new SpeechClient();
