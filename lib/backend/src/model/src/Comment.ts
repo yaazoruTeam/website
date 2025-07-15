@@ -5,13 +5,15 @@ export enum EntityType {
   Device = "device",
   Branch = "branch",
 };
-
 interface Model {
-  comment_id: number
+  comment_id: string
   entity_id: string
   entity_type: EntityType
   content: string
   created_at: Date
+  file_url?: string
+  file_name?: string
+  file_type?: string
 }
 
 const isOptionalString = (val: any) =>
@@ -48,6 +50,30 @@ function sanitize(comment: Model, hasId: boolean): Model {
     const error: HttpError.Model = {
       status: 400,
       message: 'Comment content is required and must be a non-empty string.'
+    }
+    throw error;
+  }
+
+  if (comment.file_url !== undefined && !isOptionalString(comment.file_url)) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid "file_url". Must be a string or undefined.',
+    };
+    throw error;
+  }
+
+  if (comment.file_name !== undefined && !isOptionalString(comment.file_name)) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid "file_name". Must be a string or undefined.',
+    };
+    throw error;
+  }
+
+  if (comment.file_type !== undefined && !isOptionalString(comment.file_type)) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid "file_type". Must be a string or undefined.',
     };
     throw error;
   }
@@ -57,11 +83,13 @@ function sanitize(comment: Model, hasId: boolean): Model {
     entity_id: comment.entity_id.trim(),
     entity_type: comment.entity_type,
     content: comment.content ? comment.content.trim() : "",
-    created_at: comment.created_at,
-  }
+    created_at: comment.created_at || new Date(),
+    ...(comment.file_url && { file_url: comment.file_url.trim() }),
+    ...(comment.file_name && { file_name: comment.file_name.trim() }),
+    ...(comment.file_type && { file_type: comment.file_type.trim() }),
+  };
 
   return newComment;
 }
 
-export type { Model }
-export { sanitize }
+export { Model, sanitize };

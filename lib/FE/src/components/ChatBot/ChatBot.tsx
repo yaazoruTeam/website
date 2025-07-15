@@ -1,23 +1,35 @@
-import { MicrophoneIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { FaceSmileIcon } from "@heroicons/react/24/outline";
+// React and external libraries
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import ReactDOM from "react-dom";
-import { colors } from "../../styles/theme";
-import { Alert, Box, IconButton, Snackbar, TextField } from "@mui/material";
+import { useTranslation } from "react-i18next";
+
+// Material-UI
+import { Alert, Box, IconButton, Snackbar } from "@mui/material";
+
+// Heroicons
+import { 
+  XMarkIcon 
+} from "@heroicons/react/24/outline";
+
+// Internal components
 import CustomTypography from "../designComponent/Typography";
+import CommentItem from "./CommentItem";
+import CommentInput from "./CommentInput";
+import DateSeparator from "./DateSeparator";
+
+// Models and types
 import { Comment } from "../../model";
 import { EntityType } from "../../model/src/Comment";
 import { CreateCommentDto } from "../../model/src/CommentDtos";
+
+// API
 import {
   getCommentsByEntityTypeAndEntityId,
   createComment,
 } from "../../api/comment";
-import AudioRecorderInput from "./AudioRecorderInput";
-import { formatDateToString } from "../designComponent/FormatDate";
-import profilePicture from "../../assets/profilePicture.svg";
-import EmojiPicker from "emoji-picker-react";
-import { useTranslation } from "react-i18next";
+
+// Styles and assets
+import { colors } from "../../styles/theme";
+import { chatStyles } from "./styles";
 
 interface ChatBotProps {
   entityType: EntityType;
@@ -31,187 +43,173 @@ interface ClientComment extends Comment.Model {
   audioUrl?: string;
 }
 
+let tempIdCounter = 0;
+const generateTempId = (): string => {
+  tempIdCounter++;
+  return `temp-${Date.now()}-${tempIdCounter}`;
+};
+
 const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [emojiPickerPosition, setEmojiPickerPosition] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isRecordingState, setIsRecordingState] = useState(false);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
+  
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const currentTempAudioCommentIdRef = useRef<string | null>(null);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const ENTITY_TYPE = entityType;
-  const ENTITY_ID = entityId;
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await getCommentsByEntityTypeAndEntityId(
-          ENTITY_TYPE,
-          ENTITY_ID,
-          1
+  const addCommentsToList = (newComments: ClientComment[], isLoadMore: boolean) => {
+    if (isLoadMore) {
+      setComments(prev => {
+        const existingIds = new Set(prev.map(c => c.comment_id));
+        const filtered = newComments.filter(c => !existingIds.has(c.comment_id));
+        const allComments = [...filtered, ...prev];
+        const sortedComments = allComments.sort((a, b) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
-        setComments(response.data);
-      } catch (err) {
-        console.error("Failed to fetch comments:", err);
-        setError(t("FailedToLoadComments.PleaseTryAgainLater."));
-      }
-    };
-
-    fetchComments();
-  }, [ENTITY_TYPE, ENTITY_ID, t]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [comments]);
-
-  useEffect(() => {
-    if (showEmojiPicker && inputRef.current) {
-      const inputRect = inputRef.current.getBoundingClientRect()
-      const pickerHeight = 350
-      const pickerWidth = 300
-      const margin = 10
-
-      setEmojiPickerPosition({
-        top: inputRect.top - pickerHeight - margin,
-        left: inputRect.right - pickerWidth,
-      })
+        
+        return sortedComments;
+      });
     } else {
-      setEmojiPickerPosition(null)
+      const sorted = newComments.sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      setComments(sorted);
+      setShouldScrollToBottom(true);
     }
+  };
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node) &&
-        !document.getElementById('emoji-portal-root')?.contains(event.target as Node)
-      ) {
-        setShowEmojiPicker(false)
-      }
+  const fetchComments = useCallback(async (page: number, loadMore = false) => {
+    try {
+      if (loadMore) setIsLoadingMore(true);
+      
+      const response = await getCommentsByEntityTypeAndEntityId(entityType, entityId, page);
+      
+      addCommentsToList(response.data, loadMore);
+      setHasMore(page < response.totalPages);
+    } catch (err) {
+      console.error("Failed to fetch comments:", err);
+      setError(t("FailedToLoadComments.PleaseTryAgainLater."));
+    } finally {
+      if (loadMore) setIsLoadingMore(false);
     }
+  }, [entityType, entityId, t]);
 
-    if (showEmojiPicker) {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+  const addTempComment = (tempComment: ClientComment) => {
+    setComments(prev => {
+      if (prev.some(c => String(c.comment_id) === String(tempComment.comment_id))) return prev;
+      return [...prev, tempComment];
+    });
+    setShouldScrollToBottom(true);
+  };
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showEmojiPicker])
+  const updateComment = (tempId: string, updatedComment: ClientComment) => {
+    setComments(prev => prev.map(c => c.comment_id === tempId ? updatedComment : c));
+  };
+
+  const removeComment = (commentId: string) => {
+    setComments(prev => prev.filter(c => c.comment_id !== commentId));
+  };
 
   const sendComment = async () => {
     if (!inputText.trim()) return;
 
-    const tempCommentId = `temp-${Date.now()}`;
+    const tempCommentId = generateTempId();
     const tempComment: ClientComment = {
       comment_id: tempCommentId,
-      entity_type: ENTITY_TYPE,
-      entity_id: ENTITY_ID,
+      entity_type: entityType,
+      entity_id: entityId,
       content: inputText,
       created_at: new Date(),
       isAudio: false,
     };
 
-    setComments((prev) => [...prev, tempComment]);
+    addTempComment(tempComment);
     setInputText("");
-    setShowEmojiPicker(false);
 
     try {
-      const commentDataToSend: CreateCommentDto = {
-        entity_type: ENTITY_TYPE,
-        entity_id: ENTITY_ID,
+      const commentData: CreateCommentDto = {
+        entity_type: entityType,
+        entity_id: entityId,
         content: tempComment.content,
         created_at: tempComment.created_at.toISOString(),
       };
 
-      const sentComment = await createComment(commentDataToSend);
-
-      setComments((prev) =>
-        prev.map((c) => (c.comment_id === tempCommentId ? sentComment : c))
-      );
+      const sentComment = await createComment(commentData);
+      updateComment(tempCommentId, sentComment);
     } catch (err) {
-      console.error("Error sending comment to server:", err);
+      console.error("Error sending comment:", err);
       setError(t("FailedToSendComment.PleaseTryAgain."));
-      setComments((prev) => prev.filter((c) => c.comment_id !== tempCommentId));
+      removeComment(tempCommentId);
     }
-  }
+  };
 
-  const handleAudioRecorded = useCallback(
-    async (audioBlob: Blob, transcription: string, duration: number) => {
-      const tempId = `temp-audio-${Date.now()}`;
-      currentTempAudioCommentIdRef.current = tempId;
-      const initialContent = isRecordingState
-        ? "🔴 מקליט..."
-        : "⌛ תמלול בהמתנה...";
-      const tempAudioComment: ClientComment = {
-        comment_id: tempId,
-        entity_type: ENTITY_TYPE,
-        entity_id: ENTITY_ID,
-        content: initialContent,
-        created_at: new Date(),
-        isPending: true,
-        isAudio: true,
-        audioDuration: duration,
-        audioUrl: URL.createObjectURL(audioBlob),
+  const handleAudioRecorded = useCallback(async (audioBlob: Blob, transcription: string, duration: number) => {
+    const tempId = generateTempId();
+    currentTempAudioCommentIdRef.current = tempId;
+    
+    const tempAudioComment: ClientComment = {
+      comment_id: tempId,
+      entity_type: entityType,
+      entity_id: entityId,
+      content: isRecordingState ? t("recordingInProgress") : t("transcriptionPending"),
+      created_at: new Date(),
+      isPending: true,
+      isAudio: true,
+      audioDuration: duration,
+      audioUrl: URL.createObjectURL(audioBlob),
+    };
+
+    addTempComment(tempAudioComment);
+
+    try {
+      const commentData: CreateCommentDto = {
+        entity_type: entityType,
+        entity_id: entityId,
+        content: transcription,
+        created_at: new Date().toISOString(),
       };
 
-      setComments((prev) => [...prev, tempAudioComment]);
+      const sentComment = await createComment(commentData);
+      updateComment(tempId, {
+        ...sentComment,
+        isAudio: true,
+        audioUrl: tempAudioComment.audioUrl,
+        audioDuration: duration,
+        isPending: false,
+      });
+    } catch (err) {
+      console.error("Error sending audio comment:", err);
+      setError(t("FailedToSendAudioComment.PleaseTryAgain."));
+      removeComment(tempId);
+    } finally {
+      currentTempAudioCommentIdRef.current = null;
+    }
+  }, [entityType, entityId, isRecordingState, t]);
 
-      try {
-        const finalComment: CreateCommentDto = {
-          entity_type: ENTITY_TYPE,
-          entity_id: ENTITY_ID,
-          content: transcription,
-          created_at: new Date().toISOString(),
-        };
+  const handleScroll = useCallback(() => {
+    if (!messagesContainerRef.current || isLoadingMore || !hasMore) return;
 
-        const sentComment = await createComment(finalComment);
-
-        setComments((prev) =>
-          prev.map((c) =>
-            c.comment_id === tempId
-              ? {
-                  ...sentComment,
-                  isAudio: true,
-                  audioUrl: tempAudioComment.audioUrl,
-                  audioDuration: duration,
-                  isPending: false,
-                }
-              : c
-          )
-        );
-      } catch (err) {
-        console.error("Error transcribing/sending audio comment:", err);
-        setError(t("FailedToSendAudioComment.PleaseTryAgain."));
-        setComments((prev) =>
-          prev.filter((c) => String(c.comment_id) !== tempId)
-        );
-      } finally {
-        currentTempAudioCommentIdRef.current = null;
-      }
-    },
-    [ENTITY_TYPE, ENTITY_ID, t]
-  );
+    const { scrollTop } = messagesContainerRef.current;
+    
+    if (scrollTop <= 50) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchComments(nextPage, true);
+    }
+  }, [isLoadingMore, hasMore, currentPage, fetchComments]);
 
   const handleRecordingStateChange = useCallback((isRecording: boolean) => {
     setIsRecordingState(isRecording);
-    if (isRecording) {
-      setInputText("");
-    }
+    if (isRecording) setInputText("");
   }, []);
-
-  const handleCloseError = () => {
-    setError(null);
-  };
 
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -219,52 +217,34 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  useEffect(() => {
+    fetchComments(1);
+  }, [fetchComments]);
+
+  useEffect(() => {
+    if (shouldScrollToBottom) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        setShouldScrollToBottom(false);
+      }, 100);
+    }
+  }, [shouldScrollToBottom]);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
   return (
-    <Box
-      className='chat-container'
-      sx={{
-        position: 'relative',
-        width: 420,
-        margin: '0 auto',
-        marginBottom: 50,
-        padding: 3,
-        paddingTop: 8,
-        background: colors.c6,
-      }}
-    >
-      <IconButton
-        title={t('closed')}
-        disableRipple
-        sx={{
-          position: 'absolute',
-          top: 10,
-          left: 10,
-          padding: 0,
-          backgroundColor: 'transparent',
-          '&:hover': { backgroundColor: 'transparent' },
-          '&:focus': { backgroundColor: 'transparent' },
-          '&:active': { backgroundColor: 'transparent' },
-        }}
-      >
-        <XMarkIcon
-          style={{
-            color: colors.c8,
-            width: 28,
-            height: 28,
-            paddingLeft: 12,
-            paddingTop: 5,
-          }}
-        />
+    <Box sx={chatStyles.container}>
+      <IconButton title={t('closed')} disableRipple sx={chatStyles.closeButton}>
+        <XMarkIcon style={chatStyles.closeIcon} />
       </IconButton>
-      <Box
-        sx={{
-          height: 21,
-          p: 2.5,
-          background: colors.c5,
-          borderRadius: 3,
-          textAlign: 'center',
-        }}
-      >
+      
+      <Box sx={chatStyles.header}>
         <CustomTypography
           text={t('customerComments')}
           variant='h2'
@@ -272,348 +252,64 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           color={colors.c11}
         />
       </Box>
-      <Box
-        className='chat-messages'
+      
+      <Box 
+        ref={messagesContainerRef} 
         sx={{
-          paddingRight: 1,
-          paddingLeft: 1,
-          paddingBottom: 3,
-          overflowY: 'auto',
+          ...chatStyles.messagesContainer,
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
-        {comments.map((comment) => {
-          const date = comment.created_at;
+        {isLoadingMore && (
+          <Box sx={{ textAlign: 'center', padding: 2 }}>
+            <CustomTypography
+              text={t('loading')}
+              variant='h4'
+              weight='regular'
+              color={colors.c38}
+            />
+          </Box>
+        )}
 
-          const formattedDateForDisplay = formatDateToString(date);
-
-          const formattedTime = new Date(date).toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          })
+        {comments.map((comment, index) => {
+          const currentDate = comment.created_at.toDateString();
+          const previousDate = index > 0 ? comments[index - 1].created_at.toDateString() : null;
+          const showDateSeparator = currentDate !== previousDate;
 
           return (
-            <React.Fragment key={comment.comment_id}>
-              {/* פס תאריך */}
-              <Box
-                sx={{
-                  width: '100%',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  display: 'inline-flex',
-                  margin: '20px 0 10px',
-                }}
-              >
-                <Box
-                  sx={{
-                    flex: '1 1 0',
-                    height: 1.07,
-                    opacity: 0.2,
-                    background: colors.c38,
-                    borderRadius: 10,
-                  }}
-                />
-                <CustomTypography
-                  text={formattedDateForDisplay}
-                  variant="h5"
-                  weight="medium"
-                  sx={{
-                    width: 167.89,
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    color: colors.c38,
-                    fontSize: 14,
-                    fontFamily: 'Heebo',
-                    fontWeight: '400',
-                    wordWrap: 'break-word',
-                  }}
-                />
-                <Box
-                  sx={{
-                    flex: '1 1 0',
-                    height: 1.07,
-                    opacity: 0.2,
-                    background: colors.c38,
-                    borderRadius: 10,
-                  }}
-                />
-              </Box>
-
-              {/* בלוק ההודעה עם תמונה בצד ימין */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: 'flex-start',
-                  gap: 1,
-                  paddingTop: 2,
-                  marginBottom: 2,
-                  width: '100%',
-                  boxSizing: 'border-box',
-                }}
-              >
-                {/* תמונת פרופיל מימין */}
-                <Box
-                  component='img'
-                  src={profilePicture}
-                  alt='profile'
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                  }}
-                />
-
-                {/* תוכן ההודעה + שעה מתחת */}
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    flexGrow: 1,
-                  }}
-                >
-                  {comment.isAudio ? (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        maxWidth: "100%",
-                        p: 1.5,
-                        borderRadius: 1.5,
-                        backgroundColor: colors.c6,
-                        border: `1px solid ${colors.c37}`,
-                        minWidth: 160,
-                        position: "relative",
-                      }}
-                    >
-                      {comment.isAudio && (
-                        <MicrophoneIcon
-                          style={{
-                            width: 20,
-                            height: 20,
-                            color: colors.c37,
-                            flexShrink: 0,
-                          }}
-                        />
-                      )}
-                      <CustomTypography
-                        text={
-                          isRecordingState &&
-                          String(comment.comment_id) ===
-                            currentTempAudioCommentIdRef.current
-                            ? "🔴 מקליט..."
-                            : comment.isPending
-                            ? "⌛ תמלול בהמתנה..."
-                            : comment.content
-                        }
-                        variant="h4"
-                        weight="medium"
-                        color={colors.c11}
-                        sx={{
-                          wordWrap: "break-word",
-                          flexGrow: 1,
-                        }}
-                      />
-                      {comment.audioDuration !== undefined &&
-                        (isRecordingState || !comment.isPending) && (
-                          <CustomTypography
-                            text={formatDuration(comment.audioDuration)}
-                            variant="h4"
-                            weight="regular"
-                            color={colors.c37}
-                            sx={{
-                              wordWrap: "break-word",
-                              lineHeight: 1,
-                              flexShrink: 0,
-                            }}
-                          />
-                        )}
-                    </Box>
-                  ) : (
-                    <Box
-                      sx={{
-                        maxWidth: "100%",
-                        borderRadius: 1.5,
-                        backgroundColor: colors.c6,
-                        border: `1px solid ${colors.c37}`,
-                        color: colors.c11,
-                        textAlign: "right",
-                        fontFamily: "Heebo",
-                        fontSize: 16,
-                        whiteSpace: "pre-wrap",
-                        wordWrap: "break-word",
-                        direction: "rtl",
-                        padding: "10px 14px",
-                      }}
-                    >
-                      {comment.isPending && !comment.isAudio
-                        ? `⌛ ${comment.content}`
-                        : comment.content}{" "}
-                    </Box>
-                  )}
-
-                  {/* שעה מתחת להודעה בצד ימין */}
-                  <Box
-                    sx={{
-                      textAlign: "right",
-                      justifyContent: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                      color: colors.c38,
-                      fontSize: 14,
-                      fontFamily: 'Heebo',
-                      fontWeight: '400',
-                      wordWrap: 'break-word',
-                      marginTop: 1,
-                    }}
-                  >
-                    {formattedTime}
-                  </Box>
-                </Box>
-              </Box>
+            <React.Fragment key={`${comment.comment_id}-${index}`}>
+              {showDateSeparator && <DateSeparator date={comment.created_at} />}
+              <CommentItem
+                comment={comment}
+                isRecordingState={isRecordingState}
+                currentTempAudioCommentId={currentTempAudioCommentIdRef.current}
+                formatDuration={formatDuration}
+              />
             </React.Fragment>
-          )
+          );
         })}
+        
         <div ref={messagesEndRef} />
       </Box>
-      <Box
-        sx={{
-          position: 'relative',
-          padding: 1,
-          background: 'white',
-          overflow: 'hidden',
-          borderRadius: 0.8,
-          outline: `1px ${colors.c39} solid`,
-          outlineOffset: '-1px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 1,
-          marginTop: 2,
-        }}
-      >
-        <TextField
-          ref={inputRef}
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder={t('WriteComment')}
-          variant='standard'
-          sx={{
-            flex: 1,
-            textAlign: 'right',
-            background: 'transparent',
-            border: 'none',
-            fontSize: 18,
-            fontFamily: 'Heebo',
-            fontWeight: 400,
-            color: colors.c10,
-            outline: 'none',
-            direction: 'rtl',
-            '& .MuiInputBase-input::placeholder': {
-              color: colors.c10,
-              opacity: 1,
-            },
-            '& .MuiInputBase-root': {
-              '&::before': {
-                borderBottom: 'none !important',
-              },
-              '&::after': {
-                borderBottom: 'none !important',
-              },
-              border: 'none',
-              outline: 'none',
-            },
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") sendComment();
-          }}
-        />
-        {/* אייקון חיוך */}
-        <FaceSmileIcon
-          style={{
-            width: 18,
-            height: 18,
-            color: colors.c38,
-            cursor: 'pointer',
-          }}
-          title={t('AddingEmoji')}
-          onClick={() => setShowEmojiPicker((prev) => !prev)}
-        />
-        <AudioRecorderInput
-          onAudioRecorded={handleAudioRecorded}
-          onError={setError}
-          onRecordingStateChange={handleRecordingStateChange}
-        />
-        <IconButton
-          onClick={sendComment}
-          sx={{
-            backgroundColor: colors.c37,
-            border: 'none',
-            borderRadius: 0.4,
-            width: 20,
-            height: 20,
-            padding: 0,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            '&:hover': {
-              backgroundColor: colors.c37,
-            },
-          }}
-          title={t('send')}
-        >
-          <PaperAirplaneIcon
-            style={{
-              width: 13,
-              height: 13,
-              color: 'white',
-              cursor: 'pointer',
-              transform: 'rotate(-45deg)',
-              marginBottom: 1,
-              marginLeft: 2,
-            }}
-            title={t("send")}
-          />
-        </IconButton>
-        {showEmojiPicker &&
-          emojiPickerPosition &&
-          ReactDOM.createPortal(
-            <Box
-              sx={{
-                position: 'fixed',
-                top: emojiPickerPosition.top,
-                left: emojiPickerPosition.left,
-                zIndex: 9999,
-              }}
-            >
-              <EmojiPicker
-                onEmojiClick={(emojiData) => setInputText((prev) => prev + emojiData.emoji)}
-              />
-            </Box>,
-            document.getElementById('emoji-portal-root') as HTMLElement,
-          )}
-      </Box>
-      {/* הודעת שגיאה בתחתית המסך */}
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={handleCloseError}
-      >
-        <Alert
-          onClose={handleCloseError}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
+      
+      <CommentInput
+        inputText={inputText}
+        setInputText={setInputText}
+        onSendComment={sendComment}
+        onAudioRecorded={handleAudioRecorded}
+        onError={setError}
+        onRecordingStateChange={handleRecordingStateChange}
+      />
+      
+      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
+        <Alert onClose={() => setError(null)} severity="error" sx={{ width: "100%" }}>
           {error}
         </Alert>
       </Snackbar>
     </Box>
-  )
-}
+  );
+};
 
 export default ChatBot

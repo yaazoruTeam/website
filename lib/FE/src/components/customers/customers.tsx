@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import CustomersList from './customersList'
 import { useFetchCustomers } from './useFetchCustomers'
 import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '../../model/src'
 
 const Customers: React.FC = () => {
   const [page, setPage] = useState(1)
@@ -26,15 +25,16 @@ const Customers: React.FC = () => {
   return (
     <>
       <CustomersList
-          customers={customers}
-          total={total}
-          page={page} 
-          limit={limit}
-          onPageChange={setPage}
-          onFilterChange={setFilterType}
-          noResults={noResults}
-          noResultsType={noResultsType} />
-      <ChatBot entityType={EntityType.Customer} entityId='1'/>
+        customers={customers}
+        total={total}
+        page={page}
+        limit={limit}
+        onPageChange={setPage}
+        onFilterChange={setFilterType}
+        noResults={noResults}
+        noResultsType={noResultsType}
+      />
+      <ChatBot />
     </>
   )
 }
