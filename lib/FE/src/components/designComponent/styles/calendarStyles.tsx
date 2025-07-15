@@ -1,5 +1,5 @@
 import { styled, Box, IconButton, Button } from '@mui/material'
-import { colors } from '../../styles/theme'
+import { colors } from '../../../styles/theme'
 
 // Common constants
 export const STANDARD_GAP = '2px'

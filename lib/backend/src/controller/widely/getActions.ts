@@ -16,7 +16,8 @@ const getNetworkConnection = (mccMnc: string): string => {
 
 // Helper functions that return data
 const searchUsersData = async (simNumber: string): Promise<any> => {
-  const result: Widely.Model = await callingWidely('search_users', {
+  const result: Widely.Model = await callingWidely(
+    'search_users', {
     account_id: config.widely.accountId,
     search_string: simNumber,
   })
@@ -36,7 +37,8 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
 }
 
 const getMobilesData = async (domain_user_id: string): Promise<any> => {
-  const result: Widely.Model = await callingWidely('get_mobiles', {
+  const result: Widely.Model = await callingWidely(
+    'get_mobiles', {
     domain_user_id: domain_user_id,
   })
 
@@ -55,7 +57,10 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
 }
 
 const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
-  const result: Widely.Model = await callingWidely('get_mobile_info', { endpoint_id: endpoint_id })
+  const result: Widely.Model = await callingWidely(
+    'get_mobile_info', {
+    endpoint_id: endpoint_id
+    })
 
   validateWidelyResult(result, 'Mobile info not found.', false)
 
@@ -132,12 +137,15 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     // Step 3: Get detailed device information
     const mobileInfo = await getMobileInfoData(endpoint_id)
 
-    // Extract data usage from the correct location with safety checks
-    const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
+        // Extract data usage from the correct location with safety checks
+        const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
 
-    // Network identification based on mcc_mnc
-    const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
-    const networkConnection = getNetworkConnection(mccMnc)
+        // Extract max data allowance (גיגה מקסימלית לחודש)
+        const maxDataAllowance = mobileInfo?.data_limit || 0
+
+        // Network identification based on mcc_mnc
+        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
+        const networkConnection = getNetworkConnection(mccMnc)
 
     // Prepare data for response
     const responseData: WidelyDeviceDetails.Model = {
@@ -145,6 +153,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
       endpoint_id: parseInt(endpoint_id) || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
+      max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
       imei1:
         mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
       status: mobileInfo?.registration_info?.status || 'Not available',
@@ -181,3 +190,4 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
     }
 }
 export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile }
+
