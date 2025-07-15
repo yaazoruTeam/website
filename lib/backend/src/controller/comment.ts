@@ -5,7 +5,6 @@ import * as dotenv from "dotenv";
 import { SpeechClient } from "@google-cloud/speech";
 import { NextFunction, Request, Response } from 'express'
 import config from '../config'
-const limit = config.database.limit
 
 let client: SpeechClient;
 dotenv.config();
@@ -23,7 +22,7 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
   client = new SpeechClient();
 }
 
-const limit = Number(process.env.LIMIT) || 10;
+const limit = Number(process.env.LIMIT) || config.database.limit || 10;
 
 const createComment = async (
   req: Request,
@@ -189,7 +188,7 @@ const transcribeAudio = async (
     });
 
     const transcription = response.results
-      ?.map((result) => result.alternatives?.[0].transcript)
+      ?.map((result: any) => result.alternatives?.[0].transcript)
       .join(" ")
       .trim();
 

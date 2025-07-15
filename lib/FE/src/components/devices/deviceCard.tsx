@@ -1,83 +1,88 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/system'
-import { ChevronLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
-import DeviceForm from './deviceForm'
-import { colors } from '../../styles/theme'
-import CustomTypography from '../designComponent/Typography'
-import StatusTag from '../designComponent/Status'
-import { formatDateToString } from '../designComponent/FormatDate'
-import { CustomerDevice, Device } from '../../model/src'
+import { useParams } from 'react-router-dom'
+import { getDeviceById } from '../../api/device'
+import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
+import { Device, CustomerDevice } from '../../model/src'
+import DeviceCardContent from './DeviceCardContent'
 
-interface Props {
-  device: Device.Model
-  customerDevice: CustomerDevice.Model
-  isOpen?: boolean
-  onClick?: () => void
-  showForm?: boolean
-}
+// interface Props {
+//   device: Device.Model
+//   customerDevice: CustomerDevice.Model
+//   isOpen?: boolean
+//   onClick?: () => void
+//   showForm?: boolean
+// }
 
-const statusMap: Record<string, 'active' | 'inactive' | 'blocked' | 'canceled' | 'imei_locked'> = {
-  active: 'active',
-  inactive: 'inactive',
-  blocked: 'blocked',
-  canceled: 'canceled',
-  imei_locked: 'imei_locked',
-}
+// const statusMap: Record<string, 'active' | 'inactive' | 'blocked' | 'canceled' | 'imei_locked'> = {
+//   active: 'active',
+//   inactive: 'inactive',
+//   blocked: 'blocked',
+//   canceled: 'canceled',
+//   imei_locked: 'imei_locked',
+// }
 
-const DeviceRow: React.FC<Props> = ({ device, customerDevice, isOpen = false, onClick }) => {
+const DeviceCard: React.FC = () => {
+  const { id } = useParams<{ id: string }>()
+  const [device, setDevice] = useState<Device.Model | null>(null)
+  const [customerDevice, setCustomerDevice] = useState<CustomerDevice.Model | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchDeviceData = async () => {
+      if (!id) {
+        setError('No device ID provided')
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+
+      try {
+        // שליפת נתוני המכשיר
+        const deviceData = await getDeviceById(id)
+        setDevice(deviceData)
+
+        // ניסיון לשלוף נתוני customerDevice
+        const customerDeviceData = await getCustomerDeviceByDeviceId(id)
+        setCustomerDevice(customerDeviceData)
+        
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch device data')
+        console.error('Error fetching device:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDeviceData()
+  }, [id])
+
+  // עכשיו יש לך גישה לנתוני המכשיר דרך המשתנה device
+  console.log('Device data:', device)
+
+  if (loading) {
+    return <Box>Loading device data...</Box>
+  }
+
+  if (error) {
+    return <Box>Error: {error}</Box>
+  }
+
+  if (!device) {
+    return <Box>Device not found</Box>
+  }
+
   return (
     <Box>
-      <Box
-        onClick={onClick}
-        sx={{
-          backgroundColor: isOpen ? colors.c13 : colors.c6,
-          border: `1px solid ${colors.c13}`,
-          borderRadius: '6px',
-          padding: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          cursor: 'pointer',
-          marginBottom: '11px',
-        }}
-      >
-        <CustomTypography
-          text={device.device_number}
-          variant='h1'
-          weight='medium'
-          color={colors.c8}
-        />
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          {!isOpen && device.status && statusMap[device.status] && (
-            <StatusTag status={statusMap[device.status]} />
-          )}
-          {isOpen ? (
-            <ChevronUpIcon style={{ width: 24, height: 24, color: colors.c11 }} />
-          ) : (
-            <ChevronLeftIcon style={{ width: 24, height: 24, color: colors.c11 }} />
-          )}
-        </Box>
-      </Box>
-
-      {isOpen && (
-        <DeviceForm
-          initialValues={{
-            SIM_number: device.SIM_number,
-            IMEI_1: device.IMEI_1,
-            mehalcha_number: device.mehalcha_number,
-            model: device.model,
-            received_at: formatDateToString(customerDevice.receivedAt),
-            planEndDate: formatDateToString(
-              customerDevice.planEndDate ? customerDevice.planEndDate : '',
-            ),
-            filterVersion: customerDevice.filterVersion ? customerDevice.filterVersion : '',
-            deviceProgram: customerDevice.deviceProgram ? customerDevice.deviceProgram : '',
-            notes: '',
-          }}
-        />
-      )}
+      {/* תוכן המכשיר */}
+      <DeviceCardContent 
+        device={device} 
+        customerDevice={customerDevice || undefined} 
+      />
     </Box>
   )
 }
 
-export default DeviceRow
+export default DeviceCard
