@@ -28,7 +28,6 @@ export interface deviceFormInputs {
 
 const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialValues }) => {
   const { t } = useTranslation()
-  // const isMobile = useMediaQuery('(max-width:600px)')
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
       SIM_number: '',

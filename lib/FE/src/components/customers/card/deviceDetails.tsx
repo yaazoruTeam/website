@@ -44,7 +44,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         )
 
         const filteredDevices = devicesData.filter(
-          (d: any): d is Device.Model & { customerDevice: CustomerDevice.Model } =>
+          (d: Device.Model | null | undefined): d is Device.Model & { customerDevice: CustomerDevice.Model } =>
             d !== null && d !== undefined,
         )
 
