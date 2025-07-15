@@ -8,7 +8,7 @@ import {
   FlexColumnWithGap,
   CalendarButtonContainer,
   CalendarButton,
-} from './CalendarStyles'
+} from './styles/calendarStyles'
 
 interface InlineDateRangePickerProps {
   onDateRangeChange: (start: Date | null, end: Date | null) => void

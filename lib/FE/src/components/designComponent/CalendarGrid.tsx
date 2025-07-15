@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import CalendarDay from './CalendarDay'
 import { colors } from '../../styles/theme'
-import { DayOfWeekHeader, DayOfWeekCell, WeekRow, FlexColumnWithGap } from './CalendarStyles'
+import { DayOfWeekHeader, DayOfWeekCell, WeekRow, FlexColumnWithGap } from './styles/calendarStyles'
 
 interface CalendarGridProps {
   weeks: Date[][]

@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../styles/theme'
 import CustomTypography from './Typography'
-import { CalendarHeaderContainer, FlexRow, CalendarIconButton } from './CalendarStyles'
+import { CalendarHeaderContainer, FlexRow, CalendarIconButton } from './styles/calendarStyles'
 
 interface CalendarHeaderComponentProps {
   currentMonth: Date
