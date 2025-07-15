@@ -8,7 +8,7 @@ import { Alert, Box, IconButton, Snackbar, TextField } from "@mui/material";
 import CustomTypography from "../designComponent/Typography";
 import { Comment } from "../../model";
 import { EntityType } from "../../model/src/Comment";
-import { CreateCommentDto } from "../../model/src/Dtos";
+import { CreateCommentDto } from "../../model/src/CommentDtos";
 import {
   getCommentsByEntityTypeAndEntityId,
   createComment,

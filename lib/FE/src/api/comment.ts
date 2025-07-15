@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { Comment } from "../model/src";
 import { handleTokenRefresh } from "./token";
 import { EntityType } from "../model/src/Comment";
-import { CreateCommentDto } from "../model/src/Dtos";
+import { CreateCommentDto } from "../model/src/CommentDtos";
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/comment`
 

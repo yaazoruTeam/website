@@ -16,7 +16,7 @@ import * as Payments from "./Payments";
 import * as PaymentCreditLink from "./PaymentCreditLink";
 import * as MonthlyPaymentManagement from "./MonthlyPaymentManagement";
 import * as Comment from "./Comment";
-import { CreateCommentDto } from "./Dtos";
+import { CreateCommentDto } from "./CommentDtos";
 import { EntityType } from "./Comment";
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
