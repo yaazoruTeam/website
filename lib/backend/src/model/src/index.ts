@@ -1,3 +1,5 @@
+import { CreateCommentDto } from "./Dtos";
+import { EntityType } from "./Comment";
 import * as Customer from './Customer'
 import * as Device from './Device'
 import * as HttpError from './HttpError'
@@ -38,6 +40,8 @@ export {
   PaymentCreditLink,
   MonthlyPaymentManagement,
   Comment,
+  CreateCommentDto,
+  EntityType,
   Widely,
   WidelyDeviceDetails,
 }
