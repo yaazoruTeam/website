@@ -60,7 +60,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
-    })
+  })
 
   validateWidelyResult(result, 'Mobile info not found.', false)
 
@@ -137,15 +137,15 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     // Step 3: Get detailed device information
     const mobileInfo = await getMobileInfoData(endpoint_id)
 
-        // Extract data usage from the correct location with safety checks
-        const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
+    // Extract data usage from the correct location with safety checks
+    const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
 
-        // Extract max data allowance (גיגה מקסימלית לחודש)
-        const maxDataAllowance = mobileInfo?.data_limit || 0
+    // Extract max data allowance (גיגה מקסימלית לחודש)
+    const maxDataAllowance = mobileInfo?.data_limit || 0
 
-        // Network identification based on mcc_mnc
-        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
-        const networkConnection = getNetworkConnection(mccMnc)
+    // Network identification based on mcc_mnc
+    const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
+    const networkConnection = getNetworkConnection(mccMnc)
 
     // Prepare data for response
     const responseData: WidelyDeviceDetails.Model = {
@@ -176,18 +176,35 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
 //to do: Move this function into the correct folder and file.
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { endpoint_id } = req.body
-        validateRequiredParam(endpoint_id, 'endpoint_id')
-        
-        const result: Widely.Model = await callingWidely(
-            'prov_terminate_mobile',
-            { endpoint_id: endpoint_id }
-        )
-        res.status(result.error_code).json(result)
-    } catch (error: any) {
-        next(error)
-    }
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+
+    const result: Widely.Model = await callingWidely(
+      'prov_terminate_mobile',
+      { endpoint_id: endpoint_id }
+    )
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
 }
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile }
+
+//to do: Move this function into the correct folder and file.
+const getPackagesWithInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+
+    const result: Widely.Model = await callingWidely(
+      'get_packages_with_info',
+      {
+        reseller_domain_id: config.widely.accountId,
+        package_types: ['base']
+      }
+    )
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile, getPackagesWithInfo }
 

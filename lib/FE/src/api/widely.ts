@@ -57,3 +57,28 @@ export const terminateMobile = async (endpoint_id: number): Promise<Widely.Model
     throw error
   }
 }
+
+export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as Widely.Model
+    }
+    const token = newToken
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    console.log('Packages with info response:', response.data);
+    
+    return response.data
+  } catch (error) {
+    console.error('Error fetching packages with info', error)
+    throw error
+  }
+}
