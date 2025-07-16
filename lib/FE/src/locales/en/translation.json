@@ -250,5 +250,6 @@
   "IMEI_lock": "IMEI lock",
   "addOneTimeGigabyte": "add one-time gigabyte",
   "errorLoadingDeviceDetails": "Error loading device details",
+  "simNumberNotFound": "SIM number not found",
   "noDeviceDetailsFound": "No device details found"
 }

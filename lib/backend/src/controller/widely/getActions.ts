@@ -22,13 +22,13 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
     search_string: simNumber,
   })
 
-  validateWidelyResult(result, 'User not found for the provided simNumber.')
+  validateWidelyResult(result, 'SIM number not found.')
 
   const userData = result.data[0]
   if (!userData) {
     const error: HttpError.Model = {
       status: 404,
-      message: 'User not found for the provided simNumber.',
+      message: 'SIM number not found.',
     }
     throw error
   }
@@ -62,10 +62,20 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     endpoint_id: endpoint_id
     })
 
-  validateWidelyResult(result, 'Mobile info not found.', false)
+  validateWidelyResult(result, 'SIM number not found.')
 
   // Check if the data is an array or object
   const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
+  
+  // Validate that we actually have mobile data
+  if (!mobileData || Object.keys(mobileData).length === 0) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'SIM number not found.',
+    }
+    throw error
+  }
+  
   return mobileData
 }
 
@@ -137,26 +147,46 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     // Step 3: Get detailed device information
     const mobileInfo = await getMobileInfoData(endpoint_id)
 
-        // Extract data usage from the correct location with safety checks
-        const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
+    // Validate that we have valid mobile info data
+    if (!mobileInfo || Object.keys(mobileInfo).length === 0) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'SIM number not found.',
+      }
+      throw error
+    }
 
-        // Extract max data allowance (גיגה מקסימלית לחודש)
-        const maxDataAllowance = mobileInfo?.data_limit || 0
+    // Extract data usage from the correct location with safety checks
+    const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
 
-        // Network identification based on mcc_mnc
-        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
-        const networkConnection = getNetworkConnection(mccMnc)
+    // Extract max data allowance (גיגה מקסימלית לחודש)
+    const maxDataAllowance = mobileInfo?.data_limit || 0
 
-    // Prepare data for response
+    // Network identification based on mcc_mnc
+    const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
+    const networkConnection = getNetworkConnection(mccMnc)
+
+    // Validate essential fields - if critical data is missing, throw error
+    const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei
+    const status = mobileInfo?.registration_info?.status
+    
+    if (!imei || !status) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'SIM number not found.',
+      }
+      throw error
+    }
+
+    // Prepare data for response - only if all essential data exists
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: parseInt(endpoint_id) || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
       max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
-      imei1:
-        mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
-      status: mobileInfo?.registration_info?.status || 'Not available',
+      imei1: imei,
+      status: status,
       imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'Locked' : 'Not locked',
       msisdn:
         mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || 'Not available',
