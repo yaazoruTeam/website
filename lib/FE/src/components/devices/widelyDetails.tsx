@@ -99,9 +99,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         fetchWidelyDetails();
     };
 
-    // קומפוננט כותרת לשימוש חוזר
+    // Component for reusable header section
     const HeaderSection = () => (
-        <WidelyHeaderSection style={{ justifyContent: 'space-between' }}>
+        <WidelyHeaderSection>
             <Box display="flex" alignItems="center" gap="4px">
                 <CustomTypography
                     text={t('simData')}

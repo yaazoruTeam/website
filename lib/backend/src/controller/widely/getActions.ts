@@ -21,37 +21,11 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
     search_string: simNumber,
   })
 
-  // Check for API error response
-  if (result.error_code !== undefined && result.error_code !== 200) {
-    const error: HttpError.Model = {
-      status: result.error_code || 500,
-      message: 'Failed to search for SIM number.',
-    }
-    throw error
-  }
+  // Check for API error response and validate data presence
+  validateWidelyResult(result, 'SIM number not found.')
 
-  // Validate that we have data - handle both array and object responses
-  const hasData = Array.isArray(result.data) ? result.data.length > 0 : 
-                  (result.data && typeof result.data === 'object' && Object.keys(result.data).length > 0)
-  
-  if (!hasData) {
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
-    }
-    throw error
-  }
-
-  // Normalize data to array format
+  // Normalize data to array format for consistent handling
   const dataArray = Array.isArray(result.data) ? result.data : [result.data]
-  
-  if (dataArray.length === 0) {
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
-    }
-    throw error
-  }
 
   // Ensure we have exactly one result (exact match)
   if (dataArray.length > 1) {
@@ -102,7 +76,7 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
 }
 
 const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
-  const result: any = await callingWidely(
+  const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
     })
@@ -116,8 +90,13 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     throw error
   }
   
+  // Type guard to check if response has Widely.Model structure
+  const hasDataProperty = (response: Widely.Model): response is Widely.Model => {
+    return 'data' in response && response.data !== undefined;
+  }
+  
   // Handle response with data property (Widely.Model structure)
-  if (result.data !== undefined) {
+  if (hasDataProperty(result)) {
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
     
     if (!mobileData || Object.keys(mobileData).length === 0) {
@@ -241,12 +220,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     // Step 3: Get detailed device information
-    let mobileInfo;
-    try {
-      mobileInfo = await getMobileInfoData(endpoint_id)
-    } catch (error: any) {
-      throw error;
-    }
+    const mobileInfo = await getMobileInfoData(endpoint_id)
 
     if (!mobileInfo) {
       const error: HttpError.Model = {
