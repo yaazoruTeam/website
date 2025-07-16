@@ -251,5 +251,9 @@
   "addOneTimeGigabyte": "add one-time gigabyte",
   "errorLoadingDeviceDetails": "Error loading device details",
   "simNumberNotFound": "SIM number not found",
-  "noDeviceDetailsFound": "No device details found"
+  "noDeviceDetailsFound": "No device details found",
+  "errorLoadingUserData": "Error loading user data",
+  "errorLoadingDeviceData": "Error loading device data",
+  "noUserDevicesFound": "No devices found for this user",
+  "errorSearchingUserData": "Error searching for user data"
 }

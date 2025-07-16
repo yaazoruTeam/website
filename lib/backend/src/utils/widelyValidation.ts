@@ -13,7 +13,8 @@ const validateRequiredParam = (param: any, paramName: string): void => {
 
 // General function for validating results and creating errors
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
-    if (result.error_code !== 200) {
+    // אם יש error_code, נבדוק שהוא 200. אם אין error_code, נניח שהקריאה הצליחה
+    if (result.error_code !== undefined && result.error_code !== 200) {
         const error: HttpError.Model = {
             status: result.error_code || 500,
             message: errorMessage,

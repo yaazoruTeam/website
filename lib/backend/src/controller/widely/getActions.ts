@@ -14,7 +14,6 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-// Helper functions that return data
 const searchUsersData = async (simNumber: string): Promise<any> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
@@ -22,10 +21,56 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
     search_string: simNumber,
   })
 
-  validateWidelyResult(result, 'SIM number not found.')
+  // Check for API error response
+  if (result.error_code !== undefined && result.error_code !== 200) {
+    const error: HttpError.Model = {
+      status: result.error_code || 500,
+      message: 'Failed to search for SIM number.',
+    }
+    throw error
+  }
 
-  const userData = result.data[0]
-  if (!userData) {
+  // Validate that we have data - handle both array and object responses
+  const hasData = Array.isArray(result.data) ? result.data.length > 0 : 
+                  (result.data && typeof result.data === 'object' && Object.keys(result.data).length > 0)
+  
+  if (!hasData) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'SIM number not found.',
+    }
+    throw error
+  }
+
+  // Normalize data to array format
+  const dataArray = Array.isArray(result.data) ? result.data : [result.data]
+  
+  if (dataArray.length === 0) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'SIM number not found.',
+    }
+    throw error
+  }
+
+  // Ensure we have exactly one result (exact match)
+  if (dataArray.length > 1) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'SIM number not found.',
+    }
+    throw error
+  }
+
+  // Validate that the result is an exact match
+  const userData = dataArray[0]
+  const foundName = userData?.domain_user_name || userData?.name || '';
+  
+  // Normalize comparison to handle case sensitivity and whitespace
+  const normalizedSearched = simNumber.trim().toLowerCase()
+  const normalizedFound = foundName.trim().toLowerCase()
+  
+  if (normalizedFound !== normalizedSearched) {
     const error: HttpError.Model = {
       status: 404,
       message: 'SIM number not found.',
@@ -42,13 +87,13 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
     domain_user_id: domain_user_id,
   })
 
-  validateWidelyResult(result, 'No mobiles found for the user.')
+  validateWidelyResult(result, 'Failed to load user devices.')
 
   const mobileData = result.data[0]
   if (!mobileData) {
     const error: HttpError.Model = {
       status: 404,
-      message: 'No mobiles found for the user.',
+      message: 'No devices found for this user.',
     }
     throw error
   }
@@ -57,26 +102,45 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
 }
 
 const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
-  const result: Widely.Model = await callingWidely(
+  const result: any = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
     })
-
-  validateWidelyResult(result, 'SIM number not found.')
-
-  // Check if the data is an array or object
-  const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
   
-  // Validate that we actually have mobile data
-  if (!mobileData || Object.keys(mobileData).length === 0) {
+  // Check for error_code in response
+  if (result.error_code !== undefined && result.error_code !== 200) {
     const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
+      status: result.error_code || 500,
+      message: 'Failed to load device details.',
     }
     throw error
   }
   
-  return mobileData
+  // Handle response with data property (Widely.Model structure)
+  if (result.data !== undefined) {
+    const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
+    
+    if (!mobileData || Object.keys(mobileData).length === 0) {
+      const error: HttpError.Model = {
+        status: 500,
+        message: 'Error loading device details.',
+      }
+      throw error
+    }
+    
+    return mobileData
+  }
+  
+  // Handle direct object response (without data property)
+  if (!result || Object.keys(result).length === 0) {
+    const error: HttpError.Model = {
+      status: 500,
+      message: 'Error loading device details.',
+    }
+    throw error
+  }
+  
+  return result
 }
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -121,64 +185,85 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     validateRequiredParam(simNumber, 'simNumber')
 
     // Step 1: Search for user based on SIM number
-    const user = await searchUsersData(simNumber)
-    const domain_user_id = user.domain_user_id
+    let user;
+    try {
+      user = await searchUsersData(simNumber)
+    } catch (error: any) {
+      // Pass through SIM not found errors as-is
+      if (error.message === 'SIM number not found.') {
+        throw error;
+      }
+      // Convert other errors to generic search error
+      const err: HttpError.Model = {
+        status: 500,
+        message: 'Error searching for user data.',
+      }
+      throw err;
+    }
 
+    const domain_user_id = user.domain_user_id
     if (!domain_user_id) {
       const error: HttpError.Model = {
-        status: 404,
-        message: 'User domain_user_id not found.',
+        status: 500,
+        message: 'Error loading user data - missing domain_user_id.',
       }
       throw error
     }
 
-    // Step 2: Get user's devices
-    const mobile = await getMobilesData(domain_user_id)
-    const endpoint_id = mobile.endpoint_id
+    // Step 2: Get user's mobile devices
+    let mobile;
+    try {
+      mobile = await getMobilesData(domain_user_id)
+    } catch (error: any) {
+      // If no devices found, treat as SIM not found
+      if (error.message === 'No devices found for this user.') {
+        const err: HttpError.Model = {
+          status: 404,
+          message: 'SIM number not found.',
+        }
+        throw err;
+      }
+      // Convert other errors to generic device loading error
+      const err: HttpError.Model = {
+        status: 500,
+        message: 'Error loading user devices.',
+      }
+      throw err;
+    }
 
+    const endpoint_id = mobile.endpoint_id
     if (!endpoint_id) {
       const error: HttpError.Model = {
-        status: 404,
-        message: 'Mobile endpoint_id not found.',
+        status: 500,
+        message: 'Error loading device data - missing endpoint_id.',
       }
       throw error
     }
 
     // Step 3: Get detailed device information
-    const mobileInfo = await getMobileInfoData(endpoint_id)
+    let mobileInfo;
+    try {
+      mobileInfo = await getMobileInfoData(endpoint_id)
+    } catch (error: any) {
+      throw error;
+    }
 
-    // Validate that we have valid mobile info data
-    if (!mobileInfo || Object.keys(mobileInfo).length === 0) {
+    if (!mobileInfo) {
       const error: HttpError.Model = {
-        status: 404,
-        message: 'SIM number not found.',
+        status: 500,
+        message: 'Error loading device details.',
       }
       throw error
     }
 
-    // Extract data usage from the correct location with safety checks
+    // Extract and format response data
     const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
-
-    // Extract max data allowance (גיגה מקסימלית לחודש)
     const maxDataAllowance = mobileInfo?.data_limit || 0
-
-    // Network identification based on mcc_mnc
     const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
     const networkConnection = getNetworkConnection(mccMnc)
+    const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
+    const status = mobileInfo?.registration_info?.status || 'Unknown'
 
-    // Validate essential fields - if critical data is missing, throw error
-    const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei
-    const status = mobileInfo?.registration_info?.status
-    
-    if (!imei || !status) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'SIM number not found.',
-      }
-      throw error
-    }
-
-    // Prepare data for response - only if all essential data exists
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: parseInt(endpoint_id) || 0,
@@ -188,8 +273,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
       imei1: imei,
       status: status,
       imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'Locked' : 'Not locked',
-      msisdn:
-        mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || 'Not available',
+      msisdn: mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || 'Not available',
       iccid: mobileInfo?.sim_data?.iccid || mobileInfo?.iccid || 'Not available',
       device_info: {
         brand: mobileInfo?.device_info?.brand || 'Not available',
@@ -204,7 +288,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-//to do: Move this function into the correct folder and file.
+//TODO: Move this function into the correct folder and file.
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { endpoint_id } = req.body

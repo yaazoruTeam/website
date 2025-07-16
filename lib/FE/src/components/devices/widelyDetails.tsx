@@ -63,16 +63,31 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
             // setValue('replacingProgram', details.someDefaultProgram || 'program1');
         } catch (err: any) {
-            console.error('Error fetching widely details:', err);
+            // Parse error response to determine appropriate user message
+            const errorMessage = err?.response?.data?.message || 
+                                  err?.response?.data?.error?.message || 
+                                  err?.message || '';
             
-            // בדיקה אם השגיאה היא 404 או הודעה "SIM number not found"
-            const isSimNotFound = err?.response?.status === 404 || 
-                                  err?.response?.data?.message?.includes('SIM number not found') ||
-                                  err?.message?.includes('SIM number not found');
-            
-            if (isSimNotFound) {
+            // Set appropriate error message based on server response
+            if (errorMessage === 'SIM number not found.') {
                 setError(t('simNumberNotFound'));
-            } else {
+            }
+            else if (errorMessage === 'No devices found for this user.') {
+                setError(t('simNumberNotFound'));
+            }
+            else if (errorMessage === 'Error searching for user data.') {
+                setError(t('errorSearchingUserData'));
+            }
+            else if (errorMessage.includes('Error loading user data')) {
+                setError(t('errorLoadingUserData'));
+            }
+            else if (errorMessage.includes('Error loading device')) {
+                setError(t('errorLoadingDeviceData'));
+            }
+            else if (errorMessage.includes('Failed to load')) {
+                setError(t('errorLoadingDeviceDetails'));
+            }
+            else {
                 setError(t('errorLoadingDeviceDetails'));
             }
         } finally {
