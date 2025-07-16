@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment } from 'react'
-import { getWidelyDetails } from '../../api/widely'
+import { getWidelyDetails, resetVoicemailPincode } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -9,6 +9,7 @@ import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
+import { CustomButton } from '../designComponent/Button'
 import { 
     WidelyContainer, 
     WidelyHeaderSection, 
@@ -22,6 +23,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
+    const [isResettingPincode, setIsResettingPincode] = useState(false);
     const { t } = useTranslation()
     const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string, addOneTimeGigabyte: string }>({
         defaultValues: {
@@ -46,6 +48,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         width: '1px',
         height: '26px',
         mx: '40px'
+    }
+
+    // פונקציה לאיפוס סיסמת תא קולי
+    const handleResetVoicemailPincode = async () => {
+        resetVoicemailPincode(400093108)
     }
 
     useEffect(() => {
@@ -187,6 +194,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     </Fragment>
                 ))}
             </WidelyInfoSection>
+
+            {/* כפתור איפוס סיסמת תא קולי */}
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                <CustomButton
+                    label={t('resetVoicemailPincode')}
+                    onClick={handleResetVoicemailPincode}
+                    disabled={isResettingPincode || !widelyDetails?.endpoint_id}
+                    buttonType="fourth"
+                    size="large"
+                />
+            </Box>
         </WidelyContainer>
     );
 }

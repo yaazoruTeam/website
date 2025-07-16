@@ -250,5 +250,6 @@
   "IMEI_lock": "IMEI lock",
   "addOneTimeGigabyte": "add one-time gigabyte",
   "errorLoadingDeviceDetails": "Error loading device details",
-  "noDeviceDetailsFound": "No device details found"
+  "noDeviceDetailsFound": "No device details found",
+  "resetVoicemailPincode": "Reset voicemail password to 1234"
 }
