@@ -256,5 +256,5 @@
   "errorLoadingUserData": "שגיאה בטעינת נתוני המשתמש",
   "errorLoadingDeviceData": "שגיאה בטעינת נתוני המכשיר",
   "noUserDevicesFound": "לא נמצאו מכשירים עבור משתמש זה",
-  "errorSearchingUserData": "שגיאה בחיפוש נתוני המשתמש"
+  "errorSearchingUserData": "שגיאה בחיפוש בנתוני המשתמש"
 }

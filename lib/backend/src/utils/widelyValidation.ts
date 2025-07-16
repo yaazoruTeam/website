@@ -31,7 +31,7 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
     // Validate data presence - handle both array and object responses
     const hasData = Array.isArray(result.data) 
         ? result.data.length > 0 
-        : (result.data && typeof result.data === 'object' && Object.keys(result.data).length > 0)
+        : (result.data != null && typeof result.data === 'object')
     
     if (!hasData) {
         const error: HttpError.Model = {

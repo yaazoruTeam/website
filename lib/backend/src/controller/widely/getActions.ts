@@ -257,7 +257,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-//TODO: Move this function into the correct folder and file.
+//to do: Move this function into the correct folder and file.
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
