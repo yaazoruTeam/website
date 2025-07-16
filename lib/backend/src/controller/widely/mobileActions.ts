@@ -3,7 +3,7 @@ import { HttpError, Widely } from '../../model/src'
 import { sendMobileAction } from '../../integration/widely/widelyActions'
 import { validateRequiredParam } from '../../utils/widelyValidation'
 
-const prov_reset_vm_pincode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const provResetVmPincode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
     validateRequiredParam(endpoint_id, 'endpoint_id')
@@ -20,4 +20,4 @@ const prov_reset_vm_pincode = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export { prov_reset_vm_pincode }
+export { provResetVmPincode }
