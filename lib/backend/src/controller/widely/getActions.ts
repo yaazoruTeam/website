@@ -31,7 +31,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   if (dataArray.length > 1) {
     const error: HttpError.Model = {
       status: 404,
-      message: 'SIM number not found.',
+      message: 'Multiple SIM numbers found - please contact support.',
     }
     throw error
   }
@@ -39,11 +39,11 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   // Validate that the result is an exact match
   const userData = dataArray[0]
   const foundName = userData?.domain_user_name || userData?.name || '';
-  
+
   // Normalize comparison to handle case sensitivity and whitespace
   const normalizedSearched = simNumber.trim().toLowerCase()
   const normalizedFound = foundName.trim().toLowerCase()
-  
+
   if (normalizedFound !== normalizedSearched) {
     const error: HttpError.Model = {
       status: 404,
@@ -79,8 +79,8 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
-    })
-  
+  })
+
   // Check for error_code in response
   if (result.error_code !== undefined && result.error_code !== 200) {
     const error: HttpError.Model = {
@@ -89,16 +89,11 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     }
     throw error
   }
-  
-  // Type guard to check if response has Widely.Model structure
-  const hasDataProperty = (response: Widely.Model): response is Widely.Model => {
-    return 'data' in response && response.data !== undefined;
-  }
-  
+
   // Handle response with data property (Widely.Model structure)
-  if (hasDataProperty(result)) {
+  if (result.data !== undefined) {
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
-    
+
     if (!mobileData || Object.keys(mobileData).length === 0) {
       const error: HttpError.Model = {
         status: 500,
@@ -106,10 +101,10 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
       }
       throw error
     }
-    
+
     return mobileData
   }
-  
+
   // Handle direct object response (without data property)
   if (!result || Object.keys(result).length === 0) {
     const error: HttpError.Model = {
@@ -118,7 +113,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     }
     throw error
   }
-  
+
   return result
 }
 
@@ -264,18 +259,18 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
 //TODO: Move this function into the correct folder and file.
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { endpoint_id } = req.body
-        validateRequiredParam(endpoint_id, 'endpoint_id')
-        
-        const result: Widely.Model = await callingWidely(
-            'prov_terminate_mobile',
-            { endpoint_id: endpoint_id }
-        )
-        res.status(result.error_code).json(result)
-    } catch (error: any) {
-        next(error)
-    }
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+
+    const result: Widely.Model = await callingWidely(
+      'prov_terminate_mobile',
+      { endpoint_id: endpoint_id }
+    )
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
 }
 export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile }
 
