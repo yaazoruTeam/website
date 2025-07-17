@@ -79,4 +79,22 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
     next(error)
   }
 }
-export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages }
+
+const sendApn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+
+    const result = await sendMobileAction(endpoint_id, 'send_apn')
+
+    res.status(200).json({
+      success: true,
+      message: 'APN settings have been sent successfully',
+      data: result
+    })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, sendApn }

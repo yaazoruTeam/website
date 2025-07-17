@@ -263,5 +263,7 @@
   "cancel": "ביטול",
   "choosePlan": "בחירת תוכנית",
   "failedToChangePackage": "שינוי החבילה נכשל",
-  "noDescriptionAvailable": "אין תיאור זמין"
+  "noDescriptionAvailable": "אין תיאור זמין",
+  "confirm": "אישור",
+  "sendApn": "שלח APN"
 }
