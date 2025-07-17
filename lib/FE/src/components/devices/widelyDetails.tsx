@@ -24,7 +24,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
-    const [isResettingPincode, setIsResettingPincode] = useState(false);
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
@@ -110,14 +109,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     break;
 
                 default:
-                    if (errorMessage.includes('Error loading user data')) {
-                        setError(t('errorLoadingUserData'));
-                    } else if (errorMessage.includes('Error loading device')) {
-                        setError(t('errorLoadingDeviceData'));
-                    } else if (errorMessage.includes('Failed to load')) {
-                        setError(t('errorLoadingDeviceDetails'));
-                    } else {
-                        setError(t('errorLoadingDeviceDetails'));
+                    // Handle error messages that contain specific strings
+                    switch (true) {
+                        case errorMessage.includes('Error loading user data'):
+                            setError(t('errorLoadingUserData'));
+                            break;
+                        
+                        case errorMessage.includes('Error loading device'):
+                            setError(t('errorLoadingDeviceData'));
+                            break;
+                        
+                        case errorMessage.includes('Failed to load'):
+                            setError(t('errorLoadingDeviceDetails'));
+                            break;
+                        
+                        default:
+                            setError(t('errorLoadingDeviceDetails'));
+                            break;
                     }
                     break;
             }
@@ -297,7 +305,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
-                    disabled={isResettingPincode || !widelyDetails?.endpoint_id}
                     buttonType="fourth"
                     size="large"
                 />
