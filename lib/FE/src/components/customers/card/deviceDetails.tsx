@@ -23,16 +23,16 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         setIsLoading(true)
         setError(null)
 
-        const response = await getAllCustomerDevicesByCustomerId(customerId, 1) // page 1
+        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId, 1) // page 1
 
-        if (response.data.length === 0) {
+        if (customerDevicesResponse.data.length === 0) {
           setDevices([])
           setError(t('noDevicesFound'))
           return
         }
 
         const devicesData = await Promise.all(
-          response.data.map(async (customerDevice: CustomerDevice.Model) => {
+          customerDevicesResponse.data.map(async (customerDevice: CustomerDevice.Model) => {
             try {
               const device = await getDeviceById(customerDevice.device_id)
               return { ...device, customerDevice }

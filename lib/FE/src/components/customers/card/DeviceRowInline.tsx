@@ -13,6 +13,12 @@ interface DeviceRowInlineProps {
 }
 
 const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onClick }) => {
+  const iconStyle = {
+    width: '24px',
+    height: '24px',
+    color: colors.c11
+  }
+
   return (
     <Box
       sx={{
@@ -46,21 +52,9 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
           />
         </Box>
         {isOpen ? (
-          <ChevronDownIcon
-            style={{
-              width: '24px',
-              height: '24px',
-              color: colors.c11
-            }}
-          />
+          <ChevronDownIcon style={iconStyle} />
         ) : (
-          <ChevronLeftIcon
-            style={{
-              width: '24px',
-              height: '24px',
-              color: colors.c11
-            }}
-          />
+          <ChevronLeftIcon style={iconStyle} />
         )}
       </Box>
 
