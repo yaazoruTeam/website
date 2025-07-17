@@ -12,6 +12,7 @@ export const WidelyContainer = styled('div')({
 export const WidelyHeaderSection = styled(FlexBase)({
   gap: '4px',
   marginBottom: '40px',
+  justifyContent: 'space-between',
 })
 
 export const WidelyFormSection = styled(FlexBase)({

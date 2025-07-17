@@ -19,7 +19,6 @@ const createAuth = (): {
   const hash = generateHash()
   const innerAuth = calculateMD5(BRAND_TOKEN + hash)
   const finalAuth = calculateMD5(ACCOUNT_TOKEN + innerAuth)
-  console.log(`Brand ID: ${brandId}, Auth ID: ${authId}, Hash: ${hash}, Final Auth: ${finalAuth}`)
 
   return {
     auth_id: authId,
