@@ -5,8 +5,8 @@ import { Customer, CustomerDevice, Device } from '../../../model'
 import CustomTypography from '../../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../../styles/theme'
-import DeviceRow from '../../devices/deviceCard'
 import { getDeviceById } from '../../../api/device'
+import DeviceRowInline from './DeviceRowInline'
 
 const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => {
   const { t } = useTranslation()
@@ -23,16 +23,16 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         setIsLoading(true)
         setError(null)
 
-        const customerDevices = await getAllCustomerDevicesByCustomerId(customerId)
+        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId, 1) // page 1
 
-        if (customerDevices.length === 0) {
+        if (customerDevicesResponse.data.length === 0) {
           setDevices([])
           setError(t('noDevicesFound'))
           return
         }
 
         const devicesData = await Promise.all(
-          customerDevices.map(async (customerDevice) => {
+          customerDevicesResponse.data.map(async (customerDevice: CustomerDevice.Model) => {
             try {
               const device = await getDeviceById(customerDevice.device_id)
               return { ...device, customerDevice }
@@ -44,7 +44,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         )
 
         const filteredDevices = devicesData.filter(
-          (d): d is Device.Model & { customerDevice: CustomerDevice.Model } =>
+          (d: Device.Model | null | undefined): d is Device.Model & { customerDevice: CustomerDevice.Model } =>
             d !== null && d !== undefined,
         )
 
@@ -82,10 +82,9 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       ) : (
         <Box>
           {devices.map((device) => (
-            <DeviceRow
+            <DeviceRowInline
               key={device.device_id}
               device={device}
-              customerDevice={device.customerDevice}
               isOpen={openedDeviceId === device.device_id}
               onClick={() => handleRowClick(device.device_id)}
             />
