@@ -52,24 +52,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         mx: '40px'
     }
 
-    // פונקציה לטיפול בביטול קו
-    // const handleTerminateLine = async () => {
-    //     if (!widelyDetails?.endpoint_id) return;
-
-    //     try {
-    //         setIsTerminating(true);
-    //         await terminateLine(widelyDetails.endpoint_id);
-    //         setIsTerminateModalOpen(false);
-    //         // ניתן להוסיף הודעת הצלחה או לרענן את הנתונים
-    //     } catch (err) {
-    //         console.error('Error terminating line:', err);
-    //         // ניתן להוסיף הודעת שגיאה
-    //     } finally {
-    //         setIsTerminating(false);
-    //     }
-    // }
-
-    // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 

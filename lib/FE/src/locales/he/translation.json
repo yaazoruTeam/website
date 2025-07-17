@@ -257,7 +257,6 @@
   "errorLoadingDeviceData": "שגיאה בטעינת נתוני המכשיר",
   "noUserDevicesFound": "לא נמצאו מכשירים עבור משתמש זה",
   "errorSearchingUserData": "שגיאה בחיפוש בנתוני המשתמש",
-  "noDeviceDetailsFound": "לא נמצאו פרטי מכשיר",
   "cancelLine": "ביטול קו",
   "areYouSureYouWantToCancelTheLine": "האם אתם בטוחים שאתם רוצים לבטל את הקו?",
   "cancel": "ביטול",
