@@ -57,3 +57,30 @@ export const terminateMobile = async (endpoint_id: number): Promise<Widely.Model
     throw error
   }
 }
+
+export const sendApn = async (endpoint_id: string): Promise<any> => {
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {}
+    }
+    const token = newToken
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<any> = await axios.post(
+      `${baseUrl}/send_apn`,
+      { endpoint_id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error sending APN', error)
+    throw error
+  }
+}
