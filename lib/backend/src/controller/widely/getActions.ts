@@ -27,24 +27,29 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   // Normalize data to array format for consistent handling
   const dataArray = Array.isArray(result.data) ? result.data : [result.data]
 
-  // Ensure we have exactly one result (exact match)
-  if (dataArray.length > 1) {
+  // If no results found
+  if (dataArray.length === 0) {
     const error: HttpError.Model = {
       status: 404,
-      message: 'Multiple SIM numbers found - please contact support.',
+      message: 'SIM number not found.',
     }
     throw error
   }
 
-  // Validate that the result is an exact match
+  // If multiple results found, throw error (ambiguous search)
+  if (dataArray.length > 1) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'Multiple SIM numbers found - please provide more specific SIM number.',
+    }
+    throw error
+  }
+
+  // If exactly one result found, return it (successful search)
   const userData = dataArray[0]
-  const foundName = userData?.domain_user_name || userData?.name || '';
-
-  // Normalize comparison to handle case sensitivity and whitespace
-  const normalizedSearched = simNumber.trim().toLowerCase()
-  const normalizedFound = foundName.trim().toLowerCase()
-
-  if (normalizedFound !== normalizedSearched) {
+  
+  // Validate that userData exists and has required fields
+  if (!userData || (!userData.domain_user_name && !userData.name)) {
     const error: HttpError.Model = {
       status: 404,
       message: 'SIM number not found.',
@@ -257,20 +262,5 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-//to do: Move this function into the correct folder and file.
-const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-
-    const result: Widely.Model = await callingWidely(
-      'prov_terminate_mobile',
-      { endpoint_id: endpoint_id }
-    )
-    res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
-  }
-}
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile }
+export { searchUsers, getMobiles, getMobileInfo, getAllUserData }
 

@@ -11,12 +11,12 @@ import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
 import { CustomButton } from '../designComponent/Button'
 import CustomModal from '../designComponent/Modal'
-import { 
-    WidelyContainer, 
-    WidelyHeaderSection, 
-    WidelyFormSection, 
+import {
+    WidelyContainer,
+    WidelyHeaderSection,
+    WidelyFormSection,
     WidelyConnectionSection,
-    WidelyInfoSection 
+    WidelyInfoSection
 } from '../designComponent/styles/widelyStyles'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -55,7 +55,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     // פונקציה לטיפול בביטול קו
     // const handleTerminateLine = async () => {
     //     if (!widelyDetails?.endpoint_id) return;
-        
+
     //     try {
     //         setIsTerminating(true);
     //         await terminateLine(widelyDetails.endpoint_id);
@@ -72,7 +72,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
-        
+
         try {
             setIsTerminating(true);
             await terminateLine(widelyDetails.endpoint_id);
@@ -101,31 +101,36 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // setValue('replacingProgram', details.someDefaultProgram || 'program1');
         } catch (err: any) {
             // Parse error response to determine appropriate user message
-            const errorMessage = err?.response?.data?.message || 
-                                  err?.response?.data?.error?.message || 
-                                  err?.message || '';
-            
+            const errorMessage = err?.response?.data?.message ||
+                err?.response?.data?.error?.message ||
+                err?.message || '';
+
             // Set appropriate error message based on server response
-            if (errorMessage === 'SIM number not found.') {
-                setError(t('simNumberNotFound'));
-            }
-            else if (errorMessage === 'No devices found for this user.') {
-                setError(t('simNumberNotFound'));
-            }
-            else if (errorMessage === 'Error searching for user data.') {
-                setError(t('errorSearchingUserData'));
-            }
-            else if (errorMessage.includes('Error loading user data')) {
-                setError(t('errorLoadingUserData'));
-            }
-            else if (errorMessage.includes('Error loading device')) {
-                setError(t('errorLoadingDeviceData'));
-            }
-            else if (errorMessage.includes('Failed to load')) {
-                setError(t('errorLoadingDeviceDetails'));
-            }
-            else {
-                setError(t('errorLoadingDeviceDetails'));
+            switch (errorMessage) {
+                case 'SIM number not found.':
+                case 'No devices found for this user.':
+                    setError(t('simNumberNotFound'));
+                    break;
+
+                case 'Multiple SIM numbers found - please provide more specific SIM number.':
+                    setError(t('multipleSIMNumbersFound'));
+                    break;
+
+                case 'Error searching for user data.':
+                    setError(t('errorSearchingUserData'));
+                    break;
+
+                default:
+                    if (errorMessage.includes('Error loading user data')) {
+                        setError(t('errorLoadingUserData'));
+                    } else if (errorMessage.includes('Error loading device')) {
+                        setError(t('errorLoadingDeviceData'));
+                    } else if (errorMessage.includes('Failed to load')) {
+                        setError(t('errorLoadingDeviceDetails'));
+                    } else {
+                        setError(t('errorLoadingDeviceDetails'));
+                    }
+                    break;
             }
         } finally {
             setLoading(false);
@@ -138,37 +143,37 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // Component for reusable header section
     const HeaderSection = () => (
-        <WidelyHeaderSection sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <WidelyHeaderSection sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Box display="flex" alignItems="center" gap="4px">
-                    <CustomTypography
-                        text={t('simData')}
-                        variant="h3"
-                        weight="medium"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={simNumber}
-                        variant="h4"
-                        weight="regular"
-                        color={colors.c11}
+                <CustomTypography
+                    text={t('simData')}
+                    variant="h3"
+                    weight="medium"
+                    color={colors.c11}
+                />
+                <CustomTypography
+                    text={simNumber}
+                    variant="h4"
+                    weight="regular"
+                    color={colors.c11}
                 />
             </Box>
-            <CustomButton
-                label={t('refreshSIM_data')}
-                size="small"
-                buttonType="second"
-                onClick={handleRefresh}
-                disabled={loading}
-                    />
-                </Box>
-                
+
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 <CustomButton
                     label={t('cancelLine')}
                     buttonType="first"
                     size="small"
                     onClick={() => setIsTerminateModalOpen(true)}
-            />
+                />
+                <CustomButton
+                    label={t('refreshSIM_data')}
+                    size="small"
+                    buttonType="second"
+                    onClick={handleRefresh}
+                    disabled={loading}
+                />
+            </Box>
         </WidelyHeaderSection>
     );
 
@@ -218,7 +223,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     ]}
                 />
             </WidelyFormSection>
-            
+
             <WidelyConnectionSection>
                 <CustomTypography
                     text={t('connection')}
@@ -238,7 +243,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </WidelyConnectionSection>
-            
+
             <WidelyInfoSection>
                 {infoItems.map((item, index) => (
                     <Fragment key={index}>
@@ -270,11 +275,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (loading && !widelyDetails) {
             return renderLoadingState();
         }
-        
+
         if (widelyDetails) {
             return renderMainContent();
         }
-        
+
         return renderNoDataState();
     };
 
@@ -302,40 +307,40 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <CustomModal
                 open={isTerminateModalOpen}
                 onClose={() => setIsTerminateModalOpen(false)}
-                // maxWidth={400}
+            // maxWidth={400}
             >
                 {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
-                    <CustomTypography
-                        text={t('cancelLine')}
-                        variant="h1"
-                        weight="medium"
-                        color={colors.c11}
-                        sx={{ marginBottom: 3 }}
+                <CustomTypography
+                    text={t('cancelLine')}
+                    variant="h1"
+                    weight="medium"
+                    color={colors.c11}
+                    sx={{ marginBottom: 3 }}
+                />
+
+                <CustomTypography
+                    text={t('areYouSureYouWantToCancelTheLine')}
+                    variant="h3"
+                    weight="regular"
+                    color={colors.c11}
+                    sx={{ marginBottom: 4 }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                    <CustomButton
+                        label={t('cancel')}
+                        buttonType="first"
+                        size="small"
+                        onClick={() => setIsTerminateModalOpen(false)}
                     />
-                    
-                    <CustomTypography
-                        text={t('areYouSureYouWantToCancelTheLine')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                        sx={{ marginBottom: 4 }}
+                    <CustomButton
+                        label={t('confirm')}
+                        buttonType="third"
+                        size="small"
+                        onClick={handleTerminateLine}
+                        disabled={isTerminating}
                     />
-                    
-                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                        <CustomButton
-                            label={t('cancel')}
-                            buttonType="first"
-                            size="small"
-                            onClick={() => setIsTerminateModalOpen(false)}
-                        />
-                        <CustomButton
-                            label={t('confirm')}
-                            buttonType="third"
-                            size="small"
-                            onClick={handleTerminateLine}
-                            disabled={isTerminating}
-                        />
-                    </Box>
+                </Box>
                 {/* </Box> */}
             </CustomModal>
         </WidelyContainer>

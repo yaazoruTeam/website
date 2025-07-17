@@ -12,8 +12,8 @@ export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceD
   if (!token) {
     throw new Error('No token found!')
   }
-  
-  const response: AxiosResponse<any> = await axios.post(
+
+  const response: AxiosResponse<WidelyDeviceDetails.Model> = await axios.post(
     `${baseUrl}/get_all_user_data`,
     {
       simNumber: simNumber,
