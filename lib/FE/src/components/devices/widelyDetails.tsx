@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment } from 'react'
-import { getWidelyDetails } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -9,25 +9,46 @@ import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
-import { 
-    WidelyContainer, 
-    WidelyHeaderSection, 
-    WidelyFormSection, 
+import {
+    WidelyContainer,
+    WidelyHeaderSection,
+    WidelyFormSection,
     WidelyConnectionSection,
-    WidelyInfoSection 
+    WidelyInfoSection
 } from '../designComponent/styles/widelyStyles'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
+    const [exchangePackages, setExchangePackages] = useState<any | null>(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
     const { t } = useTranslation()
-    const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string, addOneTimeGigabyte: string }>({
+
+    // פונקציה לעיבוד אפשרויות החבילות
+    const getPackageOptions = () => {
+        // לפי המבנה שתיארת: packages.data.items
+        const items = (exchangePackages as any)?.data?.items;
+        if (!items || !Array.isArray(items)) return [];
+        
+        return items.map((pkg: any) => {
+            const description = pkg.description?.EN || t('description');
+            const price = pkg.price || 0;
+            
+            // בניית הלייבל בפורמט: "תיאור - מחיר₪ לחודש"
+            const label = `${description} - ${price}₪ ${t('perMonth')}`;
+            
+            return {
+                value: pkg.id.toString(),
+                label: label
+            };
+        });
+    };
+    const { control, setValue } = useForm<{ simNumber: string, replacingPackages: string, addOneTimeGigabyte: string }>({
         defaultValues: {
             simNumber: simNumber,
-            replacingProgram: 'program1', //to do:Change to the first value from the list returned from the server call that retrieves all the data - the list of existing programs.
-            addOneTimeGigabyte: 'program1' //to do:Change to the first value from the list returned from the server call that retrieves all the data - the list of existing programs.
+            replacingPackages: '',
+            addOneTimeGigabyte: ''
         }
     })
 
@@ -61,7 +82,18 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 // עדכון ערך החיבור הנבחר
                 setSelectedNetworkConnection(details.network_connection);
                 // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
-                // setValue('replacingProgram', details.someDefaultProgram || 'program1');
+                // setValue('replacingPackages', details.someDefaultProgram || 'program1');
+
+                const packages = await getPackagesWithInfo();
+                console.log('Packages with info:', packages); // לוג לבדיקה
+                setExchangePackages(packages);
+                
+                // קביעת ערך ברירת מחדל לחבילות החלפה
+                const items = (packages as any)?.data?.items;
+                if (items && Array.isArray(items) && items.length > 0) {
+                    const defaultValue = items[0].id.toString();
+                    setValue('replacingPackages', defaultValue);
+                }
             } catch (err) {
                 setError(t('errorLoadingDeviceDetails'));
                 console.error('Error fetching widely details:', err);
@@ -123,13 +155,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
                 <CustomSelect
                     control={control}
-                    name="replacingProgram"
-                    label={t('replacingProgram')}
-                    options={[//to do:Add a call to the widely server to retrieve existing programs
-                        { value: 'program1', label: 'תוכנית 1' },
-                        { value: 'program2', label: 'תוכנית 2' },
-                        { value: 'program3', label: 'תוכנית 3' }
-                    ]}
+                    name="replacingPackages"
+                    label={t('replacingPackages')}
+                    options={getPackageOptions()}
                 />
                 <CustomSelect
                     //to do:Change to add a one-time gigabyte and make a server call
@@ -143,7 +171,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     ]}
                 />
             </WidelyFormSection>
-            
+
             <WidelyConnectionSection>
                 <CustomTypography
                     text={t('connection')}
@@ -163,7 +191,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </WidelyConnectionSection>
-            
+
             <WidelyInfoSection>
                 {infoItems.map((item, index) => (
                     <Fragment key={index}>
