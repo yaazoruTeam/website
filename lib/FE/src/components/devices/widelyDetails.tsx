@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment } from 'react'
-import { getWidelyDetails } from '../../api/widely'
+import { getWidelyDetails, sendApn } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -16,6 +16,7 @@ import {
     WidelyConnectionSection,
     WidelyInfoSection 
 } from '../designComponent/styles/widelyStyles'
+import { CustomButton } from '../designComponent/Button'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
@@ -72,6 +73,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         fetchWidelyDetails();
     }, [simNumber, setValue, t]);
 
+    // TO DO: יש לבדוק מאיפה מגיע המשתנה endpoint_id לפונקציה sendApn
+    const handleSendApn = async () => {
+        sendApn()
+    }
+
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -113,6 +119,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     color={colors.c11}
                 />
             </WidelyHeaderSection>
+
+             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                <CustomButton
+                    label={t('sendApn')}
+                    onClick={handleSendApn}
+                    buttonType="fourth"
+                    size="large"
+                />
+            </Box>
 
             <WidelyFormSection>
                 <CustomTextField
