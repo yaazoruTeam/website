@@ -174,20 +174,5 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-//to do: Move this function into the correct folder and file.
-const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { endpoint_id } = req.body
-        validateRequiredParam(endpoint_id, 'endpoint_id')
-        
-        const result: Widely.Model = await callingWidely(
-            'prov_terminate_mobile',
-            { endpoint_id: endpoint_id }
-        )
-        res.status(result.error_code).json(result)
-    } catch (error: any) {
-        next(error)
-    }
-}
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile }
+export { searchUsers, getMobiles, getMobileInfo, getAllUserData }
 

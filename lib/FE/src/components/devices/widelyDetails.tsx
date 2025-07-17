@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment } from 'react'
-import { getWidelyDetails, resetVoicemailPincode } from '../../api/widely'
+import { getWidelyDetails, terminateLine, resetVoicemailPincode } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form'
 import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
 import { CustomButton } from '../designComponent/Button'
+import CustomModal from '../designComponent/Modal'
 import { 
     WidelyContainer, 
     WidelyHeaderSection, 
@@ -24,6 +25,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
     const [isResettingPincode, setIsResettingPincode] = useState(false);
+    const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
+    const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
     const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string, addOneTimeGigabyte: string }>({
         defaultValues: {
@@ -53,6 +56,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
         resetVoicemailPincode(400093108)
+    }
+    
+    // פונקציה לטיפול בביטול קו
+    const handleTerminateLine = async () => {
+        if (!widelyDetails?.endpoint_id) return;
+        
+        try {
+            setIsTerminating(true);
+            await terminateLine(widelyDetails.endpoint_id);
+            setIsTerminateModalOpen(false);
+            // ניתן להוסיף הודעת הצלחה או לרענן את הנתונים
+        } catch (err) {
+            console.error('Error terminating line:', err);
+            // ניתן להוסיף הודעת שגיאה
+        } finally {
+            setIsTerminating(false);
+        }
     }
 
     useEffect(() => {
@@ -106,18 +126,27 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     return (
         <WidelyContainer>
             {/* כותרת עליונה */}
-            <WidelyHeaderSection>
-                <CustomTypography
-                    text={t('simData')}
-                    variant="h3"
-                    weight="medium"
-                    color={colors.c11}
-                />
-                <CustomTypography
-                    text={simNumber}
-                    variant="h4"
-                    weight="regular"
-                    color={colors.c11}
+            <WidelyHeaderSection sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <CustomTypography
+                        text={t('simData')}
+                        variant="h3"
+                        weight="medium"
+                        color={colors.c11}
+                    />
+                    <CustomTypography
+                        text={simNumber}
+                        variant="h4"
+                        weight="regular"
+                        color={colors.c11}
+                    />
+                </Box>
+                
+                <CustomButton
+                    label={t('cancelLine')}
+                    buttonType="first"
+                    size="small"
+                    onClick={() => setIsTerminateModalOpen(true)}
                 />
             </WidelyHeaderSection>
 
@@ -205,6 +234,46 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     size="large"
                 />
             </Box>
+            {/* מודל אישור ביטול קו */}
+            <CustomModal
+                open={isTerminateModalOpen}
+                onClose={() => setIsTerminateModalOpen(false)}
+                // maxWidth={400}
+            >
+                {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
+                    <CustomTypography
+                        text={t('cancelLine')}
+                        variant="h1"
+                        weight="medium"
+                        color={colors.c11}
+                        sx={{ marginBottom: 3 }}
+                    />
+                    
+                    <CustomTypography
+                        text={t('areYouSureYouWantToCancelTheLine')}
+                        variant="h3"
+                        weight="regular"
+                        color={colors.c11}
+                        sx={{ marginBottom: 4 }}
+                    />
+                    
+                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                        <CustomButton
+                            label={t('cancel')}
+                            buttonType="first"
+                            size="small"
+                            onClick={() => setIsTerminateModalOpen(false)}
+                        />
+                        <CustomButton
+                            label={t('confirm')}
+                            buttonType="third"
+                            size="small"
+                            onClick={handleTerminateLine}
+                            disabled={isTerminating}
+                        />
+                    </Box>
+                {/* </Box> */}
+            </CustomModal>
         </WidelyContainer>
     );
 }

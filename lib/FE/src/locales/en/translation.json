@@ -251,5 +251,9 @@
   "addOneTimeGigabyte": "add one-time gigabyte",
   "errorLoadingDeviceDetails": "Error loading device details",
   "noDeviceDetailsFound": "No device details found",
-  "resetVoicemailPincode": "Reset voicemail password to 1234"
+  "resetVoicemailPincode": "Reset voicemail password to 1234",
+  "cancelLine": "Cancel Line",
+  "areYouSureYouWantToCancelTheLine": "Are you sure you want to cancel the line?",
+  "cancel": "Cancel",
+  "confirm": "Confirm"
 }
