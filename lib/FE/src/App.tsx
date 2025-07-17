@@ -42,6 +42,7 @@ import CardCustomer from './components/customers/card/cardCustomer'
 import CallCenter from './components/switchboard/CallCenter'
 import CallLog from './components/switchboard/CallLog'
 import { AppLayout } from './components/designComponent/AppLayout'
+import DeviceCard from './components/devices/deviceCard'
 
 function App() {
   const { t } = useTranslation()
@@ -152,6 +153,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Devices />
+                  </ProtectedRoute>
+                }
+              />
+                 <Route
+                path='/device/card/:id'
+                element={
+                  <ProtectedRoute>
+                    <DeviceCard />
                   </ProtectedRoute>
                 }
               />

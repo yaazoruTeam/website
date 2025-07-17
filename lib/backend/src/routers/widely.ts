@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import * as widelyController from '../controller/widely'
+import * as widelyController from '../controller/widely/index'
 import { hasRole } from '../middleware/auth'
 
 const widelyRouter = Router()

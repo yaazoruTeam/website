@@ -36,3 +36,30 @@ export const getAllCustomerDevicesByCustomerId = async (customer_id: string, pag
     throw error
   }
 }
+
+// GET customer device by device_id - שליפה לפי מספר מכשיר
+export const getCustomerDeviceByDeviceId = async (device_id: string): Promise<CustomerDevice.Model | null> => {
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return null
+    }
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<PaginatedCustomerDeviceResponse> = await axios.get(
+      `${baseUrl}/device/${device_id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    // מחזיר את הרשומה הראשונה אם קיימת
+    return response.data.data.length > 0 ? response.data.data[0] : null
+  } catch (error) {
+    console.error('Error fetching customer device by device id', error)
+    return null // במקרה של שגיאה, מחזיר null במקום לזרוק שגיאה
+  }
+}
