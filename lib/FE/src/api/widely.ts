@@ -31,23 +31,51 @@ export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceD
 
 
 export const terminateMobile = async (endpoint_id: number): Promise<Widely.Model> => {
-  const newToken = await handleTokenRefresh()
-  if (!newToken) {
-    return {} as Widely.Model
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as Widely.Model
+    }
+    const token = newToken
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
+      endpoint_id: endpoint_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error terminating mobile', error)
+    throw error
   }
-  const token = newToken
-  if (!token) {
-    throw new Error('No token found!')
+}
+
+export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> => {
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as Widely.Model
+    }
+    const token = newToken
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
+      endpoint_id: endpoint_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error terminating line', error)
+    throw error
   }
-  
-  const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
-    endpoint_id: endpoint_id
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  
-  return response.data
 }
