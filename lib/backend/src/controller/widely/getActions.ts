@@ -190,21 +190,5 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
-//to do: Move this function into the correct folder and file.
-const getPackagesWithInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
 
-    const result: Widely.Model = await callingWidely(
-      'get_packages_with_info',
-      {
-        reseller_domain_id: config.widely.accountId,
-        package_types: ['base']
-      }
-    )
-    res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
-  }
-}
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile, getPackagesWithInfo }
-
+export { searchUsers, getMobiles, getMobileInfo, getAllUserData, terminateMobile }
