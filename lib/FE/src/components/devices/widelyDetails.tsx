@@ -73,9 +73,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         fetchWidelyDetails();
     }, [simNumber, setValue, t]);
 
-    // TO DO: יש לבדוק מאיפה מגיע המשתנה endpoint_id לפונקציה sendApn
     const handleSendApn = async () => {
-        sendApn()
+        if (widelyDetails && widelyDetails.endpoint_id) {
+            try {
+                await sendApn(widelyDetails.endpoint_id);
+                console.log('APN sent successfully');
+            } catch (err) {
+                console.error('Error sending APN:', err);
+            }
+        } else {
+            console.error('Error: endpoint_id is missing or widelyDetails is null');
+        }
     }
 
     if (loading) {
