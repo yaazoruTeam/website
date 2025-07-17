@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment } from 'react'
-import { getWidelyDetails, terminateLine } from '../../api/widely'
+import { getWidelyDetails, terminateLine, resetVoicemailPincode } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -24,6 +24,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
+    const [isResettingPincode, setIsResettingPincode] = useState(false);
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
@@ -52,6 +53,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         mx: '40px'
     }
 
+    // פונקציה לאיפוס סיסמת תא קולי
+    const handleResetVoicemailPincode = async () => {
+        resetVoicemailPincode(400093108)
+    }
+    
     // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
@@ -218,6 +224,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 ))}
             </WidelyInfoSection>
 
+            {/* כפתור איפוס סיסמת תא קולי */}
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                <CustomButton
+                    label={t('resetVoicemailPincode')}
+                    onClick={handleResetVoicemailPincode}
+                    disabled={isResettingPincode || !widelyDetails?.endpoint_id}
+                    buttonType="fourth"
+                    size="large"
+                />
+            </Box>
             {/* מודל אישור ביטול קו */}
             <CustomModal
                 open={isTerminateModalOpen}
