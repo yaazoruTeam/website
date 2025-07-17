@@ -6,7 +6,7 @@ export interface CustomButtonProps extends ButtonProps {
   label: string
   icon?: React.ReactElement
   size?: 'small' | 'large'
-  buttonType?: 'first' | 'second' | 'third'
+  buttonType?: 'first' | 'second' | 'third' | 'fourth'
   state?: 'default' | 'hover' | 'active'
 }
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -79,21 +79,50 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         hover: '',
       },
     },
+    fourth: {
+      default: {
+        backgroundColor: 'transparent',
+        color: colors.c11,
+        border: `1px solid ${colors.c8}`,
+        hover: colors.c5,
+      },
+      hover: {
+        backgroundColor: colors.c5,
+        color: colors.c11,
+        border: `1px solid ${colors.c8}`,
+        hover: '',
+      },
+      active: {
+        backgroundColor: 'transparent',
+        color: colors.c11,
+        border: `1px solid ${colors.c8}`,
+        hover: '',
+      },
+    },
   }
   const currentButtonStyle = buttonStyles[buttonType][state]
+  
+  // עיצוב מיוחד לכפתור fourth (מ-Figma)
+  const isFourthType = buttonType === 'fourth'
+  
   return (
     <Button
       sx={{
         backgroundColor: currentButtonStyle.backgroundColor,
         color: currentButtonStyle.color,
         border: currentButtonStyle.border || 'none',
-        padding: '10px 20px',
+        padding: isFourthType ? '10px 16px' : '10px 20px',
         display: 'flex',
         height: '40px',
         alignItems: 'center',
         gap: '10px',
-        borderRadius: '4px',
-        justifyContent: 'flex-end',
+        borderRadius: isFourthType ? '16px' : '4px',
+        justifyContent: 'center',
+        width: isFourthType ? '100%' : 'auto',
+        fontFamily: isFourthType ? 'Heebo' : 'inherit',
+        fontSize: isFourthType ? '16px' : 'inherit',
+        fontWeight: isFourthType ? '400' : 'inherit',
+        textAlign: isFourthType ? 'right' : 'inherit',
         '&:hover': {
           background: currentButtonStyle.hover,
         },

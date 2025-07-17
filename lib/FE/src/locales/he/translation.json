@@ -257,6 +257,7 @@
   "errorLoadingDeviceData": "שגיאה בטעינת נתוני המכשיר",
   "noUserDevicesFound": "לא נמצאו מכשירים עבור משתמש זה",
   "errorSearchingUserData": "שגיאה בחיפוש בנתוני המשתמש",
+  "resetVoicemailPincode": "איפוס סיסמת תא קולי ל-1234",
   "cancelLine": "ביטול קו",
   "areYouSureYouWantToCancelTheLine": "האם אתם בטוחים שאתם רוצים לבטל את הקו?",
   "cancel": "ביטול",
