@@ -105,7 +105,7 @@ export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely
   }
 }
 
-export const sendApn = async (endpoint_id: string): Promise<any> => {
+export const sendApn = async (endpoint_id: number): Promise<any> => {
   try {
     const newToken = await handleTokenRefresh()
     if (!newToken) {
