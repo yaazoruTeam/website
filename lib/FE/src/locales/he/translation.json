@@ -256,5 +256,6 @@
   "cancelLine": "ביטול קו",
   "areYouSureYouWantToCancelTheLine": "האם אתם בטוחים שאתם רוצים לבטל את הקו?",
   "cancel": "ביטול",
-  "confirm": "אישור"
+  "confirm": "אישור",
+  "softReset": "איפוס קל"
 }

@@ -255,5 +255,6 @@
   "cancelLine": "Cancel Line",
   "areYouSureYouWantToCancelTheLine": "Are you sure you want to cancel the line?",
   "cancel": "Cancel",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "softReset": "Soft Reset"
 }
