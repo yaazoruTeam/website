@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { useEffect, useState, Fragment } from 'react'
+import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getWidelyDetails, terminateLine, resetVoicemailPincode, reregisterInHlr } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
@@ -11,12 +11,12 @@ import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
 import { CustomButton } from '../designComponent/Button'
 import CustomModal from '../designComponent/Modal'
-import { 
-    WidelyContainer, 
-    WidelyHeaderSection, 
-    WidelyFormSection, 
+import {
+    WidelyContainer,
+    WidelyHeaderSection,
+    WidelyFormSection,
     WidelyConnectionSection,
-    WidelyInfoSection 
+    WidelyInfoSection
 } from '../designComponent/styles/widelyStyles'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -24,7 +24,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
-    const [isResettingPincode, setIsResettingPincode] = useState(false);
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
@@ -57,11 +56,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const handleResetVoicemailPincode = async () => {
         resetVoicemailPincode(400093108)
     }
-    
+
     // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
-        
+
         try {
             setIsTerminating(true);
             await terminateLine(widelyDetails.endpoint_id);
@@ -88,80 +87,91 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
-    useEffect(() => {
-        const fetchWidelyDetails = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber);
-                setWidelyDetails(details);
+    const fetchWidelyDetails = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber);
+            setWidelyDetails(details);
 
-                // עדכון הערך בטופס
-                setValue('simNumber', details.simNumber);
-                // עדכון ערך החיבור הנבחר
-                setSelectedNetworkConnection(details.network_connection);
-                // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
-                // setValue('replacingProgram', details.someDefaultProgram || 'program1');
-            } catch (err) {
-                setError(t('errorLoadingDeviceDetails'));
-                console.error('Error fetching widely details:', err);
-            } finally {
-                setLoading(false);
+            // עדכון הערך בטופס
+            setValue('simNumber', details.simNumber);
+            // עדכון ערך החיבור הנבחר
+            setSelectedNetworkConnection(details.network_connection);
+            // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
+            // setValue('replacingProgram', details.someDefaultProgram || 'program1');
+        } catch (err: any) {
+            // Parse error response to determine appropriate user message
+            const errorMessage = err?.response?.data?.message ||
+                err?.response?.data?.error?.message ||
+                err?.message || '';
+            // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
+            const exactMatchErrors: Record<string, string> = {
+                'SIM number not found.': 'simNumberNotFound',
+                'No devices found for this user.': 'simNumberNotFound',
+                'Multiple SIM numbers found - please provide more specific SIM number.': 'multipleSIMNumbersFound',
+                'Error searching for user data.': 'errorSearchingUserData'
             }
-        };
-        fetchWidelyDetails();
+
+            const partialMatchErrors: { test: (msg: string) => boolean; key: string }[] = [
+                { test: msg => msg.includes('Error loading user data'), key: 'errorLoadingUserData' },
+                { test: msg => msg.includes('Error loading device'), key: 'errorLoadingDeviceData' },
+                { test: msg => msg.includes('Failed to load'), key: 'errorLoadingDeviceDetails' }
+            ]
+
+            // 🧠 ראשית נבדוק האם ההודעה היא בדיוק אחת מהשגיאות הידועות
+            if (exactMatchErrors[errorMessage]) {
+                setError(t(exactMatchErrors[errorMessage]));
+            } else {
+                // אם לא – ננסה לזהות בהתבסס על תוכן הודעת השגיאה
+                const match = partialMatchErrors.find(({ test }) => test(errorMessage));
+                setError(t(match?.key || 'errorLoadingDeviceDetails'));
+            }
+
+        } finally {
+            setLoading(false);
+        }
     }, [simNumber, setValue, t]);
 
-    if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                <CustomTypography text={t('loading')} variant="h3" weight="medium" />
-            </Box>
-        );
-    }
+    const handleRefresh = () => {
+        fetchWidelyDetails();
+    };
 
-    if (error) {
-        return (
-            <Box sx={{ p: 2 }}>
-                <CustomTypography text={error} variant="h4" weight="medium" color={colors.c28} />
+    // Component for reusable header section
+    const HeaderSection = () => (
+        <WidelyHeaderSection sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box display="flex" alignItems="center" gap="4px">
+                <CustomTypography
+                    text={t('simData')}
+                    variant="h3"
+                    weight="medium"
+                    color={colors.c11}
+                />
+                <CustomTypography
+                    text={simNumber}
+                    variant="h4"
+                    weight="regular"
+                    color={colors.c11}
+                />
             </Box>
-        );
-    }
 
-    if (!widelyDetails) {
-        return (
-            <Box sx={{ p: 2 }}>
-                <CustomTypography text={t('noDeviceDetailsFound')} variant="h4" weight="medium" />
-            </Box>
-        );
-    }
-
-    return (
-        <WidelyContainer>
-            {/* כותרת עליונה */}
-            <WidelyHeaderSection sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <CustomTypography
-                        text={t('simData')}
-                        variant="h3"
-                        weight="medium"
-                        color={colors.c11}
-                    />
-                    <CustomTypography
-                        text={simNumber}
-                        variant="h4"
-                        weight="regular"
-                        color={colors.c11}
-                    />
-                </Box>
-                
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 <CustomButton
                     label={t('cancelLine')}
                     buttonType="first"
                     size="small"
                     onClick={() => setIsTerminateModalOpen(true)}
                 />
-            </WidelyHeaderSection>
+                <CustomButton
+                    label={t('refreshSIM_data')}
+                    size="small"
+                    buttonType="second"
+                    onClick={handleRefresh}
+                    disabled={loading}
+                />
+            </Box>
+        </WidelyHeaderSection>
+    );
 
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
                 <CustomButton
@@ -172,6 +182,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
             </Box>
 
+    // רנדור מצב טעינה
+    const renderLoadingState = () => (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <CustomTypography text={t('loading')} variant="h3" weight="medium" />
+        </Box>
+    );
+
+    // רנדור כשאין נתונים
+    const renderNoDataState = () => (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <CustomTypography text={t('noDeviceDetailsFound')} variant="h4" weight="medium" />
+        </Box>
+    );
+
+    // רנדור תוכן הנתונים הראשי
+    const renderMainContent = () => (
+        <>
             <WidelyFormSection>
                 <CustomTextField
                     control={control}
@@ -201,7 +228,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     ]}
                 />
             </WidelyFormSection>
-            
+
             <WidelyConnectionSection>
                 <CustomTypography
                     text={t('connection')}
@@ -221,7 +248,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </WidelyConnectionSection>
-            
+
             <WidelyInfoSection>
                 {infoItems.map((item, index) => (
                     <Fragment key={index}>
@@ -245,13 +272,47 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     </Fragment>
                 ))}
             </WidelyInfoSection>
+        </>
+    );
+
+    // קביעת מה לרנדר בהתבסס על המצב הנוכחי
+    const renderContent = () => {
+        if (loading && !widelyDetails) {
+            return renderLoadingState();
+        }
+
+        if (widelyDetails) {
+            return renderMainContent();
+        }
+
+        return renderNoDataState();
+    };
+
+    useEffect(() => {
+        fetchWidelyDetails();
+    }, [fetchWidelyDetails]);
+
+    if (error) {
+        return (
+            <WidelyContainer>
+                <HeaderSection />
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                    <CustomTypography text={error} variant="h4" weight="medium" color={colors.c28} />
+                </Box>
+            </WidelyContainer>
+        );
+    }
+
+    return (
+        <WidelyContainer>
+            <HeaderSection />
+            {renderContent()}
 
             {/* כפתור איפוס סיסמת תא קולי */}
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
-                    disabled={isResettingPincode || !widelyDetails?.endpoint_id}
                     buttonType="fourth"
                     size="large"
                 />
@@ -260,40 +321,40 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <CustomModal
                 open={isTerminateModalOpen}
                 onClose={() => setIsTerminateModalOpen(false)}
-                // maxWidth={400}
+            // maxWidth={400}
             >
                 {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
-                    <CustomTypography
-                        text={t('cancelLine')}
-                        variant="h1"
-                        weight="medium"
-                        color={colors.c11}
-                        sx={{ marginBottom: 3 }}
+                <CustomTypography
+                    text={t('cancelLine')}
+                    variant="h1"
+                    weight="medium"
+                    color={colors.c11}
+                    sx={{ marginBottom: 3 }}
+                />
+
+                <CustomTypography
+                    text={t('areYouSureYouWantToCancelTheLine')}
+                    variant="h3"
+                    weight="regular"
+                    color={colors.c11}
+                    sx={{ marginBottom: 4 }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                    <CustomButton
+                        label={t('cancel')}
+                        buttonType="first"
+                        size="small"
+                        onClick={() => setIsTerminateModalOpen(false)}
                     />
-                    
-                    <CustomTypography
-                        text={t('areYouSureYouWantToCancelTheLine')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                        sx={{ marginBottom: 4 }}
+                    <CustomButton
+                        label={t('confirm')}
+                        buttonType="third"
+                        size="small"
+                        onClick={handleTerminateLine}
+                        disabled={isTerminating}
                     />
-                    
-                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                        <CustomButton
-                            label={t('cancel')}
-                            buttonType="first"
-                            size="small"
-                            onClick={() => setIsTerminateModalOpen(false)}
-                        />
-                        <CustomButton
-                            label={t('confirm')}
-                            buttonType="third"
-                            size="small"
-                            onClick={handleTerminateLine}
-                            disabled={isTerminating}
-                        />
-                    </Box>
+                </Box>
                 {/* </Box> */}
             </CustomModal>
         </WidelyContainer>

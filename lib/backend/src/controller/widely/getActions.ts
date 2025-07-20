@@ -14,7 +14,6 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-// Helper functions that return data
 const searchUsersData = async (simNumber: string): Promise<any> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
@@ -22,13 +21,38 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
     search_string: simNumber,
   })
 
-  validateWidelyResult(result, 'User not found for the provided simNumber.')
+  // Check for API error response and validate data presence
+  validateWidelyResult(result, 'SIM number not found.')
 
-  const userData = result.data[0]
-  if (!userData) {
+  // Normalize data to array format for consistent handling
+  const dataArray = Array.isArray(result.data) ? result.data : [result.data]
+
+  // If no results found
+  if (dataArray.length === 0) {
     const error: HttpError.Model = {
       status: 404,
-      message: 'User not found for the provided simNumber.',
+      message: 'SIM number not found.',
+    }
+    throw error
+  }
+
+  // If multiple results found, throw error (ambiguous search)
+  if (dataArray.length > 1) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'Multiple SIM numbers found - please provide more specific SIM number.',
+    }
+    throw error
+  }
+
+  // If exactly one result found, return it (successful search)
+  const userData = dataArray[0]
+  
+  // Validate that userData exists and has required fields
+  if (!userData || (!userData.domain_user_name && !userData.name)) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'SIM number not found.',
     }
     throw error
   }
@@ -42,13 +66,13 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
     domain_user_id: domain_user_id,
   })
 
-  validateWidelyResult(result, 'No mobiles found for the user.')
+  validateWidelyResult(result, 'Failed to load user devices.')
 
   const mobileData = result.data[0]
   if (!mobileData) {
     const error: HttpError.Model = {
       status: 404,
-      message: 'No mobiles found for the user.',
+      message: 'No devices found for this user.',
     }
     throw error
   }
@@ -60,13 +84,42 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
-    })
+  })
 
-  validateWidelyResult(result, 'Mobile info not found.', false)
+  // Check for error_code in response
+  if (result.error_code !== undefined && result.error_code !== 200) {
+    const error: HttpError.Model = {
+      status: result.error_code || 500,
+      message: 'Failed to load device details.',
+    }
+    throw error
+  }
 
-  // Check if the data is an array or object
-  const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
-  return mobileData
+  // Handle response with data property (Widely.Model structure)
+  if (result.data !== undefined) {
+    const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
+
+    if (!mobileData || Object.keys(mobileData).length === 0) {
+      const error: HttpError.Model = {
+        status: 500,
+        message: 'Error loading device details.',
+      }
+      throw error
+    }
+
+    return mobileData
+  }
+
+  // Handle direct object response (without data property)
+  if (!result || Object.keys(result).length === 0) {
+    const error: HttpError.Model = {
+      status: 500,
+      message: 'Error loading device details.',
+    }
+    throw error
+  }
+
+  return result
 }
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -111,25 +164,57 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     validateRequiredParam(simNumber, 'simNumber')
 
     // Step 1: Search for user based on SIM number
-    const user = await searchUsersData(simNumber)
-    const domain_user_id = user.domain_user_id
+    let user;
+    try {
+      user = await searchUsersData(simNumber)
+    } catch (error: any) {
+      // Pass through SIM not found errors as-is
+      if (error.message === 'SIM number not found.') {
+        throw error;
+      }
+      // Convert other errors to generic search error
+      const err: HttpError.Model = {
+        status: 500,
+        message: 'Error searching for user data.',
+      }
+      throw err;
+    }
 
+    const domain_user_id = user.domain_user_id
     if (!domain_user_id) {
       const error: HttpError.Model = {
-        status: 404,
-        message: 'User domain_user_id not found.',
+        status: 500,
+        message: 'Error loading user data - missing domain_user_id.',
       }
       throw error
     }
 
-    // Step 2: Get user's devices
-    const mobile = await getMobilesData(domain_user_id)
-    const endpoint_id = mobile.endpoint_id
+    // Step 2: Get user's mobile devices
+    let mobile;
+    try {
+      mobile = await getMobilesData(domain_user_id)
+    } catch (error: any) {
+      // If no devices found, treat as SIM not found
+      if (error.message === 'No devices found for this user.') {
+        const err: HttpError.Model = {
+          status: 404,
+          message: 'SIM number not found.',
+        }
+        throw err;
+      }
+      // Convert other errors to generic device loading error
+      const err: HttpError.Model = {
+        status: 500,
+        message: 'Error loading user devices.',
+      }
+      throw err;
+    }
 
+    const endpoint_id = mobile.endpoint_id
     if (!endpoint_id) {
       const error: HttpError.Model = {
-        status: 404,
-        message: 'Mobile endpoint_id not found.',
+        status: 500,
+        message: 'Error loading device data - missing endpoint_id.',
       }
       throw error
     }
@@ -137,29 +222,32 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     // Step 3: Get detailed device information
     const mobileInfo = await getMobileInfoData(endpoint_id)
 
-        // Extract data usage from the correct location with safety checks
-        const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
+    if (!mobileInfo) {
+      const error: HttpError.Model = {
+        status: 500,
+        message: 'Error loading device details.',
+      }
+      throw error
+    }
 
-        // Extract max data allowance (גיגה מקסימלית לחודש)
-        const maxDataAllowance = mobileInfo?.data_limit || 0
+    // Extract and format response data
+    const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
+    const maxDataAllowance = mobileInfo?.data_limit || 0
+    const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
+    const networkConnection = getNetworkConnection(mccMnc)
+    const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
+    const status = mobileInfo?.registration_info?.status || 'Unknown'
 
-        // Network identification based on mcc_mnc
-        const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
-        const networkConnection = getNetworkConnection(mccMnc)
-
-    // Prepare data for response
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: parseInt(endpoint_id) || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
       max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
-      imei1:
-        mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available',
-      status: mobileInfo?.registration_info?.status || 'Not available',
+      imei1: imei,
+      status: status,
       imei_lock: mobileInfo?.sim_data?.lock_on_first_imei ? 'Locked' : 'Not locked',
-      msisdn:
-        mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || 'Not available',
+      msisdn: mobileInfo?.sim_data?.msisdn || mobileInfo?.registration_info?.msisdn || 'Not available',
       iccid: mobileInfo?.sim_data?.iccid || mobileInfo?.iccid || 'Not available',
       device_info: {
         brand: mobileInfo?.device_info?.brand || 'Not available',
