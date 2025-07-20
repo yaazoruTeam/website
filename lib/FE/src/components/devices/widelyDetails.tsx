@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getWidelyDetails, terminateLine, resetVoicemailPincode } from '../../api/widely'
+import { getWidelyDetails, terminateLine, resetVoicemailPincode, reregisterInHlr } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -69,6 +69,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         } catch (err) {
             console.error('Error terminating line:', err);
             // ניתן להוסיף הודעת שגיאה
+        } finally {
+            setIsTerminating(false);
+        }
+    }
+
+        // פונקציה לטיפול בביטול קו
+    const handleSoftReset = async () => {
+        if (!widelyDetails?.endpoint_id) return;
+        
+        try {
+            await reregisterInHlr(widelyDetails.endpoint_id);
+        } catch (err) {
+            console.error('Error resetting line:', err);
         } finally {
             setIsTerminating(false);
         }
@@ -159,6 +172,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             </Box>
         </WidelyHeaderSection>
     );
+
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                <CustomButton
+                    label={t('softReset')}
+                    onClick={handleSoftReset}
+                    buttonType="fourth"
+                    size="large"
+                />
+            </Box>
 
     // רנדור מצב טעינה
     const renderLoadingState = () => (
