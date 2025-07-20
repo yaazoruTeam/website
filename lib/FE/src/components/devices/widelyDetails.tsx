@@ -56,7 +56,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const handleResetVoicemailPincode = async () => {
         resetVoicemailPincode(400093108)
     }
-    
+
     // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
@@ -92,43 +92,29 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const errorMessage = err?.response?.data?.message ||
                 err?.response?.data?.error?.message ||
                 err?.message || '';
-
-            // Set appropriate error message based on server response
-            switch (errorMessage) {
-                case 'SIM number not found.':
-                case 'No devices found for this user.':
-                    setError(t('simNumberNotFound'));
-                    break;
-
-                case 'Multiple SIM numbers found - please provide more specific SIM number.':
-                    setError(t('multipleSIMNumbersFound'));
-                    break;
-
-                case 'Error searching for user data.':
-                    setError(t('errorSearchingUserData'));
-                    break;
-
-                default:
-                    // Handle error messages that contain specific strings
-                    switch (true) {
-                        case errorMessage.includes('Error loading user data'):
-                            setError(t('errorLoadingUserData'));
-                            break;
-                        
-                        case errorMessage.includes('Error loading device'):
-                            setError(t('errorLoadingDeviceData'));
-                            break;
-                        
-                        case errorMessage.includes('Failed to load'):
-                            setError(t('errorLoadingDeviceDetails'));
-                            break;
-                        
-                        default:
-                            setError(t('errorLoadingDeviceDetails'));
-                            break;
-                    }
-                    break;
+            // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
+            const exactMatchErrors: Record<string, string> = {
+                'SIM number not found.': 'simNumberNotFound',
+                'No devices found for this user.': 'simNumberNotFound',
+                'Multiple SIM numbers found - please provide more specific SIM number.': 'multipleSIMNumbersFound',
+                'Error searching for user data.': 'errorSearchingUserData'
             }
+
+            const partialMatchErrors: { test: (msg: string) => boolean; key: string }[] = [
+                { test: msg => msg.includes('Error loading user data'), key: 'errorLoadingUserData' },
+                { test: msg => msg.includes('Error loading device'), key: 'errorLoadingDeviceData' },
+                { test: msg => msg.includes('Failed to load'), key: 'errorLoadingDeviceDetails' }
+            ]
+
+            // 🧠 ראשית נבדוק האם ההודעה היא בדיוק אחת מהשגיאות הידועות
+            if (exactMatchErrors[errorMessage]) {
+                setError(t(exactMatchErrors[errorMessage]));
+            } else {
+                // אם לא – ננסה לזהות בהתבסס על תוכן הודעת השגיאה
+                const match = partialMatchErrors.find(({ test }) => test(errorMessage));
+                setError(t(match?.key || 'errorLoadingDeviceDetails'));
+            }
+
         } finally {
             setLoading(false);
         }
