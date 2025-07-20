@@ -19,7 +19,7 @@ import {
     WidelyInfoSection
 } from '../designComponent/styles/widelyStyles'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import ModelPackages from './changePackege'
+import ModelPackages from './modelPackege'
 
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -33,10 +33,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
-    console.log(widelyDetails);
-    console.log('selectedPackage:', selectedPackage);
-
-
+   
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
         // לפי המבנה שתיארת: packages.data.items
@@ -118,7 +115,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // setValue('replacingPackages', details.someDefaultProgram || 'program1');
             setSelectedPackage(details.package_id || "");
             const packages = await getPackagesWithInfo();
-            console.log('Packages with info:', packages); // לוג לבדיקה
             setExchangePackages(packages);
 
             // קביעת ערך ברירת מחדל לחבילות החלפה

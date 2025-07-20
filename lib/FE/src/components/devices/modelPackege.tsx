@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import CustomModal from "../designComponent/Modal";
 import CustomRadioBox from "../designComponent/RadioBox";
@@ -16,10 +16,10 @@ interface ModelPackagesProps {
 
 const ModelPackages = ({ packages, open, close, defaultValue }: ModelPackagesProps) => {
     const { t } = useTranslation();
-    const [selectedPackage, setSelectedPackage] = useState<string>(defaultValue||'');
+    const [selectedPackage, setSelectedPackage] = useState<string>(defaultValue || '');
 
     useEffect(() => {
-        setSelectedPackage(defaultValue||'');
+        setSelectedPackage(defaultValue || '');
     }, [defaultValue, open]);
 
     return (
@@ -46,7 +46,9 @@ const ModelPackages = ({ packages, open, close, defaultValue }: ModelPackagesPro
                     <CustomButton
                         label={t('approval')}
                         buttonType="first"
-                        onClick={() => { /* כאן אפשר להפעיל לוגיקה עם selectedPackage */ }}
+                        onClick={() => {
+                            console.log("Selected package:", selectedPackage);
+                        }}
                     />
                     <CustomButton
                         label={t('cancel')}
