@@ -18,30 +18,38 @@ import {
     WidelyConnectionSection,
     WidelyInfoSection
 } from '../designComponent/styles/widelyStyles'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import ModelPackages from './changePackege'
+
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
     const [exchangePackages, setExchangePackages] = useState<any | null>(null)
+    const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
+    const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
+    console.log(widelyDetails);
+    console.log('selectedPackage:', selectedPackage);
+
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
         // לפי המבנה שתיארת: packages.data.items
         const items = (exchangePackages as any)?.data?.items;
         if (!items || !Array.isArray(items)) return [];
-        
+
         return items.map((pkg: any) => {
             const description = pkg.description?.EN || t('description');
             const price = pkg.price || 0;
-            
+
             // בניית הלייבל בפורמט: "תיאור - מחיר₪ לחודש"
             const label = `${description} - ${price}₪ ${t('perMonth')}`;
-            
+
             return {
                 value: pkg.id.toString(),
                 label: label
@@ -75,7 +83,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-        resetVoicemailPincode(400093108)
+        resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
     }
 
     // פונקציה לטיפול בביטול קו
@@ -108,17 +116,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setSelectedNetworkConnection(details.network_connection);
             // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
             // setValue('replacingPackages', details.someDefaultProgram || 'program1');
+            setSelectedPackage(details.package_id || "");
+            const packages = await getPackagesWithInfo();
+            console.log('Packages with info:', packages); // לוג לבדיקה
+            setExchangePackages(packages);
 
-                const packages = await getPackagesWithInfo();
-                console.log('Packages with info:', packages); // לוג לבדיקה
-                setExchangePackages(packages);
-                
-                // קביעת ערך ברירת מחדל לחבילות החלפה
-                const items = (packages as any)?.data?.items;
-                if (items && Array.isArray(items) && items.length > 0) {
-                    const defaultValue = items[0].id.toString();
-                    setValue('replacingPackages', defaultValue);
-                }
+            // קביעת ערך ברירת מחדל לחבילות החלפה
+            const items = (packages as any)?.data?.items;
+            if (items && Array.isArray(items) && items.length > 0) {
+                const defaultValue = items[0].id.toString();
+                setValue('replacingPackages', defaultValue);
+            }
         } catch (err: any) {
             // Parse error response to determine appropriate user message
             const errorMessage = err?.response?.data?.message ||
@@ -216,12 +224,24 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     label={t('simCurrent')}
                     disabled={true}
                 />
-                <CustomSelect
+                <Box onClick={() => { setOpen(true); }} sx={{ cursor: 'pointer' }}>
+                    <CustomTextField
+                        control={control}
+                        name="replacingPackages"
+                        label={t('replacingPackages')}
+                        disabled={true}
+                        icon={<ChevronDownIcon />}
+                        
+                    />
+                </Box>
+                <ModelPackages packages={getPackageOptions()} open={open} close={() => setOpen(false)} defaultValue={selectedPackage} />
+
+                {/* <CustomSelect
                     control={control}
                     name="replacingPackages"
                     label={t('replacingPackages')}
                     options={getPackageOptions()}
-                />
+                /> */}
                 <CustomSelect
                     //to do:Change to add a one-time gigabyte and make a server call
                     control={control}
