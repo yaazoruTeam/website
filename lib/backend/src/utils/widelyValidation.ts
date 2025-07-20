@@ -12,8 +12,10 @@ const validateRequiredParam = (param: any, paramName: string): void => {
 }
 
 // General function for validating results and creating errors
+
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
-    if (result.error_code !== 200) {
+    // Check for API error response
+    if (result.error_code !== undefined && result.error_code !== 200) {
         const error: HttpError.Model = {
             status: result.error_code || 500,
             message: errorMessage,
@@ -21,9 +23,15 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
         throw error
     }
     
-    const hasData = checkLength ? 
-        (result.data && result.data.length > 0) : 
-        (result.data !== null && result.data !== undefined)
+    // Skip data validation if checkLength is false
+    if (!checkLength) {
+        return
+    }
+    
+    // Validate data presence - handle both array and object responses
+    const hasData = Array.isArray(result.data) 
+        ? result.data.length > 0 
+        : (result.data != null && typeof result.data === 'object')
     
     if (!hasData) {
         const error: HttpError.Model = {
