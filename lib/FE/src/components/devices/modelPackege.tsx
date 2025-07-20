@@ -47,7 +47,7 @@ const ModelPackages = ({ packages, open, close, defaultValue }: ModelPackagesPro
                         label={t('approval')}
                         buttonType="first"
                         onClick={() => {
-                            console.log("Selected package:", selectedPackage);
+                            //to do: implement package change logic
                         }}
                     />
                     <CustomButton
