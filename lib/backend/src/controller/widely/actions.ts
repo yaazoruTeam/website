@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { Widely } from '../../model/src'
 import { callingWidely } from '../../integration/widely/callingWidely'
 import { validateRequiredParam } from '../../utils/widelyValidation'
-import { sendMobileAction } from 'integration/widely/widelyActions'
+import { sendMobileAction } from '../../integration/widely/widelyActions'
 import { config } from '../../config'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
