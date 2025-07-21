@@ -98,8 +98,6 @@ const getCommentsByEntity = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    console.log("getCommentsByEntity called with params:", req.params);
-
     const { entity_id, entity_type } = req.params;
     if (!entity_id || !entity_type) {
       const error: HttpError.Model = {

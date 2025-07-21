@@ -316,7 +316,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     useEffect(() => {
         fetchWidelyDetails();
-    }, [fetchWidelyDetails]);
+    }, [fetchWidelyDetails, open]);
 
     if (error) {
         return (
