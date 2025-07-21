@@ -92,4 +92,5 @@ function sanitize(comment: Model, hasId: boolean): Model {
   return newComment;
 }
 
-export { Model, sanitize };
+export type { Model };
+export { sanitize };

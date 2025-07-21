@@ -181,7 +181,7 @@ import { Box, Button } from '@mui/material'
 import { DateRange, DateRangePicker } from '@mui/x-date-pickers-pro'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 import 'dayjs/locale/he'
 
 interface DateRangeSelectorProps {
