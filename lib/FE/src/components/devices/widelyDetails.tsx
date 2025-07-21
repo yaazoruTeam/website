@@ -11,6 +11,7 @@ import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
 import { CustomButton } from '../designComponent/Button'
 import CustomModal from '../designComponent/Modal'
+import { Snackbar, Alert } from '@mui/material'
 import { 
     WidelyContainer, 
     WidelyHeaderSection, 
@@ -27,6 +28,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [isResettingPincode, setIsResettingPincode] = useState(false);
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { t } = useTranslation()
     const { control, setValue } = useForm<{ simNumber: string, replacingProgram: string, addOneTimeGigabyte: string }>({
         defaultValues: {
@@ -55,7 +58,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-        resetVoicemailPincode(400093108)
+        try {
+            await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
+            setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
+        } catch (err) {
+            console.error('Error resetting voicemail pincode:', err);
+            setErrorMessage(t('errorResettingVoicemailPincode'));
+        }
     }
     
     // פונקציה לטיפול בביטול קו
@@ -75,16 +84,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
-        // פונקציה לטיפול באיפוס קו
+    // פונקציה לטיפול באיפוס קו
     const handleSoftReset = async () => {
         if (!widelyDetails?.endpoint_id) return;
         
         try {
             await reregisterInHlr(widelyDetails.endpoint_id);
+            setSuccessMessage(t('softResetSuccess'));
         } catch (err) {
             console.error('Error during soft reset:', err);
-        } finally {
-            setIsTerminating(false);
+            setErrorMessage(t('softResetError'));
         }
     }
 
@@ -112,31 +121,22 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         fetchWidelyDetails();
     }, [simNumber, setValue, t]);
 
-    if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                <CustomTypography text={t('loading')} variant="h3" weight="medium" />
-            </Box>
-        );
-    }
+    // רנדור מצב טעינה
+    const renderLoadingState = () => (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <CustomTypography text={t('loading')} variant="h3" weight="medium" />
+        </Box>
+    );
 
-    if (error) {
-        return (
-            <Box sx={{ p: 2 }}>
-                <CustomTypography text={error} variant="h4" weight="medium" color={colors.c28} />
-            </Box>
-        );
-    }
+    // רנדור כשאין נתונים
+    const renderNoDataState = () => (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <CustomTypography text={t('noDeviceDetailsFound')} variant="h4" weight="medium" />
+        </Box>
+    );
 
-    if (!widelyDetails) {
-        return (
-            <Box sx={{ p: 2 }}>
-                <CustomTypography text={t('noDeviceDetailsFound')} variant="h4" weight="medium" />
-            </Box>
-        );
-    }
-
-    return (
+    // רנדור תוכן הנתונים הראשי
+    const renderMainContent = () => (
         <WidelyContainer>
             {/* כותרת עליונה */}
             <WidelyHeaderSection sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -162,15 +162,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     onClick={() => setIsTerminateModalOpen(true)}
                 />
             </WidelyHeaderSection>
-
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-                <CustomButton
-                    label={t('softReset')}
-                    onClick={handleSoftReset}
-                    buttonType="fourth"
-                    size="large"
-                />
-            </Box>
 
             <WidelyFormSection>
                 <CustomTextField
@@ -246,8 +237,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 ))}
             </WidelyInfoSection>
 
-            {/* כפתור איפוס סיסמת תא קולי */}
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            {/* כפתורי פעולות */}
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                <CustomButton
+                    label={t('softReset')}
+                    onClick={handleSoftReset}
+                    buttonType="fourth"
+                    size="large"
+                />
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
@@ -256,46 +253,58 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     size="large"
                 />
             </Box>
+
             {/* מודל אישור ביטול קו */}
             <CustomModal
                 open={isTerminateModalOpen}
                 onClose={() => setIsTerminateModalOpen(false)}
                 // maxWidth={400}
             >
-                {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
-                    <CustomTypography
-                        text={t('cancelLine')}
-                        variant="h1"
-                        weight="medium"
-                        color={colors.c11}
-                        sx={{ marginBottom: 3 }}
+                <CustomTypography
+                    text={t('cancelLine')}
+                    variant="h1"
+                    weight="medium"
+                    color={colors.c11}
+                    sx={{ marginBottom: 3 }}
+                />
+                
+                <CustomTypography
+                    text={t('areYouSureYouWantToCancelTheLine')}
+                    variant="h3"
+                    weight="regular"
+                    color={colors.c11}
+                    sx={{ marginBottom: 4 }}
+                />
+                
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                    <CustomButton
+                        label={t('cancel')}
+                        buttonType="first"
+                        size="small"
+                        onClick={() => setIsTerminateModalOpen(false)}
                     />
-                    
-                    <CustomTypography
-                        text={t('areYouSureYouWantToCancelTheLine')}
-                        variant="h3"
-                        weight="regular"
-                        color={colors.c11}
-                        sx={{ marginBottom: 4 }}
+                    <CustomButton
+                        label={t('confirm')}
+                        buttonType="third"
+                        size="small"
+                        onClick={handleTerminateLine}
+                        disabled={isTerminating}
                     />
-                    
-                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                        <CustomButton
-                            label={t('cancel')}
-                            buttonType="first"
-                            size="small"
-                            onClick={() => setIsTerminateModalOpen(false)}
-                        />
-                        <CustomButton
-                            label={t('confirm')}
-                            buttonType="third"
-                            size="small"
-                            onClick={handleTerminateLine}
-                            disabled={isTerminating}
-                        />
-                    </Box>
-                {/* </Box> */}
+                </Box>
             </CustomModal>
+
+            {/* הודעות הצלחה וכישלון */}
+            <Snackbar open={!!successMessage} autoHideDuration={4000} onClose={() => setSuccessMessage(null)}>
+                <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage(null)}>
+                <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </WidelyContainer>
     );
 }
