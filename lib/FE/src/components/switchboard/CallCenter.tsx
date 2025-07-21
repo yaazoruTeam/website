@@ -16,7 +16,7 @@ import CallLog from '../../assets/CallLog.svg'
 import ChangeAccountModal from './ChangeAccountModal'
 import PurchasingNewNumber from './PurchasingNewNumber'
 import SwitchboardTabs from './SwitchboardTabs'
-import CustomSearchSelect from '../designComponent/CustomSearchSelect'
+import CustomSearchSelect from '../customers/CustomSearchSelect'
 
 const CallCenter: React.FC = () => {
   const { t } = useTranslation()
@@ -66,7 +66,7 @@ const CallCenter: React.FC = () => {
     console.log('deleteCall')
   }
 
-  const handleRowClick = (rowIndex: number) => {
+  const handleRowClick = (rowData: any, rowIndex: number) => {
     setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex)
   }
 
@@ -267,7 +267,7 @@ const CallCenter: React.FC = () => {
       <CustomTable
         columns={columns}
         data={tableData}
-        onRowClick={(index) => handleRowClick(index)}
+        onRowClick={(row, index) => handleRowClick(row, index)}
         expandedRowIndex={expandedRowIndex}
         renderExpandedRow={() => <SwitchboardTabs />}
       />

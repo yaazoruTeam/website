@@ -1,7 +1,7 @@
 import React from 'react'
 import { TableRow, TableCell } from '@mui/material'
 import '@fontsource/heebo'
-import Status from '../../components/designComponent/Status'
+import Status from '../Status/Status'
 import { colors } from '../../styles/theme'
 
 interface CustomTableRowProps {

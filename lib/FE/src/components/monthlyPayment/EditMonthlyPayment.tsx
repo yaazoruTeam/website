@@ -83,7 +83,7 @@ const EditMonthlyPayment: React.FC = () => {
           await getAllPaymentsByMonthlyPaymentId(monthlyPaymentEdit.monthlyPayment_id)
 
         setCustomer(customerData)
-        setItems(itemsData.data)
+        setItems(itemsData)
         setCreditDetails(creditData)
         setPayments(historyPaymentsDataByMonthlyPayment)
       } catch (err) {
@@ -156,7 +156,7 @@ const EditMonthlyPayment: React.FC = () => {
     items.map((item) => console.log(item))
 
     //await charge();
-    const { data: itemsBeforeChange } = await getItemsByMonthlyPaymentId(
+    const itemsBeforeChange: ItemForMonthlyPayment.Model[] = await getItemsByMonthlyPaymentId(
       monthlyPayment?.monthlyPayment_id || '',
     )
 

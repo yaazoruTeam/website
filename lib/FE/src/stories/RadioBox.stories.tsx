@@ -25,6 +25,7 @@ RadioBox.args = {
     { label: 'hi', value: 'hi' },
     { label: 'gg', value: 'gg' },
   ],
+  status: 'default',
   // defaultValue:'label2'
 }
 // className="h-5 w-5"

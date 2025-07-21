@@ -11,7 +11,7 @@ import CustomTable from '../designComponent/CustomTable'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
 import { formatDateToString } from '../designComponent/FormatDate'
-import CustomSearchSelect from '../designComponent/CustomSearchSelect'
+import CustomSearchSelect from './CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
 
 interface CustomersListProps {
