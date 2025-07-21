@@ -74,7 +74,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
-        // פונקציה לטיפול בביטול קו
+        // פונקציה לטיפול באיפוס קו
     const handleSoftReset = async () => {
         if (!widelyDetails?.endpoint_id) return;
         
