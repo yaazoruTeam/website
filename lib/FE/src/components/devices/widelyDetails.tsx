@@ -173,15 +173,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         </WidelyHeaderSection>
     );
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-                <CustomButton
-                    label={t('softReset')}
-                    onClick={handleSoftReset}
-                    buttonType="fourth"
-                    size="large"
-                />
-            </Box>
-
     // רנדור מצב טעינה
     const renderLoadingState = () => (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -310,6 +301,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             {/* כפתור איפוס סיסמת תא קולי */}
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                <CustomButton
+                    label={t('softReset')}
+                    onClick={handleSoftReset}
+                    buttonType="fourth"
+                    size="large"
+                />
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
