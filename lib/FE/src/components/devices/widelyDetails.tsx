@@ -81,7 +81,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         try {
             await reregisterInHlr(widelyDetails.endpoint_id);
         } catch (err) {
-            console.error('Error resetting line:', err);
+            console.error('Error during soft reset:', err);
         } finally {
             setIsTerminating(false);
         }
