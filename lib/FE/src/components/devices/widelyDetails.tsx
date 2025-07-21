@@ -33,7 +33,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
-   
+
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
         // לפי המבנה שתיארת: packages.data.items
@@ -83,9 +83,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
     }
 
-//פונקציה לשינוי תוכנית
+    //פונקציה לשינוי תוכנית
     const handleChangePackages = async (selectedPackage: number): Promise<Widely.Model> => {
-       return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage)
+        return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage)
     }
 
     // פונקציה לטיפול בביטול קו
@@ -232,17 +232,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         label={t('replacingPackages')}
                         disabled={true}
                         icon={<ChevronDownIcon />}
-                        
+
                     />
                 </Box>
-                <ModelPackages packages={getPackageOptions()} open={open} close={() => setOpen(false)} defaultValue={selectedPackage} approval={handleChangePackages}/>
-
-                {/* <CustomSelect
-                    control={control}
-                    name="replacingPackages"
-                    label={t('replacingPackages')}
-                    options={getPackageOptions()}
-                /> */}
+                <ModelPackages
+                    packages={getPackageOptions()}
+                    open={open}
+                    close={() => setOpen(false)}
+                    defaultValue={selectedPackage}
+                    approval={handleChangePackages}
+                />
                 <CustomSelect
                     //to do:Change to add a one-time gigabyte and make a server call
                     control={control}
