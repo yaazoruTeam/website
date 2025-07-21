@@ -19,7 +19,7 @@ import {
     WidelyInfoSection
 } from '../designComponent/styles/widelyStyles'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import ModelPackages from './modelPackege'
+import ModelPackages from './modelPackage'
 
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -41,7 +41,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (!items || !Array.isArray(items)) return [];
 
         return items.map((pkg: any) => {
-            const description = pkg.description?.EN || t('description');
+            const description = pkg.description?.EN || t('noDescriptionAvailable');
             const price = pkg.price || 0;
 
             // בניית הלייבל בפורמט: "תיאור - מחיר₪ לחודש"

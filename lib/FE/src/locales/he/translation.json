@@ -262,5 +262,6 @@
   "areYouSureYouWantToCancelTheLine": "האם אתם בטוחים שאתם רוצים לבטל את הקו?",
   "cancel": "ביטול",
   "choosePlan": "בחירת תוכנית",
-  "failedToChangePackage": "שינוי החבילה נכשל"
+  "failedToChangePackage": "שינוי החבילה נכשל",
+  "noDescriptionAvailable": "אין תיאור זמין"
 }

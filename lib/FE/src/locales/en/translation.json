@@ -261,5 +261,6 @@
   "areYouSureYouWantToCancelTheLine": "Are you sure you want to cancel the line?",
   "cancel": "Cancel",
   "choosePlan": "Choose Plan",
-  "failedToChangePackage": "Failed to change package"
+  "failedToChangePackage": "Failed to change package",
+  "noDescriptionAvailable": "No description available"
 }
