@@ -6,7 +6,7 @@ export default {
   component: Status,
 } as Meta<typeof Status>
 
-const Template: StoryFn<typeof Status> = (args: any) => <Status {...args} />
+const Template: StoryFn<typeof Status> = (args: string) => <Status {...args} />
 
 export const Active = Template.bind({})
 Active.args = {
