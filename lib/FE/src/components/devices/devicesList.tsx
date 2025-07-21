@@ -8,7 +8,7 @@ import { Device } from '../../model/src'
 import CustomTable from '../designComponent/CustomTable'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
-import CustomSearchSelect from '../customers/CustomSearchSelect'
+import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
 
 interface DevicesListProps {

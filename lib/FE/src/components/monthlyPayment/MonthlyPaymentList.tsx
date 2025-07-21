@@ -22,6 +22,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({})
+  // @ts-ignore
   const [searchCustomer, setSearchCustomer] = useState<string>('')
   const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment)
   const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10

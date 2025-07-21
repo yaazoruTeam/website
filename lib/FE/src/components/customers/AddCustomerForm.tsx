@@ -32,7 +32,6 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
   } = useForm<AddCustomerFormInputs>({
     defaultValues: initialValues || {
       first_name: '',

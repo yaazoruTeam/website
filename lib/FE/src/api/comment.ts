@@ -6,19 +6,6 @@ import { CreateCommentDto } from "../model/src/CommentDtos";
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/comment`
 
-const parseDate = (dateValue: unknown): Date => {
-  if (dateValue instanceof Date) {
-    return dateValue;
-  }
-  if (typeof dateValue === 'string') {
-    return new Date(dateValue);
-  }
-  if (typeof dateValue === 'number') {
-    return new Date(dateValue);
-  }
-  console.warn('Invalid date value received:', dateValue);
-  return new Date();
-};
 export interface PaginatedCommentsResponse {
   data: Comment.Model[];
   total: number;
