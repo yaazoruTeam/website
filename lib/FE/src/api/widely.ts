@@ -98,6 +98,26 @@ export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
   }
 }
 
+export const changePackages = async (endpoint_id: number, package_id: number): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/update_mobile_subscription`, {
+      endpoint_id,
+      package_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error changing packages', error)
+    throw error
+  }
+}
+
 export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely.Model> => {
   try {
     const newToken = await handleTokenRefresh()

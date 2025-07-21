@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode } from '../../api/widely'
-import { WidelyDeviceDetails } from '../../model'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages } from '../../api/widely'
+import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
@@ -81,6 +81,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
         resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
+    }
+
+//פונקציה לשינוי תוכנית
+    const handleChangePackages = async (selectedPackage: number): Promise<Widely.Model> => {
+       return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage)
     }
 
     // פונקציה לטיפול בביטול קו
@@ -230,7 +235,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         
                     />
                 </Box>
-                <ModelPackages packages={getPackageOptions()} open={open} close={() => setOpen(false)} defaultValue={selectedPackage} />
+                <ModelPackages packages={getPackageOptions()} open={open} close={() => setOpen(false)} defaultValue={selectedPackage} approval={handleChangePackages}/>
 
                 {/* <CustomSelect
                     control={control}

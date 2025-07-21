@@ -6,18 +6,20 @@ import CustomTypography from "../designComponent/Typography";
 import { colors } from "../../styles/theme";
 import { useTranslation } from "react-i18next";
 import { CustomButton } from "../designComponent/Button";
+import { Widely } from "../../model/src";
 
 interface ModelPackagesProps {
     packages: { value: string; label: string }[];
     open: boolean;
     close: () => void;
     defaultValue?: string;
+    approval?: (selectedPackage: number) => Promise<Widely.Model>;
 }
 
-const ModelPackages = ({ packages, open, close, defaultValue }: ModelPackagesProps) => {
+const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelPackagesProps) => {
     const { t } = useTranslation();
     const [selectedPackage, setSelectedPackage] = useState<string>(defaultValue || '');
-
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
         setSelectedPackage(defaultValue || '');
     }, [defaultValue, open]);
@@ -31,6 +33,14 @@ const ModelPackages = ({ packages, open, close, defaultValue }: ModelPackagesPro
                     weight="bold"
                     color={colors.c2}
                 />
+                {error && (
+                    <CustomTypography
+                    text={error}
+                    variant="h4"
+                    weight="bold"
+                    color={colors.c28}
+                />
+                )}
                 <CustomRadioBox
                     onChange={setSelectedPackage}
                     options={packages}
@@ -46,8 +56,19 @@ const ModelPackages = ({ packages, open, close, defaultValue }: ModelPackagesPro
                     <CustomButton
                         label={t('approval')}
                         buttonType="first"
-                        onClick={() => {
-                            //to do: implement package change logic
+                        onClick={async () => {
+                            if (approval) {
+                                try {
+                                    const res: Widely.Model = await approval(parseInt(selectedPackage) || 0);
+                                    if (res.error_code !== 200) {
+                                        setError(`${t('failedToChangePackage')}: ${res.message}`  );
+                                    } else {
+                                        close();
+                                    }
+                                } catch (err: any) {
+                                    setError(err?.response?.data?.error || err?.message || t('failedToChangePackage'));
+                                }
+                            }
                         }}
                     />
                     <CustomButton
