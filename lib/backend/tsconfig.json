@@ -9,7 +9,18 @@
     "baseUrl": "./src",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+       "paths": {
+      "@/*": ["*"]   ,
+      "@model": ["model/src"],
+      "@model/*": ["model/src/*"],
+      "@service/*": ["service/*"],
+      "@controller/*": ["controller/*"],
+      "@db/*": ["db/*"],
+      "@config/*": ["config/*"],
+      "@routes/*": ["routes/*"],
+      
+    }
   },
   "include": ["src/**/*", "src/tests/ReadExcelDevicesForDonors.test.ts"],
   "exclude": ["node_modules"]

@@ -1,6 +1,6 @@
-import { CustomerDevice } from '../model'
+import { CustomerDevice } from '@model'
 import getDbConnection from './connection'
-import config from '../config'
+import config from '@/config'
 const limit = config.database.limit
 
 const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: any) => {

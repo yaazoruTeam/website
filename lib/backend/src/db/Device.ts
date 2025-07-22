@@ -1,6 +1,6 @@
-import { Device, HttpError } from '../model'
+import { Device, HttpError } from '@model'
 import getDbConnection from './connection'
-import config from '../config'
+import config from '@/config'
 const limit = config.database.limit
 
 const createDevice = async (device: Device.Model, trx?: any) => {

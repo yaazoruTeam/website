@@ -1,6 +1,6 @@
-import { HttpError, MonthlyPayment } from '../model'
+import { HttpError, MonthlyPayment } from '@model'
 import getDbConnection from './connection'
-import config from '../config'
+import config from '@/config'
 
 const limit = config.database.limit
 

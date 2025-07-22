@@ -1,13 +1,11 @@
-import * as db from '../db'
-import { Comment } from '../model'
-import { HttpError } from 'model'
-import * as dotenv from "dotenv";
 import { SpeechClient } from "@google-cloud/speech";
 import { NextFunction, Request, Response } from 'express'
-import config from '../config'
+import * as db from '@/db'
+import { Comment, HttpError } from '@model'
+
+import config from '@/config'
 
 let client: SpeechClient;
-dotenv.config();
 
 const googleCredentials = config.google.applicationCredentialsJson;
 
