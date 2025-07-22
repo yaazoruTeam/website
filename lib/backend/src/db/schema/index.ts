@@ -12,7 +12,6 @@ import { createPayments } from './payments'
 import { createItem } from './itemForMonthlyPayment'
 import { createPaymentCreditLink } from './paymentCreditLink'
 import { createCommentsSchema } from './comments'
-import getDbConnection from '@db/connection'
 
 const createSchema = async () => {
   console.log('Creating schema...')
