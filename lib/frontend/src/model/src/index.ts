@@ -20,6 +20,9 @@ import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 
+export type {
+  CreateCommentDto,
+}
 export {
   Customer,
   Device,
@@ -38,7 +41,6 @@ export {
   PaymentCreditLink,
   MonthlyPaymentManagement,
   Comment,
-  CreateCommentDto,
   EntityType,
   Widely,
   WidelyDeviceDetails,
