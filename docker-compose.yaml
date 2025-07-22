@@ -45,10 +45,10 @@ services:
     container_name: react-frontend-nginx
     working_dir: /app
     volumes:
-      - ./lib/FE/public:/app/public
-      - ./lib/FE/src:/app/src
-      - ./lib/FE/package.json:/app/package.json
-      - ./lib/FE/tsconfig.json:/app/tsconfig.json
+      - ./lib/frontend/public:/app/public
+      - ./lib/frontend/src:/app/src
+      - ./lib/frontend/package.json:/app/package.json
+      - ./lib/frontend/tsconfig.json:/app/tsconfig.json
     ports:
       - "80:80"
     environment:

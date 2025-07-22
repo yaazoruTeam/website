@@ -8,6 +8,6 @@ services:
       - /app/node_modules
     ports:
       - "3005:3005"
-    command: sh -c "npm install && PORT=3005 npm start"
+    command: sh -c "npm install && npm run dev -- --port 3005 --host"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
