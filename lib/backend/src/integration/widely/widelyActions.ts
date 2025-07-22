@@ -1,6 +1,6 @@
-import { Widely } from '../../model/src'
+import { Widely } from '@/model/src'
 import { callingWidely } from './callingWidely'
-import { validateRequiredParam, validateWidelyResult } from '../../utils/widelyValidation'
+import { validateRequiredParam, validateWidelyResult } from '@/utils/widelyValidation'
 
 const sendMobileAction = async (endpoint_id: string | number, action: string): Promise<Widely.Model> => {
     // Validate required parameters

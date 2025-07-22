@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import config from '../config'
+import config from '@/config'
 
 const BRAND_TOKEN: string = config.widely.brandToken
 const BRAND_ID: number = config.widely.brandId

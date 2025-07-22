@@ -38,4 +38,12 @@ Thumbs.db
 .gitignore
 
 # Logs
+*.lognode_modules
+npm-debug.log
+.git
+.gitignore
+dist
+build
 *.log
+lib/*/node_modules
+lib/*/dist

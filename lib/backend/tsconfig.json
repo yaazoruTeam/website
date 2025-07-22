@@ -10,7 +10,17 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"],
-    "types": ["jest"]
+       "paths": {
+      "@/*": ["*"]   ,
+      "@model": ["model/src"],
+      "@model/*": ["model/src/*"],
+      "@service/*": ["service/*"],
+      "@controller/*": ["controller/*"],
+      "@db/*": ["db/*"],
+      "@config/*": ["config/*"],
+      "@routes/*": ["routes/*"],
+      
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "src/tests/**/*", "src/**/*.test.ts", "src/**/*.spec.ts"]

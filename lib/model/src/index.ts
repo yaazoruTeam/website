@@ -9,7 +9,6 @@ import * as BranchCustomer from "./BranchCustomer";
 import * as BranchUser from "./BranchUser";
 import * as CustomerDeviceExcel from "./CustomerDeviceExcel";
 import * as CreditDetails from "./CreditDetails";
-import * as TransactionDetails from "./TransactionDetails";
 import * as  ItemForMonthlyPayment from "./ItemForMonthlyPayment";
 import * as  MonthlyPayment from "./MonthlyPayment";
 import * as  Payments from "./Payments";
@@ -31,7 +30,6 @@ export {
   BranchUser,
   CustomerDeviceExcel,
   CreditDetails,
-  TransactionDetails,
   ItemForMonthlyPayment,
   MonthlyPayment,
   Payments,

@@ -5,9 +5,9 @@ import {
   ItemForMonthlyPayment,
   MonthlyPayment,
   MonthlyPaymentManagement,
-} from '../model'
-import * as db from '../db'
-import getDbConnection from '../db/connection'
+} from '@model'
+import * as db from '@/db'
+import getDbConnection from '@/db/connection'
 import { updateItems } from './item'
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,6 @@
-import { BranchCustomer } from '../model'
+import { BranchCustomer } from '@model'
 import getDbConnection from './connection'
-import config from '../config'
+import config from '@/config'
 const limit = config.database.limit
 
 const createBranchCustomer = async (branchCustomer: BranchCustomer.Model) => {

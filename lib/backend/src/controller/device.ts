@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import * as db from '../db'
-import { Device, HttpError } from '../model'
-import config from '../config'
+import * as db from '@/db'
+import { Device, HttpError } from '@model'
+import config from '@/config'
+
 const limit = config.database.limit
 
 const createDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

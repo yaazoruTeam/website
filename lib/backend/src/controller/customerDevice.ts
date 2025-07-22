@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
-import * as db from '../db'
-import { CustomerDevice, HttpError } from '../model'
-import config from '../config'
+import config from '@/config'
+import * as db from '@/db'
+import { CustomerDevice, HttpError } from '@model'
+
 const limit = config.database.limit
+
 
 const createCustomerDevice = async (
   req: Request,
