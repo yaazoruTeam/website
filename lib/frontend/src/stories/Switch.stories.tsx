@@ -22,6 +22,5 @@ const Template: StoryFn<typeof CustomSwitch> = (args) => (
 
 export const DefaultSwitchStory = Template.bind({})
 DefaultSwitchStory.args = {
-  initialChecked: true,
   onChange: (checked: boolean) => console.log('Switch changed:', checked),
 }

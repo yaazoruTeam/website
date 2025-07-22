@@ -11,7 +11,6 @@ import * as BranchCustomer from './BranchCustomer'
 import * as BranchUser from './BranchUser'
 import * as CustomerDeviceExcel from './CustomerDeviceExcel'
 import * as CreditDetails from './CreditDetails'
-import * as TransactionDetails from './TransactionDetails'
 import * as ItemForMonthlyPayment from './ItemForMonthlyPayment'
 import * as MonthlyPayment from './MonthlyPayment'
 import * as Payments from './Payments'
@@ -21,6 +20,9 @@ import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 
+export type {
+  CreateCommentDto,
+}
 export {
   Customer,
   Device,
@@ -33,14 +35,12 @@ export {
   BranchUser,
   CustomerDeviceExcel,
   CreditDetails,
-  TransactionDetails,
   ItemForMonthlyPayment,
   MonthlyPayment,
   Payments,
   PaymentCreditLink,
   MonthlyPaymentManagement,
   Comment,
-  CreateCommentDto,
   EntityType,
   Widely,
   WidelyDeviceDetails,
