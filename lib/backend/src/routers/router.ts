@@ -43,12 +43,6 @@ router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 
 router.get(`${ROUTE_PATH}/excel`, hasRole('admin'), excelController.handleReadExcelFile)
 
-// router.post(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDetailsController.createTransactionDetails);
-// router.get(`${ROUTE_PATH}/transactionDetails`, hasRole('admin'), TransactionDetailsController.getTransactionDetails);
-// router.get(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.getTransactionDetailsById);
-// router.put(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
-// router.delete(`${ROUTE_PATH}/transactionDetails/:id`, hasRole('admin'), TransactionDetailsController.updateTransactionDetails);
-
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,
   MonthlyPaymentManagementController.createMonthlyPayment,
