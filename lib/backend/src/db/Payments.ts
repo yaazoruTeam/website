@@ -1,6 +1,6 @@
-import { HttpError, Payments } from '../model'
+import { HttpError, Payments } from '@model'
 import getDbConnection from './connection'
-import config from '../config'
+import config from '@/config'
 const limit = config.database.limit
 
 const createPayments = async (payments: Payments.Model, trx?: any) => {

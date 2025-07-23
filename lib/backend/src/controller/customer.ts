@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import * as db from '../db'
-import { Customer, HttpError } from '../model'
-import config from '../config'
+import config from '@/config'
+import * as db from '@/db'
+import { Customer, HttpError } from '@model'
 
 const limit = config.database.limit
 

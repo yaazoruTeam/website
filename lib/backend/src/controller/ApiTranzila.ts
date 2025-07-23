@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { charge } from '../tranzila/Authentication'
+import { charge } from '@/tranzila/Authentication'
 
 const chargeTokenTranzila = async (
   req: Request,

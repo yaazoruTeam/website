@@ -21,9 +21,6 @@ interface MonthlyPaymentListProps {
 const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false, page = 1, totalPages = 1, total = 0, onPageChange }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({})
-  const [searchCustomer, setSearchCustomer] = useState<string>('')
-  const [filteredPayments, setFilteredPayments] = useState<MonthlyPayment.Model[]>(monthlyPayment)
   const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10
 
   useEffect(() => {
@@ -41,25 +38,6 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
 
     fetchCustomerNames()
   }, [monthlyPayment])
-
-  useEffect(() => {
-    const lowerSearch = searchCustomer.toLowerCase().trim()
-    if (!lowerSearch) {
-      setFilteredPayments(monthlyPayment)
-      return
-    }
-
-    const filtered = monthlyPayment.filter(payment => {
-      const customer = customerData[payment.customer_id]
-      if (!customer) return false
-      return (
-        customer.name.toLowerCase().includes(lowerSearch) ||
-        (typeof customer.id === 'string' && customer.id.includes(lowerSearch))
-      )
-    })
-
-    setFilteredPayments(filtered)
-  }, [searchCustomer,monthlyPayment, customerData])
 
   const onClickMonthlyPayment = (monthlyPayment: MonthlyPayment.Model) => {
     navigate(`/monthlyPayment/edit/${monthlyPayment.monthlyPayment_id}`, {

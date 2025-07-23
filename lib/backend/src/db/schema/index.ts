@@ -7,7 +7,6 @@ import { createBranchSchema } from './branch'
 import { createBranchCustomerSchema } from './branchCustomer'
 import { createBranchUserSchema } from './branchUser'
 import { createCreditDetailsSchema } from './creditDetails'
-import { createTransactionDetailsSchema } from './transactionDetails'
 import { createMonthlyPayment } from './monthlyPayment'
 import { createPayments } from './payments'
 import { createItem } from './itemForMonthlyPayment'
@@ -26,7 +25,6 @@ const createSchema = async () => {
     await createBranchCustomerSchema()
     await createBranchUserSchema()
     await createCreditDetailsSchema()
-    await createTransactionDetailsSchema()
     await createMonthlyPayment()
     await createPayments()
     await createItem()

@@ -14,6 +14,8 @@ const Switchboard: React.FC = () => {
   const { t } = useTranslation()
   const { control } = useForm<{ search: string }>()
   const navigate = useNavigate()
+
+  // @ts-ignore
   //to do : לשנות את זה למערך מסוד המרכזיה וליצור useEffect ששולף את הנתונים הנכונים מהשרת
   const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([
     {

@@ -6,7 +6,8 @@ export default {
   component: CustomerStatus,
 } as Meta
 
-const Template: StoryFn = () => <CustomerStatus />
-
+const Template: StoryFn = () => (
+  <CustomerStatus onStatusSelect={(status) => { console.log(status); }} />
+)
 export const Default = Template.bind({})
 Default.args = {}

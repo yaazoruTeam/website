@@ -1,6 +1,6 @@
-import { HttpError, User } from '../model'
+import { HttpError, User } from '@model'
 import getDbConnection from './connection'
-import config from '../config'
+import config from '@/config'
 const limit = config.database.limit
 
 const createUser = async (user: User.Model) => {
