@@ -40,7 +40,7 @@ export const config = {
     },
     tranzila: {
         publicKey: process.env.TRANZILA_PUBLIC_KEY || '',
-        privateKey: process.env.TRANZILA_PRIVET_KEY || '',
+        privateKey: process.env.TRANZILA_PRIVATE_KEY || '',
     },
     widely: {
         brandToken: process.env.BRAND_TOKEN as string,
