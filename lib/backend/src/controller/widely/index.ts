@@ -2,4 +2,4 @@
 export { searchUsers, getMobiles, getMobileInfo, getAllUserData } from './getActions'
 
 // Export all functions from actions (action functions)
-export { terminateMobile, provResetVmPincode } from './actions'
+export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages } from './actions'

@@ -240,7 +240,7 @@
   "transcriptionPending": "⌛ תמלול בהמתנה...",
   "simData": "נתוני סים",
   "simCurrent": "סים נוכחי",
-  "replacingProgram": "החלפת תוכנית",
+  "replacingPackages": "החלפת תוכנית",
   "connection": "חיבור",
   "pelephoneAndPartner": "פלאפון ופרטנר",
   "HotAndPartner": "הוט ופרטנר",
@@ -261,5 +261,7 @@
   "cancelLine": "ביטול קו",
   "areYouSureYouWantToCancelTheLine": "האם אתם בטוחים שאתם רוצים לבטל את הקו?",
   "cancel": "ביטול",
-  "confirm": "אישור"
+  "choosePlan": "בחירת תוכנית",
+  "failedToChangePackage": "שינוי החבילה נכשל",
+  "noDescriptionAvailable": "אין תיאור זמין"
 }

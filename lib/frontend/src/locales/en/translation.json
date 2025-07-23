@@ -239,7 +239,7 @@
   "send": "send",
   "simData": "SIM data",
   "simCurrent": "current SIM",
-  "replacingProgram": "replacing a program",
+  "replacingPackages": "replacing packages",
   "connection": "connection",
   "pelephoneAndPartner": "Pelephone and Partner",
   "HotAndPartner": "Hot and Partner",
@@ -260,5 +260,7 @@
   "cancelLine": "Cancel Line",
   "areYouSureYouWantToCancelTheLine": "Are you sure you want to cancel the line?",
   "cancel": "Cancel",
-  "confirm": "Confirm"
+  "choosePlan": "Choose Plan",
+  "failedToChangePackage": "Failed to change package",
+  "noDescriptionAvailable": "No description available"
 }
