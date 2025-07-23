@@ -3,8 +3,6 @@ import { router } from './routers/router'
 import { errorHandler } from './middleware/errorHandler'
 import config from './config'
 import { createSchema } from '@/db/schema'
-import { checkDatabaseConnection } from '@/db/connection'
-
 
 const cors = require('cors')
 
@@ -16,25 +14,10 @@ app.use(cors())
 app.use(express.json())
 
 // Health check endpoint לDocker
-app.get('/health', async (req: Request, res: Response) => {
-	  try {
-	    // Check database connectivity
-	    await checkDatabaseConnection();
-	    res.status(200).json({ 
-	      status: 'OK', 
-	      timestamp: new Date().toISOString(),
-	      dependencies: { database: 'healthy' }
-	    });
-	  } catch (error: any) {
-	    console.error("Health check failed:", error);
-	    res.status(500).json({ 
-	      status: 'FAIL', 
-	      timestamp: new Date().toISOString(),
-	      dependencies: { database: 'unhealthy' },
-	      error: error.message
-	    });
-	  }
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
 app.use(router)
 app.use(errorHandler)
 
