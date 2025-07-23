@@ -10,16 +10,14 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"],
-       "paths": {
-      "@/*": ["*"]   ,
+    "paths": {
+      "@/*": ["*"],
       "@model": ["model/src"],
-      "@model/*": ["model/src/*"],
       "@service/*": ["service/*"],
       "@controller/*": ["controller/*"],
       "@db/*": ["db/*"],
       "@config/*": ["config/*"],
-      "@routes/*": ["routes/*"],
-      
+      "@routes/*": ["routes/*"]
     }
   },
   "include": ["src/**/*"],

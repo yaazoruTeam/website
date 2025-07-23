@@ -17,9 +17,9 @@ const requiredEnvVars = {
 
 // Check for missing required variables
 Object.entries(requiredEnvVars).forEach(([key, value]) => {
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`)
-  }
+    if (!value) {
+        throw new Error(`Missing required environment variable: ${key}`)
+    }
 })
 
 export const config = {
