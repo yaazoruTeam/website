@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express'
 import { router } from './routers/router'
 import { errorHandler } from './middleware/errorHandler'
 import config from './config'
-import { createSchema } from 'db/schema'
+import { createSchema } from '@/db/schema'
 
 
 const cors = require('cors')

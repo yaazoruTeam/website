@@ -4,7 +4,7 @@ import { hasRole } from '../middleware/auth'
 
 const authRouter = Router()
 
-authRouter.post(`/register`/*, hasRole('admin')*/, authController.register)
+authRouter.post(`/register`, authController.register)
 authRouter.post(`/login`, authController.login)
 authRouter.post(`/refresh`, authController.refreshToken)
 

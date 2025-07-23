@@ -14,8 +14,6 @@ RUN npm install
 COPY lib/backend/. . 
 
 # קומפילציית TypeScript
-#RUN npx tsc 
-# קומפילציית TypeScript
 RUN npm run build
 
 # שלב Production - מכיל רק את מה שנדרש להרצת האפליקציה (קטן ויעיל יותר)
