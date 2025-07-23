@@ -1,0 +1,43 @@
+
+# Node.js specific files and folders
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-store/
+.yarn/
+
+# Build artifacts and temporary files
+dist/
+build/
+out/
+.parcel-cache/
+# Add other frontend-specific build outputs if applicable (e.g., CRA's build folder)
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store # macOS specific
+Thumbs.db # Windows specific
+
+# Version control and environment files
+.git/
+.gitignore
+.env
+.env.*.local
+.env.local
+
+# Log files and cache
+*.log
+*.tmp
+tmp/
+cache/
+.nyc_output/ # Jest coverage reports
+coverage/
+
+# Test related files
+*.test.ts
+cypress/
+__tests__/
+stories/
