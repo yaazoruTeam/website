@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getWidelyDetails, terminateLine, resetVoicemailPincode } from '../../api/widely'
+import { getWidelyDetails, terminateLine, resetVoicemailPincode, sendApn } from '../../api/widely'
 import { WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -55,6 +55,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
         resetVoicemailPincode(400093108)
+    }
+
+    const handleSendApn = async () => {
+        if (widelyDetails && widelyDetails.endpoint_id) {
+            try {
+                await sendApn(widelyDetails.endpoint_id);
+                console.log('APN sent successfully');
+            } catch (err) {
+                console.error('Error sending APN:', err);
+            }
+        } else {
+            console.error('Error: endpoint_id is missing or widelyDetails is null');
+        }
     }
 
     // פונקציה לטיפול בביטול קו
@@ -286,11 +299,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <HeaderSection />
             {renderContent()}
 
-            {/* כפתור איפוס סיסמת תא קולי */}
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
+                    buttonType="fourth"
+                    size="large"
+                />
+                <CustomButton
+                    label={t('sendApn')}
+                    onClick={handleSendApn}
                     buttonType="fourth"
                     size="large"
                 />
