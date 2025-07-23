@@ -1,8 +1,8 @@
 services:
   backend:
     build:
-      context: lib/backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: lib/backend/Dockerfile
     container_name: yaazoru-backend-prod
     ports:
       - "3006:3006"
