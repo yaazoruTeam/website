@@ -9,14 +9,17 @@
     }
   ],
   "compilerOptions": {
-    "types": [
-      "react",
-      "react-dom"
-    ]
+    "types": ["react", "react-dom"]
   },
-  "baseUrl": ".",  
-  "paths": {
-    "@model/": ["../model/src"],
-    "@model/*": ["../model/src/*"]
-  }
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
