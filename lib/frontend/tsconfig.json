@@ -13,5 +13,10 @@
       "react",
       "react-dom"
     ]
+  },
+  "baseUrl": ".",  
+  "paths": {
+    "@model/": ["../model/src"],
+    "@model/*": ["../model/src/*"]
   }
 }
