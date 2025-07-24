@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import * as branchUserController from '../controller/branchUser'
-import { hasRole } from '../middleware/auth'
+import * as branchUserController from '@controller/branchUser'
+import { hasRole } from '@middleware/auth'
 
 const branchUserRouter = Router()
 

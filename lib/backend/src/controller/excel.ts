@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { readExcelFile } from '@/utils/excel'
-import { processExcelData } from '@/service/ReadExcelDevicesForDonors'
+import { readExcelFile } from '@utils/excel'
+import { processExcelData } from '@service/ReadExcelDevicesForDonors'
 
 const handleReadExcelFile = async (
   req: Request,

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { HttpError, User, JwtPayload } from '@model'
-import config from '@/config'
+import config from '@config/index'
 
 const JWT_SECRET = config.jwt.secret
 

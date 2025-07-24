@@ -1,6 +1,6 @@
 import { Branch, HttpError } from '@model'
-import getDbConnection from './connection'
-import config from '@/config'
+import getDbConnection from '@db/connection'
+import config from '@config/index'
 const limit = config.database.limit
 
 const createBranch = async (branch: Branch.Model) => {

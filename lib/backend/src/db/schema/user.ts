@@ -1,5 +1,5 @@
-import { User } from '../../model'
-import getDbConnection from '../connection'
+import { User } from '@model'
+import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createUserSchema = async () => {
