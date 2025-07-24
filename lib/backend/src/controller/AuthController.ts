@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError, User } from '@model'
-import * as db from '@/db'
-import { generateToken, verifyToken } from '@/utils/jwt'
-import { comparePasswords } from '@/utils/password'
+import * as db from '@db/index'
+import { generateToken, verifyToken } from '@utils/jwt'
+import { comparePasswords } from '@utils/password'
 import { createUser } from './user'
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

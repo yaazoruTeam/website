@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import * as customerDevicesController from '../controller/customerDevice'
-import { hasRole } from '../middleware/auth'
+import * as customerDevicesController from '@controller/customerDevice'
+import { hasRole } from '@middleware/auth'
 
 const customerDeviceRouter = Router()
 

@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import * as paymentCreditLinkController from '../controller/paymentCreditLink'
-import { hasRole } from '../middleware/auth'
+import * as paymentCreditLinkController from '@controller/paymentCreditLink'
+import { hasRole } from '@middleware/auth'
 
 const paymentCreditLinkRouter = Router()
 
