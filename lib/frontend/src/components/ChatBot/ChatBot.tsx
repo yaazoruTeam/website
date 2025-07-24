@@ -17,9 +17,9 @@ import CommentInput from "./CommentInput";
 import DateSeparator from "./DateSeparator";
 
 // Models and types
-import { Comment } from "../../model";
-import { EntityType } from "../../model/src/Comment";
-import { CreateCommentDto } from "../../model/src/CommentDtos";
+import { Comment } from "@model";
+import { EntityType } from "@model";
+import { CreateCommentDto } from "@model";
 
 // API
 import {

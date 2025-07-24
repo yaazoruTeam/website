@@ -5,7 +5,7 @@ import CustomTypography from '../designComponent/Typography';
 import { colors } from '../../styles/theme';
 import profilePicture from '../../assets/profilePicture.svg';
 import { commentStyles } from './styles';
-import { Comment } from '../../model';
+import { Comment } from '@model';
 
 interface ClientComment extends Comment.Model {
   isPending?: boolean;
