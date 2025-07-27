@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { handleTokenRefresh } from './token'
-import { CustomerDevice } from '../model/src'
+import { CustomerDevice } from '@model'
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/customerDevice`
 

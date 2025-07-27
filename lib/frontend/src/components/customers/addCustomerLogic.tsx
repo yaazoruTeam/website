@@ -1,5 +1,5 @@
 import { createCustomer } from '../../api/customerApi'
-import { Customer } from '../../model/src'
+import { Customer } from '@model'
 import { AddCustomerFormInputs } from './AddCustomerForm'
 
 export const addCustomer = async (data: AddCustomerFormInputs): Promise<Customer.Model> => {

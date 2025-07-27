@@ -1,13 +1,13 @@
-import { HttpError } from ".";
+import { HttpError } from '.'
 
 interface Model {
-  credit_id: string;
-  customer_id: number;
-  token: string;
-  expiry_month: number;
-  expiry_year: number;
-  created_at: Date;
-  update_at: Date;
+  credit_id: string
+  customer_id: string
+  token: string
+  expiry_month: number
+  expiry_year: number
+  created_at: Date
+  update_at: Date
 }
 
 function sanitize(creditDetails: Model, hasId: boolean): Model {
@@ -15,50 +15,50 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "credit_id".',
-    };
-    throw error;
+    }
+    throw error
   }
-  if (!creditDetails.credit_id) {
+  if (!creditDetails.customer_id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!creditDetails.token) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "token".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!creditDetails.expiry_month) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "expiry_month".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!creditDetails.expiry_year) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "expiry_year".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!creditDetails.created_at) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "created_at".',
-    };
-    throw error;
+    }
+    throw error
   }
   if (!creditDetails.update_at) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "update_at".',
-    };
-    throw error;
+    }
+    throw error
   }
   const newCreditDetails: Model = {
     credit_id: creditDetails.credit_id,
@@ -68,33 +68,29 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
     expiry_year: creditDetails.expiry_year,
     created_at: creditDetails.created_at,
     update_at: creditDetails.update_at,
-  };
-  return newCreditDetails;
+  }
+  return newCreditDetails
 }
 
 const sanitizeIdExisting = (id: any) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
-      message: "No ID provided",
-    };
-    throw error;
+      message: 'No ID provided',
+    }
+    throw error
   }
-};
+}
 
 const sanitizeBodyExisting = (req: any) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
-      message: "No body provaider",
-    };
-    throw error;
+      message: 'No body provaider',
+    }
+    throw error
   }
-};
+}
 
-export type { Model };
-export {
-  sanitize,
-  sanitizeIdExisting,
-  sanitizeBodyExisting,
-};
+export type { Model }
+export { sanitize, sanitizeIdExisting, sanitizeBodyExisting }

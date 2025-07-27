@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import { Customer } from '../../../model/src'
+import { Customer } from '@model'
 import { deleteCustomer, getCustomerById } from '../../../api/customerApi'
 import CustomTypography from '../../designComponent/Typography'
 import { colors } from '../../../styles/theme'

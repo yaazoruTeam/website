@@ -1,4 +1,4 @@
-import { HttpError, Widely } from '../model/src'
+import { HttpError, Widely } from '@model'
 
 // General function for parameter validation
 const validateRequiredParam = (param: any, paramName: string): void => {

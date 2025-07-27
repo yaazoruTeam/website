@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { config } from '@/config'
+import { config } from '@config/index'
 
 // שימוש במשתנים מה-config המרכזי
 const { brandToken: BRAND_TOKEN, brandId, accountToken: ACCOUNT_TOKEN, authId } = config.widely

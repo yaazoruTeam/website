@@ -6,7 +6,7 @@ import CustomTypography from "../designComponent/Typography";
 import { colors } from "../../styles/theme";
 import { useTranslation } from "react-i18next";
 import { CustomButton } from "../designComponent/Button";
-import { Widely } from "../../model/src";
+import { Widely } from "@model";
 
 interface ModelPackagesProps {
     packages: { value: string; label: string }[];

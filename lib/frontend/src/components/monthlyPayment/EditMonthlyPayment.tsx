@@ -10,7 +10,7 @@ import {
   MonthlyPaymentManagement,
   PaymentCreditLink,
   Payments,
-} from '../../model/src'
+} from '@model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { getCustomerById } from '../../api/customerApi'

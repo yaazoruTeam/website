@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import * as db from '@/db'
+import * as db from '@db/index'
 import { BranchUser, HttpError } from '@model'
-import config from '@/config'
+import config from '@config/index'
 
 const limit = config.database.limit
 const createBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

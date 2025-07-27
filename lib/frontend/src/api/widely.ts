@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { handleTokenRefresh } from './token'
-import { Widely, WidelyDeviceDetails } from '../model'
+import { Widely, WidelyDeviceDetails } from '@model'
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/widely`
 

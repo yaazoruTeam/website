@@ -1,10 +1,10 @@
-import getDbConnection from '../db/connection'
-import * as db from '../db'
+import getDbConnection from '@db/connection'
+import * as db from '@db/index'
 import { CustomerDeviceExcel } from '@model'
 import * as XLSX from 'xlsx' // ✨ שינוי: נדרש בשביל כתיבה
 import * as path from 'path' // ✨ שינוי: נדרש בשביל כתיבה
-import { convertFlatRowToModel } from '../utils/converters/customerDeviceExcelConverter'
-import { writeErrorsToExcel } from '../utils/excel'
+import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
+import { writeErrorsToExcel } from '@utils/excel'
 
 const processExcelData = async (data: any[]): Promise<void> => {
   const knex = getDbConnection()

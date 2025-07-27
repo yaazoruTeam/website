@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import AddCustomerForm from '../AddCustomerForm'
-import { Customer } from '../../../model/src'
+import { Customer } from '@model'
 import { Box } from '@mui/system'
 
 export interface CustomerDetailsRef {

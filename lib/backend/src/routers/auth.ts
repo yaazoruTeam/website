@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import * as authController from '../controller/AuthController'
-import { hasRole } from '../middleware/auth'
+import * as authController from '@controller/AuthController'
+import { hasRole } from '@middleware/auth'
 
 const authRouter = Router()
 

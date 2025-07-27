@@ -1,8 +1,8 @@
-jest.mock("../../db");
-jest.mock("../../model");
+jest.mock('@db');
+jest.mock('@model');
 import { Request, Response, NextFunction } from "express";
-import * as db from "../../db";
-import { Customer, HttpError } from "../../model";
+import * as db from '../../db';
+import { Customer, HttpError } from '../../../../model/src';
 import { createCustomer, deleteCustomer, existingCustomer, getCustomerById, getCustomers, getCustomersByCity, getCustomersByDateRange, getCustomersByStatus, updateCustomer } from "../../controller/customer";
 
 

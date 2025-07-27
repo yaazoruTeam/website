@@ -3,7 +3,7 @@ import { Box } from '@mui/system'
 import { useParams } from 'react-router-dom'
 import { getDeviceById } from '../../api/device'
 import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
-import { Device, CustomerDevice } from '../../model/src'
+import { Device, CustomerDevice } from '@model'
 import DeviceCardContent from './DeviceCardContent'
 
 const DeviceCard: React.FC = () => {

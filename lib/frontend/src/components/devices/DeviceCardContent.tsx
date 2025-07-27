@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/system'
-import { Device, CustomerDevice } from '../../model/src'
+import { Device, CustomerDevice } from '@model'
 import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'

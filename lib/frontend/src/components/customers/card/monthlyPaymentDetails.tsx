@@ -1,6 +1,6 @@
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
-import { Customer, MonthlyPayment } from '../../../model'
+import { Customer, MonthlyPayment } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../../styles/theme'

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { Autocomplete, CircularProgress, useMediaQuery, Box, TextField, InputAdornment } from '@mui/material'
 import { useFetchCustomers } from './useFetchCustomers'
-import { Customer } from '../../model/src'
+import { Customer } from '@model'
 import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm'
 import CustomModal from '../designComponent/Modal'
 import { useTranslation } from 'react-i18next'

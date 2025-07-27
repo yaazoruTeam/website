@@ -1,4 +1,4 @@
-import { createSchema } from './schema'
+import { createSchema } from '@db/schema'
 
 createSchema()
 ;(async () => {

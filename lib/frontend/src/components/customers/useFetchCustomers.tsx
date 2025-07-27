@@ -6,7 +6,7 @@ import {
   getCustomersByDateRange,
   getCustomersByName,
 } from '../../api/customerApi'
-import { Customer } from '../../model'
+import { Customer } from '@model'
 
 interface UseFetchCustomersProps {
   page: number

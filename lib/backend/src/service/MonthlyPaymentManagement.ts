@@ -1,6 +1,6 @@
-import getDbConnection from '@/db/connection'
+import getDbConnection from '@db/connection'
 import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from '@model'
-import * as db from '@/db'
+import * as db from '@db/index'
 
 const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentManagement.Model) => {
   const knex = getDbConnection()
