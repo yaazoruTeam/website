@@ -1,5 +1,6 @@
 services:
   backend:
+  #מומלץ להשתמש ב- image ולא ב- build ב- production
     build:
       context: .
       dockerfile: lib/backend/Dockerfile
@@ -15,6 +16,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       NODE_ENV: production
+      #אין צורך ב- volumes ב- production
     volumes:
       - /app/node_modules
     command: npm run start
@@ -24,12 +26,14 @@ services:
       - yaazoru-internal
 
   frontend:
+    #מומלץ להשתמש ב- image ולא ב- build ב- production
     build:
       context: ./lib/frontend
       dockerfile: Dockerfile
     image: yaazoru-frontend:latest
     container_name: react-frontend-nginx
     working_dir: /app
+    # לא צריך להגדיר את ה- volumes ב- production
     volumes:
       - ./lib/backend:/app
       - /app/node_modules
@@ -49,6 +53,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
+      #האם יש צורך ב- volumes ב- production?
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:

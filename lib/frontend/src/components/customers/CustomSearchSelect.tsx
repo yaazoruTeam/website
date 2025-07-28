@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { FormControl, Select, MenuItem, Box /*, InputBase*/, OutlinedInput } from '@mui/material'
-import CityOptions from './CityOptions'
-import DateRangePickerComponent from './InlineDateRangePicker'
-import StatusCard from './StatusCard'
+import DateRangePickerComponent from '../designComponent/InlineDateRangePicker'
 import { ChevronDownIcon, ChevronLeftIcon, CalendarIcon } from '@heroicons/react/24/outline'
 import { colors } from '../../styles/theme'
 import { getCities } from '../../api/customerApi'
+import CityOptions from '../designComponent/CityOptions'
+import StatusCard from '../designComponent/StatusCard'
 
 interface CustomSearchSelectProps {
   placeholder?: string

@@ -2,8 +2,10 @@
 FROM node:20 AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+COPY tsconfig*.json ./
 COPY . .
+
+RUN npm install
 RUN npm run build
 
 # שלב 2: Nginx להגשָת האתר

@@ -1,8 +1,55 @@
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: lib/backend/Dockerfile
+      # target: development
+    container_name: yaazoru-backend-dev
+    ports:
+      - "3006:3006"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      NODE_ENV: development
+      #לדאוג ל volumes ב- development נכונים כדי שלא יצטרכו כל פעם לעשות build על כל שינוי
+    volumes:
+      - ./lib/backend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
+    # command: sh -c "npm install && npm run watch & npm run start:dist"
+
+    depends_on:
+      - db
+    networks:
+      - yaazoru-network
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: yaazoru-postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    # volumes:
+    # - db-data:/var/lib/postgresql/data
+    networks:
+      - yaazoru-network
+
   frontend:
-    image: node:20
+    build:
+      context: ./lib/frontend
+      dockerfile: Dockerfile
+      target: builder
     container_name: react-frontend-dev
-    working_dir: /app
     volumes:
       - ./lib/frontend:/app
       - /app/node_modules
@@ -11,3 +58,12 @@ services:
     command: sh -c "npm install && npm run dev -- --port 3005 --host"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+    networks:
+      - yaazoru-network
+    
+# volumes:
+#   db-data:
+
+networks:
+  yaazoru-network:
+    driver: bridge

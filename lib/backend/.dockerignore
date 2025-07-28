@@ -13,9 +13,9 @@ coverage
 jest.config.*
 
 # Build output
-dist
-build
-lib/*/dist
+# dist
+# build
+# lib/*/dist
 
 # Development files
 .env
