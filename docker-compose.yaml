@@ -1,9 +1,6 @@
 services:
   backend:
-  #מומלץ להשתמש ב- image ולא ב- build ב- production
-    build:
-      context: .
-      dockerfile: lib/backend/Dockerfile
+    image: yaazoru/backend:latest
     container_name: yaazoru-backend-prod
     ports:
       - "3006:3006"
@@ -16,10 +13,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       NODE_ENV: production
-      #אין צורך ב- volumes ב- production
-    volumes:
-      - /app/node_modules
-    command: npm run start
+    command: sh -c "npm install && npm run start"
     depends_on:
       - db
     networks:
@@ -27,16 +21,10 @@ services:
 
   frontend:
     #מומלץ להשתמש ב- image ולא ב- build ב- production
-    build:
-      context: ./lib/frontend
-      dockerfile: Dockerfile
-    image: yaazoru-frontend:latest
+    image: yaazoru/frontend:latest
     container_name: react-frontend-nginx
     working_dir: /app
     # לא צריך להגדיר את ה- volumes ב- production
-    volumes:
-      - ./lib/backend:/app
-      - /app/node_modules
     ports:
       - "80:80"
     environment:
@@ -53,7 +41,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
-      #האם יש צורך ב- volumes ב- production?
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
