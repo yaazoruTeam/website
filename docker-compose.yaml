@@ -20,11 +20,9 @@ services:
       - yaazoru-internal
 
   frontend:
-    #מומלץ להשתמש ב- image ולא ב- build ב- production
     image: yaazoru/frontend:latest
     container_name: react-frontend-nginx
     working_dir: /app
-    # לא צריך להגדיר את ה- volumes ב- production
     ports:
       - "80:80"
     environment:
