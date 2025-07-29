@@ -20,9 +20,7 @@ services:
     volumes:
       - ./lib/backend:/app
       - /app/node_modules
-    command: sh -c "npm install && npm run dev"
-    # command: sh -c "npm install && npm run watch & npm run start:dist"
-
+    command: sh -c "npm install && npm run dev:nodemon"
     depends_on:
       - db
     networks:
@@ -67,3 +65,4 @@ services:
 networks:
   yaazoru-network:
     driver: bridge
+                                                                                                                             

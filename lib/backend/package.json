@@ -8,6 +8,7 @@
         "build": "tsc && tsc-alias",
         "build-schema": "ts-node -r tsconfig-paths/register ./src/db/buildSchema",
         "dev": "ts-node-dev --respawn --transpile-only --prefer-ts-exts -r tsconfig-paths/register src/index.ts",
+        "dev:nodemon": "npx nodemon --legacy-watch --exec \"ts-node -r tsconfig-paths/register -r dotenv/config\" src/index.ts",
         "start": "node src/index.ts"
     },
     "dependencies": {
@@ -24,6 +25,7 @@
         "knex": "^3.1.0",
         "media-typer": "^1.1.0",
         "multer": "^2.0.1",
+        "nodemon": "^3.1.10",
         "pg": "^8.13.3",
         "pg-hstore": "^2.3.4",
         "safer-buffer": "^2.1.2",
