@@ -7,7 +7,8 @@ export default {
 } as Meta
 
 const Template: StoryFn = () => (
-  <CustomerStatus onStatusSelect={(status) => { console.log(status); }} />
+  <CustomerStatus onStatusSelect={async (status: 'active' | 'inactive') => {console.log(`Status selected: ${status}`);
+  }} />
 )
 export const Default = Template.bind({})
 Default.args = {}
