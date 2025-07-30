@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { HttpError, User, JwtPayload } from '@model'
 import config from '@/config'
+import { log } from 'console'
 
 const JWT_SECRET = config.jwt.secret
 
@@ -15,6 +16,7 @@ const hasRole = (...roles: Array<User.Model['role']>) => {
       }
       return next(error)
     }
+console.log('vvvv');
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model
