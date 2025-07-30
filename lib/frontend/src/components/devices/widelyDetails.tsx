@@ -7,7 +7,6 @@ import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
-import CustomSelect from '../designComponent/CustomSelect'
 import CustomRadioBox from '../designComponent/RadioBox'
 import { CustomButton } from '../designComponent/Button'
 import CustomModal from '../designComponent/Modal'
@@ -24,8 +23,12 @@ import ModelPackages from './modelPackage'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
-    const [exchangePackages, setExchangePackages] = useState<any | null>(null)
-    const [open, setOpen] = useState<boolean>(false)
+    const [basePackages, setBasePackages] = useState<any | null>(null)
+    const [extraPackages, setExtraPackages] = useState<any | null>(null)
+
+    const [openBasePackagesModel, setOpenBasePackagesModel] = useState<boolean>(false)
+    const [openExtraPackagesModel, setOpenExtraPackagesModel] = useState<boolean>(false)
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
@@ -35,9 +38,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
 
     // פונקציה לעיבוד אפשרויות החבילות
-    const getPackageOptions = () => {
+    const getPackageOptions = (packages: any) => {
         // לפי המבנה שתיארת: packages.data.items
-        const items = (exchangePackages as any)?.data?.items;
+        const items = (packages as any)?.data?.items;
         if (!items || !Array.isArray(items)) return [];
 
         return items.map((pkg: any) => {
@@ -119,14 +122,25 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
             // setValue('replacingPackages', details.someDefaultProgram || 'program1');
             setSelectedPackage(details.package_id || "");
-            const packages = await getPackagesWithInfo();
-            setExchangePackages(packages);
+            const basePackages = await getPackagesWithInfo('base');
+            const extraPackages = await getPackagesWithInfo('extra');
+
+            setExtraPackages(extraPackages);
+            setBasePackages(basePackages);
+
+
 
             // קביעת ערך ברירת מחדל לחבילות החלפה
-            const items = (packages as any)?.data?.items;
-            if (items && Array.isArray(items) && items.length > 0) {
-                const defaultValue = items[0].id.toString();
+            const baseItems = (basePackages as any)?.data?.items;
+            if (baseItems && Array.isArray(baseItems) && baseItems.length > 0) {
+                const defaultValue = baseItems[0].id.toString();
                 setValue('replacingPackages', defaultValue);
+            }
+
+            const extraItems = (extraPackages as any)?.data?.items;
+            if (extraItems && Array.isArray(extraItems) && extraItems.length > 0) {
+                const defaultValue = extraItems[0].id.toString();
+                setValue('addOneTimeGigabyte', defaultValue);
             }
         } catch (err: any) {
             // Parse error response to determine appropriate user message
@@ -225,7 +239,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     label={t('simCurrent')}
                     disabled={true}
                 />
-                <Box onClick={() => { setOpen(true); }} sx={{ cursor: 'pointer' }}>
+                <Box onClick={() => { setOpenBasePackagesModel(true); }} sx={{ cursor: 'pointer' }}>
                     <CustomTextField
                         control={control}
                         name="replacingPackages"
@@ -236,22 +250,34 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
                 <ModelPackages
-                    packages={getPackageOptions()}
-                    open={open}
-                    close={() => setOpen(false)}
+                    packages={getPackageOptions(basePackages)}
+                    open={openBasePackagesModel}
+                    close={() => setOpenBasePackagesModel(false)}
                     defaultValue={selectedPackage}
                     approval={handleChangePackages}
                 />
-                <CustomSelect
-                    //to do:Change to add a one-time gigabyte and make a server call
-                    control={control}
-                    name="addOneTimeGigabyte"
-                    label={t('addOneTimeGigabyte')}
-                    options={[
-                        { value: 'program1', label: 'תוכנית 1' },
-                        { value: 'program2', label: 'תוכנית 2' },
-                        { value: 'program3', label: 'תוכנית 3' }
-                    ]}
+                <Box onClick={() => { setOpenExtraPackagesModel(true); }} sx={{ cursor: 'pointer' }}>
+                    <CustomTextField
+                        control={control}
+                        name="addOneTimeGigabyte"
+                        label={t('addOneTimeGigabyte')}
+                        disabled={true}
+                        icon={<ChevronDownIcon />}
+
+                    />
+                </Box>
+                <ModelPackages
+                    packages={getPackageOptions(extraPackages)}
+                    open={openExtraPackagesModel}
+                    close={() => setOpenExtraPackagesModel(false)}
+                    defaultValue={selectedPackage}
+                    //to do: Check how to add a one-time gigabyte on widely
+                    
+                    approval={async (selectedPackage: number) => {
+                        console.log(`addOneTimeGigabyte: ${selectedPackage}`);
+                        // Return a dummy Widely.Model object to satisfy the type
+                        return Promise.resolve({} as Widely.Model);
+                    }}
                 />
             </WidelyFormSection>
 

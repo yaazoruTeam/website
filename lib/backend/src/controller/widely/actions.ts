@@ -40,11 +40,22 @@ const provResetVmPincode = async (req: Request, res: Response, next: NextFunctio
 const getPackagesWithInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
 
+    const { package_types } = req.body
+    validateRequiredParam(package_types, 'package_types')
+
+    if(package_types !== 'base' && package_types !== 'extra') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid package_types provided. It must be "base" or "extra".'
+      }
+      throw error
+    }
+
     const result: Widely.Model = await callingWidely(
       'get_packages_with_info',
       {
         reseller_domain_id: config.widely.accountId,
-        package_types: ['base']
+        package_types: [package_types]
       }
     )
     res.status(result.error_code).json(result)

@@ -81,10 +81,12 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
   }
 }
 
-export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
+export const getPackagesWithInfo = async (package_types: 'base' | 'extra'): Promise<Widely.Model> => {
   try {
     const token = await getValidToken()
-    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {}, {
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {
+      package_types
+    }, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
