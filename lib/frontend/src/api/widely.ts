@@ -120,6 +120,27 @@ export const changePackages = async (endpoint_id: number, package_id: number): P
   }
 }
 
+export const addOneTimePackage = async (endpoint_id: number, domain_user_id: number, package_id: number): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/add_one_time_package`, {
+      endpoint_id,
+      domain_user_id,
+      package_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error adding one-time packages', error)
+    throw error
+  }
+}
+
 export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely.Model> => {
   try {
     const newToken = await handleTokenRefresh()

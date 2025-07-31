@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, addOneTimePackage } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -89,6 +89,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     //פונקציה לשינוי תוכנית
     const handleChangePackages = async (selectedPackage: number): Promise<Widely.Model> => {
         return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage)
+    }
+
+     //פונקציה להוספת חבילת גיגה חד פעמית
+    const handleAddOneTimeGigabyte = async (selectedPackage: number): Promise<Widely.Model> => {
+        return await addOneTimePackage(widelyDetails?.endpoint_id || 0,widelyDetails?.domain_user_id || 0, selectedPackage)
     }
 
     // פונקציה לטיפול בביטול קו
@@ -271,13 +276,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     open={openExtraPackagesModel}
                     close={() => setOpenExtraPackagesModel(false)}
                     defaultValue={selectedPackage}
-                    //to do: Check how to add a one-time gigabyte on widely
-                    
-                    approval={async (selectedPackage: number) => {
-                        console.log(`addOneTimeGigabyte: ${selectedPackage}`);
-                        // Return a dummy Widely.Model object to satisfy the type
-                        return Promise.resolve({} as Widely.Model);
-                    }}
+                    approval={async (selectedPackage: number) => handleAddOneTimeGigabyte(selectedPackage)}
                 />
             </WidelyFormSection>
 

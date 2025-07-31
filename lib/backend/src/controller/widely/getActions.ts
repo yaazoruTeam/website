@@ -242,6 +242,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: parseInt(endpoint_id) || 0,
+      domain_user_id: mobileInfo?.domain_user_id || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
       max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),

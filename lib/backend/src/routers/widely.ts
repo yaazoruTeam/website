@@ -12,5 +12,6 @@ widelyRouter.post('/terminate_mobile', hasRole('admin'), widelyController.termin
 widelyRouter.post('/get_packages_with_info', hasRole('admin'), widelyController.getPackagesWithInfo)
 widelyRouter.post('/prov_reset_vm_pincode', hasRole('admin'), widelyController.provResetVmPincode)
 widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyController.changePackages)
+widelyRouter.post('/add_one_time_package', hasRole('admin'), widelyController.addOneTimePackage)
 
 export default widelyRouter
