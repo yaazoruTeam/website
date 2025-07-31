@@ -142,3 +142,29 @@ export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely
     throw error
   }
 }
+
+export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone'): Promise<Widely.Model> => {
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as Widely.Model
+    }
+    const token = newToken
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/changeNetwork`, {
+      endpoint_id: endpoint_id,
+      network_name: network
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error changing preferred network', error)
+    throw error
+  }
+}

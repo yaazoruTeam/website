@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, setPreferredNetwork } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -81,6 +81,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
         resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
+    }
+
+    
+  //פונקציה לשינוי חיבור לרשת אחרת
+    const handleChangeNetworkConnection = async (network_connection:'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
+        setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection)
     }
 
     //פונקציה לשינוי תוכנית
@@ -264,10 +270,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
                 <Box>
                     <CustomRadioBox
-                        onChange={(value) => setSelectedNetworkConnection(value)}
+                        onChange={(value) => handleChangeNetworkConnection(value as 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone')}
                         options={[
-                            { label: t('pelephoneAndPartner'), value: 'pelephoneAndPartner' },
-                            { label: t('HotAndPartner'), value: 'HotAndPartner' },
+                            { label: t('pelephoneAndPartner'), value: 'Pelephone_and_Partner' },
+                            { label: t('HotAndPartner'), value: 'Hot_and_Partner' },
                             { label: t('pelephone'), value: 'pelephone' }
                         ]}
                         value={selectedNetworkConnection}
