@@ -43,7 +43,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     { label: '', key: 'status' },
   ]
 
-  const tableData = devices.map((device) => ({
+  const tableData = (devices ?? []).map((device) => ({
     device_id: device.device_id,
     device_number: device.device_number,
     mehalcha_number: device.mehalcha_number,
