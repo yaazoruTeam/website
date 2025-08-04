@@ -71,7 +71,6 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, variant 
         variant={variant} 
         checked={checked} 
         onChange={handleChange}
-        // disabled={disabled} // רק disabled רגיל, לא במצב loading
       />
       {loading && (
         <CircularProgress 

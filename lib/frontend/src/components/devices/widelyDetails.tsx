@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { useEffect, useState, Fragment, useCallback, useRef } from 'react'
+import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, freezeUnfreezeMobile, lockUnlockImei } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
@@ -37,13 +37,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [lineSuspension, setLineSuspension] = useState<boolean>(false);
     const [isUpdatingLineSuspension, setIsUpdatingLineSuspension] = useState<boolean>(false);
     const [lineSuspensionError, setLineSuspensionError] = useState<string | null>(null);
-    const isUpdatingRef = useRef(false);
+    const [isUpdating, setIsUpdating] = useState(false);
     
     // IMEI Lock state
     const [imeiLocked, setImeiLocked] = useState<boolean>(false);
     const [isUpdatingImeiLock, setIsUpdatingImeiLock] = useState<boolean>(false);
     const [imeiLockError, setImeiLockError] = useState<string | null>(null);
-    const isUpdatingImeiRef = useRef(false);
+    const [isUpdatingImei, setIsUpdatingImei] = useState(false);
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
@@ -126,7 +126,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         const previousState = lineSuspension;
         setLineSuspension(freeze);
         setIsUpdatingLineSuspension(true);
-        isUpdatingRef.current = true; // עדכון ה-ref
+        setIsUpdating(true); // עדכון state במקום ref
         
         try {
             const action = freeze ? 'freeze' : 'unfreeze';
@@ -149,7 +149,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             console.error('Error updating line suspension:', error);
         } finally {
             setIsUpdatingLineSuspension(false);
-            isUpdatingRef.current = false; // איפוס ה-ref
+            setIsUpdating(false); // איפוס state במקום ref
         }
     }
 
@@ -163,7 +163,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         const previousState = imeiLocked;
         setImeiLocked(lock);
         setIsUpdatingImeiLock(true);
-        isUpdatingImeiRef.current = true; // עדכון ה-ref
+        setIsUpdatingImei(true); // עדכון state במקום ref
         
         try {
             const response = await lockUnlockImei(widelyDetails?.endpoint_id || 0, widelyDetails?.iccid || '', lock);
@@ -188,9 +188,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             console.error('Error updating IMEI lock:', error);
         } finally {
             setIsUpdatingImeiLock(false);
-            isUpdatingImeiRef.current = false; // איפוס ה-ref
+            setIsUpdatingImei(false); // איפוס state במקום ref
         }
     }
+
+    // Helper function to parse IMEI lock status
+    const parseImeiLockStatus = (status: string): boolean => {
+        if (!status || typeof status !== 'string') {
+            return false;
+        }
+        
+        const normalizedStatus = status.toLowerCase().trim();
+        
+        // Handle various positive responses
+        const positiveValues = ['yes', 'true', '1', 'locked', 'enabled', 'active'];
+        
+        return positiveValues.some(value => normalizedStatus.startsWith(value));
+    };
 
     const fetchWidelyDetails = useCallback(async () => {
         try {
@@ -214,7 +228,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // אם active=false אז הקו לא פעיל ולכן lineSuspension=true (יש השהיה)
             setLineSuspension(prevState => {
                 // אם כרגע עושים עדכון, לא נשנה את המצב
-                if (isUpdatingRef.current) {
+                if (isUpdating) {
                     console.log('Line Suspension: Skipping update because currently updating');
                     return prevState;
                 }
@@ -226,13 +240,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // עדכון מצב נעילת IMEI רק אם לא במהלך עדכון אופטימיסטי
             setImeiLocked(prevState => {
                 // אם כרגע עושים עדכון, לא נשנה את המצב
-                if (isUpdatingImeiRef.current) {
+                if (isUpdatingImei) {
                     console.log('IMEI Lock: Skipping update because currently updating');
                     return prevState;
                 }
-                // המרת הערך מ-string ל-boolean 
-                // "Yes" (בכל צורה) = נעול, "No" = לא נעול
-                const newState = details.imei_lock.startsWith("Yes");
+                // המרת הערך מ-string ל-boolean בצורה יותר חזקה
+                const newState = parseImeiLockStatus(details.imei_lock);
                 console.log(`IMEI Lock: Setting from server data - imei_lock: "${details.imei_lock}" -> ${newState}`);
                 return newState;
             });
@@ -278,7 +291,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const handleRefresh = () => {
         // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh
-        if (!isUpdatingRef.current && !isUpdatingImeiRef.current) {
+        if (!isUpdating && !isUpdatingImei) {
             fetchWidelyDetails();
         }
     };

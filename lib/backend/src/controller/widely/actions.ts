@@ -97,12 +97,12 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
 
     const result: Widely.Model = await callingWidely(
       'freeze_unfreeze_endpoint',
-      { 
+      {
         endpoint_id: endpoint_id,
         action: action,
       }
     )
-    
+
     res.status(result.error_code).json(result)
   } catch (error: any) {
     next(error)
@@ -133,8 +133,9 @@ const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunct
       }
     )
 
-    validateWidelyResult(result, 'Failed to set IMEI lock')
-    res.status(result.error_code).json(result)
+    const operation = action ? 'lock' : 'unlock';
+        validateWidelyResult(result, `Failed to ${operation} IMEI lock`);
+        res.status(result.error_code).json(result)
   } catch (error: any) {
     next(error)
   }
