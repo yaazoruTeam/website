@@ -83,10 +83,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
     }
 
-    
-  //פונקציה לשינוי חיבור לרשת אחרת
-    const handleChangeNetworkConnection = async (network_connection:'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
-        setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection)
+
+    //פונקציה לשינוי חיבור לרשת אחרת
+    const handleChangeNetworkConnection = async (network_connection: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
+        try {
+            await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
+            // Optionally, add success handling here (e.g., refresh data or show a message)
+        } catch (error) {
+            console.error('Error setting preferred network:', error);
+            // Optionally, add user-facing error handling here
+        }
     }
 
     //פונקציה לשינוי תוכנית

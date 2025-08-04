@@ -33,7 +33,7 @@ export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceD
       },
     },
   )
-  
+
   return response.data
 }
 
@@ -67,7 +67,7 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
       throw new Error('No token found!')
     }
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
-         endpoint_id: endpoint_id
+      endpoint_id: endpoint_id
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
         Authorization: `Bearer ${token}`,
       },
     })
-    
+
     return response.data
   } catch (error) {
     console.error('Error fetching packages with info', error)
@@ -120,14 +120,7 @@ export const changePackages = async (endpoint_id: number, package_id: number): P
 
 export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely.Model> => {
   try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return {} as Widely.Model
-    }
-    const token = newToken
-    if (!token) {
-      throw new Error('No token found!')
-    }
+    const token = await getValidToken()
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/prov_reset_vm_pincode`, {
       endpoint_id: endpoint_id
     }, {
@@ -145,14 +138,7 @@ export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely
 
 export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone'): Promise<Widely.Model> => {
   try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return {} as Widely.Model
-    }
-    const token = newToken
-    if (!token) {
-      throw new Error('No token found!')
-    }
+    const token = await getValidToken()
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/changeNetwork`, {
       endpoint_id: endpoint_id,
       network_name: network

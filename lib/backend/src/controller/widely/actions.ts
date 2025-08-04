@@ -46,7 +46,7 @@ const changeNetwork = async (
     validateRequiredParam(network_name, 'network_name');
 
     // נירמול שם הרשת
-    const normalized = network_name.toLowerCase().replace(/ /g, "_");
+    const normalized = network_name.toLowerCase();
 
     // מיפוי הרשתות לפעולות API
     const networkActions = {
@@ -70,7 +70,6 @@ const changeNetwork = async (
 
     // שליחת הפעולה
     const result = await sendMobileAction(numericEndpointId, action);
-    console.log('changeNetwork result:', result);
 
     res.status(200).json(result);
   } catch (error) {    
