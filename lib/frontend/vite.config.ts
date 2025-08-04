@@ -9,5 +9,12 @@ export default defineConfig({
     alias: {
       '@model': path.resolve(__dirname, '../model/src'),
     },
+    server: {
+    watch: {
+      usePolling: true,
+      interval: 500,
+    },
+    host: true,
+    port: 3005,
   },
 })

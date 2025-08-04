@@ -18,10 +18,20 @@ interface MonthlyPaymentListProps {
   onPageChange?: (page: number) => void
 }
 
-const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment, isCustomerCard = false, page = 1, totalPages = 1, total = 0, onPageChange }) => {
+const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
+  monthlyPayment,
+  isCustomerCard = false,
+  page = 1,
+  totalPages = 1,
+  total = 0,
+  onPageChange
+}) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10
+
+  // תיקון: הגדרת סטייט לנתוני לקוחות
+  const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({})
 
   useEffect(() => {
     const fetchCustomerNames = async () => {
@@ -61,7 +71,10 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
     isCustomerCard && { label: '', key: 'updateMonthlyPayment' },
   ].filter(Boolean) as { label: string, key: string }[]
 
-  const tableData = filteredPayments.map((payment) => ({
+  // תיקון: filteredPayments מוגדר כ־monthlyPayment (או תוסיף לוגיקת סינון אם צריך)
+  const filteredPayments: MonthlyPayment.Model[] = monthlyPayment
+
+  const tableData = filteredPayments.map((payment: MonthlyPayment.Model) => ({
     monthlyPayment_id: payment.monthlyPayment_id,
     customer_name: (
       <Link
@@ -72,7 +85,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {payment.customer_name || t('loading')}
+        {customerData[payment.customer_id]?.name || t('loading')}
       </Link>
     ),
     dates: `${formatDateToString(payment.start_date)} - ${formatDateToString(payment.end_date)}`,
@@ -97,10 +110,6 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({ monthlyPayment,
         sx={{
           width: '100%',
           height: '100%',
-          // paddingLeft: 10,
-          // paddingRight: 10,
-          // paddingTop: 15,
-          // paddingBottom: 15,
           borderRadius: 2,
           display: 'flex',
           flexDirection: 'column',
