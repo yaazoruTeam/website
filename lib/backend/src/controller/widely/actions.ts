@@ -79,4 +79,32 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
     next(error)
   }
 }
-export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages }
+
+const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    const { action } = req.body
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParam(action, 'action')
+
+    if (action !== 'freeze' && action !== 'unfreeze') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid action provided. It must be either "freeze" or "unfreeze".'
+      }
+      throw error
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'freeze_unfreeze_endpoint',
+      { 
+        endpoint_id: endpoint_id,
+        action: action,
+       }
+    )    
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, freezeUnFreezeMobile }

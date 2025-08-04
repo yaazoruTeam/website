@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, freezeUnfreezeMobile } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -20,6 +20,7 @@ import {
 } from '../designComponent/styles/widelyStyles'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import ModelPackages from './modelPackage'
+import CustomSwitch from '../designComponent/Switch'
 
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -33,6 +34,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
+    const [lineSuspension, setLineSuspension] = useState<boolean>(widelyDetails?.active || false);
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
@@ -105,6 +107,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
+    //פונקציה להקפאת והפשרת מכשיר
+    const handleFreezeUnFreezeMobile = async (freeze: boolean) => {        
+        if (!freeze)
+            await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'freeze')
+        else
+            await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'unfreeze')
+
+    await fetchWidelyDetails()
+    }
+    //פונקציה להפשרת מכשיר
+
     const fetchWidelyDetails = useCallback(async () => {
         try {
             setLoading(true);
@@ -121,7 +134,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setSelectedPackage(details.package_id || "");
             const packages = await getPackagesWithInfo();
             setExchangePackages(packages);
-
+            setLineSuspension(details.active);
             // קביעת ערך ברירת מחדל לחבילות החלפה
             const items = (packages as any)?.data?.items;
             if (items && Array.isArray(items) && items.length > 0) {
@@ -341,6 +354,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     onClick={handleResetVoicemailPincode}
                     buttonType="fourth"
                     size="large"
+                />
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginTop: 2 }}>
+                <CustomSwitch checked={lineSuspension} onChange={(status) => { handleFreezeUnFreezeMobile(status) }} variant='modern' />
+                <CustomTypography
+                    text={t('lineIsPaused')}
+                    variant="h5"
+                    weight="regular"
+                    color={colors.c0}
                 />
             </Box>
             {/* מודל אישור ביטול קו */}
