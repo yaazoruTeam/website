@@ -50,9 +50,9 @@ const changeNetwork = async (
 
     // מיפוי הרשתות לפעולות API
     const networkActions = {
-      pelephone_and_partner: "both_networks_pl_first",
-      hot_and_partner: "both_networks_ht_first",
-      pelephone: "pelephone_only"
+      pelephone_and_partner: "both_networks_pl_first_force",
+      hot_and_partner: "both_networks_ht_first_force",
+      pelephone: "pelephone_only_force"
     } as const;
 
     const action = networkActions[normalized as keyof typeof networkActions];
@@ -66,12 +66,14 @@ const changeNetwork = async (
       throw error;
     }
 
+    const numericEndpointId = parseInt(endpoint_id);
+
     // שליחת הפעולה
-    const result = await sendMobileAction(endpoint_id, action);
+    const result = await sendMobileAction(numericEndpointId, action);
     console.log('changeNetwork result:', result);
 
     res.status(200).json(result);
-  } catch (error) {
+  } catch (error) {    
     next(error);
   }
 };
