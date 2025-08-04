@@ -1,19 +1,24 @@
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import Switch from '@mui/material/Switch'
+import { CircularProgress, Box } from '@mui/material'
 import { colors } from '../../styles/theme'
 
 interface CustomSwitchProps {
   checked: boolean
   onChange: (checked: boolean) => void
   variant?: 'default' | 'modern'
+  disabled?: boolean
+  loading?: boolean
 }
 
-const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern' }>(({ variant = 'default' }) => ({
+const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern'; loading?: boolean }>(({ variant = 'default', loading = false }) => ({
   width: 44,
   height: 22,
   padding: 0,
   display: 'flex',
+  opacity: loading ? 0.7 : 1, // קצת שקיפות במצב טעינה
+  transition: 'opacity 0.3s ease',
   '& .MuiSwitch-switchBase': {
     padding: 3,
     transitionDuration: '300ms',
@@ -53,8 +58,32 @@ const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern' }>(({ varia
   },
 }))
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, variant = 'default' }) => {
-  return <StyledSwitch variant={variant} checked={checked} onChange={(e) => onChange(e.target.checked)} />
+const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, variant = 'default', disabled = false, loading = false }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!loading && !disabled) {
+      onChange(e.target.checked);
+    }
+  };
+
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <StyledSwitch 
+        variant={variant} 
+        checked={checked} 
+        onChange={handleChange}
+        // disabled={disabled} // רק disabled רגיל, לא במצב loading
+      />
+      {loading && (
+        <CircularProgress 
+          size={16} 
+          sx={{ 
+            color: variant === 'modern' ? colors.c3 : colors.c12,
+            marginLeft: '4px'
+          }} 
+        />
+      )}
+    </Box>
+  );
 }
 
 export default CustomSwitch

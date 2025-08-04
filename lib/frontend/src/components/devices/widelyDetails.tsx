@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { useEffect, useState, Fragment, useCallback } from 'react'
+import { useEffect, useState, Fragment, useCallback, useRef } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, freezeUnfreezeMobile } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
@@ -35,6 +35,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
     const [lineSuspension, setLineSuspension] = useState<boolean>(widelyDetails?.active || false);
+    const [isUpdatingLineSuspension, setIsUpdatingLineSuspension] = useState<boolean>(false);
+    const [lineSuspensionError, setLineSuspensionError] = useState<string | null>(null);
+    const isUpdatingRef = useRef<boolean>(false);
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
@@ -108,15 +111,40 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     }
 
     //פונקציה להקפאת והפשרת מכשיר
-    const handleFreezeUnFreezeMobile = async (freeze: boolean) => {        
-        if (!freeze)
-            await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'freeze')
-        else
-            await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'unfreeze')
+    const handleFreezeUnFreezeMobile = async (freeze: boolean) => {
+        // איפוס שגיאות קודמות
+        setLineSuspensionError(null);
+        
+        // עדכון אופטימיסטי - מעדכנים את ה-state מיידית
+        const previousState = lineSuspension;
+        setLineSuspension(freeze);
+        setIsUpdatingLineSuspension(true);
+        isUpdatingRef.current = true; // עדכון ה-ref
+        
+        try {
+            if (!freeze)
+                await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'freeze')
+            else
+                await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'unfreeze')
 
-    await fetchWidelyDetails()
+            // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
+            // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
+        } catch (error: any) {
+            // במקרה של שגיאה, נחזיר את המצב הקודם
+            setLineSuspension(previousState);
+            
+            // הצגת הודעת שגיאה מותאמת למשתמש
+            const errorMessage = error?.response?.data?.message || 
+                               error?.message || 
+                               t('errorUpdatingLineSuspension');
+            setLineSuspensionError(errorMessage);
+            
+            console.error('Error updating line suspension:', error);
+        } finally {
+            setIsUpdatingLineSuspension(false);
+            isUpdatingRef.current = false; // איפוס ה-ref
+        }
     }
-    //פונקציה להפשרת מכשיר
 
     const fetchWidelyDetails = useCallback(async () => {
         try {
@@ -134,7 +162,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setSelectedPackage(details.package_id || "");
             const packages = await getPackagesWithInfo();
             setExchangePackages(packages);
-            setLineSuspension(details.active);
+            
+            // עדכון מצב ההקפאה רק אם לא במהלך עדכון אופטימיסטי
+            // נבדוק את המצב הנוכחי במקום להשתמש ב-state
+            setLineSuspension(prevState => {
+                // אם כרגע עושים עדכון, לא נשנה את המצב
+                if (isUpdatingRef.current) {
+                    return prevState;
+                }
+                return details.active;
+            });
+            
             // קביעת ערך ברירת מחדל לחבילות החלפה
             const items = (packages as any)?.data?.items;
             if (items && Array.isArray(items) && items.length > 0) {
@@ -172,10 +210,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         } finally {
             setLoading(false);
         }
-    }, [simNumber, setValue, t]);
+    }, [simNumber, setValue, t]); // הסרנו את isUpdatingLineSuspension
 
     const handleRefresh = () => {
-        fetchWidelyDetails();
+        // אם במהלך עדכון של line suspension, לא נבצע refresh
+        if (!isUpdatingRef.current) {
+            fetchWidelyDetails();
+        }
     };
 
     // Component for reusable header section
@@ -328,8 +369,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     };
 
     useEffect(() => {
+        // קוראים ל-fetchWidelyDetails רק בטעינה הראשונה, לא כאשר open משתנה
         fetchWidelyDetails();
-    }, [fetchWidelyDetails, open]);
+    }, [fetchWidelyDetails]); // הסרנו את open מה-dependency array
 
     if (error) {
         return (
@@ -357,7 +399,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginTop: 2 }}>
-                <CustomSwitch checked={lineSuspension} onChange={(status) => { handleFreezeUnFreezeMobile(status) }} variant='modern' />
+                <CustomSwitch 
+                    checked={lineSuspension} 
+                    onChange={(status) => { 
+                        // מסתירים שגיאה קודמת כשמתחילים פעולה חדשה
+                        setLineSuspensionError(null);
+                        handleFreezeUnFreezeMobile(status);
+                    }} 
+                    variant='modern' 
+                    loading={isUpdatingLineSuspension}
+                />
                 <CustomTypography
                     text={t('lineIsPaused')}
                     variant="h5"
@@ -365,6 +416,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     color={colors.c0}
                 />
             </Box>
+            {/* הצגת הודעת שגיאה אם יש */}
+            {lineSuspensionError && (
+                <Box sx={{ marginTop: 1 }}>
+                    <CustomTypography
+                        text={lineSuspensionError}
+                        variant="h5"
+                        weight="regular"
+                        color={colors.c28} // צבע אדום לשגיאה
+                    />
+                </Box>
+            )}
             {/* מודל אישור ביטול קו */}
             <CustomModal
                 open={isTerminateModalOpen}
