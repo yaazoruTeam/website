@@ -264,5 +264,7 @@
   "choosePlan": "בחירת תוכנית",
   "failedToChangePackage": "שינוי החבילה נכשל",
   "noDescriptionAvailable": "אין תיאור זמין",
-  "lineIsPaused": "קו מושהה"
+  "lineIsPaused": "קו מושהה",
+  "imeiLock": "נעילת IMEI",
+  "errorUpdatingImeiLock": "שגיאה בעדכון נעילת IMEI"
 }

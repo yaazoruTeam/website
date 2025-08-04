@@ -100,11 +100,44 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
       { 
         endpoint_id: endpoint_id,
         action: action,
-       }
-    )    
+      }
+    )
+    
     res.status(result.error_code).json(result)
   } catch (error: any) {
     next(error)
   }
 }
-export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, freezeUnFreezeMobile }
+
+const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id, iccid, action } = req.body
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParam(iccid, 'iccid')
+    validateRequiredParam(action, 'action')
+
+    if (typeof action !== 'boolean') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid action provided. It must be a boolean value (true/false).'
+      }
+      throw error
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'prov_update_mobile',
+      {
+        endpoint_id: endpoint_id,
+        iccid: iccid,
+        lock_on_first_imei: action,
+      }
+    )
+
+    validateWidelyResult(result, 'Failed to set IMEI lock')
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, freezeUnFreezeMobile, updateImeiLockStatus }

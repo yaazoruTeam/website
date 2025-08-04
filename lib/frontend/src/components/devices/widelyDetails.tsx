@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback, useRef } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, freezeUnfreezeMobile } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, freezeUnfreezeMobile, lockUnlockImei } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -34,10 +34,16 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [isTerminating, setIsTerminating] = useState(false);
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
-    const [lineSuspension, setLineSuspension] = useState<boolean>(widelyDetails?.active || false);
+    const [lineSuspension, setLineSuspension] = useState<boolean>(false);
     const [isUpdatingLineSuspension, setIsUpdatingLineSuspension] = useState<boolean>(false);
     const [lineSuspensionError, setLineSuspensionError] = useState<string | null>(null);
-    const isUpdatingRef = useRef<boolean>(false);
+    const isUpdatingRef = useRef(false);
+    
+    // IMEI Lock state
+    const [imeiLocked, setImeiLocked] = useState<boolean>(false);
+    const [isUpdatingImeiLock, setIsUpdatingImeiLock] = useState<boolean>(false);
+    const [imeiLockError, setImeiLockError] = useState<string | null>(null);
+    const isUpdatingImeiRef = useRef(false);
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = () => {
@@ -114,6 +120,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const handleFreezeUnFreezeMobile = async (freeze: boolean) => {
         // איפוס שגיאות קודמות
         setLineSuspensionError(null);
+        console.log(freeze);
         
         // עדכון אופטימיסטי - מעדכנים את ה-state מיידית
         const previousState = lineSuspension;
@@ -122,10 +129,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         isUpdatingRef.current = true; // עדכון ה-ref
         
         try {
-            if (!freeze)
-                await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'freeze')
-            else
-                await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, 'unfreeze')
+            const action = freeze ? 'freeze' : 'unfreeze';
+            console.log(`Freezing/unfreezing mobile with endpoint_id: ${widelyDetails?.endpoint_id || 0}, action: ${action}`);
+
+            await freezeUnfreezeMobile(widelyDetails?.endpoint_id || 0, action);
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
@@ -143,6 +150,45 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         } finally {
             setIsUpdatingLineSuspension(false);
             isUpdatingRef.current = false; // איפוס ה-ref
+        }
+    }
+
+    //פונקציה לנעילת ושחרור IMEI
+    const handleLockUnlockImei = async (lock: boolean) => {
+        // איפוס שגיאות קודמות
+        setImeiLockError(null);
+        console.log(`IMEI Lock: Setting to ${lock}, endpoint_id: ${widelyDetails?.endpoint_id}, iccid: ${widelyDetails?.iccid}`);
+        
+        // עדכון אופטימיסטי - מעדכנים את ה-state מיידית
+        const previousState = imeiLocked;
+        setImeiLocked(lock);
+        setIsUpdatingImeiLock(true);
+        isUpdatingImeiRef.current = true; // עדכון ה-ref
+        
+        try {
+            const response = await lockUnlockImei(widelyDetails?.endpoint_id || 0, widelyDetails?.iccid || '', lock);
+
+            if (response.error_code !== 200) {
+                throw new Error(response.message || t('errorUpdatingImeiLock'));
+            }
+            
+            // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
+            // לא נעשה refresh כדי לא לדרוס את השינוי
+            
+        } catch (error: any) {
+            // במקרה של שגיאה, נחזיר את המצב הקודם
+            setImeiLocked(previousState);
+            
+            // הצגת הודעת שגיאה מותאמת למשתמש
+            const errorMessage = error?.response?.data?.message || 
+                               error?.message || 
+                               t('errorUpdatingImeiLock');
+            setImeiLockError(errorMessage);
+            
+            console.error('Error updating IMEI lock:', error);
+        } finally {
+            setIsUpdatingImeiLock(false);
+            isUpdatingImeiRef.current = false; // איפוס ה-ref
         }
     }
 
@@ -164,13 +210,31 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setExchangePackages(packages);
             
             // עדכון מצב ההקפאה רק אם לא במהלך עדכון אופטימיסטי
-            // נבדוק את המצב הנוכחי במקום להשתמש ב-state
+            // אם active=true אז הקו פעיל ולכן lineSuspension=false (אין השהיה)
+            // אם active=false אז הקו לא פעיל ולכן lineSuspension=true (יש השהיה)
             setLineSuspension(prevState => {
                 // אם כרגע עושים עדכון, לא נשנה את המצב
                 if (isUpdatingRef.current) {
+                    console.log('Line Suspension: Skipping update because currently updating');
                     return prevState;
                 }
-                return details.active;
+                const newState = !details.active; // הפוך מ-active
+                console.log(`Line Suspension: Setting from server data - active: ${details.active} -> lineSuspension: ${newState}`);
+                return newState;
+            });
+            
+            // עדכון מצב נעילת IMEI רק אם לא במהלך עדכון אופטימיסטי
+            setImeiLocked(prevState => {
+                // אם כרגע עושים עדכון, לא נשנה את המצב
+                if (isUpdatingImeiRef.current) {
+                    console.log('IMEI Lock: Skipping update because currently updating');
+                    return prevState;
+                }
+                // המרת הערך מ-string ל-boolean 
+                // "Yes" (בכל צורה) = נעול, "No" = לא נעול
+                const newState = details.imei_lock.startsWith("Yes");
+                console.log(`IMEI Lock: Setting from server data - imei_lock: "${details.imei_lock}" -> ${newState}`);
+                return newState;
             });
             
             // קביעת ערך ברירת מחדל לחבילות החלפה
@@ -213,8 +277,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     }, [simNumber, setValue, t]); // הסרנו את isUpdatingLineSuspension
 
     const handleRefresh = () => {
-        // אם במהלך עדכון של line suspension, לא נבצע refresh
-        if (!isUpdatingRef.current) {
+        // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh
+        if (!isUpdatingRef.current && !isUpdatingImeiRef.current) {
             fetchWidelyDetails();
         }
     };
@@ -416,11 +480,44 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     color={colors.c0}
                 />
             </Box>
-            {/* הצגת הודעת שגיאה אם יש */}
+           
+            {/* הצגת הודעת שגיאה של line suspension אם יש */}
             {lineSuspensionError && (
                 <Box sx={{ marginTop: 1 }}>
                     <CustomTypography
                         text={lineSuspensionError}
+                        variant="h5"
+                        weight="regular"
+                        color={colors.c28} // צבע אדום לשגיאה
+                    />
+                </Box>
+            )}
+
+            {/* נעילת IMEI */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginTop: 2 }}>
+                <CustomSwitch 
+                    checked={imeiLocked} 
+                    onChange={(status) => { 
+                        // מסתירים שגיאה קודמת כשמתחילים פעולה חדשה
+                        setImeiLockError(null);
+                        handleLockUnlockImei(status);
+                    }} 
+                    variant='modern' 
+                    loading={isUpdatingImeiLock}
+                />
+                <CustomTypography
+                    text={t('imeiLock')}
+                    variant="h5"
+                    weight="regular"
+                    color={colors.c0}
+                />
+            </Box>
+           
+            {/* הצגת הודעת שגיאה של IMEI lock אם יש */}
+            {imeiLockError && (
+                <Box sx={{ marginTop: 1 }}>
+                    <CustomTypography
+                        text={imeiLockError}
                         variant="h5"
                         weight="regular"
                         color={colors.c28} // צבע אדום לשגיאה
