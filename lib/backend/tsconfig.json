@@ -12,8 +12,8 @@
     "typeRoots": ["node_modules/@types"],
        "paths": {
       "@/*": ["*"]   ,
-      "@model": ["../model/src"],
-      "@model/*": ["../model/src/*"],
+      "@model": ["./model/src", "../model/src"],
+      "@model/*": ["./model/src/*", "../model/src/*"],
       "@service/*": ["src/service/*"],
       "@controller/*": ["src/controller/*"],
       "@db/*": ["src/db/*"],
