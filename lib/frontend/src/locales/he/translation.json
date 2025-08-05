@@ -265,5 +265,9 @@
   "sendApn": "שלח APN",
   "choosePlan": "בחירת תוכנית",
   "failedToChangePackage": "שינוי החבילה נכשל",
-  "noDescriptionAvailable": "אין תיאור זמין"
+  "noDescriptionAvailable": "אין תיאור זמין",
+  "apnSentSuccessfully": "הגדרות APN נשלחו בהצלחה",
+  "errorSendingApn": "שגיאה בשליחת הגדרות APN",
+  "voicemailPincodeResetSuccessfully": "סיסמת תא קולי אופסה בהצלחה ל-1234",
+  "errorResettingVoicemailPincode": "שגיאה באיפוס סיסמת תא קולי"
 }

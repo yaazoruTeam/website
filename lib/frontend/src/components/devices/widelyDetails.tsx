@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '../../model'
@@ -31,6 +31,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
 
@@ -80,7 +82,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-        resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
+        try {
+            await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
+            setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
+        } catch (err) {
+            console.error('Error resetting voicemail pincode:', err);
+            setErrorMessage(t('errorResettingVoicemailPincode'));
+        }
     }
 
     //פונקציה לשינוי תוכנית
@@ -92,12 +100,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (widelyDetails && widelyDetails.endpoint_id) {
             try {
                 await sendApn(widelyDetails.endpoint_id);
-                console.log('APN sent successfully');
+                setSuccessMessage(t('apnSentSuccessfully'));
             } catch (err) {
                 console.error('Error sending APN:', err);
+                setErrorMessage(t('errorSendingApn'));
             }
         } else {
             console.error('Error: endpoint_id is missing or widelyDetails is null');
+            setErrorMessage(t('errorSendingApn'));
         }
     }
 
@@ -401,6 +411,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 </Box>
                 {/* </Box> */}
             </CustomModal>
+
+            {/* הודעות הצלחה וכישלון */}
+            <Snackbar open={!!successMessage} autoHideDuration={4000} onClose={() => setSuccessMessage(null)}>
+                <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage(null)}>
+                <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </WidelyContainer>
     );
 }

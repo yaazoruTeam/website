@@ -264,5 +264,9 @@
   "sendApn": "Send APN",
   "choosePlan": "Choose Plan",
   "failedToChangePackage": "Failed to change package",
-  "noDescriptionAvailable": "No description available"
+  "noDescriptionAvailable": "No description available",
+  "apnSentSuccessfully": "APN settings sent successfully",
+  "errorSendingApn": "Error sending APN settings",
+  "voicemailPincodeResetSuccessfully": "Voicemail pincode reset successfully to 1234",
+  "errorResettingVoicemailPincode": "Error resetting voicemail pincode"
 }
