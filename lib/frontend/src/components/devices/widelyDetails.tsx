@@ -88,6 +88,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const handleChangeNetworkConnection = async (network_connection: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
         try {
             await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
+            await fetchWidelyDetails(); // רענון הנתונים לאחר השינוי
             // Optionally, add success handling here (e.g., refresh data or show a message)
         } catch (error) {
             console.error('Error setting preferred network:', error);
@@ -127,7 +128,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // עדכון הערך בטופס
             setValue('simNumber', details.simNumber);
             // עדכון ערך החיבור הנבחר
-            setSelectedNetworkConnection(details.network_connection);
+            console.log('Network connection:', details.network_connection);
+            switch(details.network_connection) {
+                case 'PHI':
+                    setSelectedNetworkConnection('Hot_and_Partner');
+                    break;
+                case 'PL':
+                    setSelectedNetworkConnection('Pelephone_and_Partner');
+                    break;
+                    //to do : Check how to make sure it's just a pelephon 
+                default:
+                    setSelectedNetworkConnection('');
+                    break;
+            }
             // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
             // setValue('replacingPackages', details.someDefaultProgram || 'program1');
             setSelectedPackage(details.package_id || "");
