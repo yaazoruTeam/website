@@ -1,7 +1,6 @@
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import Switch from '@mui/material/Switch'
-import { CircularProgress, Box } from '@mui/material'
 import { colors } from '../../styles/theme'
 
 interface CustomSwitchProps {
@@ -9,15 +8,13 @@ interface CustomSwitchProps {
   onChange: (checked: boolean) => void
   variant?: 'default' | 'modern'
   disabled?: boolean
-  loading?: boolean
 }
 
-const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern'; loading?: boolean }>(({ variant = 'default', loading = false }) => ({
+const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern' }>(({ variant = 'default' }) => ({
   width: 44,
   height: 22,
   padding: 0,
   display: 'flex',
-  opacity: loading ? 0.7 : 1, // קצת שקיפות במצב טעינה
   transition: 'opacity 0.3s ease',
   '& .MuiSwitch-switchBase': {
     padding: 3,
@@ -39,6 +36,16 @@ const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern'; loading?: 
         backgroundColor: variant === 'modern' ? colors.c6 : colors.c28,
       },
     },
+    '&.Mui-disabled': {
+      opacity: 0.5,
+      '& .MuiSwitch-thumb': {
+        backgroundColor: colors.c38, // neutral gray
+      },
+      '& + .MuiSwitch-track': {
+        backgroundColor: colors.c39, // neutral light gray
+        opacity: 0.7,
+      },
+    },
   },
   '&:focus .MuiSwitch-thumb': {
     outline: 'none',
@@ -58,30 +65,20 @@ const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern'; loading?: 
   },
 }))
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, variant = 'default', disabled = false, loading = false }) => {
+const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, variant = 'default', disabled = false }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!loading && !disabled) {
+    if (!disabled) {
       onChange(e.target.checked);
     }
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <StyledSwitch 
-        variant={variant} 
-        checked={checked} 
-        onChange={handleChange}
-      />
-      {loading && (
-        <CircularProgress 
-          size={16} 
-          sx={{ 
-            color: variant === 'modern' ? colors.c3 : colors.c12,
-            marginLeft: '4px'
-          }} 
-        />
-      )}
-    </Box>
+    <StyledSwitch 
+      variant={variant} 
+      checked={checked} 
+      onChange={handleChange}
+      disabled={disabled}
+    />
   );
 }
 

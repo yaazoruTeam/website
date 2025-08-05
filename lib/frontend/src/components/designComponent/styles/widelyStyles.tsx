@@ -30,3 +30,15 @@ export const WidelyInfoSection = styled(FlexBase)({
   justifyContent: 'space-between',
   margin: '40px 0',
 })
+
+export const WidelyButtonSection = styled(FlexBase)({
+  marginTop: '24px',
+  justifyContent: 'center',
+})
+
+export const WidelySwitchSection = styled('div')({
+  marginTop: '24px',
+  '& > *:not(:last-child)': {
+    marginBottom: '16px',
+  },
+})
