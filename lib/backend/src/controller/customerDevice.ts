@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import config from '@/config'
-import * as db from '@/db'
+import config from '@config/index'
+import * as db from '@db/index'
 import { CustomerDevice, HttpError } from '@model'
 
 const limit = config.database.limit

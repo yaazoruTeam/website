@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, WidelyDeviceDetails } from '@/model/src'
-import { callingWidely } from '@/integration/widely/callingWidely'
-import { config } from '@/config'
-import { validateRequiredParam, validateWidelyResult } from '@/utils/widelyValidation'
+import { HttpError, Widely, WidelyDeviceDetails } from '@model'
+import { callingWidely } from '@integration/widely/callingWidely'
+import { config } from '@config/index'
+import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
 
 // Function for network identification
 const getNetworkConnection = (mccMnc: string): string => {

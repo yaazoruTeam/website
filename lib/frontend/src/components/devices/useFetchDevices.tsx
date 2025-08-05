@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getDevices, PaginatedDeviceResponse } from '../../api/device'
-import { Device } from '../../model/src'
+import { Device } from '@model'
 
 interface UseFetchDevicesProps {
   page: number

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely } from '@/model/src'
-import { callingWidely } from '@/integration/widely/callingWidely'
-import { validateRequiredParam, validateWidelyResult } from '@/utils/widelyValidation'
-import { sendMobileAction } from '@/integration/widely/widelyActions'
-import { config } from '@/config'
+import { HttpError, Widely } from '@model'
+import { callingWidely } from '@integration/widely/callingWidely'
+import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
+import { sendMobileAction } from '@integration/widely/widelyActions'
+import { config } from '@config/index'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

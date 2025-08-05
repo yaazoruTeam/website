@@ -1,14 +1,15 @@
-#Dockerfile רב-שלבי (Multi-Stage Build)
-
 # שלב בנייה (Builder Stage) - מכיל את כל מה שנדרש לקומפילציה והתקנת תלויות
 FROM node:20-alpine AS builder
 WORKDIR /app 
 
-# העתקת קבצי package.json להתקנת תלויות (מנצל cache)
+# העתקת קבצי package.json והתקנת תלויות (מנצל cache)
 COPY lib/backend/package*.json ./ 
 
-# התקנת כל התלויות (כולל dev dependencies הנחוצות לקומפילציה)
-RUN npm install 
+# העתקת תיקיית המודל הנדרשת כ-dependency
+COPY lib/model ./model
+
+# שימוש ב-npm ci שמבטיח התקנה נקייה
+RUN npm ci --include=dev
 
 # העתקת קוד המקור
 COPY lib/backend/. . 
@@ -22,11 +23,12 @@ WORKDIR /app
 
 # העתקת קבצי ה-package מה-builder stage כדי לאפשר התקנת תלויות production
 COPY --from=builder /app/package*.json ./ 
-COPY --from=builder /app/tsconfig.json ./ 
 
+# העתקת תיקיית המודל משלב ה-builder
+COPY --from=builder /app/model ./model 
 
-# התקנת תלויות Production בלבד (אופטימיזציה נוספת)
-RUN npm install --production --omit=dev 
+# התקנת תלויות Production עם npm ci
+RUN npm ci --omit=dev
 
 # העתקת הקבצים המקומפלים (dist) משלב ה-builder
 COPY --from=builder /app/dist ./dist 

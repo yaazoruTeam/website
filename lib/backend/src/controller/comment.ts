@@ -1,9 +1,9 @@
 import { SpeechClient } from "@google-cloud/speech";
 import { NextFunction, Request, Response } from 'express'
-import * as db from '@/db'
+import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
 
-import config from '@/config'
+import config from '@config/index'
 
 let client: SpeechClient;
 
