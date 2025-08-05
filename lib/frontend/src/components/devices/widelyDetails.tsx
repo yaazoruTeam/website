@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, setPreferredNetwork } from '../../api/widely'
-import { Widely, WidelyDeviceDetails } from '../../model'
+import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as https from 'https'
-import { createAuth } from './auth'
-import { config } from '@/config'
+import { createAuth } from '@integration/widely/auth'
+import { config } from '@config/index'
 
 const callingWidely = async (func_name: string, data: any) => {
   const requestBody = {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import * as commentsController from '../controller/comment';
-import { hasRole } from '../middleware/auth';
+import * as commentsController from '@controller/comment';
+import { hasRole } from '@middleware/auth';
 import multer from 'multer';
 
 const commentRouter = Router()

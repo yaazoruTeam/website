@@ -2,7 +2,7 @@ import request from 'supertest'
 import express from 'express'
 import * as commentsController from '../../controller/comment'
 import * as db from '../../db'
-import { Comment } from '../../model';
+import { Comment } from '../../../../model/src';
 
 jest.mock('../../db')
 

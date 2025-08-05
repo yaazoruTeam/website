@@ -1,4 +1,4 @@
-import getDbConnection from '../connection'
+import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createDeviceSchema = async () => {
