@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/system'
-import { Device, CustomerDevice } from '../../../model'
+import { Device, CustomerDevice } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { colors } from '../../../styles/theme'
 import DeviceCardContent from '../../devices/DeviceCardContent'

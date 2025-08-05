@@ -1,7 +1,7 @@
 import { Box } from '@mui/system'
 import React, { useCallback, useEffect, useState } from 'react'
 import { getAllCustomerDevicesByCustomerId } from '../../../api/customerDevice'
-import { Customer, CustomerDevice, Device } from '../../../model'
+import { Customer, CustomerDevice, Device } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../../styles/theme'

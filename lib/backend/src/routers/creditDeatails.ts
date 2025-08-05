@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import * as creditDetailsController from '../controller/creditDetails'
-import { hasRole } from '../middleware/auth'
+import * as creditDetailsController from '@controller/creditDetails'
+import { hasRole } from '@middleware/auth'
 
 const creditDetailsRouter = Router()
 
