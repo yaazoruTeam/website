@@ -21,7 +21,7 @@ const callingWidely = async (func_name: string, data: any) => {
     })
 
     return response.data
-  } catch (error) {
+  } catch (error: any) {
     throw error
   }
 }
