@@ -7,9 +7,10 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@model': path.resolve(__dirname, '../model/src'),
+      '@model': path.resolve(process.cwd(), 'model/src'),
     },
-    server: {
+  },
+  server: {
     watch: {
       usePolling: true,
       interval: 500,
