@@ -1,8 +1,8 @@
-import { CreateCommentDto } from "./Dtos";
 import { EntityType } from "./Comment";
 import * as Customer from './Customer'
 import * as Device from './Device'
 import * as HttpError from './HttpError'
+import * as CreateCommentDto from './Dtos'
 import * as CustomerDevice from './CustomerDevice'
 import * as User from './User'
 import * as JwtPayload from './JwtPayload'

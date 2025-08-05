@@ -50,7 +50,7 @@ export const getCommentsByEntityTypeAndEntityId = async (
 };
 
 export const createComment = async (
-  commentData: CreateCommentDto
+  commentData: CreateCommentDto.Model
 ): Promise<Comment.Model> => {
   try {
     const newToken = await handleTokenRefresh();

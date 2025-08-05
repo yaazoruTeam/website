@@ -135,7 +135,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     setInputText("");
 
     try {
-      const commentData: CreateCommentDto = {
+      const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
         entity_id: entityId,
         content: tempComment.content,
@@ -170,7 +170,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     addTempComment(tempAudioComment);
 
     try {
-      const commentData: CreateCommentDto = {
+      const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
         entity_id: entityId,
         content: transcription,

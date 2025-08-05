@@ -1,6 +1,6 @@
 import { EntityType } from "./Comment";
 
-export interface CreateCommentDto {
+interface Model {
   entity_id: string;
   entity_type: EntityType;
   content?: string;
@@ -9,3 +9,5 @@ export interface CreateCommentDto {
   file_type?: string;
   created_at: string;
 }
+
+export { Model }
