@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { MonthlyPayment } from '../model/src'
+import { MonthlyPayment } from '@model'
 import { handleTokenRefresh } from './token'
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/monthlyPayment`

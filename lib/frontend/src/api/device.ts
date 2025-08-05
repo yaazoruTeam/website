@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { Device } from '../model/src'
+import { Device } from '@model'
 import { handleTokenRefresh } from './token'
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/device`

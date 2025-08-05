@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import * as itemController from '../controller/item'
-import { hasRole } from '../middleware/auth'
+import * as itemController from '@controller/item'
+import { hasRole } from '@middleware/auth'
 
 const itemRouter = Router()
 

@@ -1,5 +1,5 @@
 import * as db from '../../db';
-import { Device } from '../../model';
+import { Device } from '../../../../model/src';
 import { createDevice, getDevices, getDeviceById, getDevicesByStatus, updateDevice, deleteDevice } from '../../controller/device';
 import { Request, Response, NextFunction } from "express";
 

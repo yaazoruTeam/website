@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MonthlyPayment } from '../../model/src'
+import { MonthlyPayment } from '@model'
 import MonthlyPaymentList from './MonthlyPaymentList'
 import { getMonthlyPayment } from '../../api/monhlyPaymentApi'
 import { Box } from '@mui/system'
