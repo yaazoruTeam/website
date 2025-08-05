@@ -16,6 +16,7 @@ interface Model {
   msisdn: string
   iccid: string
   device_info: DeviceInfo
+  package_id: string
 }
 
 export type { Model, DeviceInfo }

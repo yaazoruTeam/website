@@ -9,9 +9,17 @@
     }
   ],
   "compilerOptions": {
-    "types": [
-      "react",
-      "react-dom"
-    ]
-  }
+    "types": ["react", "react-dom"]
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

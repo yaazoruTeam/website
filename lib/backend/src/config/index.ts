@@ -17,9 +17,9 @@ const requiredEnvVars = {
 
 // Check for missing required variables
 Object.entries(requiredEnvVars).forEach(([key, value]) => {
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`)
-  }
+    if (!value) {
+        throw new Error(`Missing required environment variable: ${key}`)
+    }
 })
 
 export const config = {
@@ -40,7 +40,7 @@ export const config = {
     },
     tranzila: {
         publicKey: process.env.TRANZILA_PUBLIC_KEY || '',
-        privateKey: process.env.TRANZILA_PRIVET_KEY || '',
+        privateKey: process.env.TRANZILA_PRIVATE_KEY || '',
     },
     widely: {
         brandToken: process.env.BRAND_TOKEN as string,

@@ -9,7 +9,9 @@ widelyRouter.post('/get_mobiles', hasRole('admin'), widelyController.getMobiles)
 widelyRouter.post('/get_mobile_info', hasRole('admin'), widelyController.getMobileInfo)
 widelyRouter.post('/get_all_user_data', hasRole('admin'), widelyController.getAllUserData)
 widelyRouter.post('/terminate_mobile', hasRole('admin'), widelyController.terminateMobile)
+widelyRouter.post('/get_packages_with_info', hasRole('admin'), widelyController.getPackagesWithInfo)
 widelyRouter.post('/prov_reset_vm_pincode', hasRole('admin'), widelyController.provResetVmPincode)
 widelyRouter.post('/send_apn', hasRole('admin'), widelyController.sendApn)
+widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyController.changePackages)
 
 export default widelyRouter

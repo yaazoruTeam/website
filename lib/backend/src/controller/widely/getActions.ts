@@ -86,6 +86,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     endpoint_id: endpoint_id
   })
 
+
   // Check for error_code in response
   if (result.error_code !== undefined && result.error_code !== 200) {
     const error: HttpError.Model = {
@@ -254,6 +255,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         model: mobileInfo?.device_info?.model || 'Not available',
         name: mobileInfo?.device_info?.name || 'Not available',
       },
+      package_id: mobileInfo?.package_id?.toString() || '',
     }
 
     res.status(200).json(responseData)
@@ -263,4 +265,3 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 }
 
 export { searchUsers, getMobiles, getMobileInfo, getAllUserData }
-
