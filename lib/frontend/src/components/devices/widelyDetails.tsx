@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -357,7 +357,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <HeaderSection />
             {renderContent()}
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 2 }}>
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
