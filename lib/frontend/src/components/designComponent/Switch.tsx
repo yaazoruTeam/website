@@ -6,13 +6,16 @@ import { colors } from '../../styles/theme'
 interface CustomSwitchProps {
   checked: boolean
   onChange: (checked: boolean) => void
+  variant?: 'default' | 'modern'
+  disabled?: boolean
 }
 
-const StyledSwitch = styled(Switch)(() => ({
+const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern' }>(({ variant = 'default' }) => ({
   width: 44,
   height: 22,
   padding: 0,
   display: 'flex',
+  transition: 'opacity 0.3s ease',
   '& .MuiSwitch-switchBase': {
     padding: 3,
     transitionDuration: '300ms',
@@ -20,17 +23,27 @@ const StyledSwitch = styled(Switch)(() => ({
       transform: 'translateX(22px)',
       color: colors.c6,
       '& .MuiSwitch-thumb': {
-        backgroundColor: colors.c30,
+        backgroundColor: variant === 'modern' ? colors.c6 : colors.c30,
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: colors.c12,
+        backgroundColor: variant === 'modern' ? colors.c3 : colors.c12,
         opacity: 1,
       },
     },
     '&:not(.Mui-checked)': {
       transform: 'translateX(0px)',
       '& .MuiSwitch-thumb': {
-        backgroundColor: colors.c28,
+        backgroundColor: variant === 'modern' ? colors.c6 : colors.c28,
+      },
+    },
+    '&.Mui-disabled': {
+      opacity: 0.5,
+      '& .MuiSwitch-thumb': {
+        backgroundColor: colors.c38, // neutral gray
+      },
+      '& + .MuiSwitch-track': {
+        backgroundColor: colors.c39, // neutral light gray
+        opacity: 0.7,
       },
     },
   },
@@ -46,14 +59,27 @@ const StyledSwitch = styled(Switch)(() => ({
     outline: 'none',
   },
   '& .MuiSwitch-track': {
-    backgroundColor: colors.c12,
+    backgroundColor: variant === 'modern' ? colors.n50 : colors.c12,
     borderRadius: 20,
     opacity: 1,
   },
 }))
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange }) => {
-  return <StyledSwitch checked={checked} onChange={(e) => onChange(e.target.checked)} />
+const CustomSwitch: React.FC<CustomSwitchProps> = ({ checked, onChange, variant = 'default', disabled = false }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!disabled) {
+      onChange(e.target.checked);
+    }
+  };
+
+  return (
+    <StyledSwitch 
+      variant={variant} 
+      checked={checked} 
+      onChange={handleChange}
+      disabled={disabled}
+    />
+  );
 }
 
 export default CustomSwitch

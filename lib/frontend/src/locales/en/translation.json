@@ -262,5 +262,8 @@
   "cancel": "Cancel",
   "choosePlan": "Choose Plan",
   "failedToChangePackage": "Failed to change package",
-  "noDescriptionAvailable": "No description available"
+  "noDescriptionAvailable": "No description available",
+  "lineIsPaused": "Line is paused.",
+  "imeiLock": "IMEI Lock",
+  "errorUpdatingImeiLock": "Error updating IMEI lock"
 }

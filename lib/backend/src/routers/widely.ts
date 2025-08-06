@@ -12,5 +12,7 @@ widelyRouter.post('/terminate_mobile', hasRole('admin'), widelyController.termin
 widelyRouter.post('/get_packages_with_info', hasRole('admin'), widelyController.getPackagesWithInfo)
 widelyRouter.post('/prov_reset_vm_pincode', hasRole('admin'), widelyController.provResetVmPincode)
 widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyController.changePackages)
+widelyRouter.post('/freeze_unfreeze_mobile', hasRole('admin'), widelyController.freezeUnFreezeMobile)
+widelyRouter.post('/lock_unlock_imei', hasRole('admin'), widelyController.updateImeiLockStatus)
 
 export default widelyRouter
