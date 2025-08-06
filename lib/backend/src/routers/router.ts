@@ -46,7 +46,6 @@ router.post(
   `${ROUTE_PATH}/excel/upload`,
   hasRole('admin'),
   uploadExcel.single('excelFile'),
-  handleUploadError,
   excelController.handleReadExcelFile
 )
 

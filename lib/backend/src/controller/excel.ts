@@ -46,13 +46,14 @@ const handleReadExcelFile = async (
     }
 
     res.status(200).json({
-      message: 'הקובץ עובד בהצלחה',
+      message: processingResults.errorFilePath
+        ? `הקובץ עובד עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
+        : 'הקובץ עובד בהצלחה',
       totalRows: processingResults.totalRows,
       successCount: processingResults.successCount,
       errorsCount: processingResults.errorsCount,
       ...(processingResults.errorFilePath && { 
-        errorFileGenerated: true,
-        message: `הקובץ עובד עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
+        errorFileGenerated: true
       }),
       data: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
     })

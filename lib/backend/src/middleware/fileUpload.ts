@@ -1,6 +1,6 @@
 import multer from 'multer'
 import path from 'path'
-import { Request } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 // הגדרת תיקיית העלאות
 const uploadDir = path.join(__dirname, '../../uploads')
@@ -44,7 +44,7 @@ export const uploadExcel = multer({
 })
 
 // middleware לטיפול בשגיאות העלאה
-export const handleUploadError = (error: any, req: Request, res: any, next: any) => {
+export const handleUploadError = (error: any, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({

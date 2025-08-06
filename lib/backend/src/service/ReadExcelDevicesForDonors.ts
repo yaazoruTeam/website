@@ -90,13 +90,11 @@ const processExcelData = async (data: any[]): Promise<{
     console.log(`📋 Error report generated: ${errorFilePath}`)
   }
 
-  // החזרת סיכום התוצאות
-  successCount = data.length - errors.length
-  
+  // ✅ החזרת סיכום התוצאות עם הספירה הנכונה
   return {
     totalRows: data.length,
     errorsCount: errors.length,
-    successCount,
+    successCount, 
     ...(errorFilePath && { errorFilePath })
   }
 }
