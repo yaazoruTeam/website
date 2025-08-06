@@ -3,7 +3,6 @@ import {
   apiPostPublic,
   apiPut 
 } from './core/apiHelpers'
-import { AxiosResponse } from 'axios'
 
 const ENDPOINT = '/addMonthlyPayment'
 
@@ -17,8 +16,8 @@ export const createMonthlyPayment = async (
 export const updateMonthlyPayment = async (
   monthlyPayment: MonthlyPaymentManagement.Model,
   monthlyPayment_id: string,
-): Promise<AxiosResponse> => {
+): Promise<MonthlyPaymentManagement.Model> => {
   console.log('update monthly payment in frontend')
   const endpointUrl = `${ENDPOINT}/updateMonthlyPayment/${monthlyPayment_id}`
-  return apiPut<AxiosResponse>(endpointUrl, monthlyPayment)
+  return apiPut<MonthlyPaymentManagement.Model>(endpointUrl, monthlyPayment)
 }

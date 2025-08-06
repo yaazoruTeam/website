@@ -1,16 +1,14 @@
 import { Widely, WidelyDeviceDetails } from '@model'
 import { 
   apiPost,
-  safeApiGet,
-  // PaginatedResponse 
 } from './core/apiHelpers'
 
 const ENDPOINT = '/widely'
 
 export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceDetails.Model> => {
-  return safeApiGet<WidelyDeviceDetails.Model>(
+  return apiPost<WidelyDeviceDetails.Model>(
     `${ENDPOINT}/get_all_user_data`,
-    { simNumber } as WidelyDeviceDetails.Model
+    { simNumber } 
   )
 }
 

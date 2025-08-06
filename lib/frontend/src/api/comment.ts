@@ -55,7 +55,6 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
       {
         headers: {
           ...headers,
-          'Content-Type': 'multipart/form-data',
         },
       }
     )
