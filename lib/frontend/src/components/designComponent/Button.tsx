@@ -101,8 +101,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     },
   }
   const currentButtonStyle = buttonStyles[buttonType][state]
-  
-  // עיצוב מיוחד לכפתור fourth (מ-Figma)
+
+  // Special styling for the "fourth" button type (from Figma)
   const isFourthType = buttonType === 'fourth'
   
   return (

@@ -58,14 +58,7 @@ export const terminateMobile = async (endpoint_id: number): Promise<Widely.Model
 
 export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> => {
   try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return {} as Widely.Model
-    }
-    const token = newToken
-    if (!token) {
-      throw new Error('No token found!')
-    }
+    const token = await getValidToken()
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
          endpoint_id: endpoint_id
     }, {
@@ -120,14 +113,7 @@ export const changePackages = async (endpoint_id: number, package_id: number): P
 
 export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely.Model> => {
   try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return {} as Widely.Model
-    }
-    const token = newToken
-    if (!token) {
-      throw new Error('No token found!')
-    }
+    const token = await getValidToken()
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/prov_reset_vm_pincode`, {
       endpoint_id: endpoint_id
     }, {
@@ -191,6 +177,26 @@ export const getMobileInfo = async (endpoint_id: string): Promise<Widely.Model> 
     return response.data
   } catch (error) {
     console.error('Error getting mobile info', error)
+    throw error
+  }
+}
+
+export const sendApn = async (endpoint_id: number): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(
+      `${baseUrl}/send_apn`,
+      { endpoint_id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error sending APN', error)
     throw error
   }
 }
