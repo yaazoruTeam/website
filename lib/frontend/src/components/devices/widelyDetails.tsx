@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
@@ -125,6 +125,52 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // ניתן להוסיף הודעת שגיאה
         } finally {
             setIsTerminating(false);
+        }
+    }
+
+    // פונקציה לאיפוס מקיף של מכשיר
+    const handleComprehensiveReset = async () => {
+        if (!widelyDetails?.endpoint_id) {
+            setErrorMessage(t('errorNoEndpointId'));
+            return;
+        }
+
+        // בקשת אישור מהמשתמש
+        const confirmed = window.confirm(
+            `${t('areYouSureComprehensiveReset')} ${widelyDetails.endpoint_id}?\n\n${t('warningComprehensiveReset')}`
+        );
+
+        if (!confirmed) return;
+
+        // בקשת שם למכשיר החדש
+        const deviceName = window.prompt(t('enterNewDeviceName'), `Reset_${widelyDetails.endpoint_id}_${new Date().toISOString().split('T')[0]}`);
+        
+        if (!deviceName) {
+            setErrorMessage(t('deviceNameRequired'));
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const result = await ComprehensiveResetDevice(widelyDetails.endpoint_id, deviceName);
+            
+            if (result.success) {
+                setSuccessMessage(
+                    `${t('comprehensiveResetSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
+                );
+                // רענון הנתונים לאחר איפוס מוצלח
+                setTimeout(() => {
+                    fetchWidelyDetails();
+                }, 2000);
+            } else {
+                setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
+            }
+        } catch (err: any) {
+            console.error('Error in comprehensive reset:', err);
+            const errorMsg = err?.response?.data?.message || err?.message || t('comprehensiveResetError');
+            setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -367,6 +413,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 <CustomButton
                     label={t('sendApn')}
                     onClick={handleSendApn}
+                    buttonType="fourth"
+                    size="large"
+                />
+                <CustomButton
+                    label={t('comprehensiveReset')}
+                    onClick={handleComprehensiveReset}
                     buttonType="fourth"
                     size="large"
                 />
