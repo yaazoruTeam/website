@@ -119,3 +119,7 @@ export const safeGetPaginated = async <T>(
     return { data: [], total: 0, page, totalPages: 0 }
   }
 }
+
+// פונקציות נוספות שהיו ב-apiClient
+export const safePaginated = safeGetPaginated // alias לתאימות
+export const safeGet = safeApiGet // alias לתאימות
