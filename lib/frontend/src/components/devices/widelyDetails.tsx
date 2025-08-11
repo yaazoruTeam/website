@@ -370,7 +370,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         label={t('addOneTimeGigabyte')}
                         disabled={true}
                         icon={<ChevronDownIcon />}
-
                     />
                 </Box>
                 <ModelPackages

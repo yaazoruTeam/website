@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
-import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParam, validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 
@@ -66,8 +66,11 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
 const changePackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, package_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(package_id, 'package_id')
+    
+    validateRequiredParams([
+      { value: endpoint_id, name: 'endpoint_id' },
+      { value: package_id, name: 'package_id' }
+    ])
 
     if (!package_id || isNaN(Number(package_id))) {
       const error: HttpError.Model = {
@@ -96,8 +99,10 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
   try {
     const { endpoint_id, name } = req.body
 
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(name, 'name')
+    validateRequiredParams([
+      { value: endpoint_id, name: 'endpoint_id' },
+      { value: name, name: 'name' }
+    ])
 
     const result = await ComprehensiveResetDevice(endpoint_id, name)
 
@@ -141,9 +146,12 @@ const sendApn = async (req: Request, res: Response, next: NextFunction): Promise
 const addOneTimePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, domain_user_id, package_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(domain_user_id, 'domain_user_id')
-    validateRequiredParam(package_id, 'package_id')
+    
+    validateRequiredParams([
+      { value: endpoint_id, name: 'endpoint_id' },
+      { value: domain_user_id, name: 'domain_user_id' },
+      { value: package_id, name: 'package_id' }
+    ])
 
     if (!package_id || isNaN(Number(package_id))) {
       const error: HttpError.Model = {
