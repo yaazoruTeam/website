@@ -3,6 +3,30 @@ import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, addOneTimePackage } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
+
+// Interface עבור פריט חבילה בודד
+interface PackageItem {
+    id: number
+    description?: {
+        EN?: string
+        HE?: string
+    }
+    price?: number
+}
+
+// Interface עבור מבנה הנתונים של החבילות
+interface PackagesData {
+    data: {
+        items: PackageItem[]
+    }
+}
+
+// Type guard לבדיקת מבנה החבילות
+const isPackagesData = (obj: any): obj is PackagesData => {
+    return obj && 
+           typeof obj.data === 'object' && 
+           Array.isArray(obj.data.items);
+}
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { CustomTextField } from '../designComponent/Input'
@@ -23,8 +47,8 @@ import ModelPackages from './modelPackage'
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
-    const [basePackages, setBasePackages] = useState<any | null>(null)
-    const [extraPackages, setExtraPackages] = useState<any | null>(null)
+    const [basePackages, setBasePackages] = useState<PackagesData | null>(null)
+    const [extraPackages, setExtraPackages] = useState<PackagesData | null>(null)
 
     const [openBasePackagesModel, setOpenBasePackagesModel] = useState<boolean>(false)
     const [openExtraPackagesModel, setOpenExtraPackagesModel] = useState<boolean>(false)
@@ -40,12 +64,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
 
     // פונקציה לעיבוד אפשרויות החבילות
-    const getPackageOptions = (packages: any) => {
+    const getPackageOptions = (packages: PackagesData | null) => {
         // לפי המבנה שתיארת: packages.data.items
-        const items = (packages as any)?.data?.items;
+        const items = packages?.data?.items;
         if (!items || !Array.isArray(items)) return [];
 
-        return items.map((pkg: any) => {
+        return items.map((pkg: PackageItem) => {
             const description = pkg.description?.EN || t('noDescriptionAvailable');
             const price = pkg.price || 0;
 
@@ -199,22 +223,31 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const basePackages = await getPackagesWithInfo('base');
             const extraPackages = await getPackagesWithInfo('extra');
 
-            setExtraPackages(extraPackages);
-            setBasePackages(basePackages);
+            // בדיקה ושמירה בטוחה של החבילות
+            if (isPackagesData(extraPackages)) {
+                setExtraPackages(extraPackages);
+            }
+            if (isPackagesData(basePackages)) {
+                setBasePackages(basePackages);
+            }
 
 
 
             // קביעת ערך ברירת מחדל לחבילות החלפה
-            const baseItems = (basePackages as any)?.data?.items;
-            if (baseItems && Array.isArray(baseItems) && baseItems.length > 0) {
-                const defaultValue = baseItems[0].id.toString();
-                setValue('replacingPackages', defaultValue);
+            if (isPackagesData(basePackages)) {
+                const baseItems = basePackages.data.items;
+                if (baseItems && Array.isArray(baseItems) && baseItems.length > 0) {
+                    const defaultValue = baseItems[0].id.toString();
+                    setValue('replacingPackages', defaultValue);
+                }
             }
 
-            const extraItems = (extraPackages as any)?.data?.items;
-            if (extraItems && Array.isArray(extraItems) && extraItems.length > 0) {
-                const defaultValue = extraItems[0].id.toString();
-                setValue('addOneTimeGigabyte', defaultValue);
+            if (isPackagesData(extraPackages)) {
+                const extraItems = extraPackages.data.items;
+                if (extraItems && Array.isArray(extraItems) && extraItems.length > 0) {
+                    const defaultValue = extraItems[0].id.toString();
+                    setValue('addOneTimeGigabyte', defaultValue);
+                }
             }
         } catch (err: any) {
             // Parse error response to determine appropriate user message
@@ -410,7 +443,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     useEffect(() => {
         fetchWidelyDetails();
-    }, [fetchWidelyDetails, open]);
+    }, [fetchWidelyDetails]);
 
     if (error) {
         return (
