@@ -2,7 +2,7 @@ import request from 'supertest'
 import express from 'express'
 import { createUser, getUsers, getUserById, updateUser, deleteUser } from '../../controller/user'
 import * as db from '../../db'
-import { User } from '../../model/src'
+import { User } from '../../../../model/src'
 import { hashPassword } from '../../utils/password'
 
 jest.mock('../../db')

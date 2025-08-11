@@ -1,7 +1,7 @@
-import { Box } from '@mui/material'
+import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, addOneTimePackage } from '../../api/widely'
-import { Widely, WidelyDeviceDetails } from '../../model'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, addOneTimePackage } from '../../api/widely'
+import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
@@ -34,6 +34,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [selectedNetworkConnection, setSelectedNetworkConnection] = useState<string>('');
     const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
     const [isTerminating, setIsTerminating] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { t } = useTranslation()
     const [selectedPackage, setSelectedPackage] = useState<string>(widelyDetails?.package_id || "");
 
@@ -83,12 +85,33 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-        resetVoicemailPincode(widelyDetails?.endpoint_id || 0)
+        try {
+            await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
+            setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
+        } catch (err) {
+            console.error('Error resetting voicemail pincode:', err);
+            setErrorMessage(t('errorResettingVoicemailPincode'));
+        }
     }
 
     //פונקציה לשינוי תוכנית
     const handleChangePackages = async (selectedPackage: number): Promise<Widely.Model> => {
         return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage)
+    }
+
+    const handleSendApn = async () => {
+        if (widelyDetails && widelyDetails.endpoint_id) {
+            try {
+                await sendApn(widelyDetails.endpoint_id);
+                setSuccessMessage(t('apnSentSuccessfully'));
+            } catch (err) {
+                console.error('Error sending APN:', err);
+                setErrorMessage(t('errorSendingApn'));
+            }
+        } else {
+            console.error('Error: endpoint_id is missing or widelyDetails is null');
+            setErrorMessage(t('errorSendingApn'));
+        }
     }
 
      //פונקציה להוספת חבילת גיגה חד פעמית
@@ -110,6 +133,52 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // ניתן להוסיף הודעת שגיאה
         } finally {
             setIsTerminating(false);
+        }
+    }
+
+    // פונקציה לאיפוס מקיף של מכשיר
+    const handleComprehensiveReset = async () => {
+        if (!widelyDetails?.endpoint_id) {
+            setErrorMessage(t('errorNoEndpointId'));
+            return;
+        }
+
+        // בקשת אישור מהמשתמש
+        const confirmed = window.confirm(
+            `${t('areYouSureComprehensiveReset')} ${widelyDetails.endpoint_id}?\n\n${t('warningComprehensiveReset')}`
+        );
+
+        if (!confirmed) return;
+
+        // בקשת שם למכשיר החדש
+        const deviceName = window.prompt(t('enterNewDeviceName'), `Reset_${widelyDetails.endpoint_id}_${new Date().toISOString().split('T')[0]}`);
+        
+        if (!deviceName) {
+            setErrorMessage(t('deviceNameRequired'));
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const result = await ComprehensiveResetDevice(widelyDetails.endpoint_id, deviceName);
+            
+            if (result.success) {
+                setSuccessMessage(
+                    `${t('comprehensiveResetSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
+                );
+                // רענון הנתונים לאחר איפוס מוצלח
+                setTimeout(() => {
+                    fetchWidelyDetails();
+                }, 2000);
+            } else {
+                setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
+            }
+        } catch (err: any) {
+            console.error('Error in comprehensive reset:', err);
+            const errorMsg = err?.response?.data?.message || err?.message || t('comprehensiveResetError');
+            setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -359,11 +428,22 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <HeaderSection />
             {renderContent()}
 
-            {/* כפתור איפוס סיסמת תא קולי */}
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 2 }}>
                 <CustomButton
                     label={t('resetVoicemailPincode')}
                     onClick={handleResetVoicemailPincode}
+                    buttonType="fourth"
+                    size="large"
+                />
+                <CustomButton
+                    label={t('sendApn')}
+                    onClick={handleSendApn}
+                    buttonType="fourth"
+                    size="large"
+                />
+                <CustomButton
+                    label={t('comprehensiveReset')}
+                    onClick={handleComprehensiveReset}
                     buttonType="fourth"
                     size="large"
                 />
@@ -408,6 +488,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 </Box>
                 {/* </Box> */}
             </CustomModal>
+
+            {/* הודעות הצלחה וכישלון */}
+            <Snackbar open={!!successMessage} autoHideDuration={4000} onClose={() => setSuccessMessage(null)}>
+                <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage(null)}>
+                <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </WidelyContainer>
     );
 }

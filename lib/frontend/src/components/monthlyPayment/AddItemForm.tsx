@@ -5,7 +5,7 @@ import { CustomTextField } from '../designComponent/Input'
 import CustomSelect from '../designComponent/CustomSelect'
 import { CustomButton } from '../designComponent/Button'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { ItemForMonthlyPayment } from '../../model/src'
+import { ItemForMonthlyPayment } from '@model'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../styles/theme'
 

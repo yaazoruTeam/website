@@ -1,7 +1,8 @@
 import { Router } from 'express'
-import * as excelController from '../controller/excel'
-import * as ApiTranzila from '../controller/ApiTranzila'
-import * as MonthlyPaymentManagementController from '../controller/MonthlyPaymentManagement'
+import * as excelController from '@controller/excel'
+import * as ApiTranzila from '@controller/ApiTranzila'
+import * as MonthlyPaymentManagementController from '@controller/MonthlyPaymentManagement'
+import { uploadExcel, handleUploadError } from '@middleware/fileUpload'
 
 import customerRouter from './customer'
 import deviceRouter from './device'
@@ -16,8 +17,8 @@ import paymentsRouter from './payments'
 import itemRouter from './item'
 import paymentCreditLinkRouter from './paymentCreditLink'
 import authRouter from './auth'
-import { errorHandler } from '../middleware/errorHandler'
-import { hasRole } from '../middleware/auth'
+import { errorHandler } from '@middleware/errorHandler'
+import { hasRole } from '@middleware/auth'
 import commentRouter from './comments'
 import widelyRouter from './widely'
 
@@ -41,7 +42,12 @@ router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 
 
-router.get(`${ROUTE_PATH}/excel`, hasRole('admin'), excelController.handleReadExcelFile)
+router.post(
+  `${ROUTE_PATH}/excel/upload`,
+  hasRole('admin'),
+  uploadExcel.single('excelFile'),
+  excelController.handleReadExcelFile
+)
 
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,

@@ -1,6 +1,6 @@
 interface Model {
-    status: number;
-    message: string;
+  status: number
+  message: string
 }
 
 export { Model }

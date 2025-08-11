@@ -17,9 +17,9 @@ import CommentInput from "./CommentInput";
 import DateSeparator from "./DateSeparator";
 
 // Models and types
-import { Comment } from "../../model";
-import { EntityType } from "../../model/src/Comment";
-import { CreateCommentDto } from "../../model/src/CommentDtos";
+import { Comment } from "@model";
+import { EntityType } from "@model";
+import { CreateCommentDto } from "@model";
 
 // API
 import {
@@ -135,7 +135,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     setInputText("");
 
     try {
-      const commentData: CreateCommentDto = {
+      const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
         entity_id: entityId,
         content: tempComment.content,
@@ -170,7 +170,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     addTempComment(tempAudioComment);
 
     try {
-      const commentData: CreateCommentDto = {
+      const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
         entity_id: entityId,
         content: transcription,

@@ -1,14 +1,20 @@
-import getDbConnection from '../db/connection'
-import * as db from '../db'
+import getDbConnection from '@db/connection'
+import * as db from '@db/index'
 import { CustomerDeviceExcel } from '@model'
 import * as XLSX from 'xlsx' // ✨ שינוי: נדרש בשביל כתיבה
 import * as path from 'path' // ✨ שינוי: נדרש בשביל כתיבה
-import { convertFlatRowToModel } from '../utils/converters/customerDeviceExcelConverter'
-import { writeErrorsToExcel } from '../utils/excel'
+import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
+import { writeErrorsToExcel } from '@utils/excel'
 
-const processExcelData = async (data: any[]): Promise<void> => {
+const processExcelData = async (data: any[]): Promise<{
+  totalRows: number;
+  errorsCount: number;
+  successCount: number;
+  errorFilePath?: string;
+}> => {
   const knex = getDbConnection()
   const errors: any[] = []
+  let successCount = 0
 
   for (const item of data) {
     const isCustomer: boolean =
@@ -55,6 +61,7 @@ const processExcelData = async (data: any[]): Promise<void> => {
           )
         }
         await trx.commit()
+        successCount++ // ספירת הצלחה
       } catch (err: any) {
         console.error('Transaction failed:', err)
         errors.push({
@@ -66,6 +73,7 @@ const processExcelData = async (data: any[]): Promise<void> => {
     } else {
       try {
         await processDevice(sanitized, null)
+        successCount++ // ספירת הצלחה גם ליצירת device בלבד
       } catch (err: any) {
         console.error('Error creating device (no customer):', err)
         errors.push({
@@ -75,7 +83,20 @@ const processExcelData = async (data: any[]): Promise<void> => {
       }
     }
   }
-  await writeErrorsToExcel(errors)
+  
+  // כתיבת השגיאות לקובץ Excel
+  const errorFilePath = await writeErrorsToExcel(errors)
+  if (errorFilePath) {
+    console.log(`📋 Error report generated: ${errorFilePath}`)
+  }
+
+  // ✅ החזרת סיכום התוצאות עם הספירה הנכונה
+  return {
+    totalRows: data.length,
+    errorsCount: errors.length,
+    successCount, 
+    ...(errorFilePath && { errorFilePath })
+  }
 }
 
 const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) => {
