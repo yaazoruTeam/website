@@ -38,6 +38,8 @@ export const WidelyButtonSection = styled(FlexBase)({
 
 export const WidelySwitchSection = styled('div')({
   marginTop: '24px',
+  display: 'flex',
+  gap:1,
   '& > *:not(:last-child)': {
     marginBottom: '16px',
   },
