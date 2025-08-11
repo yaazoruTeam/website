@@ -82,12 +82,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-     try {
+        try {
             await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
             setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
         } catch (err) {
             console.error('Error resetting voicemail pincode:', err);
             setErrorMessage(t('errorResettingVoicemailPincode'));
+        }
+    }
+
+    const handleChangeNetworkConnection = async (network_connection: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
+        try {
+            await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
+            await fetchWidelyDetails(); // רענון הנתונים לאחר השינוי
+            setSuccessMessage(t('preferredNetworkChangedSuccessfully'));
+        } catch (error) {
+            console.error('Error setting preferred network:', error);
+            setErrorMessage(t('errorSettingPreferredNetwork'));
         }
     }
 
@@ -144,7 +155,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
         // בקשת שם למכשיר החדש
         const deviceName = window.prompt(t('enterNewDeviceName'), `Reset_${widelyDetails.endpoint_id}_${new Date().toISOString().split('T')[0]}`);
-        
+
         if (!deviceName) {
             setErrorMessage(t('deviceNameRequired'));
             return;
@@ -153,7 +164,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         try {
             setLoading(true);
             const result = await ComprehensiveResetDevice(widelyDetails.endpoint_id, deviceName);
-            
+
             if (result.success) {
                 setSuccessMessage(
                     `${t('comprehensiveResetSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
@@ -185,14 +196,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setValue('simNumber', details.simNumber);
             // עדכון ערך החיבור הנבחר
             console.log('Network connection:', details.network_connection);
-            switch(details.network_connection) {
+            switch (details.network_connection) {
                 case 'PHI':
                     setSelectedNetworkConnection('Hot_and_Partner');
                     break;
                 case 'PL':
                     setSelectedNetworkConnection('Pelephone_and_Partner');
                     break;
-                    //to do : Check how to make sure it's just a pelephon 
+                //to do : Check how to make sure it's just a pelephon 
                 default:
                     setSelectedNetworkConnection('');
                     break;

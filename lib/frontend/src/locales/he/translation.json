@@ -279,5 +279,7 @@
   "comprehensiveResetFailed": "איפוס מקיף נכשל",
   "comprehensiveResetError": "שגיאה באיפוס מקיף",
   "newEndpointId": "מזהה מכשיר חדש",
-  "errorNoEndpointId": "מזהה מכשיר חסר"
+  "errorNoEndpointId": "מזהה מכשיר חסר",
+  "preferredNetworkChangedSuccessfully": "רשת מועדפת שונתה בהצלחה",
+  "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת"
 }
