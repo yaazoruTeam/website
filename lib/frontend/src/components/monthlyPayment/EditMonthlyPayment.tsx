@@ -253,7 +253,7 @@ const EditMonthlyPayment: React.FC = () => {
         monthlyPaymentManagement,
         monthlyPayment?.monthlyPayment_id || '',
       )
-      if (response.status === 200) {
+      if (response) {
         if (fromCustomerCard && customerId) {
           navigate(`/customer/${customerId}`)
         } else {

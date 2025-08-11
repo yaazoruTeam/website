@@ -124,32 +124,6 @@ class CustomerApi extends BaseApi {
 export const customerApi = new CustomerApi()
 ```
 
-## השינויים שביצענו בקבצים
-
-### קבצים שעודכנו:
-1. `customerApi.ts` - מ-85 שורות ל-67 שורות
-2. `widely.ts` - מ-144 שורות ל-57 שורות  
-3. `userApi.ts` - מ-60+ שורות ל-35 שורות
-4. `itemsApi.ts` - מ-80+ שורות ל-40 שורות
-5. `comment.ts` - מ-115 שורות ל-75 שורות
-6. `device.ts` - מ-80+ שורות ל-55 שורות
-7. `creditDetails.ts` - מ-60+ שורות ל-40 שורות
-8. `monthlyPaymentApi.ts` - חדש, מחליף monhlyPaymentApi.ts
-9. `paymentCreditLink.ts` - מ-35 שורות ל-35 שורות
-10. `customerDevice.ts` - מ-60+ שורות ל-50 שורות
-11. `monthlyPaymentManagement.ts` - עודכן לארכיטקטורה חדשה
-12. `payments.ts` - עודכן לארכיטקטורה חדשה
-
-### קבצים חדשים:
-1. `core/tokenManager.ts` - ניהול טוקנים מרכזי
-2. `core/apiClient.ts` - לקח HTTP מרכזי
-3. `core/baseApi.ts` - מחלקת בסיס לכל ה-APIs
-4. `index.ts` - ייצוא מרכזי של כל ה-APIs
-
-### קבצים שנמחקו:
-1. `token.tsx` - הועבר ל-`core/tokenManager.ts`
-2. `monhlyPaymentApi.ts` - הוחלף ב-`monthlyPaymentApi.ts`
-
 ## היתרונות של הארכיטקטורה החדשה
 
 ### 1. הפחתת קוד משמעותית
