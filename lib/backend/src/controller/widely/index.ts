@@ -7,6 +7,8 @@ export {
     provResetVmPincode,
     getPackagesWithInfo,
     changePackages,
+    ComprehensiveResetDeviceController,
+    sendApn,
     freezeUnFreezeMobile,
     updateImeiLockStatus
 } from './actions'
