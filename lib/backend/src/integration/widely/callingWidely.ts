@@ -1,13 +1,14 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import * as https from 'https'
 import { createAuth } from '@integration/widely/auth'
 import { config } from '@config/index'
+import { HttpError } from '@model'
 
 const callingWidely = async (func_name: string, data: any) => {
   const requestBody = {
     auth: createAuth(),
-    func_name: func_name,
-    data: data,
+    func_name,
+    data,
   }
 
   try {
@@ -21,8 +22,16 @@ const callingWidely = async (func_name: string, data: any) => {
     })
 
     return response.data
-  } catch (error: any) {
-    throw error
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError
+      throw <HttpError.Model>{
+        message: axiosError.message,
+        status: axiosError.response?.status || 500,
+      }
+    } else {
+      throw error
+    }
   }
 }
 
