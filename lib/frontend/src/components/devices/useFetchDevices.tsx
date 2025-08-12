@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getDevices, PaginatedDeviceResponse } from '../../api/device'
+import { getDevices } from '../../api/device'
 import { Device } from '@model'
 
 interface UseFetchDevicesProps {
@@ -29,7 +29,7 @@ export const useFetchDevices = ({ page, filterType }: UseFetchDevicesProps): Use
       
       try {
         // TODO: Update getDevices API to support filters
-        const response: PaginatedDeviceResponse = await getDevices(page)
+        const response = await getDevices(page)
         
         let filteredDevices = response.data
 

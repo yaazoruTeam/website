@@ -1,151 +1,40 @@
-import axios, { AxiosResponse } from 'axios'
 import { MonthlyPayment } from '@model'
-import { handleTokenRefresh } from './token'
+import { 
+  safeGetPaginated,
+  apiGet,
+  PaginatedResponse 
+} from './core/apiHelpers'
 
-const baseUrl = `${import.meta.env.VITE_BASE_URL}/monthlyPayment`
-export interface PaginatedMonthlyPayments {
-  data: MonthlyPayment.Model[]
-  page: number
-  totalPages: number
-  total: number
+const ENDPOINT = '/monthlyPayment'
+
+
+export const getMonthlyPayment = async (page = 1): Promise<PaginatedResponse<MonthlyPayment.Model>> => {
+  return await safeGetPaginated<MonthlyPayment.Model>(ENDPOINT, page)
 }
 
-// GET
-export const getMonthlyPayment = async (page = 1): Promise<PaginatedMonthlyPayments> => {
-  try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return { data: [], page, totalPages: 0, total: 0 }
-    }
-    const token = localStorage.getItem('token')
-    if (!token) {
-      throw new Error('No token found!')
-    }
-    const response: AxiosResponse<PaginatedMonthlyPayments> = await axios.get(`${baseUrl}?page=${page}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching monthly payments', error)
-    throw error
-  }
-}
-
-// GET(id)
 export const getMonthlyPaymentById = async (
   monthlyPayment_id: string,
 ): Promise<MonthlyPayment.Model> => {
-  try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return {} as MonthlyPayment.Model
-    }
-    const token = localStorage.getItem('token')
-    if (!token) {
-      throw new Error('No token found!')
-    }
-    const response: AxiosResponse<MonthlyPayment.Model> = await axios.get(
-      `${baseUrl}/${monthlyPayment_id}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    return response.data
-  } catch (error) {
-    console.error('Error fetching monthly payment id', error)
-    throw error
-  }
+  return apiGet<MonthlyPayment.Model>(`${ENDPOINT}/${monthlyPayment_id}`)
 }
 
-// GET(customer_id)
 export const getMonthlyPaymentByCustomerId = async (
-  customer_id: string, page = 1,
-): Promise<PaginatedMonthlyPayments> => {
-  try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return { data: [], page, totalPages: 0, total: 0 }
-    }
-    const token = localStorage.getItem('token')
-    if (!token) {
-      throw new Error('No token found!')
-    }
-    const response: AxiosResponse<PaginatedMonthlyPayments> = await axios.get(
-      `${baseUrl}/customer/${customer_id}?page=${page}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    return response.data
-  } catch (error) {
-    console.error('Error fetching all monthly payments by customer id', error)
-    throw error
-  }
+  customer_id: string, 
+  page = 1,
+): Promise<PaginatedResponse<MonthlyPayment.Model>> => {
+  return await safeGetPaginated<MonthlyPayment.Model>(`${ENDPOINT}/customer/${customer_id}`, page)
 }
 
-// GET(status)
 export const getMonthlyPaymentByStatus = async (
-  status: 'active' | 'inactive', page = 1,
-): Promise<PaginatedMonthlyPayments> => {
-  try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return { data: [], page, totalPages: 0, total: 0 }
-    }
-    const token = localStorage.getItem('token')
-    if (!token) {
-      throw new Error('No token found!')
-    }
-    const response: AxiosResponse<PaginatedMonthlyPayments> = await axios.get(
-      `${baseUrl}/status/${status}?page=${page}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    return response.data
-  } catch (error) {
-    console.error('Error fetching monthly payments by status', error)
-    throw error
-  }
+  status: 'active' | 'inactive', 
+  page = 1,
+): Promise<PaginatedResponse<MonthlyPayment.Model>> => {
+  return await safeGetPaginated<MonthlyPayment.Model>(`${ENDPOINT}/status/${status}`, page)
 }
 
-// GET(organization)
 export const getMonthlyPaymentByOrganization = async (
-  organization: string, page = 1,
-): Promise<PaginatedMonthlyPayments> => {
-  try {
-    const newToken = await handleTokenRefresh()
-    if (!newToken) {
-      return { data: [], page, totalPages: 0, total: 0 }
-    }
-    const token = localStorage.getItem('token')
-    if (!token) {
-      throw new Error('No token found!')
-    }
-    const response: AxiosResponse<PaginatedMonthlyPayments> = await axios.get(
-      `${baseUrl}/organization/${organization}?page=${page}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    return response.data
-  } catch (error) {
-    console.error('Error fetching monthly payments by organization', error)
-    throw error
-  }
+  organization: string, 
+  page = 1,
+): Promise<PaginatedResponse<MonthlyPayment.Model>> => {
+  return await safeGetPaginated<MonthlyPayment.Model>(`${ENDPOINT}/organization/${organization}`, page)
 }
