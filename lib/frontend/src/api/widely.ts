@@ -33,7 +33,7 @@ export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceD
       },
     },
   )
-  
+
   return response.data
 }
 
@@ -60,7 +60,7 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
   try {
     const token = await getValidToken()
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
-         endpoint_id: endpoint_id
+      endpoint_id: endpoint_id
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export const getPackagesWithInfo = async (package_types: 'base' | 'extra'): Prom
         Authorization: `Bearer ${token}`,
       },
     })
-    
+
     return response.data
   } catch (error) {
     console.error('Error fetching packages with info', error)
@@ -220,6 +220,25 @@ export const sendApn = async (endpoint_id: number): Promise<Widely.Model> => {
     return response.data
   } catch (error) {
     console.error('Error sending APN', error)
+    throw error
+  }
+}
+
+export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone'): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/changeNetwork`, {
+      endpoint_id: endpoint_id,
+      network_name: network
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error changing preferred network', error)
     throw error
   }
 }

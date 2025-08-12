@@ -278,5 +278,7 @@
   "comprehensiveResetFailed": "Comprehensive reset failed",
   "comprehensiveResetError": "Error in comprehensive reset",
   "newEndpointId": "New endpoint ID",
-  "errorNoEndpointId": "Missing endpoint ID"
+  "errorNoEndpointId": "Missing endpoint ID",
+  "preferredNetworkChangedSuccessfully": "Preferred network changed successfully",
+  "errorSettingPreferredNetwork": "Error setting preferred network"
 }
