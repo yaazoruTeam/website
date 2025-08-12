@@ -53,16 +53,17 @@ export const apiPut = async <T>(url: string, data?: any, config?: AxiosRequestCo
   }
 }
 
-export const apiDelete = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+export const apiDeleteById = async <T>(endpoint: string, id: string | number, config?: AxiosRequestConfig): Promise<T> => {
   try {
     const headers = await getAuthHeaders()
-    const response: AxiosResponse<T> = await axios.delete(`${baseURL}${url}`, {
+    const url = `${baseURL}${endpoint}/${id}`
+    const response: AxiosResponse<T> = await axios.delete(url, {
       ...config,
       headers: { ...headers, ...config?.headers },
     })
     return response.data
   } catch (error) {
-    console.error(`Error in DELETE ${url}:`, error)
+    console.error(`Error in DELETE ${endpoint}/${id}:`, error)
     throw error
   }
 }

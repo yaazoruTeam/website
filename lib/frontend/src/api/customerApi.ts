@@ -3,7 +3,7 @@ import {
   apiGet, 
   apiPost, 
   apiPut, 
-  apiDelete, 
+  apiDeleteById, 
   apiGetPublic,
   safeGetPaginated,
   PaginatedResponse 
@@ -82,5 +82,5 @@ export const updateCustomer = async (
 
 // DELETE
 export const deleteCustomer = async (customerId: number): Promise<Customer.Model> => {
-  return apiDelete<Customer.Model>(`${ENDPOINT}/${customerId}`)
+  return apiDeleteById<Customer.Model>(ENDPOINT, customerId)
 }
