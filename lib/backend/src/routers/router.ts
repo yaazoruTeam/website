@@ -2,6 +2,7 @@ import { Router } from 'express'
 import * as excelController from '@controller/excel'
 import * as ApiTranzila from '@controller/ApiTranzila'
 import * as MonthlyPaymentManagementController from '@controller/MonthlyPaymentManagement'
+import { uploadExcel, handleUploadError } from '@middleware/fileUpload'
 
 import customerRouter from './customer'
 import deviceRouter from './device'
@@ -41,7 +42,12 @@ router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 
 
-router.get(`${ROUTE_PATH}/excel`, hasRole('admin'), excelController.handleReadExcelFile)
+router.post(
+  `${ROUTE_PATH}/excel/upload`,
+  hasRole('admin'),
+  uploadExcel.single('excelFile'),
+  excelController.handleReadExcelFile
+)
 
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,

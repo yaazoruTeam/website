@@ -7,9 +7,15 @@ import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConv
 import { writeErrorsToExcel } from '@utils/excel'
 import logger from '../utils/logger'
 
-const processExcelData = async (data: any[]): Promise<void> => {
+const processExcelData = async (data: any[]): Promise<{
+  totalRows: number;
+  errorsCount: number;
+  successCount: number;
+  errorFilePath?: string;
+}> => {
   const knex = getDbConnection()
   const errors: any[] = []
+  let successCount = 0
 
   for (const item of data) {
     const isCustomer: boolean =
@@ -56,6 +62,7 @@ const processExcelData = async (data: any[]): Promise<void> => {
           )
         }
         await trx.commit()
+        successCount++ // ספירת הצלחה
       } catch (err: any) {
         logger.error('Transaction failed:', err)
         errors.push({
@@ -67,6 +74,7 @@ const processExcelData = async (data: any[]): Promise<void> => {
     } else {
       try {
         await processDevice(sanitized, null)
+        successCount++ // ספירת הצלחה גם ליצירת device בלבד
       } catch (err: any) {
         logger.error('Error creating device (no customer):', err)
         errors.push({
@@ -76,7 +84,20 @@ const processExcelData = async (data: any[]): Promise<void> => {
       }
     }
   }
-  await writeErrorsToExcel(errors)
+  
+  // כתיבת השגיאות לקובץ Excel
+  const errorFilePath = await writeErrorsToExcel(errors)
+  if (errorFilePath) {
+    console.log(`📋 Error report generated: ${errorFilePath}`)
+  }
+
+  // ✅ החזרת סיכום התוצאות עם הספירה הנכונה
+  return {
+    totalRows: data.length,
+    errorsCount: errors.length,
+    successCount, 
+    ...(errorFilePath && { errorFilePath })
+  }
 }
 
 const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) => {

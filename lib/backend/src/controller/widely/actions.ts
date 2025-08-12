@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
-import { sendMobileAction } from '@integration/widely/widelyActions'
+import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -79,4 +79,52 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
     next(error)
   }
 }
-export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages }
+
+// איפוס מקיף של מכשיר כטרנזקציה
+const ComprehensiveResetDeviceController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id, name } = req.body
+    
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParam(name, 'name')
+
+    const result = await ComprehensiveResetDevice(endpoint_id, name)
+
+    const terminationSuccess = result.terminationResult.error_code === 200 || result.terminationResult.error_code === undefined
+    const creationSuccess = result.creationResult.error_code === 200 || result.creationResult.error_code === undefined
+
+    res.status(200).json({
+      success: true,
+      message: 'Device reset completed successfully',
+      data: {
+        originalInfo: result.originalInfo,
+        terminationSuccess,
+        creationSuccess,
+        newEndpointId: result.creationResult.data?.[0]?.endpoint_id || null,
+        terminationResult: result.terminationResult,
+        creationResult: result.creationResult
+      }
+    })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+const sendApn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+
+    const result = await sendMobileAction(endpoint_id, 'send_apn')
+
+    res.status(200).json({
+      success: true,
+      message: 'APN settings have been sent successfully',
+      data: result
+    })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, ComprehensiveResetDeviceController, sendApn }
