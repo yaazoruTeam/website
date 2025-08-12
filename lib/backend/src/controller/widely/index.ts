@@ -9,6 +9,7 @@ export {
     changePackages,
     ComprehensiveResetDeviceController,
     sendApn,
+    changeNetwork,
     freezeUnFreezeMobile,
     updateImeiLockStatus
 } from './actions'

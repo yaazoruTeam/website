@@ -280,7 +280,9 @@
   "comprehensiveResetError": "שגיאה באיפוס מקיף",
   "newEndpointId": "מזהה מכשיר חדש",
   "errorNoEndpointId": "מזהה מכשיר חסר",
-   "lineIsPaused": "קו מושהה",
+  "lineIsPaused": "קו מושהה",
   "imeiLock": "נעילת IMEI",
-  "errorUpdatingImeiLock": "שגיאה בעדכון נעילת IMEI"
+  "errorUpdatingImeiLock": "שגיאה בעדכון נעילת IMEI",
+  "preferredNetworkChangedSuccessfully": "רשת מועדפת שונתה בהצלחה",
+  "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת"
 }
