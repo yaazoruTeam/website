@@ -9,5 +9,6 @@ export {
     changePackages,
     ComprehensiveResetDeviceController,
     sendApn,
-    changeNetwork
+    changeNetwork,
+    addOneTimePackage
 } from './actions'

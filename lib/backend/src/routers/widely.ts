@@ -15,5 +15,6 @@ widelyRouter.post('/send_apn', hasRole('admin'), widelyController.sendApn)
 widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyController.changePackages)
 widelyRouter.post('/reset_device', hasRole('admin'), widelyController.ComprehensiveResetDeviceController)
 widelyRouter.post('/changeNetwork', hasRole('admin'), widelyController.changeNetwork)
+widelyRouter.post('/add_one_time_package', hasRole('admin'), widelyController.addOneTimePackage)
 
 export default widelyRouter

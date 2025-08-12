@@ -80,11 +80,22 @@ const changeNetwork = async (
 const getPackagesWithInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
 
+    const { package_types } = req.body
+    validateRequiredParam(package_types, 'package_types')
+
+    if (package_types !== 'base' && package_types !== 'extra') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid package_types provided. It must be "base" or "extra".'
+      }
+      throw error
+    }
+
     const result: Widely.Model = await callingWidely(
       'get_packages_with_info',
       {
         reseller_domain_id: config.widely.accountId,
-        package_types: ['base']
+        package_types: [package_types]
       }
     )
     res.status(result.error_code).json(result)
@@ -95,6 +106,7 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
 const changePackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, package_id } = req.body
+
     validateRequiredParam(endpoint_id, 'endpoint_id')
     validateRequiredParam(package_id, 'package_id')
 
@@ -167,6 +179,39 @@ const sendApn = async (req: Request, res: Response, next: NextFunction): Promise
   }
 }
 
+const addOneTimePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id, domain_user_id, package_id } = req.body
+    
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParam(domain_user_id, 'domain_user_id')
+    validateRequiredParam(package_id, 'package_id')
+
+    if (!package_id || isNaN(Number(package_id))) {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid package_id provided. It must be a number.'
+      }
+      throw error
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'add_once_off_subscription',
+      {
+        account_id: config.widely.accountId,
+        domain_user_id: domain_user_id,
+        endpoint_id: endpoint_id,
+        new_package_ids: [package_id]
+      }
+    )
+
+    validateWidelyResult(result, 'Failed to add one-time package')
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export {
   terminateMobile,
   provResetVmPincode,
@@ -174,5 +219,5 @@ export {
   changePackages,
   ComprehensiveResetDeviceController,
   sendApn,
-  changeNetwork
+  addOneTimePackage
 }
