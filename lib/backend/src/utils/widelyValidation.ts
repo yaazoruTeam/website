@@ -1,6 +1,6 @@
 import { HttpError, Widely } from '@model'
 
-// General function for parameter validation
+// General function for parameter validation (single parameter)
 const validateRequiredParam = (param: any, paramName: string): void => {
     if (param == null || param === '') {
         const error: HttpError.Model = {
@@ -10,8 +10,6 @@ const validateRequiredParam = (param: any, paramName: string): void => {
         throw error
     }
 }
-
-// General function for validating results and creating errors
 
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
     // Check for API error response

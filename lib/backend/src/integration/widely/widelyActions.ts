@@ -1,11 +1,13 @@
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
-import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParam, validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 
 const sendMobileAction = async (endpoint_id: string | number, action: string): Promise<Widely.Model> => {
     // Validate required parameters
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(action, 'action')
+    validateRequiredParams([
+        { value: endpoint_id, name: 'endpoint_id' },
+        { value: action, name: 'action' }
+    ])
 
     // Call Widely API
     const result: Widely.Model = await callingWidely(
@@ -77,10 +79,12 @@ const provCreateMobile = async (
         sms_to_mail?: string
     }>
 ): Promise<Widely.Model> => {
-    validateRequiredParam(domain_user_id, 'domain_user_id')
-    validateRequiredParam(sim_iccid, 'sim_iccid')
-    validateRequiredParam(service_id, 'service_id')
-    validateRequiredParam(name, 'name')
+    validateRequiredParams([
+        { value: domain_user_id, name: 'domain_user_id' },
+        { value: sim_iccid, name: 'sim_iccid' },
+        { value: service_id, name: 'service_id' },
+        { value: name, name: 'name' }
+    ])
 
     const data: any = {
         domain_user_id,
@@ -103,8 +107,10 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
     terminationResult: Widely.Model
     creationResult: Widely.Model
 }> => {
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(name, 'name')
+    validateRequiredParams([
+        { value: endpoint_id, name: 'endpoint_id' },
+        { value: name, name: 'name' }
+    ])
 
     let originalInfo: any = null
     let terminationResult: Widely.Model | null = null

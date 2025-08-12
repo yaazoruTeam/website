@@ -242,6 +242,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: parseInt(endpoint_id) || 0,
+      domain_user_id: mobileInfo?.domain_user_id || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
       max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
@@ -256,6 +257,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         name: mobileInfo?.device_info?.name || 'Not available',
       },
       package_id: mobileInfo?.package_id?.toString() || '',
+      active: mobileInfo?.active,
     }
 
     res.status(200).json(responseData)

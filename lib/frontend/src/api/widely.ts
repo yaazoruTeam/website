@@ -25,10 +25,11 @@ export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
 }
 
 export const changePackages = async (endpoint_id: number, package_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/update_mobile_subscription`, {
-    endpoint_id,
-    package_id
-  })
+  return apiPost<Widely.Model>(`${ENDPOINT}/change_packages`, { endpoint_id, package_id })
+}
+
+export const addOneTimePackage = async (endpoint_id: number, domain_user_id: number, package_id: number): Promise<Widely.Model> => {
+  return apiPost<Widely.Model>(`${ENDPOINT}/add_one_time_package`, { endpoint_id, domain_user_id, package_id })
 }
 
 export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely.Model> => {
@@ -82,3 +83,19 @@ export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelepho
       network_name: network
     })
 }
+
+export const freezeUnfreezeMobile = async (endpoint_id: number, action: 'freeze' | 'unfreeze'): Promise<Widely.Model> => {
+  return apiPost<Widely.Model>(`${ENDPOINT}/freeze_unfreeze_mobile`, {
+    endpoint_id: endpoint_id,
+    action: action
+  })
+}
+
+export const lockUnlockImei = async (endpoint_id: number, iccid: string, action: boolean): Promise<Widely.Model> => {
+  return apiPost<Widely.Model>(`${ENDPOINT}/lock_unlock_imei`, {
+    endpoint_id: endpoint_id,
+    iccid: iccid,
+    action: action
+  })
+}
+
