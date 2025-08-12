@@ -74,10 +74,12 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
   }
 }
 
-export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
+export const getPackagesWithInfo = async (package_types: 'base' | 'extra'): Promise<Widely.Model> => {
   try {
     const token = await getValidToken()
-    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {}, {
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {
+      package_types
+    }, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -107,6 +109,27 @@ export const changePackages = async (endpoint_id: number, package_id: number): P
     return response.data
   } catch (error) {
     console.error('Error changing packages', error)
+    throw error
+  }
+}
+
+export const addOneTimePackage = async (endpoint_id: number, domain_user_id: number, package_id: number): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/add_one_time_package`, {
+      endpoint_id,
+      domain_user_id,
+      package_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error adding one-time packages', error)
     throw error
   }
 }
