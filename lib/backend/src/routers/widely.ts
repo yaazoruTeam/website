@@ -16,5 +16,7 @@ widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyControl
 widelyRouter.post('/reset_device', hasRole('admin'), widelyController.ComprehensiveResetDeviceController)
 widelyRouter.post('/changeNetwork', hasRole('admin'), widelyController.changeNetwork)
 widelyRouter.post('/add_one_time_package', hasRole('admin'), widelyController.addOneTimePackage)
+widelyRouter.post('/freeze_unfreeze_mobile', hasRole('admin'), widelyController.freezeUnFreezeMobile)
+widelyRouter.post('/lock_unlock_imei', hasRole('admin'), widelyController.updateImeiLockStatus)
 
 export default widelyRouter

@@ -18,6 +18,7 @@ interface Model {
   iccid: string
   device_info: DeviceInfo
   package_id: string
+  active: boolean
 }
 
 export { Model, DeviceInfo }

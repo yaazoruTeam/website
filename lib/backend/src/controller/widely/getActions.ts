@@ -257,6 +257,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         name: mobileInfo?.device_info?.name || 'Not available',
       },
       package_id: mobileInfo?.package_id?.toString() || '',
+      active: mobileInfo?.active,
     }
 
     res.status(200).json(responseData)

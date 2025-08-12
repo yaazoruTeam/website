@@ -242,3 +242,42 @@ export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelepho
     throw error
   }
 }
+
+export const freezeUnfreezeMobile = async (endpoint_id: number, action: 'freeze' | 'unfreeze'): Promise<Widely.Model> => {
+  try {    
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/freeze_unfreeze_mobile`, {
+      endpoint_id: endpoint_id,
+      action: action
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error freezing/unfreezing mobile', error)
+    throw error
+  }
+}
+
+export const lockUnlockImei = async (endpoint_id: number, iccid: string, action: boolean): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/lock_unlock_imei`, {
+      endpoint_id: endpoint_id,
+      iccid: iccid,
+      action: action
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error locking/unlocking IMEI', error)
+    throw error
+  }
+}
