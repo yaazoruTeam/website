@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
-import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result: Widely.Model = await callingWidely(
       'prov_terminate_mobile',
@@ -23,7 +23,7 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
 const provResetVmPincode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result = await sendMobileAction(endpoint_id, 'prov_reset_vm_pincode')
 
@@ -42,8 +42,7 @@ const changeNetwork = async (
     const { endpoint_id, network_name } = req.body;
 
     // ולידציות בסיסיות
-    validateRequiredParam(endpoint_id, 'endpoint_id');
-    validateRequiredParam(network_name, 'network_name');
+    validateRequiredParams({ endpoint_id, network_name });
 
     // נירמול שם הרשת
     const normalized = network_name.toLowerCase();
@@ -81,7 +80,7 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
   try {
 
     const { package_types } = req.body
-    validateRequiredParam(package_types, 'package_types')
+    validateRequiredParams({ package_types })
 
     if (package_types !== 'base' && package_types !== 'extra') {
       const error: HttpError.Model = {
@@ -107,8 +106,7 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
   try {
     const { endpoint_id, package_id } = req.body
 
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(package_id, 'package_id')
+    validateRequiredParams({ endpoint_id, package_id })
 
     if (!package_id || isNaN(Number(package_id))) {
       const error: HttpError.Model = {
@@ -137,8 +135,7 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
   try {
     const { endpoint_id, name } = req.body
 
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(name, 'name')
+    validateRequiredParams({ endpoint_id, name })
 
     const result = await ComprehensiveResetDevice(endpoint_id, name)
 
@@ -165,7 +162,7 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
 const sendApn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result = await sendMobileAction(endpoint_id, 'send_apn')
 
@@ -183,9 +180,7 @@ const addOneTimePackage = async (req: Request, res: Response, next: NextFunction
   try {
     const { endpoint_id, domain_user_id, package_id } = req.body
 
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(domain_user_id, 'domain_user_id')
-    validateRequiredParam(package_id, 'package_id')
+    validateRequiredParams({ endpoint_id, domain_user_id, package_id })
 
     if (!package_id || isNaN(Number(package_id))) {
       const error: HttpError.Model = {
@@ -217,8 +212,7 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
   try {
     const { endpoint_id } = req.body
     const { action } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(action, 'action')
+    validateRequiredParams({ endpoint_id, action })
 
     if (action !== 'freeze' && action !== 'unfreeze') {
       const error: HttpError.Model = {
@@ -245,9 +239,7 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
 const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, iccid, action } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(iccid, 'iccid')
-    validateRequiredParam(action, 'action')
+    validateRequiredParams({ endpoint_id, iccid, action })
 
     if (typeof action !== 'boolean') {
       const error: HttpError.Model = {
