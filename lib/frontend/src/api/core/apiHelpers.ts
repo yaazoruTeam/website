@@ -10,117 +10,121 @@ export interface PaginatedResponse<T> {
   totalPages: number
 }
 
-// פונקציות גנריות לשימוש חוזר
-export const apiGet = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+export interface ApiConfig extends AxiosRequestConfig {
+  /** האם להחזיר fallback במקום לזרוק שגיאה */
+  safe?: boolean
+  /** ערך ברירת מחדל במידה ו-safe=true */
+  fallback?: any
+  /** האם הבקשה צריכה authentication */
+  requireAuth?: boolean
+}
+
+// פונקציה מרכזית לכל הבקשות
+const makeRequest = async <T>(
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  url: string,
+  data?: any,
+  config: ApiConfig = {}
+): Promise<T> => {
+  const { safe = false, fallback, requireAuth = true, ...axiosConfig } = config
+  
   try {
-    const headers = await getAuthHeaders()
-    const response: AxiosResponse<T> = await axios.get(`${baseURL}${url}`, {
-      ...config,
-      headers: { ...headers, ...config?.headers },
-    })
+    // וידוא טוקן אם נדרש
+    if (requireAuth) {
+      await getValidToken()
+    }
+    
+    // קבלת headers
+    const headers = requireAuth 
+      ? await getAuthHeaders() 
+      : { 'Content-Type': 'application/json' }
+    
+    const requestConfig = {
+      ...axiosConfig,
+      headers: { ...headers, ...axiosConfig?.headers },
+    }
+    
+    let response: AxiosResponse<T>
+    
+    switch (method) {
+      case 'GET':
+        response = await axios.get(`${baseURL}${url}`, requestConfig)
+        break
+      case 'POST':
+        response = await axios.post(`${baseURL}${url}`, data, requestConfig)
+        break
+      case 'PUT':
+        response = await axios.put(`${baseURL}${url}`, data, requestConfig)
+        break
+      case 'DELETE':
+        response = await axios.delete(`${baseURL}${url}`, requestConfig)
+        break
+    }
+    
     return response.data
   } catch (error) {
-    console.error(`Error in GET ${url}:`, error)
+    console.error(`Error in ${method} ${url}:`, error)
+    
+    // אם safe mode - החזר fallback
+    if (safe && fallback !== undefined) {
+      return fallback
+    }
+    
     throw error
   }
 }
 
-export const apiPost = async <T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
-  try {
-    const headers = await getAuthHeaders()
-    const response: AxiosResponse<T> = await axios.post(`${baseURL}${url}`, data, {
-      ...config,
-      headers: { ...headers, ...config?.headers },
-    })
-    return response.data
-  } catch (error) {
-    console.error(`Error in POST ${url}:`, error)
-    throw error
-  }
+// פונקציות ה-API החדשות - אחידות וגמישות
+export const apiGet = async <T>(url: string, config: ApiConfig = {}): Promise<T> => {
+  return makeRequest<T>('GET', url, undefined, config)
 }
 
-export const apiPut = async <T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
-  try {
-    const headers = await getAuthHeaders()
-    const response: AxiosResponse<T> = await axios.put(`${baseURL}${url}`, data, {
-      ...config,
-      headers: { ...headers, ...config?.headers },
-    })
-    return response.data
-  } catch (error) {
-    console.error(`Error in PUT ${url}:`, error)
-    throw error
-  }
+export const apiPost = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+  return makeRequest<T>('POST', url, data, config)
 }
 
-export const apiDeleteById = async <T>(endpoint: string, id: string | number, config?: AxiosRequestConfig): Promise<T> => {
-  try {
-    const headers = await getAuthHeaders()
-    const url = `${baseURL}${endpoint}/${id}`
-    const response: AxiosResponse<T> = await axios.delete(url, {
-      ...config,
-      headers: { ...headers, ...config?.headers },
-    })
-    return response.data
-  } catch (error) {
-    console.error(`Error in DELETE ${endpoint}/${id}:`, error)
-    throw error
-  }
+export const apiPut = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+  return makeRequest<T>('PUT', url, data, config)
 }
 
-// פונקציות לבקשות ללא טוקן
-export const apiGetPublic = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-  try {
-    const response: AxiosResponse<T> = await axios.get(`${baseURL}${url}`, config)
-    return response.data
-  } catch (error) {
-    console.error(`Error in public GET ${url}:`, error)
-    throw error
-  }
+export const apiDelete = async <T>(url: string, config: ApiConfig = {}): Promise<T> => {
+  return makeRequest<T>('DELETE', url, undefined, config)
 }
 
-export const apiPostPublic = async <T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
-  try {
-    const response: AxiosResponse<T> = await axios.post(`${baseURL}${url}`, data, config)
-    return response.data
-  } catch (error) {
-    console.error(`Error in public POST ${url}:`, error)
-    throw error
-  }
+export const apiDeleteById = async <T>(endpoint: string, id: string | number, config: ApiConfig = {}): Promise<T> => {
+  return apiDelete<T>(`${endpoint}/${id}`, config)
 }
 
-// פונקציה גנרית לקבלת נתונים עם pagination
-export const getPaginatedData = async <T>(
+// פונקציות לבקשות ללא טוקן (public)
+export const apiGetPublic = async <T>(url: string, config: ApiConfig = {}): Promise<T> => {
+  return apiGet<T>(url, { ...config, requireAuth: false })
+}
+
+export const apiPostPublic = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+  return apiPost<T>(url, data, { ...config, requireAuth: false })
+}
+
+// פונקציות עם safe mode מובנה
+export const safeApiGet = async <T>(url: string, fallback: T, config: ApiConfig = {}): Promise<T> => {
+  return apiGet<T>(url, { ...config, safe: true, fallback })
+}
+
+export const safePaginated = async <T>(
   endpoint: string,
-  page: number = 1
+  page: number = 1,
+  config: ApiConfig = {}
 ): Promise<PaginatedResponse<T>> => {
-  return await apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`)
+  const fallback: PaginatedResponse<T> = { data: [], total: 0, page, totalPages: 0 }
+  return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`, { 
+    ...config, 
+    safe: true, 
+    fallback 
+  })
 }
 
-// פונקציות גנריות עם safe fallback
-export const safeApiGet = async <T>(url: string, fallback: T): Promise<T> => {
-  try {
-    await getValidToken() // וידוא שהטוקן תקין
-    return await apiGet<T>(url)
-  } catch (error) {
-    console.error(`Safe API GET failed for ${url}:`, error)
-    return fallback
-  }
+// Aliases לתאימות עם קוד קיים
+export const safeGetPaginated = safePaginated
+export const safeGet = safeApiGet
+export const getPaginatedData = <T>(endpoint: string, page: number = 1): Promise<PaginatedResponse<T>> => {
+  return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`)
 }
-
-export const safeGetPaginated = async <T>(
-  endpoint: string,
-  page: number = 1
-): Promise<PaginatedResponse<T>> => {
-  try {
-    await getValidToken() // וידוא שהטוקן תקין
-    return await getPaginatedData<T>(endpoint, page)
-  } catch (error) {
-    console.error(`Safe paginated GET failed for ${endpoint}:`, error)
-    return { data: [], total: 0, page, totalPages: 0 }
-  }
-}
-
-// פונקציות נוספות שהיו ב-apiClient
-export const safePaginated = safeGetPaginated // alias לתאימות
-export const safeGet = safeApiGet // alias לתאימות

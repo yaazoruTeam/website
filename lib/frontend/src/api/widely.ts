@@ -20,8 +20,8 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
   return apiPost<Widely.Model>(`${ENDPOINT}/terminate_mobile`, { endpoint_id })
 }
 
-export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/get_packages_with_info`, {})
+export const getPackagesWithInfo = async (package_types:'base' | 'extra'): Promise<Widely.Model> => {
+  return apiPost<Widely.Model>(`${ENDPOINT}/get_packages_with_info`, { package_types })
 }
 
 export const changePackages = async (endpoint_id: number, package_id: number): Promise<Widely.Model> => {

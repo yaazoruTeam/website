@@ -281,6 +281,7 @@ export {
   changePackages,
   ComprehensiveResetDeviceController,
   sendApn,
+  changeNetwork,
   addOneTimePackage,
   freezeUnFreezeMobile,
   updateImeiLockStatus
