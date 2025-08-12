@@ -1,11 +1,5 @@
 import { HttpError, Widely } from '@model'
 
-// Type definition for parameter validation
-interface ParamValidation {
-    value: any
-    name: string
-}
-
 // General function for parameter validation (single parameter)
 const validateRequiredParam = (param: any, paramName: string): void => {
     if (param == null || param === '') {
@@ -16,31 +10,6 @@ const validateRequiredParam = (param: any, paramName: string): void => {
         throw error
     }
 }
-
-// Enhanced function for validating multiple parameters at once
-const validateRequiredParams = (params: ParamValidation[]): void => {
-    const missingParams: string[] = []
-    
-    params.forEach(({ value, name }) => {
-        if (value == null || value === '') {
-            missingParams.push(name)
-        }
-    })
-    
-    if (missingParams.length > 0) {
-        const message = missingParams.length === 1 
-            ? `${missingParams[0]} is required.`
-            : `The following parameters are required: ${missingParams.join(', ')}.`
-            
-        const error: HttpError.Model = {
-            status: 400,
-            message,
-        }
-        throw error
-    }
-}
-
-// General function for validating results and creating errors
 
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
     // Check for API error response
@@ -71,5 +40,5 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
     }
 }
 
-export { validateRequiredParam, validateRequiredParams, validateWidelyResult }
+export { validateRequiredParam, validateWidelyResult }
 ;

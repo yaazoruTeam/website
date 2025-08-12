@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
-import { validateRequiredParam, validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 
@@ -106,11 +106,9 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
 const changePackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, package_id } = req.body
-    
-    validateRequiredParams([
-      { value: endpoint_id, name: 'endpoint_id' },
-      { value: package_id, name: 'package_id' }
-    ])
+
+    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParam(package_id, 'package_id')
 
     if (!package_id || isNaN(Number(package_id))) {
       const error: HttpError.Model = {
