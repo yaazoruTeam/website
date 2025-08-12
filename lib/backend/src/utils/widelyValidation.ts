@@ -1,11 +1,24 @@
 import { HttpError, Widely } from '@model'
 
-// General function for parameter validation (single parameter)
-const validateRequiredParam = (param: any, paramName: string): void => {
-    if (param == null || param === '') {
+const validateRequiredParams = (params: Record<string, any>): void => {
+    const missingParams: string[] = []
+    
+    // Check each parameter for null, undefined, or empty string values
+    Object.entries(params).forEach(([key, value]) => {
+        if (value == null || value === '' || (typeof value === 'string' && value.trim() === '')) {
+            missingParams.push(key)
+        }
+    })
+    
+    // If there are missing parameters, throw a detailed error
+    if (missingParams.length > 0) {
+        const message = missingParams.length === 1 
+            ? `Parameter '${missingParams[0]}' is required.`
+            : `The following parameters are required: ${missingParams.map(param => `'${param}'`).join(', ')}.`
+            
         const error: HttpError.Model = {
             status: 400,
-            message: `${paramName} is required.`,
+            message,
         }
         throw error
     }
@@ -40,5 +53,4 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
     }
 }
 
-export { validateRequiredParam, validateWidelyResult }
-;
+export { validateRequiredParams, validateWidelyResult }
