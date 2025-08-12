@@ -1,6 +1,7 @@
 import { Customer, HttpError } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
+import logger from '../utils/logger'
 
 const limit = config.database.limit
 
@@ -48,7 +49,7 @@ const getCustomers = async (
       total: parseInt(count as string, 10),
     }
   } catch (err) {
-    console.log('Error in getCustomers: in db:', err)
+    logger.error('Error in getCustomers: in db:', err)
     throw err
   }
 }

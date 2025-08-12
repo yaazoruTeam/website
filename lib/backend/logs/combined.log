@@ -1,0 +1,75 @@
+[2025-08-12 08:32:36] info: Creating database schema...
+[2025-08-12 08:32:36] info: Server is running on http://localhost:3006
+[2025-08-12 08:32:36] info: Health check available at http://localhost:3006/health
+[2025-08-12 08:36:47] info: Creating database schema...
+[2025-08-12 08:36:47] info: create branch schema
+[2025-08-12 08:36:47] info: branch table already exists. Skipping creation.
+[2025-08-12 08:36:47] info: create branchCustomer schema
+[2025-08-12 08:36:48] info: Server is running on http://localhost:3006
+[2025-08-12 08:36:48] info: Health check available at http://localhost:3006/health
+[2025-08-12 09:08:58] info: Creating database schema...
+[2025-08-12 09:08:58] info: Creating schema...
+[2025-08-12 09:08:58] info: create customer schema
+[2025-08-12 09:08:58] info: Schema "yaazoru" already exists.
+[2025-08-12 09:08:58] info: create customer schema
+[2025-08-12 09:08:58] info: Customer table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create device schema
+[2025-08-12 09:08:58] info: device table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create customerDevice schema
+[2025-08-12 09:08:58] info: CustomerDevice table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create user schema
+[2025-08-12 09:08:58] info: User table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create branch schema
+[2025-08-12 09:08:58] info: branch table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create branchCustomer schema
+[2025-08-12 09:08:58] info: branchCustomer table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create branchUser schema
+[2025-08-12 09:08:58] info: branchUser table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create creditDetails schema
+[2025-08-12 09:08:58] info: creditDetails table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create monthlyPayment schema
+[2025-08-12 09:08:58] info: monthlyPayment table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create payments schema
+[2025-08-12 09:08:58] info: payments table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create item schema
+[2025-08-12 09:08:58] info: item table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create paymentCreditLink schema
+[2025-08-12 09:08:58] info: paymentCreditLink table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: create comments schema
+[2025-08-12 09:08:58] info: Comments table already exists. Skipping creation.
+[2025-08-12 09:08:58] info: Schema created successfully
+[2025-08-12 09:08:58] info: Server is running on http://localhost:3006
+[2025-08-12 09:08:58] info: Health check available at http://localhost:3006/health
+[2025-08-12 09:10:23] info: Creating database schema...
+[2025-08-12 09:10:23] info: Creating schema...
+[2025-08-12 09:10:23] info: create customer schema
+[2025-08-12 09:10:23] info: Schema "yaazoru" already exists.
+[2025-08-12 09:10:23] info: create customer schema
+[2025-08-12 09:10:23] info: Customer table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create device schema
+[2025-08-12 09:10:23] info: device table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create customerDevice schema
+[2025-08-12 09:10:23] info: CustomerDevice table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create user schema
+[2025-08-12 09:10:23] info: User table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create branch schema
+[2025-08-12 09:10:23] info: branch table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create branchCustomer schema
+[2025-08-12 09:10:23] info: branchCustomer table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create branchUser schema
+[2025-08-12 09:10:23] info: branchUser table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create creditDetails schema
+[2025-08-12 09:10:23] info: creditDetails table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create monthlyPayment schema
+[2025-08-12 09:10:23] info: monthlyPayment table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create payments schema
+[2025-08-12 09:10:23] info: payments table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create item schema
+[2025-08-12 09:10:23] info: item table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create paymentCreditLink schema
+[2025-08-12 09:10:23] info: paymentCreditLink table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: create comments schema
+[2025-08-12 09:10:23] info: Comments table already exists. Skipping creation.
+[2025-08-12 09:10:23] info: Schema created successfully
+[2025-08-12 09:10:23] info: Server is running on http://localhost:3006
+[2025-08-12 09:10:23] info: Health check available at http://localhost:3006/health

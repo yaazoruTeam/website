@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { CreditDetails, HttpError } from '@model'
 import config from '@config/index'
+import logger from '../utils/logger'
 
 const limit = config.database.limit
 
@@ -14,7 +15,7 @@ const createCreditDetails = async (
     CreditDetails.sanitizeBodyExisting(req)
     const creditDetailsrData = req.body
     const sanitized = CreditDetails.sanitize(creditDetailsrData, false)
-    console.log(sanitized)
+    logger.info(sanitized)
 
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
     if (!existCustomer) {
@@ -25,7 +26,7 @@ const createCreditDetails = async (
       throw error
     }
     const existToken = await db.CreditDetails.doesTokenExist(sanitized.token)
-    console.log('token: ', existToken)
+    logger.info('token: ', existToken)
 
     if (existToken) {
       const error: HttpError.Model = {

@@ -1,6 +1,7 @@
 import getDbConnection from '@db/connection'
 import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from '@model'
 import * as db from '@db/index'
+import logger from '../utils/logger'
 
 const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentManagement.Model) => {
   const knex = getDbConnection()
@@ -35,10 +36,10 @@ const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentMana
       await db.Item.createItem(item)
     }
     await trx.commit()
-    console.log('All actions completed successfully')
+    logger.info('All actions completed successfully')
   } catch (error) {
     await trx.rollback()
-    console.error('Transaction failed, all actions rolled back:', error)
+    logger.error('Transaction failed, all actions rolled back:', error)
 
     // החזרת שגיאה מסודרת
     throw new Error('Transaction failed, all actions were rolled back')
