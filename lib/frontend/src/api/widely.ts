@@ -75,3 +75,10 @@ export const getMobileInfo = async (endpoint_id: string): Promise<Widely.Model> 
 export const sendApn = async (endpoint_id: number): Promise<Widely.Model> => {
   return apiPost<Widely.Model>(`${ENDPOINT}/send_apn`, { endpoint_id })
 }
+
+export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone'): Promise<Widely.Model> => {
+    return apiPost<Widely.Model>(`${ENDPOINT}/changeNetwork`, {
+      endpoint_id: endpoint_id,
+      network_name: network
+    })
+}

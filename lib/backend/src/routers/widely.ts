@@ -14,5 +14,6 @@ widelyRouter.post('/prov_reset_vm_pincode', hasRole('admin'), widelyController.p
 widelyRouter.post('/send_apn', hasRole('admin'), widelyController.sendApn)
 widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyController.changePackages)
 widelyRouter.post('/reset_device', hasRole('admin'), widelyController.ComprehensiveResetDeviceController)
+widelyRouter.post('/changeNetwork', hasRole('admin'), widelyController.changeNetwork)
 
 export default widelyRouter
