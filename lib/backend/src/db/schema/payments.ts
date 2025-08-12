@@ -1,14 +1,15 @@
+import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createPayments = async () => {
-  console.log('create payments schema')
+  logger.info('create payments schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('payments')
     if (!tableExists) {
-      console.log('Creating payments table...')
+      logger.info('Creating payments table...')
       await knex.schema
         .withSchema('yaazoru')
         .createTable('payments', (table: Knex.TableBuilder) => {
@@ -20,12 +21,12 @@ const createPayments = async () => {
           table.date('created_at').notNullable()
           table.date('update_at').notNullable()
         })
-      console.log('payments table created successfully.')
+      logger.info('payments table created successfully.')
     } else {
-      console.log('payments table already exists. Skipping creation.')
+      logger.info('payments table already exists. Skipping creation.')
     }
   } catch (err) {
-    console.error('error creat schema payments', err)
+    logger.error('error creat schema payments', err)
   }
 }
 

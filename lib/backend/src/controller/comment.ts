@@ -4,6 +4,7 @@ import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
 
 import config from '@config/index'
+import logger from "../utils/logger";
 
 let client: SpeechClient;
 
@@ -14,7 +15,7 @@ if (googleCredentials) {
     const credentials = JSON.parse(googleCredentials);
     client = new SpeechClient({ credentials });
   } catch (e) {
-    console.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:", e);
+    logger.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:", e);
     process.exit(1);
   }
 } else {
@@ -29,7 +30,7 @@ const createComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    console.log("createComment called with body:", req.body);
+    logger.info("createComment called with body:", req.body);
 
     const sanitized = Comment.sanitize(req.body, false);
     const comment = await db.Comment.createComment(sanitized);

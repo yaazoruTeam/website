@@ -1,13 +1,14 @@
 import { createSchema } from '@db/schema'
+import logger from '../utils/logger';
 
 createSchema()
 ;(async () => {
   try {
-    console.log('build schema---------------------')
+    logger.info('build schema---------------------')
 
     await createSchema()
-    console.log('Schema creation completed. Starting app...')
+    logger.info('Schema creation completed. Starting app...')
   } catch (err) {
-    console.error('Error during schema creation', err)
+    logger.error('Error during schema creation', err)
   }
 })()

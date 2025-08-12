@@ -1,43 +1,44 @@
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
+import logger from './logger'
 
 const readExcelFile = (filePath: string) => {
   try {
-    console.log('Reading excel file from:', filePath)
-    
+    logger.info('Reading excel file from:', filePath)
+
     // בדיקה שהקובץ קיים
     if (!fs.existsSync(filePath)) {
       throw new Error(`הקובץ לא נמצא: ${filePath}`)
     }
-    
-    console.log('File exists, reading...')
+
+    logger.info('File exists, reading...')
     // קריאת קובץ ה-Excel
     const workbook = XLSX.readFile(filePath)
-    console.log('----------------workbook-----------------')
+    logger.info('----------------workbook-----------------')
 
     // console.log(workbook);
 
     // בחירת הגיליון הראשון
     const sheetName = workbook.SheetNames[0]
-    console.log('----------------sheetName-----------------')
+    logger.info('----------------sheetName-----------------')
 
     // console.log(sheetName);
 
     const sheet = workbook.Sheets[sheetName]
-    console.log('----------------sheet-----------------')
+    logger.info('----------------sheet-----------------')
 
     // console.log(sheet);
 
     // המרת הגיליון ל-JSON
     const data = XLSX.utils.sheet_to_json(sheet)
-    console.log('----------------data-----------------')
+    logger.info('----------------data-----------------')
 
     // console.log(data);
 
     return data
   } catch (error) {
-    console.error('Error reading Excel file:', error)
+    logger.error('Error reading Excel file:', error)
     throw error
   }
 }
@@ -56,7 +57,7 @@ const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
 
     // יצירת נתיב בטוח לשמירת קובץ השגיאות
     const uploadsDir = path.resolve(__dirname, '../../uploads')
-    
+
     // יצירת התיקייה אם היא לא קיימת
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true })
@@ -66,15 +67,15 @@ const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
     // יצירת שם קובץ ייחודי עם timestamp
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     const errorFilePath = path.join(uploadsDir, `errors_${timestamp}.xlsx`)
-    
+
     XLSX.writeFile(wb, errorFilePath)
-    console.log(`❌ ${errors.length} errors written to: ${errorFilePath}`)
+    logger.error(`❌ ${errors.length} errors written to: ${errorFilePath}`)
     
     return errorFilePath
   } catch (err) {
-    console.error('Failed to write errors to Excel:', err)
+    logger.error('Failed to write errors to Excel:', err)
     // לא זורק שגיאה כדי לא לעצור את העיבוד הראשי
-    console.warn('⚠️ Continuing without writing errors file')
+    logger.warn('⚠️ Continuing without writing errors file')
     return null
   }
 }

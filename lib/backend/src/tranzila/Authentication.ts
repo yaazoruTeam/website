@@ -1,6 +1,7 @@
 import axios from 'axios'
 import generateAccessTokenTranzila from '@tranzila/tranzilaAuth'
 import config from '@config/index'
+import logger from '../utils/logger'
 
 const appPublicKey = config.tranzila.publicKey
 const appPrivateKey = config.tranzila.privateKey
@@ -17,11 +18,11 @@ const charge = async (transactionData: any) => {
         headers,
       })
       .then((response) => {
-        console.log('Response:', response.data)
+       logger.info('Response:', response.data)
         return response.data
       })
   } catch (err: any) {
-    console.log(err)
+    logger.error(err)
     return err
   }
 }

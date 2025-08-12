@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { charge } from '@tranzila/Authentication'
+import logger from '../utils/logger'
 
 const chargeTokenTranzila = async (
   req: Request,
@@ -7,7 +8,6 @@ const chargeTokenTranzila = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    console.log('charge11')
     const body = req.body
     const transaction = {
       terminal_name: 'yaazorutok',
@@ -25,11 +25,10 @@ const chargeTokenTranzila = async (
       ],
     }
     const result = await charge(transaction)
-    console.log('result after charge')
-    console.log(result)
+    logger.info('result after charge', { result })
     res.status(200).json(result)
   } catch (error: any) {
-    console.log('error in charge!!')
+    logger.error('error in charge!!', { error })
     next(error)
   }
 }

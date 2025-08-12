@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { config } from '@config/index'
 import * as db from '@db/index'
 import { Customer, HttpError } from '@model'
+import logger from '../utils/logger'
 
 const limit = config.database.limit
 
@@ -32,7 +33,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
       total,
     })
   } catch (error: any) {
-    console.log('Error in getCustomers: in controller: ', error)
+    logger.error('Error in getCustomers: in controller: ', error)
 
     next(error)
   }
