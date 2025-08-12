@@ -1,13 +1,10 @@
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
-import { validateRequiredParam, validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 
 const sendMobileAction = async (endpoint_id: string | number, action: string): Promise<Widely.Model> => {
     // Validate required parameters
-    validateRequiredParams([
-        { value: endpoint_id, name: 'endpoint_id' },
-        { value: action, name: 'action' }
-    ])
+    validateRequiredParams({ endpoint_id, action })
 
     // Call Widely API
     const result: Widely.Model = await callingWidely(
@@ -60,7 +57,7 @@ const getMobileInfo = async (endpoint_id: string): Promise<any> => {
 }
 
 const terminateMobile = async (endpoint_id: string | number): Promise<Widely.Model> => {
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result: Widely.Model = await callingWidely('prov_terminate_mobile', { endpoint_id })
     validateWidelyResult(result, 'Failed to terminate mobile', false)
@@ -79,12 +76,7 @@ const provCreateMobile = async (
         sms_to_mail?: string
     }>
 ): Promise<Widely.Model> => {
-    validateRequiredParams([
-        { value: domain_user_id, name: 'domain_user_id' },
-        { value: sim_iccid, name: 'sim_iccid' },
-        { value: service_id, name: 'service_id' },
-        { value: name, name: 'name' }
-    ])
+    validateRequiredParams({ domain_user_id, sim_iccid, service_id, name })
 
     const data: any = {
         domain_user_id,
@@ -107,10 +99,7 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
     terminationResult: Widely.Model
     creationResult: Widely.Model
 }> => {
-    validateRequiredParams([
-        { value: endpoint_id, name: 'endpoint_id' },
-        { value: name, name: 'name' }
-    ])
+    validateRequiredParams({ endpoint_id, name })
 
     let originalInfo: any = null
     let terminationResult: Widely.Model | null = null
@@ -164,7 +153,7 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
                     name,
                     originalInfo.dids || undefined
                 )
-                
+
                 return {
                     originalInfo,
                     terminationResult,
