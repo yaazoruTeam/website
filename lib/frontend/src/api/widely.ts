@@ -25,7 +25,7 @@ export const getPackagesWithInfo = async (package_types:'base' | 'extra'): Promi
 }
 
 export const changePackages = async (endpoint_id: number, package_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/change_packages`, { endpoint_id, package_id })
+  return apiPost<Widely.Model>(`${ENDPOINT}/update_mobile_subscription`, { endpoint_id, package_id })
 }
 
 export const addOneTimePackage = async (endpoint_id: number, domain_user_id: number, package_id: number): Promise<Widely.Model> => {
