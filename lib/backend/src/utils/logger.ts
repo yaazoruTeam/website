@@ -5,7 +5,7 @@ import fs from 'fs';
 // יצירת תיקיית לוגים אם לא קיימת
 const logDirectory = path.resolve(__dirname, '../../logs');
 if (!fs.existsSync(logDirectory)) {
-  fs.mkdirSync(logDirectory);
+  fs.mkdirSync(logDirectory, { recursive: true });
 }
 
 // הגדרות פורמט
