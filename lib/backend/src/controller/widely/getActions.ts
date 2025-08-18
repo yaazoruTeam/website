@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely, WidelyDeviceDetails } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
-import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 
 // Function for network identification
 const getNetworkConnection = (mccMnc: string): string => {
@@ -47,7 +47,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
 
   // If exactly one result found, return it (successful search)
   const userData = dataArray[0]
-  
+
   // Validate that userData exists and has required fields
   if (!userData || (!userData.domain_user_name && !userData.name)) {
     const error: HttpError.Model = {
@@ -126,7 +126,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { simNumber } = req.body
-    validateRequiredParam(simNumber, 'simNumber')
+    validateRequiredParams({ simNumber })
 
     const userData = await searchUsersData(simNumber)
     res.status(200).json(userData)
@@ -138,7 +138,7 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
 const getMobiles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { domain_user_id } = req.body
-    validateRequiredParam(domain_user_id, 'domain_user_id')
+    validateRequiredParams({ domain_user_id })
 
     const mobileData = await getMobilesData(domain_user_id)
     res.status(200).json(mobileData)
@@ -150,7 +150,7 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
 const getMobileInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const mobileInfoData = await getMobileInfoData(endpoint_id)
     res.status(200).json(mobileInfoData)
@@ -162,7 +162,7 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
 const getAllUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { simNumber } = req.body
-    validateRequiredParam(simNumber, 'simNumber')
+    validateRequiredParams({ simNumber })
 
     // Step 1: Search for user based on SIM number
     let user;
@@ -242,6 +242,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: parseInt(endpoint_id) || 0,
+      domain_user_id: mobileInfo?.domain_user_id || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
       max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
@@ -256,6 +257,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         name: mobileInfo?.device_info?.name || 'Not available',
       },
       package_id: mobileInfo?.package_id?.toString() || '',
+      active: mobileInfo?.active,
     }
 
     res.status(200).json(responseData)

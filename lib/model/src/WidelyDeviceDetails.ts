@@ -7,6 +7,7 @@ interface DeviceInfo {
 interface Model {
   simNumber: string
   endpoint_id: number
+  domain_user_id: number
   network_connection: string
   data_usage_gb: number
   max_data_gb: number
@@ -17,6 +18,7 @@ interface Model {
   iccid: string
   device_info: DeviceInfo
   package_id: string
+  active: boolean
 }
 
 export { Model, DeviceInfo }

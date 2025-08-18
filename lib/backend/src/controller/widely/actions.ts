@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
-import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
+import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result: Widely.Model = await callingWidely(
       'prov_terminate_mobile',
@@ -23,28 +23,78 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
 const provResetVmPincode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result = await sendMobileAction(endpoint_id, 'prov_reset_vm_pincode')
 
-    res.status(200).json({
-      success: true,
-      message: 'Voicemail pincode has been reset to 1234 successfully',
-      data: result
-    })
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
 }
 
+const changeNetwork = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { endpoint_id, network_name } = req.body;
+
+    // ולידציות בסיסיות
+    validateRequiredParams({ endpoint_id, network_name });
+
+    // נירמול שם הרשת
+    const normalized = network_name.toLowerCase();
+
+    // מיפוי הרשתות לפעולות API
+    const networkActions = {
+      pelephone_and_partner: "both_networks_pl_first_force",
+      hot_and_partner: "both_networks_ht_first_force",
+      pelephone: "pelephone_only_force"
+    } as const;
+
+    const action = networkActions[normalized as keyof typeof networkActions];
+
+    // בדיקה אם הרשת קיימת
+    if (!action) {
+      const error: HttpError.Model = {
+        status: 400,
+        message: `Invalid network_name provided. Use one of: "pelephone_and_partner", "hot_and_partner", "pelephone".`
+      };
+      throw error;
+    }
+
+    const numericEndpointId = parseInt(endpoint_id);
+
+    // שליחת הפעולה
+    const result = await sendMobileAction(numericEndpointId, action);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getPackagesWithInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+
+    const { package_types } = req.body
+    validateRequiredParams({ package_types })
+
+    if (package_types !== 'base' && package_types !== 'extra') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid package_types provided. It must be "base" or "extra".'
+      }
+      throw error
+    }
 
     const result: Widely.Model = await callingWidely(
       'get_packages_with_info',
       {
         reseller_domain_id: config.widely.accountId,
-        package_types: ['base']
+        package_types: [package_types]
       }
     )
     res.status(result.error_code).json(result)
@@ -55,8 +105,8 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
 const changePackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, package_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(package_id, 'package_id')
+
+    validateRequiredParams({ endpoint_id, package_id })
 
     if (!package_id || isNaN(Number(package_id))) {
       const error: HttpError.Model = {
@@ -84,9 +134,8 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
 const ComprehensiveResetDeviceController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, name } = req.body
-    
-    validateRequiredParam(endpoint_id, 'endpoint_id')
-    validateRequiredParam(name, 'name')
+
+    validateRequiredParams({ endpoint_id, name })
 
     const result = await ComprehensiveResetDevice(endpoint_id, name)
 
@@ -113,7 +162,7 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
 const sendApn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
-    validateRequiredParam(endpoint_id, 'endpoint_id')
+    validateRequiredParams({ endpoint_id })
 
     const result = await sendMobileAction(endpoint_id, 'send_apn')
 
@@ -127,4 +176,105 @@ const sendApn = async (req: Request, res: Response, next: NextFunction): Promise
   }
 }
 
-export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, ComprehensiveResetDeviceController, sendApn }
+const addOneTimePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id, domain_user_id, package_id } = req.body
+
+    validateRequiredParams({ endpoint_id, domain_user_id, package_id })
+
+    if (!package_id || isNaN(Number(package_id))) {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid package_id provided. It must be a number.'
+      }
+      throw error
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'add_once_off_subscription',
+      {
+        account_id: config.widely.accountId,
+        domain_user_id: domain_user_id,
+        endpoint_id: endpoint_id,
+        new_package_ids: [package_id]
+      }
+    )
+
+    validateWidelyResult(result, 'Failed to add one-time package')
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+
+const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    const { action } = req.body
+    validateRequiredParams({ endpoint_id, action })
+
+    if (action !== 'freeze' && action !== 'unfreeze') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid action provided. It must be either "freeze" or "unfreeze".'
+      }
+      throw error
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'freeze_unfreeze_endpoint',
+      {
+        endpoint_id: endpoint_id,
+        action: action,
+      }
+    )
+
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id, iccid, action } = req.body
+    validateRequiredParams({ endpoint_id, iccid, action })
+
+    if (typeof action !== 'boolean') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid action provided. It must be a boolean value (true/false).'
+      }
+      throw error
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'prov_update_mobile',
+      {
+        endpoint_id: endpoint_id,
+        iccid: iccid,
+        lock_on_first_imei: action,
+      }
+    )
+
+    const operation = action ? 'lock' : 'unlock';
+    validateWidelyResult(result, `Failed to ${operation} IMEI lock`);
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export {
+  terminateMobile,
+  provResetVmPincode,
+  getPackagesWithInfo,
+  changePackages,
+  ComprehensiveResetDeviceController,
+  sendApn,
+  changeNetwork,
+  addOneTimePackage,
+  freezeUnFreezeMobile,
+  updateImeiLockStatus
+}
