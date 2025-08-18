@@ -11,8 +11,10 @@ COPY lib/model ./model
 # שימוש ב-npm ci שמבטיח התקנה נקייה
 RUN npm ci --include=dev
 
-# העתקת קוד המקור
-COPY lib/backend/. . 
+# העתקת קוד המקור (מחוץ לnode_modules)
+COPY lib/backend/src ./src
+COPY lib/backend/tsconfig.json ./
+COPY lib/backend/jest.config.ts ./ 
 
 # קומפילציית TypeScript
 RUN npm run build

@@ -33,7 +33,7 @@ export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceD
       },
     },
   )
-  
+
   return response.data
 }
 
@@ -60,7 +60,7 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
   try {
     const token = await getValidToken()
     const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
-         endpoint_id: endpoint_id
+      endpoint_id: endpoint_id
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -74,16 +74,18 @@ export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> 
   }
 }
 
-export const getPackagesWithInfo = async (): Promise<Widely.Model> => {
+export const getPackagesWithInfo = async (package_types: 'base' | 'extra'): Promise<Widely.Model> => {
   try {
     const token = await getValidToken()
-    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {}, {
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {
+      package_types
+    }, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     })
-    
+
     return response.data
   } catch (error) {
     console.error('Error fetching packages with info', error)
@@ -107,6 +109,27 @@ export const changePackages = async (endpoint_id: number, package_id: number): P
     return response.data
   } catch (error) {
     console.error('Error changing packages', error)
+    throw error
+  }
+}
+
+export const addOneTimePackage = async (endpoint_id: number, domain_user_id: number, package_id: number): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/add_one_time_package`, {
+      endpoint_id,
+      domain_user_id,
+      package_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error adding one-time packages', error)
     throw error
   }
 }
@@ -197,6 +220,64 @@ export const sendApn = async (endpoint_id: number): Promise<Widely.Model> => {
     return response.data
   } catch (error) {
     console.error('Error sending APN', error)
+    throw error
+  }
+}
+
+export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone'): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/changeNetwork`, {
+      endpoint_id: endpoint_id,
+      network_name: network
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error changing preferred network', error)
+    throw error
+  }
+}
+
+export const freezeUnfreezeMobile = async (endpoint_id: number, action: 'freeze' | 'unfreeze'): Promise<Widely.Model> => {
+  try {    
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/freeze_unfreeze_mobile`, {
+      endpoint_id: endpoint_id,
+      action: action
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error freezing/unfreezing mobile', error)
+    throw error
+  }
+}
+
+export const lockUnlockImei = async (endpoint_id: number, iccid: string, action: boolean): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/lock_unlock_imei`, {
+      endpoint_id: endpoint_id,
+      iccid: iccid,
+      action: action
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error locking/unlocking IMEI', error)
     throw error
   }
 }

@@ -2,4 +2,15 @@
 export { searchUsers, getMobiles, getMobileInfo, getAllUserData } from './getActions'
 
 // Export all functions from actions (action functions)
-export { terminateMobile, provResetVmPincode, getPackagesWithInfo, changePackages, ComprehensiveResetDeviceController, sendApn } from './actions'
+export {
+    terminateMobile,
+    provResetVmPincode,
+    getPackagesWithInfo,
+    changePackages,
+    ComprehensiveResetDeviceController,
+    sendApn,
+    changeNetwork,
+    addOneTimePackage,
+    freezeUnFreezeMobile,
+    updateImeiLockStatus
+} from './actions'
