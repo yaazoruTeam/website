@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Device, HttpError } from '@model'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -12,6 +13,10 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
     const sanitized = Device.sanitize(deviceData, false)
     await existingDevice(sanitized, false)
     const device = await db.Device.createDevice(sanitized)
+    
+    // Create audit log for device creation
+    await AuditService.logCreate(req, AuditService.getTableName('devices'), device.device_id, sanitized)
+    
     res.status(201).json(device)
   } catch (error: any) {
     next(error)
@@ -88,9 +93,30 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
   try {
     Device.sanitizeIdExisting(req)
     Device.sanitizeBodyExisting(req)
+    
+    // Get existing device data for audit log
+    const existingDeviceData = await db.Device.getDeviceById(req.params.id)
+    if (!existingDeviceData) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'Device does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = Device.sanitize(req.body, true)
     await existingDevice(sanitized, true)
     const updateDevice = await db.Device.updateDevice(req.params.id, sanitized)
+    
+    // Create audit log for device update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('devices'), 
+      req.params.id,
+      existingDeviceData,
+      sanitized
+    )
+    
     res.status(200).json(updateDevice)
   } catch (error: any) {
     next(error)
@@ -108,7 +134,20 @@ const deleteDevice = async (req: Request, res: Response, next: NextFunction): Pr
       }
       throw error
     }
+    
+    // Get device data before deletion for audit log
+    const deviceData = await db.Device.getDeviceById(req.params.id)
+    
     const deleteDevice = await db.Device.deleteDevice(req.params.id)
+    
+    // Create audit log for device deletion
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('devices'), 
+      req.params.id,
+      deviceData
+    )
+    
     res.status(200).json(deleteDevice)
   } catch (error: any) {
     next(error)

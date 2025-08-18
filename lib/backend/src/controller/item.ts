@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, ItemForMonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -21,6 +22,15 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
       throw error
     }
     const item = await db.Item.createItem(sanitized)
+    
+    // Log create action
+    await AuditService.logCreate(
+      req,
+      AuditService.getTableName('items'),
+      item.item_id,
+      item
+    );
+    
     res.status(201).json(item)
   } catch (error: any) {
     next(error)
@@ -94,6 +104,10 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     ItemForMonthlyPayment.sanitizeIdExisting(req)
     ItemForMonthlyPayment.sanitizeBodyExisting(req)
+    
+    // Get existing item for audit log
+    const existingItem = await db.Item.getItemId(req.params.id)
+    
     const sanitized = ItemForMonthlyPayment.sanitize(req.body, true)
     const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
       sanitized.monthlyPayment_id,
@@ -106,6 +120,16 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
       throw error
     }
     const updateItem = await db.Item.updateItem(req.params.id, sanitized)
+    
+    // Log update action
+    await AuditService.logUpdate(
+      req,
+      AuditService.getTableName('items'),
+      req.params.id,
+      existingItem,
+      updateItem
+    );
+    
     res.status(200).json(updateItem)
   } catch (error: any) {
     next(error)
@@ -154,7 +178,20 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
       }
       throw error
     }
+    
+    // Get existing item for audit log
+    const existingItem = await db.Item.getItemId(req.params.id)
+    
     const deleteItem = await db.Item.deleteItem(req.params.id)
+    
+    // Log delete action
+    await AuditService.logDelete(
+      req,
+      AuditService.getTableName('items'),
+      req.params.id,
+      existingItem
+    );
+    
     res.status(200).json(deleteItem)
   } catch (error: any) {
     next(error)

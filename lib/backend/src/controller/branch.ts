@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Branch, HttpError } from '@model'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -11,6 +12,10 @@ const createBranch = async (req: Request, res: Response, next: NextFunction): Pr
     const branchData = req.body
     const sanitized = Branch.sanitize(branchData, false)
     const branch = await db.Branch.createBranch(sanitized)
+    
+    // Create audit log for branch creation
+    await AuditService.logCreate(req, AuditService.getTableName('branches'), branch.branch_id, sanitized)
+    
     res.status(201).json(branch)
   } catch (error: any) {
     next(error)
@@ -92,8 +97,29 @@ const updateBranch = async (req: Request, res: Response, next: NextFunction): Pr
   try {
     Branch.sanitizeIdExisting(req)
     Branch.sanitizeBodyExisting(req)
+    
+    // Get existing branch data for audit log (also validates existence)
+    const existingBranchData = await db.Branch.getBranchById(req.params.id)
+    if (!existingBranchData) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'Branch does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = Branch.sanitize(req.body, true)
     const updateBranch = await db.Branch.updateBranch(req.params.id, sanitized)
+    
+    // Create audit log for branch update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('branches'), 
+      req.params.id,
+      existingBranchData,
+      sanitized
+    )
+    
     res.status(200).json(updateBranch)
   } catch (error: any) {
     next(error)
@@ -103,15 +129,27 @@ const updateBranch = async (req: Request, res: Response, next: NextFunction): Pr
 const deleteBranch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     Branch.sanitizeIdExisting(req)
-    const existBranch = await db.Branch.doesBranchExist(req.params.id)
-    if (!existBranch) {
+    
+    // Get branch data before deletion for audit log (also validates existence)
+    const branchData = await db.Branch.getBranchById(req.params.id)
+    if (!branchData) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'branch does not exist.',
+        message: 'Branch does not exist.',
       }
       throw error
     }
+    
     const deleteBranch = await db.Branch.deleteBranch(req.params.id)
+    
+    // Create audit log for branch deletion
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('branches'), 
+      req.params.id,
+      branchData
+    )
+    
     res.status(200).json(deleteBranch)
   } catch (error: any) {
     next(error)

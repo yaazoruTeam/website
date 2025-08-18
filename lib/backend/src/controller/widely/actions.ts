@@ -4,6 +4,7 @@ import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParam, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -14,6 +15,15 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
       'prov_terminate_mobile',
       { endpoint_id: endpoint_id }
     )
+    
+    // Log termination action
+    await AuditService.logDelete(
+      req,
+      'widely_endpoints',
+      endpoint_id,
+      { endpoint_id: endpoint_id, action: 'terminate_mobile', result: result }
+    );
+    
     res.status(result.error_code).json(result)
   } catch (error: any) {
     next(error)
@@ -26,6 +36,15 @@ const provResetVmPincode = async (req: Request, res: Response, next: NextFunctio
     validateRequiredParam(endpoint_id, 'endpoint_id')
 
     const result = await sendMobileAction(endpoint_id, 'prov_reset_vm_pincode')
+
+    // Log voicemail pincode reset action
+    await AuditService.logUpdate(
+      req,
+      'widely_endpoints',
+      endpoint_id,
+      { endpoint_id: endpoint_id, vm_pincode: 'old_pincode' },
+      { endpoint_id: endpoint_id, vm_pincode: '1234', action: 'reset_vm_pincode' }
+    );
 
     res.status(200).json({
       success: true,
@@ -74,6 +93,16 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
       }
     )
     validateWidelyResult(result, 'Failed to change package')
+    
+    // Log package change action
+    await AuditService.logUpdate(
+      req,
+      'widely_endpoints',
+      endpoint_id,
+      { endpoint_id: endpoint_id, package_id: 'old_package' },
+      { endpoint_id: endpoint_id, package_id: package_id, action: 'change_package' }
+    );
+    
     res.status(result.error_code).json(result)
   } catch (error: any) {
     next(error)
@@ -92,6 +121,25 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
 
     const terminationSuccess = result.terminationResult.error_code === 200 || result.terminationResult.error_code === undefined
     const creationSuccess = result.creationResult.error_code === 200 || result.creationResult.error_code === undefined
+
+    // Log comprehensive device reset action
+    await AuditService.logUpdate(
+      req,
+      'widely_endpoints',
+      endpoint_id,
+      { 
+        endpoint_id: endpoint_id, 
+        name: result.originalInfo?.name || 'unknown',
+        action: 'comprehensive_reset_device_start'
+      },
+      { 
+        endpoint_id: result.creationResult.data?.[0]?.endpoint_id || endpoint_id,
+        name: name,
+        terminationSuccess,
+        creationSuccess,
+        action: 'comprehensive_reset_device_complete'
+      }
+    );
 
     res.status(200).json({
       success: true,

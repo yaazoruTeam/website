@@ -3,6 +3,7 @@ import { readExcelFile } from '@utils/excel'
 import { processExcelData } from '@service/ReadExcelDevicesForDonors'
 import * as fs from 'fs'
 import * as path from 'path'
+import { AuditService } from '@service/auditService'
 
 const handleReadExcelFile = async (
   req: Request,
@@ -28,7 +29,6 @@ const handleReadExcelFile = async (
     // קריאת הקובץ
     const data = await readExcelFile(filePath)
     console.log('Excel file read successfully, rows:', data.length)
-
     // עיבוד הנתונים
     const processingResults = await processExcelData(data)
     console.log('Data processed and saved to DB')
@@ -37,6 +37,21 @@ const handleReadExcelFile = async (
       console.log(`❌ Errors: ${processingResults.errorsCount}`)
     }
 
+    // Log excel data processing action
+    await AuditService.logCreate(
+      req,
+      'excel_imports',
+      req.file.filename,
+      {
+        filename: req.file.filename,
+        totalRows: processingResults.totalRows,
+        successCount: processingResults.successCount,
+        errorsCount: processingResults.errorsCount,
+        errorFilePath: processingResults.errorFilePath
+      }
+    );
+
+    // מחיקת הקובץ הזמני אחרי העיבוד
     // מחיקת הקובץ הזמני אחרי העיבוד
     try {
       fs.unlinkSync(filePath)

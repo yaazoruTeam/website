@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import config from '@config/index'
 import * as db from '@db/index'
 import { CustomerDevice, HttpError } from '@model'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -17,6 +18,10 @@ const createCustomerDevice = async (
     const sanitized: CustomerDevice.Model = CustomerDevice.sanitize(customerDeviceData, false)
     await existingCustomerDevice(sanitized, false)
     const customerDevice = await db.CustomerDevice.createCustomerDevice(sanitized)
+    
+    // Create audit log for customer-device creation
+    await AuditService.logCreate(req, AuditService.getTableName('customer_devices'), customerDevice.customer_device_id, sanitized)
+    
     res.status(201).json(customerDevice)
   } catch (error: any) {
     next(error)
@@ -149,12 +154,33 @@ const updateCustomerDevice = async (
   try {
     CustomerDevice.sanitizeIdExisting(req)
     CustomerDevice.sanitizeBodyExisting(req)
+    
+    // Get existing customer-device data for audit log
+    const existingCustomerDeviceData = await db.CustomerDevice.getCustomerDeviceById(req.params.id)
+    if (!existingCustomerDeviceData) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'CustomerDevice does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = CustomerDevice.sanitize(req.body, true)
     await existingCustomerDevice(sanitized, true)
     const updateCustomerDevice = await db.CustomerDevice.updateCustomerDevice(
       req.params.id,
       sanitized,
     )
+    
+    // Create audit log for customer-device update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('customer_devices'), 
+      req.params.id,
+      existingCustomerDeviceData,
+      sanitized
+    )
+    
     res.status(200).json(updateCustomerDevice)
   } catch (error: any) {
     next(error)
@@ -176,7 +202,20 @@ const deleteCustomerDevice = async (
       }
       throw error
     }
+    
+    // Get customer-device data before deletion for audit log
+    const customerDeviceData = await db.CustomerDevice.getCustomerDeviceById(req.params.id)
+    
     const deleteCustomerDevice = await db.CustomerDevice.deleteCustomerDevice(req.params.id)
+    
+    // Create audit log for customer-device deletion
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('customer_devices'), 
+      req.params.id,
+      customerDeviceData
+    )
+    
     res.status(200).json(deleteCustomerDevice)
   } catch (error: any) {
     next(error)

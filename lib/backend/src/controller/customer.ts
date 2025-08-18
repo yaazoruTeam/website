@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { config } from '@config/index'
 import * as db from '@db/index'
 import { Customer, HttpError } from '@model'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -12,6 +13,10 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
     const sanitized = Customer.sanitize(customerData, false)
     await existingCustomer(sanitized, false)
     const customer = await db.Customer.createCustomer(sanitized)
+    
+    // Create audit log for customer creation
+    await AuditService.logCreate(req, AuditService.getTableName('customers'), customer.customer_id, sanitized)
+    
     res.status(201).json(customer)
   } catch (error: any) {
     next(error)
@@ -175,10 +180,31 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
   try {
     Customer.sanitizeIdExisting(req)
     Customer.sanitizeBodyExisting(req)
+    
+    // Get existing customer data for audit log
+    const existingCustomerData = await db.Customer.getCustomerById(req.params.id)
+    if (!existingCustomerData) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'Customer does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = Customer.sanitize(req.body, true)
     await existingCustomer(sanitized, true)
-    const updateCustomer = await db.Customer.updateCustomer(req.params.id, sanitized)
-    res.status(200).json(updateCustomer)
+    const updatedCustomer = await db.Customer.updateCustomer(req.params.id, sanitized)
+    
+    // Create audit log for customer update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('customers'), 
+      req.params.id,
+      existingCustomerData,
+      sanitized
+    )
+    
+    res.status(200).json(updatedCustomer)
   } catch (error: any) {
     next(error)
   }
@@ -195,8 +221,21 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
       }
       throw error
     }
-    const deleteCustomer = await db.Customer.deleteCustomer(req.params.id)
-    res.status(200).json(deleteCustomer)
+    
+    // Get customer data before deletion for audit log
+    const customerData = await db.Customer.getCustomerById(req.params.id)
+    
+    const deletedCustomer = await db.Customer.deleteCustomer(req.params.id)
+    
+    // Create audit log for customer deletion (soft delete - status change)
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('customers'), 
+      req.params.id,
+      customerData
+    )
+    
+    res.status(200).json(deletedCustomer)
   } catch (error: any) {
     next(error)
   }

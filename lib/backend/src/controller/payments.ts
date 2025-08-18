@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, Payments } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 
 const limit = config.database.limit
@@ -22,6 +23,10 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
       throw error
     }
     const payments = await db.Payments.createPayments(sanitized)
+    
+    // Create audit log for payment creation
+    await AuditService.logCreate(req, AuditService.getTableName('payments'), payments.payments_id, sanitized)
+    
     res.status(201).json(payments)
   } catch (error: any) {
     next(error)
@@ -98,6 +103,17 @@ const updatePayments = async (req: Request, res: Response, next: NextFunction) =
   try {
     Payments.sanitizeIdExisting(req)
     Payments.sanitizeBodyExisting(req)
+    
+    // Get existing payment data for audit log
+    const existingPaymentData = await db.Payments.getPaymentsId(req.params.id)
+    if (!existingPaymentData) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'Payment does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = Payments.sanitize(req.body, true)
     const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
       sanitized.monthlyPayment_id,
@@ -110,6 +126,16 @@ const updatePayments = async (req: Request, res: Response, next: NextFunction) =
       throw error
     }
     const updatePayments = await db.Payments.updatePayments(req.params.id, sanitized)
+    
+    // Create audit log for payment update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('payments'), 
+      req.params.id,
+      existingPaymentData,
+      sanitized
+    )
+    
     res.status(200).json(updatePayments)
   } catch (error: any) {
     next(error)
@@ -127,7 +153,20 @@ const deletePayments = async (req: Request, res: Response, next: NextFunction) =
       }
       throw error
     }
+    
+    // Get payment data before deletion for audit log
+    const paymentData = await db.Payments.getPaymentsId(req.params.id)
+    
     const deletePayments = await db.Payments.deletePayments(req.params.id)
+    
+    // Create audit log for payment deletion
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('payments'), 
+      req.params.id,
+      paymentData
+    )
+    
     res.status(200).json(deletePayments)
   } catch (error: any) {
     next(error)

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, PaymentCreditLink } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 
 const limit = config.database.limit
@@ -34,14 +35,23 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
       await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(
         sanitized.monthlyPayment_id,
       )
-    if (!existCreditDetails) {
+    if (existMonthlyPaymentInPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 409,
-        message: 'monthly paymemnt already exists',
+        message: 'monthly payment already exists',
       }
       throw error
     }
     const paymentCreditLink = await db.PaymentCreditLink.createPaymentCreditLink(sanitized)
+    
+    // Log create action
+    await AuditService.logCreate(
+      req,
+      AuditService.getTableName('payment_credit_links'),
+      paymentCreditLink.payment_credit_link_id,
+      paymentCreditLink
+    );
+    
     res.status(201).json(paymentCreditLink)
   } catch (error: any) {
     next(error)
@@ -152,6 +162,10 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
   try {
     PaymentCreditLink.sanitizeIdExisting(req)
     PaymentCreditLink.sanitizeBodyExisting(req)
+    
+    // Get existing payment credit link for audit log
+    const existingPaymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLinkId(req.params.id)
+    
     const sanitized = PaymentCreditLink.sanitize(req.body, true)
     const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
       sanitized.monthlyPayment_id,
@@ -177,10 +191,10 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
       await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(
         sanitized.monthlyPayment_id,
       )
-    if (!existCreditDetails) {
+    if (existMonthlyPaymentInPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 409,
-        message: 'monthly paymemnt already exists',
+        message: 'monthly payment already exists',
       }
       throw error
     }
@@ -188,6 +202,16 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
       req.params.id,
       sanitized,
     )
+    
+    // Log update action
+    await AuditService.logUpdate(
+      req,
+      AuditService.getTableName('payment_credit_links'),
+      req.params.id,
+      existingPaymentCreditLink,
+      updatePaymentCreditLink
+    );
+    
     res.status(200).json(updatePaymentCreditLink)
   } catch (error: any) {
     next(error)
@@ -197,10 +221,10 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
 const deletePaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
   try {
     PaymentCreditLink.sanitizeIdExisting(req)
-    const existPaymentCreditLink = await db.PaymentCreditLink.doesPaymentCreditLinkExist(
-      req.params.id,
-    )
-    if (!existPaymentCreditLink) {
+    
+    // Get existing payment credit link for audit log (also validates existence)
+    const existingPaymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLinkId(req.params.id)
+    if (!existingPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 404,
         message: 'PaymentCreditLink does not exist.',
@@ -210,11 +234,21 @@ const deletePaymentCreditLink = async (req: Request, res: Response, next: NextFu
     const deletePaymentCreditLink = await db.PaymentCreditLink.deletePaymentCreditLink(
       req.params.id,
     )
+    
+    // Log delete action
+    await AuditService.logDelete(
+      req,
+      AuditService.getTableName('payment_credit_links'),
+      req.params.id,
+      existingPaymentCreditLink
+    );
+    
     res.status(200).json(deletePaymentCreditLink)
   } catch (error: any) {
     next(error)
   }
 }
+
 export {
   createPaymentCreditLink,
   getPaymentCreditLinks,

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, MonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 
 const limit = config.database.limit
@@ -20,6 +21,15 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       throw error
     }
     const monthlyPayment = await db.MonthlyPayment.createMonthlyPayment(sanitized)
+    
+    // Log create action
+    await AuditService.logCreate(
+      req,
+      AuditService.getTableName('monthly_payments'),
+      monthlyPayment.monthly_payment_id,
+      monthlyPayment
+    );
+    
     res.status(201).json(monthlyPayment)
   } catch (error: any) {
     next(error)
@@ -167,6 +177,10 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
   try {
     MonthlyPayment.sanitizeIdExisting(req)
     MonthlyPayment.sanitizeBodyExisting(req)
+    
+    // Get existing monthly payment for audit log
+    const existingMonthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(req.params.id)
+    
     const sanitized = MonthlyPayment.sanitize(req.body, true)
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
     if (!existCustomer) {
@@ -176,11 +190,21 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       }
       throw error
     }
-    const updateMonthlyPayment = await db.MonthlyPayment.updateMonthlyPayment(
+    const updatedMonthlyPayment = await db.MonthlyPayment.updateMonthlyPayment(
       req.params.id,
       sanitized,
     )
-    res.status(200).json(updateMonthlyPayment)
+    
+    // Log update action
+    await AuditService.logUpdate(
+      req,
+      AuditService.getTableName('monthly_payments'),
+      req.params.id,
+      existingMonthlyPayment,
+      updatedMonthlyPayment
+    )
+    
+    res.status(200).json(updatedMonthlyPayment)
   } catch (error: any) {
     next(error)
   }
@@ -198,8 +222,21 @@ const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       }
       throw error
     }
-    const deleteMonthlyPayment = await db.MonthlyPayment.deleteMonthlyPayment(req.params.id)
-    res.status(200).json(deleteMonthlyPayment)
+    
+    // Get existing monthly payment for audit log
+    const existingMonthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(req.params.id)
+    
+    const deletedMonthlyPayment = await db.MonthlyPayment.deleteMonthlyPayment(req.params.id)
+    
+    // Log delete action
+    await AuditService.logDelete(
+      req,
+      AuditService.getTableName('monthly_payments'),
+      req.params.id,
+      existingMonthlyPayment
+    )
+    
+    res.status(200).json(deletedMonthlyPayment)
   } catch (error: any) {
     next(error)
   }
