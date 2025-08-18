@@ -16,8 +16,8 @@ export const createMonthlyPayment = async (
 export const updateMonthlyPayment = async (
   monthlyPayment: MonthlyPaymentManagement.Model,
   monthlyPayment_id: string,
-): Promise<MonthlyPaymentManagement.Model> => {
+): Promise<{ message: string }> => {
   console.log('update monthly payment in frontend')
   const endpointUrl = `${ENDPOINT}/updateMonthlyPayment/${monthlyPayment_id}`
-  return apiPut<MonthlyPaymentManagement.Model>(endpointUrl, monthlyPayment)
+  return apiPut<{ message: string }>(endpointUrl, monthlyPayment)
 }
