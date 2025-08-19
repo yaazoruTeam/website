@@ -1,10 +1,18 @@
 import * as db from '../../db';
-import { Device } from '../../../../model/src';
 import { createDevice, getDevices, getDeviceById, getDevicesByStatus, updateDevice, deleteDevice } from '../../controller/device';
 import { Request, Response, NextFunction } from "express";
 
 jest.mock("../../db");
-jest.mock("../../model");
+jest.mock('../../../../model/src', () => ({
+  Device: {
+    sanitizeBodyExisting: jest.fn(),
+    sanitize: jest.fn(),
+    sanitizeIdExisting: jest.fn(),
+    sanitizeExistingDevice: jest.fn(),
+  }
+}))
+
+import { Device } from '../../../../model/src';
 
 describe('Device Controller Tests', () => {
     let req: Partial<Request>;
