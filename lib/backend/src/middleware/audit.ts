@@ -17,7 +17,7 @@ interface AuditRequest extends Request {
 }
 
 // Helper function to get user info from token
-const getUserFromToken = (req: Request): { user_id: string; user_name?: string; role: 'admin' | 'branch' } | null => {
+const getUserFromToken = async (req: Request): Promise<{ user_id: string; user_name?: string; role: 'admin' | 'branch' } | null> => {
   try {
     const authHeader = req.headers['authorization']
     console.log('Auth header:', authHeader)
@@ -32,10 +32,14 @@ const getUserFromToken = (req: Request): { user_id: string; user_name?: string; 
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model
     console.log('Token decoded successfully:', { user_id: decoded.user_id, role: decoded.role })
     
+    // Fetch the actual user name from the database
+    const userRecord = await db.User.getUserById(decoded.user_id)
+    const user_name = userRecord ? `${userRecord.first_name} ${userRecord.last_name}` : undefined
+    
     return {
       user_id: decoded.user_id.toString(), // Convert to string
       role: decoded.role,
-      user_name: decoded.user_id.toString(), // We'll need to get the actual user name from the database
+      user_name,
     }
   } catch (error) {
     console.error('Error decoding token:', error)
@@ -64,12 +68,12 @@ export const createAuditLog = async (
   oldValues?: any,
   newValues?: any,
   ip_address?: string,
-  user_agent?: string
+  user_agent?: string,
+  user_name?: string
 ) => {
   try {
-    // Get user name from database
-    const user = await db.User.getUserById(user_id)
-    const user_name = user ? `${user.first_name} ${user.last_name}` : user_id
+    // Use provided user_name or fallback to user_id
+    const finalUserName = user_name || user_id
 
     const auditLogData: AuditLog.Model = {
       table_name: tableName,
@@ -78,7 +82,7 @@ export const createAuditLog = async (
       old_values: oldValues,
       new_values: newValues,
       user_id: user_id.toString(), // Ensure it's a string
-      user_name,
+      user_name: finalUserName,
       user_role,
       timestamp: new Date(),
       ip_address,
@@ -95,8 +99,8 @@ export const createAuditLog = async (
 
 // Middleware to set up audit context
 export const auditMiddleware = (tableName: string, action: 'INSERT' | 'UPDATE' | 'DELETE') => {
-  return (req: AuditRequest, res: Response, next: NextFunction) => {
-    const userInfo = getUserFromToken(req)
+  return async (req: AuditRequest, res: Response, next: NextFunction) => {
+    const userInfo = await getUserFromToken(req)
     if (!userInfo) {
       return next() // Skip audit if no user info
     }
@@ -133,7 +137,8 @@ export const auditMiddleware = (tableName: string, action: 'INSERT' | 'UPDATE' |
               req.auditContext?.oldValues,
               req.auditContext?.newValues,
               ip_address,
-              user_agent
+              user_agent,
+              userInfo.user_name
             )
           })
         }
@@ -157,7 +162,7 @@ export const logAudit = async (
   oldValues?: any,
   newValues?: any
 ) => {
-  const userInfo = getUserFromToken(req)
+  const userInfo = await getUserFromToken(req)
   if (!userInfo) {
     console.warn('Cannot create audit log: No user info available')
     return
@@ -175,7 +180,8 @@ export const logAudit = async (
     oldValues,
     newValues,
     ip_address,
-    user_agent
+    user_agent,
+    userInfo.user_name
   )
 }
 
