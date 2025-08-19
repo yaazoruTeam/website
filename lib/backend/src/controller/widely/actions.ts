@@ -149,7 +149,7 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
       req,
       'widely_endpoints',
       endpoint_id,
-      { endpoint_id: endpoint_id, package_id: 'old_package' },
+      null, // Old package value not available without additional query
       { endpoint_id: endpoint_id, package_id: package_id, action: 'change_package' }
     );
     
