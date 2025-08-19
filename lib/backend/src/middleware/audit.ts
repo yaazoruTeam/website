@@ -92,8 +92,24 @@ export const createAuditLog = async (
     const sanitizedAuditLog = AuditLog.sanitize(auditLogData, false)
     await db.AuditLog.createAuditLog(sanitizedAuditLog)
   } catch (error) {
-    console.error('Error creating audit log:', error)
+    console.error('CRITICAL: Failed to create audit log:', {
+      error: error instanceof Error ? error.message : error,
+      tableName,
+      recordId,
+      action,
+      user_id,
+      user_role,
+      timestamp: new Date().toISOString()
+    })
+    
+    // TODO: Implement proper alerting mechanism for audit failures
+    // This is a compliance issue that needs to be addressed:
+    // - Send alert to security team
+    // - Store failed audit attempts in separate backup system
+    // - Consider triggering compliance violation workflow
+    
     // Don't throw the error to avoid breaking the main operation
+    // But ensure this failure is properly monitored and alerted
   }
 }
 
