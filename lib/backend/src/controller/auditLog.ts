@@ -134,32 +134,19 @@ const getAuditStats = async (req: Request, res: Response, next: NextFunction): P
       filters.end_date = new Date(end_date as string)
     }
 
-    // Get all audit logs for the period
-    const { auditLogs, total } = await db.AuditLog.getAuditLogs(0, filters)
-
-    // Calculate statistics
-    const stats = {
-      total_entries: total,
-      actions: {
-        INSERT: auditLogs.filter(log => log.action === 'INSERT').length,
-        UPDATE: auditLogs.filter(log => log.action === 'UPDATE').length,
-        DELETE: auditLogs.filter(log => log.action === 'DELETE').length,
-      },
-      tables: {} as { [key: string]: number },
-      users: {} as { [key: string]: number },
+    // Get aggregated audit statistics from the database
+    const stats = await db.AuditLog.getAuditStats(filters)
+    
+    // Add period info to the stats
+    const statsWithPeriod = {
+      ...stats,
       period: {
         start_date: filters.start_date || 'No limit',
         end_date: filters.end_date || 'No limit',
       }
     }
 
-    // Count by table
-    auditLogs.forEach(log => {
-      stats.tables[log.table_name] = (stats.tables[log.table_name] || 0) + 1
-      stats.users[log.user_name] = (stats.users[log.user_name] || 0) + 1
-    })
-
-    res.status(200).json(stats)
+    res.status(200).json(statsWithPeriod)
   } catch (error: any) {
     next(error)
   }

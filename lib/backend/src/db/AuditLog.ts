@@ -141,10 +141,77 @@ const deleteOldAuditLogs = async (daysToKeep: number = 365) => {
   }
 }
 
+// Get audit statistics with aggregation queries
+const getAuditStats = async (filters: any = {}) => {
+  const knex = getDbConnection()
+  try {
+    let query = knex('yaazoru.audit_logs')
+    
+    // Apply date filters
+    if (filters.start_date) {
+      query = query.where('timestamp', '>=', filters.start_date)
+    }
+    if (filters.end_date) {
+      query = query.where('timestamp', '<=', filters.end_date)
+    }
+
+    // Get total count
+    const totalResult = await query.clone().count('* as total')
+    const total = totalResult[0].total
+
+    // Get action statistics
+    const actionResult = await query.clone()
+      .select('action')
+      .count('* as count')
+      .groupBy('action')
+    
+    // Get table statistics
+    const tableResult = await query.clone()
+      .select('table_name')
+      .count('* as count')
+      .groupBy('table_name')
+      .orderBy('count', 'desc')
+    
+    // Get user statistics
+    const userResult = await query.clone()
+      .select('user_name')
+      .count('* as count')
+      .groupBy('user_name')
+      .orderBy('count', 'desc')
+
+    // Format results
+    const actions = { INSERT: 0, UPDATE: 0, DELETE: 0 }
+    actionResult.forEach((row: any) => {
+      actions[row.action as keyof typeof actions] = parseInt(row.count)
+    })
+
+    const tables: { [key: string]: number } = {}
+    tableResult.forEach((row: any) => {
+      tables[row.table_name] = parseInt(row.count)
+    })
+
+    const users: { [key: string]: number } = {}
+    userResult.forEach((row: any) => {
+      users[row.user_name] = parseInt(row.count)
+    })
+
+    return {
+      total_entries: parseInt(total as string),
+      actions,
+      tables,
+      users
+    }
+  } catch (err: any) {
+    console.error('Error getting audit statistics:', err)
+    throw err
+  }
+}
+
 export {
   createAuditLog,
   getAuditLogs,
   getAuditLogById,
   getAuditLogsByTableAndRecord,
   deleteOldAuditLogs,
+  getAuditStats,
 }
