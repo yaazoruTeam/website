@@ -43,6 +43,7 @@ import CallCenter from './components/switchboard/CallCenter'
 import CallLog from './components/switchboard/CallLog'
 import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
+import AddCustomer from './components/customers/AddCustomer'
 
 function App() {
   const { t } = useTranslation()
@@ -137,6 +138,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Customers />
+                  </ProtectedRoute>
+                }
+              />
+               <Route
+                path='/customer/add'
+                element={
+                  <ProtectedRoute>
+                    <AddCustomer />
                   </ProtectedRoute>
                 }
               />
