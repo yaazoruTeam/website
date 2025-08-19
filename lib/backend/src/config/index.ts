@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 import path from 'path'
 
 // Load environment variables from the correct path
-dotenv.config({ path: path.join(__dirname, '../../../../.env') })
+dotenv.config({ path: path.join(__dirname, '../../../.env') })
 
 // Validate required environment variables
 const requiredEnvVars = {
