@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { CreditDetails, HttpError } from '@model'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -35,6 +36,15 @@ const createCreditDetails = async (
       throw error
     }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized)
+    
+    // Log create action
+    await AuditService.logCreate(
+      req,
+      AuditService.getTableName('credit_details'),
+      creditDetails.credit_details_id,
+      creditDetails
+    );
+    
     res.status(201).json(creditDetails)
   } catch (error: any) {
     next(error)
@@ -89,6 +99,10 @@ const updateCreditDetails = async (
   try {
     CreditDetails.sanitizeIdExisting(req)
     CreditDetails.sanitizeBodyExisting(req)
+    
+    // Get existing credit details for audit log
+    const existingCreditDetails = await db.CreditDetails.getCreditDetailsById(req.params.id)
+    
     const sanitized = CreditDetails.sanitize(req.body, true)
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
     if (!existCustomer) {
@@ -99,6 +113,16 @@ const updateCreditDetails = async (
       throw error
     }
     const updateCreditDetails = await db.CreditDetails.updateCreditDetails(req.params.id, sanitized)
+    
+    // Log update action
+    await AuditService.logUpdate(
+      req,
+      AuditService.getTableName('credit_details'),
+      req.params.id,
+      existingCreditDetails,
+      updateCreditDetails
+    );
+    
     res.status(200).json(updateCreditDetails)
   } catch (error: any) {
     next(error)

@@ -2,6 +2,7 @@ import { SpeechClient } from "@google-cloud/speech";
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
+import { AuditService } from '@service/auditService'
 
 import config from '@config/index'
 
@@ -33,6 +34,10 @@ const createComment = async (
 
     const sanitized = Comment.sanitize(req.body, false);
     const comment = await db.Comment.createComment(sanitized);
+    
+    // Create audit log for comment creation
+    await AuditService.logCreate(req, AuditService.getTableName('comments'), comment.comment_id, sanitized)
+    
     res.status(201).json(comment);
   } catch (error: any) {
     next(error);
@@ -131,6 +136,9 @@ const updateComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // Get existing comment for audit log
+    const existingComment = await db.Comment.getCommentById(req.params.id);
+    
     const sanitized = Comment.sanitize(
       { ...req.body, comment_id: req.params.id },
       true
@@ -139,6 +147,16 @@ const updateComment = async (
       req.params.id,
       sanitized
     );
+    
+    // Log update action
+    await AuditService.logUpdate(
+      req,
+      AuditService.getTableName('comments'),
+      req.params.id,
+      existingComment,
+      updatedComment
+    );
+    
     res.status(200).json(updatedComment);
   } catch (error: any) {
     next(error);
@@ -151,7 +169,19 @@ const deleteComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // Get existing comment for audit log
+    const existingComment = await db.Comment.getCommentById(req.params.id);
+    
     const deletedComment = await db.Comment.deleteComment(req.params.id);
+    
+    // Log delete action
+    await AuditService.logDelete(
+      req,
+      AuditService.getTableName('comments'),
+      req.params.id,
+      existingComment
+    );
+    
     res.status(200).json(deletedComment);
   } catch (error: any) {
     next(error);

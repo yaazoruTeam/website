@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { BranchUser, HttpError } from '@model'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 const createBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -37,6 +38,15 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
       throw error
     }
     const branchUser = await db.BranchUser.createBranchUser(sanitized)
+    
+    // Log create action
+    await AuditService.logCreate(
+      req,
+      AuditService.getTableName('branch_users'),
+      branchUser.branch_user_id,
+      branchUser
+    );
+    
     res.status(201).json(branchUser)
   } catch (error: any) {
     next(error)
@@ -150,6 +160,17 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
   try {
     BranchUser.sanitizeIdExisting(req)
     BranchUser.sanitizeBodyExisting(req)
+    
+    // Get existing branch user for audit log
+    const existingBranchUser = await db.BranchUser.getBranchUserById(req.params.id)
+    if (!existingBranchUser) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'BranchUser does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = BranchUser.sanitize(req.body, true)
     const existBranch = await db.Branch.doesBranchExist(sanitized.branch_id)
     if (!existBranch) {
@@ -168,6 +189,16 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
       throw error
     }
     const updateBranchUser = await db.BranchUser.updateBranchUser(req.params.id, sanitized)
+    
+    // Log update action
+    await AuditService.logUpdate(
+      req,
+      AuditService.getTableName('branch_users'),
+      req.params.id,
+      existingBranchUser,
+      updateBranchUser
+    );
+    
     res.status(200).json(updateBranchUser)
   } catch (error: any) {
     next(error)
@@ -177,15 +208,27 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
 const deleteBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     BranchUser.sanitizeIdExisting(req)
-    const existBranchUser = await db.BranchUser.doesBranchUserExist(req.params.id)
-    if (!existBranchUser) {
+    
+    // Get existing branch user for audit log (also validates existence)
+    const existingBranchUser = await db.BranchUser.getBranchUserById(req.params.id)
+    if (!existingBranchUser) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'branchUser does not exist.',
+        message: 'BranchUser does not exist.',
       }
       throw error
     }
+    
     const deleteBranchUser = await db.BranchUser.deleteBranchUser(req.params.id)
+    
+    // Log delete action
+    await AuditService.logDelete(
+      req,
+      AuditService.getTableName('branch_users'),
+      req.params.id,
+      existingBranchUser
+    );
+    
     res.status(200).json(deleteBranchUser)
   } catch (error: any) {
     next(error)

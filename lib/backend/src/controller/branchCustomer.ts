@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { BranchCustomer, HttpError } from '@model'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -42,6 +43,10 @@ const createBranchCustomer = async (
       throw error
     }
     const branchCustomer = await db.BranchCustomer.createBranchCustomer(sanitized)
+    
+    // Create audit log for branch-customer creation
+    await AuditService.logCreate(req, AuditService.getTableName('branch_customers'), branchCustomer.branch_customer_id, sanitized)
+    
     res.status(201).json(branchCustomer)
   } catch (error: any) {
     next(error)
@@ -166,6 +171,17 @@ const updateBranchCustomer = async (
   try {
     BranchCustomer.sanitizeIdExisting(req)
     BranchCustomer.sanitizeBodyExisting(req)
+    
+    // Get existing branch-customer data for audit log
+    const existingBranchCustomerData = await db.BranchCustomer.getBranchCustomerById(req.params.id)
+    if (!existingBranchCustomerData) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'BranchCustomer does not exist.',
+      }
+      throw error
+    }
+    
     const sanitized = BranchCustomer.sanitize(req.body, true)
     const existBranch = await db.Branch.doesBranchExist(sanitized.branch_id)
     if (!existBranch) {
@@ -187,6 +203,16 @@ const updateBranchCustomer = async (
       req.params.id,
       sanitized,
     )
+    
+    // Create audit log for branch-customer update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('branch_customers'), 
+      req.params.id,
+      existingBranchCustomerData,
+      sanitized
+    )
+    
     res.status(200).json(updateBranchCustomer)
   } catch (error: any) {
     next(error)
@@ -208,7 +234,20 @@ const deleteBranchCustomer = async (
       }
       throw error
     }
+    
+    // Get branch-customer data before deletion for audit log
+    const branchCustomerData = await db.BranchCustomer.getBranchCustomerById(req.params.id)
+    
     const deleteBranchCustomer = await db.BranchCustomer.deleteBranchCustomer(req.params.id)
+    
+    // Create audit log for branch-customer deletion
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('branch_customers'), 
+      req.params.id,
+      branchCustomerData
+    )
+    
     res.status(200).json(deleteBranchCustomer)
   } catch (error: any) {
     next(error)

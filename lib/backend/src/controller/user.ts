@@ -3,6 +3,7 @@ import * as db from '@db/index'
 import { User, HttpError } from '@model'
 import { hashPassword } from '@utils/password'
 import config from '@config/index'
+import { AuditService } from '@service/auditService'
 
 const limit = config.database.limit
 
@@ -14,6 +15,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
     await existingUser(sanitized, false)
     sanitized.password = await hashPassword(sanitized.password)
     const user = await db.User.createUser(sanitized)
+    
+    // Create audit log for user creation
+    await AuditService.logCreate(req, AuditService.getTableName('users'), user.user_id, {
+      ...sanitized,
+      password: '[HIDDEN]' // Don't log actual password
+    })
+    
     res.status(201).json(user)
   } catch (error: any) {
     next(error)
@@ -60,6 +68,17 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
   try {
     User.sanitizeIdExisting(req)
     User.sanitizeBodyExisting(req)
+    
+    // Get existing user data for audit log
+    const existingUser = await db.User.getUserById(req.params.id)
+    if (!existingUser) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'user does not exist.',
+      }
+      throw error
+    }
+    
     const userData = req.body
     if (userData.password) {
       userData.password = await hashPassword(userData.password)
@@ -67,6 +86,22 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
     const sanitized = User.sanitize(userData, true)
     await existingUser(sanitized, true)
     const updateUser = await db.User.updateUser(req.params.id, sanitized)
+    
+    // Create audit log for user update
+    await AuditService.logUpdate(
+      req, 
+      AuditService.getTableName('users'), 
+      req.params.id,
+      {
+        ...existingUser,
+        password: '[HIDDEN]' // Don't log actual password
+      },
+      {
+        ...sanitized,
+        password: userData.password ? '[HIDDEN]' : existingUser.password
+      }
+    )
+    
     res.status(200).json(updateUser)
   } catch (error: any) {
     next(error)
@@ -84,7 +119,23 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction): Prom
       }
       throw error
     }
+    
+    // Get user data before deletion for audit log
+    const userData = await db.User.getUserById(req.params.id)
+    
     const deleteUser = await db.User.deleteUser(req.params.id)
+    
+    // Create audit log for user deletion (soft delete - status change)
+    await AuditService.logDelete(
+      req, 
+      AuditService.getTableName('users'), 
+      req.params.id,
+      {
+        ...userData,
+        password: '[HIDDEN]' // Don't log actual password
+      }
+    )
+    
     res.status(200).json(deleteUser)
   } catch (error: any) {
     next(error)

@@ -11,6 +11,7 @@ import * as Payments from './Payments'
 import * as Item from './Item'
 import * as PaymentCreditLink from './PaymentCreditLink'
 import * as Comment from './Comment'
+import * as AuditLog from './AuditLog'
 
 export {
   Customer,
@@ -26,4 +27,5 @@ export {
   Item,
   PaymentCreditLink,
   Comment,
+  AuditLog,
 }
