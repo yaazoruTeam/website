@@ -42,8 +42,8 @@ const provResetVmPincode = async (req: Request, res: Response, next: NextFunctio
       req,
       'widely_endpoints',
       endpoint_id,
-      { endpoint_id: endpoint_id, vm_pincode: 'old_pincode' },
-      { endpoint_id: endpoint_id, vm_pincode: '1234', action: 'reset_vm_pincode' }
+      null, // No old value available for security reasons
+      { endpoint_id: endpoint_id, action: 'reset_vm_pincode', vm_pincode: 'reset_to_default' }
     );
     
     res.status(200).json(result)
