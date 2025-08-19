@@ -109,7 +109,7 @@ export const auditMiddleware = (tableName: string, action: 'INSERT' | 'UPDATE' |
       tableName,
       recordId: '', // Will be set after the record is created/updated
       action,
-      oldValues: action === 'UPDATE' || action === 'DELETE' ? undefined : undefined, // Will be fetched if needed
+      oldValues: undefined,
       newValues: action === 'INSERT' || action === 'UPDATE' ? req.body : undefined,
     }
 
