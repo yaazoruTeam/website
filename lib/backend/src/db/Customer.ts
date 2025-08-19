@@ -8,6 +8,7 @@ const limit = config.database.limit
 const createCustomer = async (customer: Customer.Model, trx?: any) => {
   const knex = getDbConnection()
   try {
+    logger.debug('[DB] Creating customer in database', { email: customer.email })
     const query = trx ? trx('yaazoru.customers') : knex('yaazoru.customers')
     const [newCustomer] = await query
       .insert({
@@ -25,8 +26,10 @@ const createCustomer = async (customer: Customer.Model, trx?: any) => {
         updated_at: customer.updated_at,
       })
       .returning('*')
+    logger.debug('[DB] Customer created successfully', { customer_id: newCustomer.customer_id })
     return newCustomer
   } catch (err) {
+    logger.error('[DB] Database error creating customer:', err)
     throw err
   }
 }
@@ -36,6 +39,7 @@ const getCustomers = async (
 ): Promise<{ customers: Customer.Model[]; total: number }> => {
   const knex = getDbConnection()
   try {
+    logger.debug('[DB] Fetching customers from database', { offset, limit })
     const customers = await knex('yaazoru.customers')
       .select('*')
       .limit(limit)
@@ -49,7 +53,7 @@ const getCustomers = async (
       total: parseInt(count as string, 10),
     }
   } catch (err) {
-    logger.error('Error in getCustomers: in db:', err)
+    logger.error('[DB] Database error fetching customers:', err)
     throw err
   }
 }
@@ -57,8 +61,13 @@ const getCustomers = async (
 const getCustomerById = async (customer_id: string) => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.customers').where({ customer_id }).first()
+    const customer = await knex('yaazoru.customers').where({ customer_id }).first()
+    if (!customer) {
+      logger.debug('[DB] Customer not found in database', { customer_id })
+    }
+    return customer
   } catch (err) {
+    logger.error('[DB] Database error fetching customer by ID:', err)
     throw err
   }
 }
@@ -77,11 +86,15 @@ const getCustomersByCity = async (
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ city })
 
+    const total = parseInt(count as string, 10)
+    logger.debug('[DB] Retrieved customers by city', { city, found: customers.length, total })
+
     return {
       customers,
-      total: parseInt(count as string, 10),
+      total,
     }
   } catch (err) {
+    logger.error('[DB] Database error fetching customers by city:', err)
     throw err
   }
 }
@@ -99,11 +112,16 @@ const getCustomersByStatus = async (
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ status })
+
+    const total = parseInt(count as string, 10)
+    logger.debug('[DB] Retrieved customers by status', { status, found: customers.length, total })
+
     return {
       customers,
-      total: parseInt(count as string, 10),
+      total,
     }
   } catch (err) {
+    logger.error('[DB] Database error fetching customers by status:', err)
     throw err
   }
 }
@@ -124,11 +142,16 @@ const getCustomersByDateRange = async (
     const [{ count }] = await knex('yaazoru.customers')
       .count('*')
       .whereBetween('created_at', [startDate, endDate])
+
+    const total = parseInt(count as string, 10)
+    logger.debug('[DB] Retrieved customers by date range', { startDate, endDate, found: customers.length, total })
+
     return {
       customers,
-      total: parseInt(count as string, 10),
+      total,
     }
   } catch (err) {
+    logger.error('[DB] Database error fetching customers by date range:', err)
     throw err
   }
 }
@@ -136,16 +159,20 @@ const getCustomersByDateRange = async (
 const updateCustomer = async (customer_id: string, customer: Customer.Model) => {
   const knex = getDbConnection()
   try {
+    logger.debug('[DB] Updating customer in database', { customer_id })
     customer.updated_at = new Date(Date.now())
     const updateCustomer = await knex('yaazoru.customers')
       .where({ customer_id })
       .update(customer)
       .returning('*')
     if (updateCustomer.length === 0) {
+      logger.warn('[DB] Customer not found for update', { customer_id })
       throw { status: 404, message: 'Customer not found' }
     }
+    logger.debug('[DB] Customer updated successfully', { customer_id })
     return updateCustomer[0]
   } catch (err) {
+    logger.error('[DB] Database error updating customer:', err)
     throw err
   }
 }
@@ -153,19 +180,23 @@ const updateCustomer = async (customer_id: string, customer: Customer.Model) => 
 const deleteCustomer = async (customer_id: string) => {
   const knex = getDbConnection()
   try {
+    logger.debug('[DB] Soft deleting customer (marking inactive)', { customer_id })
     const updateCustomer = await knex('yaazoru.customers')
       .where({ customer_id })
       .update({ status: 'inactive' })
       .returning('*')
     if (updateCustomer.length === 0) {
+      logger.warn('[DB] Customer not found for deletion', { customer_id })
       const error: HttpError.Model = {
         status: 404,
         message: 'customer not found',
       }
       throw error
     }
+    logger.debug('[DB] Customer soft deleted successfully', { customer_id })
     return updateCustomer[0]
   } catch (err) {
+    logger.error('[DB] Database error deleting customer:', err)
     throw err
   }
 }
@@ -177,7 +208,8 @@ const findCustomer = async (criteria: {
 }) => {
   const knex = getDbConnection()
   try {
-    return await knex('yaazoru.customers')
+    logger.debug('[DB] Searching for existing customer', { criteria })
+    const customer = await knex('yaazoru.customers')
       .where(function () {
         if (criteria.email && criteria.id_number) {
           this.where({ email: criteria.email }).orWhere({ id_number: criteria.id_number })
@@ -193,7 +225,13 @@ const findCustomer = async (criteria: {
         }
       })
       .first()
+
+    if (customer) {
+      logger.debug('[DB] Found existing customer with matching criteria', { found_id: customer.customer_id })
+    }
+    return customer
   } catch (err) {
+    logger.error('[DB] Database error searching for customer:', err)
     throw err
   }
 }
@@ -207,6 +245,7 @@ const doesCustomerExist = async (customer_id: string): Promise<boolean> => {
       .first()
     return !!result
   } catch (err) {
+    logger.error('[DB] Database error checking customer existence:', err)
     throw err
   }
 }
@@ -220,8 +259,10 @@ const getUniqueCities = async (): Promise<string[]> => {
       .andWhere('city', '!=', '')
       .orderBy('city')
 
+    logger.debug('[DB] Retrieved unique cities', { count: rows.length })
     return rows.map((row) => row.city)
   } catch (error) {
+    logger.error('[DB] Database error fetching unique cities:', error)
     throw error
   }
 }
@@ -234,10 +275,12 @@ const searchCustomersByName = async (
   try {
     const trimmed = searchTerm.trim()
     if (!trimmed) {
+      logger.debug('[DB] Empty search term provided')
       return { customers: [], total: 0 }
     }
 
     const terms = trimmed.split(/\s+/)
+    logger.debug('[DB] Searching customers by name', { searchTerms: terms })
 
     const buildWhereClause = (query: any) => {
       terms.forEach((term) => {
@@ -262,11 +305,15 @@ const searchCustomersByName = async (
         buildWhereClause(this)
       })
 
+    const total = parseInt(totalCount as string, 10)
+    logger.debug('[DB] Search completed', { searchTerm, found: customers.length, total })
+
     return {
       customers,
-      total: parseInt(totalCount as string, 10),
+      total,
     }
   } catch (err) {
+    logger.error('[DB] Database error searching customers by name:', err)
     throw err
   }
 }

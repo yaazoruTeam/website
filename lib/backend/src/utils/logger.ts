@@ -8,20 +8,31 @@ if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory, { recursive: true });
 }
 
-// הגדרות פורמט
+// הגדרות פורמט משופר
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.errors({ stack: true }),
-  winston.format.printf(({ level, message, timestamp, stack }) => {
+  winston.format.json(), // מאפשר הדפסה של אובייקטים
+  winston.format.printf(({ level, message, timestamp, stack, ...meta }) => {
+    const metaString = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
     return stack
-      ? `[${timestamp}] ${level}: ${message}\n${stack}`
-      : `[${timestamp}] ${level}: ${message}`;
+      ? `[${timestamp}] ${level}: ${message}${metaString}\n${stack}`
+      : `[${timestamp}] ${level}: ${message}${metaString}`;
   })
 );
 
+// הגדרת רמת לוגים לפי סביבה
+const getLogLevel = (): string => {
+  if (process.env.LOG_LEVEL) {
+    return process.env.LOG_LEVEL;
+  }
+  // במצב פיתוח נרצה לראות debug logs
+  return process.env.NODE_ENV === 'production' ? 'info' : 'debug';
+};
+
 // יצירת ה-Logger
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: getLogLevel(),
   format: logFormat,
   defaultMeta: { service: 'yaazoru-backend' },
   transports: [
@@ -31,9 +42,10 @@ const logger = winston.createLogger({
       level: 'error'
     }),
 
-    // שומר את כל הלוגים לקובץ combined.log
+    // שומר את כל הלוגים לקובץ combined.log (כולל debug בפיתוח)
     new winston.transports.File({
-      filename: path.join(logDirectory, 'combined.log')
+      filename: path.join(logDirectory, 'combined.log'),
+      level: getLogLevel()
     }),
   ],
 });
@@ -42,6 +54,7 @@ const logger = winston.createLogger({
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
+      level: getLogLevel(), // גם הקונסול יכבד את רמת הלוג
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
@@ -49,5 +62,15 @@ if (process.env.NODE_ENV !== 'production') {
     })
   );
 }
+
+// פונקציות לשליטה דינמית ברמת הלוג
+export const setLogLevel = (level: string) => {
+  logger.level = level;
+  logger.info(`Log level changed to: ${level}`);
+};
+
+export const getCurrentLogLevel = () => {
+  return logger.level;
+};
 
 export default logger;

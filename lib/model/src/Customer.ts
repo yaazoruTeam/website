@@ -28,7 +28,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     return /^\d{9,10}$/.test(normalized)
   }
 
-  console.log('customer sanitaized: ', customer)
+  // console.log('customer sanitaized: ', customer)
 
   if (hasId && !customer.customer_id) {
     const error: HttpError.Model = {
@@ -38,7 +38,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.first_name) || customer.first_name.trim() === '') {
-    console.log('faild first name: ', customer.first_name)
+    // console.log('faild first name: ', customer.first_name)
 
     const error: HttpError.Model = {
       status: 400,
@@ -47,7 +47,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.last_name) || customer.last_name.trim() === '') {
-    console.log('faild last name: ', customer.last_name)
+    // console.log('faild last name: ', customer.last_name)
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "last_name".',
@@ -55,7 +55,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!customer.id_number) {
-    console.log('faild id number:', customer.id_number)
+    // console.log('faild id number:', customer.id_number)
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "id_number".',
@@ -63,7 +63,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!customer.phone_number || !isValidPhoneNumber(customer.phone_number)) {
-    console.log('faild phone number: ', customer.phone_number)
+    // console.log('faild phone number: ', customer.phone_number)
 
     const error: HttpError.Model = {
       status: 400,
@@ -75,7 +75,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     customer.additional_phone &&
     (!customer.additional_phone || !isValidPhoneNumber(customer.additional_phone))
   ) {
-    console.log('faild additional phone: ', customer.additional_phone)
+    // console.log('faild additional phone: ', customer.additional_phone)
 
     const error: HttpError.Model = {
       status: 400,
@@ -85,7 +85,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
-    console.log('faild email: ', customer.email)
+    // console.log('faild email: ', customer.email)
 
     const error: HttpError.Model = {
       status: 400,
@@ -94,7 +94,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.city) || customer.city.trim() === '') {
-    console.log('faild city: ', customer.city)
+    // console.log('faild city: ', customer.city)
 
     const error: HttpError.Model = {
       status: 400,
@@ -103,7 +103,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.address1) || customer.address1.trim() === '') {
-    console.log('faild address1: ', customer.address1)
+    // console.log('faild address1: ', customer.address1)
 
     const error: HttpError.Model = {
       status: 400,
@@ -112,7 +112,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (customer.address2 && !isString(customer.address2)) {
-    console.log('faild address2: ', customer.address2)
+    // console.log('faild address2: ', customer.address2)
 
     const error: HttpError.Model = {
       status: 400,

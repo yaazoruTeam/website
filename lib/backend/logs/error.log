@@ -1,0 +1,2 @@
+[2025-08-19 09:46:24] error: Error in createCustomer {"service":"yaazoru-backend","error":"Invalid or missing \"phone_number\". It must be a number between 9 and 15 digits."}
+[2025-08-19 09:46:24] error: Error occurred: Invalid or missing "phone_number". It must be a number between 9 and 15 digits. {"service":"yaazoru-backend","url":"/controller/customer","method":"POST","ip":"::ffff:172.21.0.1"}
