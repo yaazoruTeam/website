@@ -20,17 +20,13 @@ interface AuditRequest extends Request {
 const getUserFromToken = async (req: Request): Promise<{ user_id: string; user_name?: string; role: 'admin' | 'branch' } | null> => {
   try {
     const authHeader = req.headers['authorization']
-    console.log('Auth header:', authHeader)
     
     const token = authHeader?.split(' ')[1]
     if (!token) {
-      console.log('No token found in request')
       return null
     }
 
-    console.log('Token found, attempting to decode...')
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model
-    console.log('Token decoded successfully:', { user_id: decoded.user_id, role: decoded.role })
     
     // Fetch the actual user name from the database
     const userRecord = await db.User.getUserById(decoded.user_id)
@@ -42,7 +38,7 @@ const getUserFromToken = async (req: Request): Promise<{ user_id: string; user_n
       user_name,
     }
   } catch (error) {
-    console.error('Error decoding token:', error)
+    console.error('Error decoding token:', error instanceof Error ? error.message : error)
     return null
   }
 }
@@ -159,7 +155,7 @@ export const auditMiddleware = (tableName: string, action: 'INSERT' | 'UPDATE' |
           })
         }
       } catch (error) {
-        console.error('Error processing audit log from response:', error)
+        // Silently handle parsing errors to avoid disrupting the main operation
       }
 
       return originalSend(data)
@@ -180,7 +176,6 @@ export const logAudit = async (
 ) => {
   const userInfo = await getUserFromToken(req)
   if (!userInfo) {
-    console.warn('Cannot create audit log: No user info available')
     return
   }
 
