@@ -86,6 +86,14 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     endpoint_id: endpoint_id
   })
 
+  // Handle null/undefined result
+  if (!result) {
+    const error: HttpError.Model = {
+      status: 500,
+      message: 'Error loading device details.',
+    }
+    throw error
+  }
 
   // Check for error_code in response
   if (result.error_code !== undefined && result.error_code !== 200) {
