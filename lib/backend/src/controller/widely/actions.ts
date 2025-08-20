@@ -20,19 +20,6 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
-const provResetVmPincode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const { endpoint_id } = req.body
-    validateRequiredParams({ endpoint_id })
-
-    const result = await sendMobileAction(endpoint_id, 'prov_reset_vm_pincode')
-
-    res.status(200).json(result)
-  } catch (error: any) {
-    next(error)
-  }
-}
-
 const changeNetwork = async (
   req: Request,
   res: Response,
@@ -176,6 +163,19 @@ const sendApn = async (req: Request, res: Response, next: NextFunction): Promise
   }
 }
 
+const provResetVmPincode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParams({ endpoint_id })
+
+    const result = await sendMobileAction(endpoint_id, 'prov_reset_vm_pincode')
+
+    res.status(200).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 const addOneTimePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, domain_user_id, package_id } = req.body
@@ -236,6 +236,19 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
   }
 }
 
+const reregisterInHlr = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParams({ endpoint_id })
+
+    const result: Widely.Model = await sendMobileAction(endpoint_id, 'reregister_in_hlr')
+
+    res.status(result.error_code).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, iccid, action } = req.body
@@ -276,5 +289,6 @@ export {
   changeNetwork,
   addOneTimePackage,
   freezeUnFreezeMobile,
-  updateImeiLockStatus
+  updateImeiLockStatus,
+  reregisterInHlr
 }

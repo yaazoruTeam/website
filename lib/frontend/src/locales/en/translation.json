@@ -283,5 +283,8 @@
   "imeiLock": "IMEI Lock",
   "errorUpdatingImeiLock": "Error updating IMEI lock",
   "preferredNetworkChangedSuccessfully": "Preferred network changed successfully",
-  "errorSettingPreferredNetwork": "Error setting preferred network"
+  "errorSettingPreferredNetwork": "Error setting preferred network",
+  "softReset": "Soft Reset",
+  "softResetSuccess": "Soft reset completed successfully",
+  "softResetError": "Error performing soft reset"
 }

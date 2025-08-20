@@ -284,5 +284,8 @@
   "imeiLock": "נעילת IMEI",
   "errorUpdatingImeiLock": "שגיאה בעדכון נעילת IMEI",
   "preferredNetworkChangedSuccessfully": "רשת מועדפת שונתה בהצלחה",
-  "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת"
+  "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת",
+  "softReset": "איפוס קל",
+  "softResetSuccess": "איפוס קל הושלם בהצלחה",
+  "softResetError": "שגיאה בביצוע איפוס קל"
 }
