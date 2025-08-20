@@ -78,7 +78,7 @@ describe('Item Controller Tests', () => {
 
       expect(next).toHaveBeenCalledWith({
         status: 404,
-        message: 'monthly payment dose not exist'
+        message: 'monthly payment does not exist'
       });
     });
 
@@ -431,7 +431,7 @@ describe('Item Controller Tests', () => {
 
       expect(next).toHaveBeenCalledWith({
         status: 404,
-        message: 'monthly payment dose not exist'
+        message: 'monthly payment does not exist'
       });
     });
 

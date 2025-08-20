@@ -80,7 +80,7 @@ describe('MonthlyPayment Controller Tests', () => {
 
       expect(next).toHaveBeenCalledWith({
         status: 404,
-        message: 'customer dose not exist'
+        message: 'customer does not exist'
       });
     });
 
@@ -569,7 +569,7 @@ describe('MonthlyPayment Controller Tests', () => {
 
       expect(next).toHaveBeenCalledWith({
         status: 404,
-        message: 'customer dose not exist'
+        message: 'customer does not exist'
       });
     });
 
