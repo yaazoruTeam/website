@@ -5,21 +5,23 @@
  */
 export interface RequestWithId {
   params: {
-    id: string
+    id?: string
+    [key: string]: any
   }
 }
 
 /**
  * Express Request object with a body
  */
-export interface RequestWithBody<T = unknown> {
+export interface RequestWithBody<T = any> {
   body: T
+  [key: string]: any
 }
 
 /**
  * Express Request object with both params.id and body
  */
-export interface RequestWithIdAndBody<T = unknown> extends RequestWithId {
+export interface RequestWithIdAndBody<T = any> extends RequestWithId {
   body: T
 }
 
@@ -27,12 +29,3 @@ export interface RequestWithIdAndBody<T = unknown> extends RequestWithId {
  * Generic value type checker function
  */
 export type ValueChecker<T> = (value: unknown) => value is T
-
-/**
- * Database transaction type (for Knex)
- */
-export interface DatabaseTransaction {
-  // Basic transaction interface - can be extended with Knex-specific types later
-  commit(): Promise<void>
-  rollback(error?: any): Promise<void>
-}
