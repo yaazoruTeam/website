@@ -1,6 +1,6 @@
-import { CustomerDeviceExcel } from '@model'
+import { CustomerDeviceExcel, ExcelRowData } from '@model'
 
-const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
+const convertFlatRowToModel = (row: ExcelRowData): CustomerDeviceExcel.Model => {
   return {
     customer: {
       customer_id: '',
@@ -28,7 +28,7 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
       status: 'active',
       isDonator: true,
     },
-    receivedAt: row.receivedAt,
+    receivedAt: row.receivedAt || new Date(),
   }
 }
 

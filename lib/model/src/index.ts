@@ -21,6 +21,7 @@ import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import { WidelyUserData, WidelyCreationResult, WidelyEndpoint } from './WidelyTypes'
 import { MobileInfo } from './MobileInfo'
+import { ExcelRowData, ProcessingError } from './ExcelTypes'
 
 export {
   Customer,
@@ -48,4 +49,6 @@ export {
   WidelyCreationResult,
   WidelyEndpoint,
   MobileInfo,
+  ExcelRowData,
+  ProcessingError,
 }
