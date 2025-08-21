@@ -8,6 +8,7 @@ export interface CustomButtonProps extends ButtonProps {
   size?: 'small' | 'large'
   buttonType?: 'first' | 'second' | 'third' | 'fourth'
   state?: 'default' | 'hover' | 'active'
+  disabled?: boolean
 }
 export const CustomButton: React.FC<CustomButtonProps> = ({
   label,
@@ -16,6 +17,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   size = 'large',
   buttonType = 'first',
   state = 'default',
+  disabled = false,
   ...props
 }) => {
   const buttonStyles = {
@@ -104,9 +106,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 
   // Special styling for the "fourth" button type (from Figma)
   const isFourthType = buttonType === 'fourth'
-  
+
   return (
     <Button
+      disabled={disabled}
       sx={{
         backgroundColor: currentButtonStyle.backgroundColor,
         color: currentButtonStyle.color,
@@ -134,7 +137,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         text={label}
         variant={size === 'large' ? 'h4' : 'h5'}
         weight={state === 'active' ? (size === 'large' ? 'medium' : 'bold') : 'regular'}
-        color={currentButtonStyle.color}
+        color={disabled ? colors.c22 : currentButtonStyle.color}
       />
       {icon && React.isValidElement(icon) && (
         <span style={{ display: 'flex', justifyContent: 'flex-end' }}>
