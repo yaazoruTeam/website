@@ -136,7 +136,7 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
         originalInfo: result.originalInfo,
         terminationSuccess,
         creationSuccess,
-        newEndpointId: result.creationResult.data?.[0]?.endpoint_id || null,
+        newEndpointId: (result.creationResult.data?.[0] as { endpoint_id?: string })?.endpoint_id || null,
         terminationResult: result.terminationResult,
         creationResult: result.creationResult
       }

@@ -1,6 +1,23 @@
 import { CustomerDeviceExcel } from '@model'
 
-const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
+interface ExcelRowData {
+  first_name?: string
+  last_name?: string
+  id_number?: string
+  phone_number?: string
+  email?: string
+  city?: string
+  address1?: string
+  device_number?: string
+  SIM_number?: string
+  IMEI_1?: string
+  mehalcha_number?: string
+  model?: string
+  receivedAt?: string | Date
+  [key: string]: unknown // Allow additional properties
+}
+
+const convertFlatRowToModel = (row: ExcelRowData): CustomerDeviceExcel.Model => {
   return {
     customer: {
       customer_id: '',
@@ -28,8 +45,8 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
       status: 'active',
       isDonator: true,
     },
-    receivedAt: row.receivedAt,
+    receivedAt: row.receivedAt || new Date(),
   }
 }
 
-export { convertFlatRowToModel }
+export { convertFlatRowToModel, ExcelRowData }

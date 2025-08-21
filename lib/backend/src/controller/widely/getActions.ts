@@ -46,7 +46,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   }
 
   // If exactly one result found, return it (successful search)
-  const userData = dataArray[0]
+  const userData = dataArray[0] as { domain_user_name?: string; name?: string; [key: string]: unknown }
 
   // Validate that userData exists and has required fields
   if (!userData || (!userData.domain_user_name && !userData.name)) {

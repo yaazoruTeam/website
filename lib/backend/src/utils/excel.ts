@@ -1,8 +1,15 @@
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
+import { ExcelRowData } from '@utils/converters/customerDeviceExcelConverter'
 
-const readExcelFile = (filePath: string) => {
+// Create a more generic error type for Excel operations  
+interface ExcelError {
+  error: string
+  [key: string]: unknown
+}
+
+const readExcelFile = (filePath: string): ExcelRowData[] => {
   try {
     console.log('Reading excel file from:', filePath)
     
@@ -30,7 +37,7 @@ const readExcelFile = (filePath: string) => {
     // console.log(sheet);
 
     // המרת הגיליון ל-JSON
-    const data = XLSX.utils.sheet_to_json(sheet)
+    const data = XLSX.utils.sheet_to_json(sheet) as ExcelRowData[]
     console.log('----------------data-----------------')
 
     // console.log(data);
@@ -42,7 +49,7 @@ const readExcelFile = (filePath: string) => {
   }
 }
 
-const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
+const writeErrorsToExcel = async (errors: ExcelError[]): Promise<string | null> => {
   try {
     // אם אין שגיאות, לא צריך ליצור קובץ
     if (!errors || errors.length === 0) {

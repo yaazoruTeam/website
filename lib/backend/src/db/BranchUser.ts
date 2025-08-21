@@ -1,4 +1,5 @@
 import { BranchUser } from '@model'
+import { DatabaseTransaction } from "@db/types"
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 

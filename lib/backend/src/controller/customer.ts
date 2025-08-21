@@ -13,7 +13,7 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
     await existingCustomer(sanitized, false)
     const customer = await db.Customer.createCustomer(sanitized)
     res.status(201).json(customer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -31,7 +31,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log('Error in getCustomers: in controller: ', error)
 
     next(error)
@@ -51,7 +51,7 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     }
     const customer = await db.Customer.getCustomerById(req.params.id)
     res.status(200).json(customer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -121,7 +121,7 @@ const getCustomersByStatus = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -166,7 +166,7 @@ const getCustomersByDateRange = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -179,7 +179,7 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
     await existingCustomer(sanitized, true)
     const updateCustomer = await db.Customer.updateCustomer(req.params.id, sanitized)
     res.status(200).json(updateCustomer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -197,7 +197,7 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
     }
     const deleteCustomer = await db.Customer.deleteCustomer(req.params.id)
     res.status(200).json(deleteCustomer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

@@ -57,7 +57,7 @@ const handleReadExcelFile = async (
       }),
       data: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     // מחיקת הקובץ הזמני במקרה של שגיאה
     if (req.file?.path) {
       try {

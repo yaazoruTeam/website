@@ -18,7 +18,7 @@ const createCustomerDevice = async (
     await existingCustomerDevice(sanitized, false)
     const customerDevice = await db.CustomerDevice.createCustomerDevice(sanitized)
     res.status(201).json(customerDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -40,7 +40,7 @@ const getCustomersDevices = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -62,7 +62,7 @@ const getCustomerDeviceById = async (
     }
     const customerDevice = await db.CustomerDevice.getCustomerDeviceById(req.params.id)
     res.status(200).json(customerDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -102,7 +102,7 @@ const getAllDevicesByCustomerId = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -136,7 +136,7 @@ const getCustomerIdByDeviceId = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -156,7 +156,7 @@ const updateCustomerDevice = async (
       sanitized,
     )
     res.status(200).json(updateCustomerDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -178,7 +178,7 @@ const deleteCustomerDevice = async (
     }
     const deleteCustomerDevice = await db.CustomerDevice.deleteCustomerDevice(req.params.id)
     res.status(200).json(deleteCustomerDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

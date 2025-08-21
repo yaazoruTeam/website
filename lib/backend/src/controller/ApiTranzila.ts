@@ -28,7 +28,7 @@ const chargeTokenTranzila = async (
     console.log('result after charge')
     console.log(result)
     res.status(200).json(result)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log('error in charge!!')
     next(error)
   }
