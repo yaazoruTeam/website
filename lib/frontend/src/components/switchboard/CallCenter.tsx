@@ -13,6 +13,18 @@ import { TrashIcon } from '@heroicons/react/24/outline'
 import TableWithArrow from '../../assets/TableWithArrow.svg'
 import ChangingDestinations from '../../assets/ChangingDestinations.svg'
 import CallLog from '../../assets/CallLog.svg'
+
+// Call interface for type safety
+interface Call {
+  organizationName: string
+  number: string
+  country: 'USA' | 'Israel' | 'England'
+  target: string
+  fromDate: Date
+  definedAsAnIdentifier: boolean
+  monthlyCost: number
+  outgoingCalls: boolean
+}
 import ChangeAccountModal from './ChangeAccountModal'
 import PurchasingNewNumber from './PurchasingNewNumber'
 import SwitchboardTabs from './SwitchboardTabs'
@@ -22,11 +34,11 @@ const CallCenter: React.FC = () => {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [calls, setCalls] = useState<any[]>([
+  const [calls, setCalls] = useState<Call[]>([
     {
       organizationName: '1234',
       number: '125-324-6587',
-      country: 'Isral',
+      country: 'Israel',
       target: '125-324-6587',
       fromDate: new Date(Date.now()),
       definedAsAnIdentifier: true,
@@ -51,7 +63,7 @@ const CallCenter: React.FC = () => {
   const editCallCenter = () => {
     console.log('editCallCenter')
   }
-  const callLog = (call: any) => {
+  const callLog = (call: Call) => {
     console.log('callLog', call)
     navigate(`./callLog/${call.target}`)
   }
@@ -168,21 +180,21 @@ const CallCenter: React.FC = () => {
     ),
   }))
 
-  const changeDefinedAsAnIdentifier = (e: any) => {
+  const changeDefinedAsAnIdentifier = (checked: boolean) => {
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של מוגדר כמזהה
-    console.log('changeDefinedAsAnIdentifier', e)
+    console.log('changeDefinedAsAnIdentifier', checked)
     //שינוי הסטטוס לבינתיים
     setCalls((prevCalls) =>
-      prevCalls.map((call, i) => (i === 0 ? { ...call, definedAsAnIdentifier: e } : call)),
+      prevCalls.map((call, i) => (i === 0 ? { ...call, definedAsAnIdentifier: checked } : call)),
     )
   }
 
-  const changeOutgoingCalls = (e: any) => {
+  const changeOutgoingCalls = (checked: boolean) => {
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של שיחות יוצאות
-    console.log('changeOutgoingCalls', e)
+    console.log('changeOutgoingCalls', checked)
     //שינוי הסטטוס לבינתיים
     setCalls((prevCalls) =>
-      prevCalls.map((call, i) => (i === 0 ? { ...call, outgoingCalls: e } : call)),
+      prevCalls.map((call, i) => (i === 0 ? { ...call, outgoingCalls: checked } : call)),
     )
   }
   const editAccount = () => {

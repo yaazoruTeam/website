@@ -1,5 +1,20 @@
 // src/tranzila.d.ts
 
+// Tranzila error interface
+interface TranzilaError {
+  message: string
+  code?: string
+  details?: unknown
+}
+
+// Tranzila response interface
+interface TranzilaResponse {
+  success: boolean
+  transaction_id?: string
+  error?: TranzilaError
+  [key: string]: unknown
+}
+
 declare global {
   interface TzlaHostedFields {
     create(options: TzlaHostedFieldsOptions): TzlaHostedFieldsInstance
@@ -16,7 +31,7 @@ declare global {
   }
 
   interface TzlaHostedFieldsInstance {
-    charge(data: ChargeData, callback: (err: any, response: any) => void): void
+    charge(data: ChargeData, callback: (err: TranzilaError | null, response: TranzilaResponse | null) => void): void
   }
 
   interface FieldOptions {
@@ -34,7 +49,7 @@ declare global {
 }
 declare global {
   interface Window {
-    TzlaHostedFields: any // תוכל לשנות את ה-any לסוג מדויק יותר אם יש לך מידע על הפונקציות שלה
+    TzlaHostedFields: TzlaHostedFields
   }
 }
 

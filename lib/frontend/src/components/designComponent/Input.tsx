@@ -1,5 +1,5 @@
 import React from 'react'
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import { TextField, Box, TextFieldProps, InputAdornment } from '@mui/material'
 import CustomTypography from './Typography'
 import { colors } from '../../styles/theme'
@@ -10,7 +10,7 @@ export interface CustomTextFieldProps extends Omit<TextFieldProps, 'variant'> {
   errorMessage?: string
   control: Control<any>
   name: string
-  rules?: any
+  rules?: RegisterOptions
   placeholder?: string
   icon?: React.ReactNode
   height?: '44px' | '96px' | '29px'

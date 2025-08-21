@@ -5,6 +5,22 @@ import { useForm } from 'react-hook-form'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
+
+// Tranzila types (moved here for proper typing)
+interface TranzilaError {
+  message: string
+  code?: string
+  details?: unknown
+}
+
+interface TranzilaResponse {
+  success: boolean
+  transaction_id?: string
+  transaction_response?: PaymentData
+  error?: TranzilaError
+  [key: string]: unknown
+}
+
 interface PaymentFormInput {
   name: string
   mustEvery: string
@@ -13,19 +29,31 @@ interface PaymentFormInput {
   dayOfTheMonth: string
   additionalField: string
 }
+
+// Payment form data interfaces
+interface PaymentData {
+  amount: string
+  contact: string
+  terminal_name: string
+}
+
+interface TimeData {
+  [key: string]: unknown // Time-related data structure
+}
+
 declare global {
   interface Window {
-    TzlaHostedFields: any
+    TzlaHostedFields: TzlaHostedFields
     fieldsInitialized: boolean
   }
 }
-let fields: any = null
+let fields: TzlaHostedFieldsInstance | null = null
 
 const PaymentForm = forwardRef(
   (
     props: {
-      onPaymentChange: (paymentData: any) => void
-      OnTimeChange: (timeData: any) => void
+      onPaymentChange: (paymentData: PaymentData) => void
+      OnTimeChange: (timeData: TimeData) => void
       defaultValues?: PaymentFormInput
     },
     ref,
@@ -73,6 +101,7 @@ const PaymentForm = forwardRef(
           expiry: {
             selector: '#expiry',
             placeholder: 'MM/YY',
+            tabindex: 3,
             version: '1',
           },
           identity_number: {
@@ -125,21 +154,21 @@ const PaymentForm = forwardRef(
       }
 
       return new Promise((resolve, reject) => {
-        fields.charge(
+        fields!.charge(
           {
             terminal_name: 'yaazoru',
-            amount: 5,
+            amount: '5',
             tran_mode: 'N',
             tokenize: true,
             response_language: 'Hebrew',
           },
-          (err: any, response: any) => {
+          (err: TranzilaError | null, response: TranzilaResponse | null) => {
             if (err) {
               handleError(err)
               reject(err)
             }
             if (response) {
-              onPaymentChange(response.transaction_response)
+              onPaymentChange(response.transaction_response as PaymentData)
               resolve(response)
             }
           },
@@ -147,10 +176,13 @@ const PaymentForm = forwardRef(
       })
     }
 
-    const handleError = (err: any) => {
+    const handleError = (err: TranzilaError) => {
       console.log('העסקה נכשלה.')
-      const errorMessages = err.messages.map((message: any) => message.message)
-      setErrors(errorMessages)
+      if (err.message) {
+        setErrors([err.message])
+      } else {
+        setErrors(['שגיאה לא ידועה בעסקה'])
+      }
     }
 
     useEffect(() => {
