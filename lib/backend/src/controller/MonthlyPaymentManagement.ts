@@ -57,7 +57,7 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     await trx.commit()
     console.log('i add monthly payment!! sucss!!!')
     res.status(201).json(monthlyPaymentData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
     await trx.rollback()
     console.error('Transaction failed, all actions rolled back:', error)
@@ -115,7 +115,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
         await trx.commit()
         console.log('Monthly payment updated successfully!')
         res.status(200).json({ message: 'Monthly payment updated successfully!' })
-    } catch (error: any) {
+    } catch (error: unknown) {
         await trx.rollback()
         console.error('Transaction failed, all actions rolled back:', error)
         next(error)

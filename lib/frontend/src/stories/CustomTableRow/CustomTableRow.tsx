@@ -5,7 +5,7 @@ import Status from '../../components/designComponent/Status'
 import { colors } from '../../styles/theme'
 
 interface CustomTableRowProps {
-  data: { [key: string]: any }
+  data: { [key: string]: React.ReactNode | string | number | boolean | null | undefined }
 }
 
 const CustomTableRow: React.FC<CustomTableRowProps> = ({ data }) => {
