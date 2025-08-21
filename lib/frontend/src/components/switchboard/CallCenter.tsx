@@ -18,15 +18,26 @@ import PurchasingNewNumber from './PurchasingNewNumber'
 import SwitchboardTabs from './SwitchboardTabs'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 
+interface CallData {
+  organizationName: string
+  number: string
+  country: 'USA' | 'Israel' | 'England'
+  target: string
+  fromDate: Date
+  definedAsAnIdentifier: boolean
+  monthlyCost: number
+  outgoingCalls: boolean
+}
+
 const CallCenter: React.FC = () => {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [calls, setCalls] = useState<any[]>([
+  const [calls, setCalls] = useState<CallData[]>([
     {
       organizationName: '1234',
       number: '125-324-6587',
-      country: 'Isral',
+      country: 'Israel',
       target: '125-324-6587',
       fromDate: new Date(Date.now()),
       definedAsAnIdentifier: true,
@@ -66,7 +77,7 @@ const CallCenter: React.FC = () => {
     console.log('deleteCall')
   }
 
-  const handleRowClick = (rowIndex: number) => {
+  const handleRowClick = (_rowData: any, rowIndex: number) => {
     setExpandedRowIndex(expandedRowIndex === rowIndex ? null : rowIndex)
   }
 
@@ -267,7 +278,7 @@ const CallCenter: React.FC = () => {
       <CustomTable
         columns={columns}
         data={tableData}
-        onRowClick={(index) => handleRowClick(index)}
+        onRowClick={handleRowClick}
         expandedRowIndex={expandedRowIndex}
         renderExpandedRow={() => <SwitchboardTabs />}
       />

@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { FormControl, Select, MenuItem, InputAdornment, Box } from '@mui/material'
-import { Controller } from 'react-hook-form'
+import { Controller, Control } from 'react-hook-form'
 import { colors } from '../../styles/theme'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import CustomTypography from './Typography'
 
 interface CustomSelectProps {
   name: string
-  control: any
+  control: Control<any> // This is from react-hook-form, we'll keep any here as it's a library type
   options: { label: string; value: string; icon?: React.ReactNode }[]
   label: string
   variant?: 'default' | 'changeAccount'

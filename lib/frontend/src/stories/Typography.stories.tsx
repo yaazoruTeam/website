@@ -30,7 +30,7 @@ export default {
   },
 } as Meta
 
-const Template: StoryFn<any> = (args) => (
+const Template: StoryFn<typeof CustomTypography> = (args) => (
   <ThemeProvider theme={theme}>
     {' '}
     {/* עטוף את הקומפוננטה ב-ThemeProvider */}
