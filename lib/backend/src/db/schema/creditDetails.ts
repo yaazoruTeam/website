@@ -3,13 +3,13 @@ import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createCreditDetailsSchema = async () => {
-  logger.info('create creditDetails schema')
+  logger.debug('create creditDetails schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('creditDetails')
     if (!tableExists) {
-      logger.info('Creating creditDetails table...')
+      logger.debug('Creating creditDetails table...')
       await knex.schema
         .withSchema('yaazoru')
         .createTable('creditDetails', (table: Knex.TableBuilder) => {
@@ -22,9 +22,9 @@ const createCreditDetailsSchema = async () => {
           table.date('update_at').notNullable()
           // האם צריך סטטוס בשביל מחיקה ומה קורה במחיקה
         })
-      logger.info('creditDetails table created successfully.')
+      logger.debug('creditDetails table created successfully.')
     } else {
-      logger.info('creditDetails table already exists. Skipping creation.')
+      logger.debug('creditDetails table already exists. Skipping creation.')
     }
   } catch (err) {
     logger.error('error creat schema creditDetails', err)

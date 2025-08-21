@@ -4,8 +4,7 @@ import logger from '../utils/logger';
 createSchema()
 ;(async () => {
   try {
-    logger.info('build schema---------------------')
-
+    logger.debug('build schema---------------------')
     await createSchema()
     logger.info('Schema creation completed. Starting app...')
   } catch (err) {

@@ -3,13 +3,13 @@ import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createMonthlyPayment = async () => {
-  logger.info('create monthlyPayment schema')
+  logger.debug('create monthlyPayment schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('monthlyPayment')
     if (!tableExists) {
-      logger.info('Creating monthlyPayment table...')
+      logger.debug('Creating monthlyPayment table...')
       await knex.schema
         .withSchema('yaazoru')
         .createTable('monthlyPayment', (table: Knex.TableBuilder) => {
@@ -32,9 +32,9 @@ const createMonthlyPayment = async () => {
           table.date('update_at').notNullable()
           table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
         })
-      logger.info('monthlyPayment table created successfully.')
+      logger.debug('monthlyPayment table created successfully.')
     } else {
-      logger.info('monthlyPayment table already exists. Skipping creation.')
+      logger.debug('monthlyPayment table already exists. Skipping creation.')
     }
   } catch (err) {
     logger.error('error creat schema monthlyPayment', err)

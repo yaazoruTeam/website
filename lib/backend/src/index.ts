@@ -25,7 +25,7 @@ app.use(errorHandler)
 // פונקציה להפעלת השרת
 const startServer = async () => {
   try {
-    logger.info("Creating database schema...");
+    logger.debug("Creating database schema...");
     await createSchema();
     app.listen(PORT, () => {
       logger.info(`Server is running on http://localhost:${PORT}`);

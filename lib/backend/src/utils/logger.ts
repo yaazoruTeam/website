@@ -10,7 +10,18 @@ if (!fs.existsSync(logDirectory)) {
 
 // הגדרות פורמט משופר
 const logFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.timestamp({ 
+    format: () => new Date().toLocaleString('he-IL', {
+      timeZone: 'Asia/Jerusalem',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}:\d{2})/, '$3-$2-$1 $4')
+  }),
   winston.format.errors({ stack: true }),
   winston.format.json(), // מאפשר הדפסה של אובייקטים
   winston.format.printf(({ level, message, timestamp, stack, ...meta }) => {

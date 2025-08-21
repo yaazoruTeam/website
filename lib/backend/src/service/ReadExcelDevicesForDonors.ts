@@ -111,9 +111,9 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) =
   })
 
   if (!existCustomer) {
-    logger.info('Creating customer...')
+    logger.debug('Creating customer...')
     existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
-    logger.info('Customer created.')
+    logger.debug('Customer created.')
   }
 
   return existCustomer
@@ -128,9 +128,9 @@ const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: any) => 
   })
 
   if (!existDevice) {
-    logger.info('Creating device...')
+    logger.debug('Creating device...')
     existDevice = await db.Device.createDevice(sanitized.device, trx)
-    logger.info('Device created.')
+    logger.debug('Device created.')
   }
 
   return existDevice

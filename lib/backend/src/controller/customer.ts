@@ -8,7 +8,7 @@ const limit = config.database.limit
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    logger.info('createCustomer called', { body: req.body });
+    logger.debug('createCustomer called', { body: req.body });
 
     Customer.sanitizeBodyExisting(req)
     const customerData = req.body
@@ -32,7 +32,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
     const page = parseInt(req.query.page as string)
     const offset = (page - 1) * limit
 
-    logger.info('getCustomers called', { page, offset });
+    logger.debug('getCustomers called', { page, offset });
 
     const { customers, total } = await db.Customer.getCustomers(offset)
 
@@ -51,7 +51,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
 
 const getCustomerById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    logger.info('getCustomerById called', { id: req.params.id });
+    logger.debug('getCustomerById called', { id: req.params.id });
 
     Customer.sanitizeIdExisting(req)
     const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
@@ -82,7 +82,7 @@ const getCustomersByCity = async (
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    logger.info('getCustomersByCity called', { city, page });
+    logger.debug('getCustomersByCity called', { city, page });
 
     if (!city) {
       logger.warn('Missing city parameter');
@@ -127,7 +127,7 @@ const getCustomersByStatus = async (
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    logger.info('getCustomersByStatus called', { status, page });
+    logger.debug('getCustomersByStatus called', { status, page });
 
     if (status !== 'active' && status !== 'inactive') {
       logger.warn('Invalid status parameter', { status });
@@ -163,7 +163,7 @@ const getCustomersByDateRange = async (
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    logger.info('getCustomersByDateRange called', { startDate, endDate, page });
+    logger.debug('getCustomersByDateRange called', { startDate, endDate, page });
 
     if (!startDate || !endDate) {
       logger.warn('Missing date parameters', { startDate, endDate });
@@ -204,7 +204,7 @@ const getCustomersByDateRange = async (
 
 const updateCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    logger.info('updateCustomer called', { id: req.params.id });
+    logger.debug('updateCustomer called', { id: req.params.id });
 
     Customer.sanitizeIdExisting(req)
     Customer.sanitizeBodyExisting(req)
@@ -222,7 +222,7 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
 
 const deleteCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    logger.info('deleteCustomer called', { id: req.params.id });
+    logger.debug('deleteCustomer called', { id: req.params.id });
 
     Customer.sanitizeIdExisting(req)
     const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
@@ -279,7 +279,7 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
 
 const getCities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    logger.info('getCities called');
+    logger.debug('getCities called');
 
     const cities = await db.Customer.getUniqueCities()
 
@@ -297,7 +297,7 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    logger.info('searchCustomers called', { searchTerm, page });
+    logger.debug('searchCustomers called', { searchTerm, page });
 
     if (!searchTerm) {
       logger.warn('Missing search term');

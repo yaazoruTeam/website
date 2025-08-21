@@ -5,37 +5,37 @@ import logger from './logger'
 
 const readExcelFile = (filePath: string) => {
   try {
-    logger.info('Reading excel file from:', filePath)
+    logger.debug('Reading excel file from:', filePath)
 
     // בדיקה שהקובץ קיים
     if (!fs.existsSync(filePath)) {
       throw new Error(`הקובץ לא נמצא: ${filePath}`)
     }
 
-    logger.info('File exists, reading...')
+    logger.debug('File exists, reading...')
     // קריאת קובץ ה-Excel
     const workbook = XLSX.readFile(filePath)
-    logger.info('----------------workbook-----------------')
+    logger.debug('----------------workbook-----------------')
 
     // console.log(workbook);
 
     // בחירת הגיליון הראשון
     const sheetName = workbook.SheetNames[0]
-    logger.info('----------------sheetName-----------------')
+    logger.debug('----------------sheetName-----------------')
 
     // console.log(sheetName);
 
     const sheet = workbook.Sheets[sheetName]
-    logger.info('----------------sheet-----------------')
+    logger.debug('----------------sheet-----------------')
 
     // console.log(sheet);
 
     // המרת הגיליון ל-JSON
     const data = XLSX.utils.sheet_to_json(sheet)
-    logger.info('----------------data-----------------')
+    logger.debug('----------------data-----------------')
 
     // console.log(data);
-
+    logger.info('Excel data read successfully:', { count: data.length })
     return data
   } catch (error) {
     logger.error('Error reading Excel file:', error)
@@ -47,7 +47,7 @@ const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
   try {
     // אם אין שגיאות, לא צריך ליצור קובץ
     if (!errors || errors.length === 0) {
-      console.log('✅ No errors to write')
+      logger.debug('✅ No errors to write')
       return null
     }
 
@@ -61,7 +61,7 @@ const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
     // יצירת התיקייה אם היא לא קיימת
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true })
-      console.log(`📁 Created uploads directory: ${uploadsDir}`)
+      logger.debug(`📁 Created uploads directory: ${uploadsDir}`)
     }
 
     // יצירת שם קובץ ייחודי עם timestamp
@@ -70,7 +70,7 @@ const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
 
     XLSX.writeFile(wb, errorFilePath)
     logger.error(`❌ ${errors.length} errors written to: ${errorFilePath}`)
-    
+
     return errorFilePath
   } catch (err) {
     logger.error('Failed to write errors to Excel:', err)

@@ -3,13 +3,13 @@ import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createBranchUserSchema = async () => {
-  logger.info('create branchUser schema')
+  logger.debug('create branchUser schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('branchUser')
     if (!tableExists) {
-      logger.info('Creating branchUser table...')
+      logger.debug('Creating branchUser table...')
       await knex.schema
         .withSchema('yaazoru')
         .createTable('branchUser', (table: Knex.TableBuilder) => {
@@ -17,9 +17,9 @@ const createBranchUserSchema = async () => {
           table.string('branch_id').notNullable()
           table.string('user_id').notNullable()
         })
-      logger.info('branchUser table created successfully.')
+      logger.debug('branchUser table created successfully.')
     } else {
-      logger.info('branchUser table already exists. Skipping creation.')
+      logger.debug('branchUser table already exists. Skipping creation.')
     }
   } catch (err) {
     logger.error('error creat schema branchUser', err)
