@@ -1,4 +1,6 @@
 import { HttpError } from '.'
+import { isNonEmptyString } from './ValidationHelpers'
+import { Request } from 'express'
 
 interface Model {
   branchUser_id: string
@@ -7,7 +9,6 @@ interface Model {
 }
 
 function sanitize(branchUser: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
 
   if (hasId && !branchUser.branchUser_id) {
     const error: HttpError.Model = {
@@ -16,14 +17,14 @@ function sanitize(branchUser: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(branchUser.branch_id) || branchUser.branch_id.trim() === '') {
+  if (!isNonEmptyString(branchUser.branch_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "branch_id".',
     }
     throw error
   }
-  if (!isString(branchUser.user_id) || branchUser.user_id.trim() === '') {
+  if (!isNonEmptyString(branchUser.user_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "user_id".',
@@ -38,8 +39,8 @@ function sanitize(branchUser: Model, hasId: boolean): Model {
   return newBranchUser
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (req: Request): void => {
+  if (!req.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -48,7 +49,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Request): void => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

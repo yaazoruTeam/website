@@ -53,8 +53,9 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
         device: Device.sanitize(customerDeviceExcel.device, false),
       }
     }
-  } catch (error: any) {
-    console.error('Sanitize failed:', error.message)
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Sanitize failed:', errorMessage)
     throw error
   }
 }
