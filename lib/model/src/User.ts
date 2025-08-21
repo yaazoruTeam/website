@@ -1,4 +1,5 @@
 import { HttpError } from '.'
+import { RequestWithParams, RequestWithBody } from './SharedTypes'
 
 interface Model {
   user_id: string
@@ -19,7 +20,7 @@ interface Model {
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
