@@ -6,17 +6,21 @@ import { useTranslation } from 'react-i18next'
 import { colors } from '../../styles/theme'
 import CustomTypography from './Typography'
 
-interface CustomTableProps {
+export interface TableRow {
+  [key: string]: unknown
+}
+
+interface CustomTableProps<T extends TableRow = TableRow> {
   columns: { label: string, key: string }[]
-  data: { [key: string]: any }[]
-  onRowClick?: (rowData: any, rowIndex: number) => void
+  data: T[]
+  onRowClick?: (rowData: T, rowIndex: number) => void
   showSummary?: { page: number, limit: number, total: number, totalPages: number, onPageChange: (page: number) => void }
   alignLastColumnLeft?: boolean
   expandedRowIndex?: number | null
-  renderExpandedRow?: (rowData: any, rowIndex: number) => React.ReactNode
+  renderExpandedRow?: (rowData: T, rowIndex: number) => React.ReactNode
 }
 
-const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {
+const CustomTable = <T extends TableRow = TableRow>({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }: CustomTableProps<T>) => {
   const { t } = useTranslation()
 
   return (
@@ -101,8 +105,15 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                               color={colors.c11}
                               text={String(row[key] || t('dataNotAvailable'))}
                             />
+                          ) : React.isValidElement(row[key]) ? (
+                            row[key] as React.ReactElement
                           ) : (
-                            row[key]
+                            <CustomTypography
+                              variant='h4'
+                              weight='regular'
+                              color={colors.c11}
+                              text={String(row[key] || t('dataNotAvailable'))}
+                            />
                           )}
                         </TableCell>
                       )

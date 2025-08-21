@@ -8,11 +8,18 @@ import {
 } from '../../api/customerApi'
 import { Customer } from '@model'
 
+interface FilterValue {
+  city?: string
+  status?: 'active' | 'inactive'
+  dateRange?: { start: Date; end: Date }
+  search?: string
+}
+
 interface UseFetchCustomersProps {
   page: number
   filterType?: {
     type: 'city' | 'status' | 'date' | 'search'
-    value: any
+    value: FilterValue[keyof FilterValue]
   }
 }
 
@@ -33,15 +40,15 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           const res = await getCustomers(page)
           data = res.data
           total = res.total
-        } else if (filterType.type === 'city') {
+        } else if (filterType.type === 'city' && typeof filterType.value === 'string') {
           const res = await getCustomersByCity(filterType.value, page)
           data = res.data
           total = res.total
-        } else if (filterType.type === 'status') {
+        } else if (filterType.type === 'status' && (filterType.value === 'active' || filterType.value === 'inactive')) {
           const res = await getCustomersByStatus(filterType.value, page)
           data = res.data
           total = res.total
-        } else if (filterType.type === 'date') {
+        } else if (filterType.type === 'date' && filterType.value && typeof filterType.value === 'object' && 'start' in filterType.value && 'end' in filterType.value) {
           const res = await getCustomersByDateRange(
             filterType.value.start,
             filterType.value.end,
@@ -49,7 +56,7 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           )
           data = res.data
           total = res.total
-        } else if (filterType.type === 'search') {
+        } else if (filterType.type === 'search' && typeof filterType.value === 'string') {
           const res = await getCustomersByName(filterType.value, page)
           data = res.data
           total = res.total

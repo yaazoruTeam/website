@@ -58,6 +58,12 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
     })
   }
 
+  const handleRowClick = (rowData: any) => {
+    if (rowData.originalPayment) {
+      onClickMonthlyPayment(rowData.originalPayment)
+    }
+  }
+
   const columns = [
     !isCustomerCard && { label: t('customerName'), key: 'customer_name' },
     { label: t('dates'), key: 'dates' },
@@ -76,6 +82,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
 
   const tableData = filteredPayments.map((payment: MonthlyPayment.Model) => ({
     monthlyPayment_id: payment.monthlyPayment_id,
+    originalPayment: payment, // Store the original payment for onRowClick
     customer_name: (
       <Link
         to={`/customer/card/${payment.customer_id}`}
@@ -132,7 +139,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
           {!isCustomerCard ? <CustomTable
             columns={columns}
             data={tableData}
-            onRowClick={onClickMonthlyPayment}
+            onRowClick={handleRowClick}
             showSummary={{
               page,
               limit,
