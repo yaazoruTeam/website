@@ -1,4 +1,6 @@
 import { HttpError } from '.'
+import { isNonEmptyString } from './ValidationHelpers'
+import { Request } from 'express'
 
 interface Model {
   user_id: string
@@ -19,7 +21,6 @@ interface Model {
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
@@ -30,14 +31,14 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(user.first_name) || user.first_name.trim() === '') {
+  if (!isNonEmptyString(user.first_name)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "first_name".',
     }
     throw error
   }
-  if (!isString(user.last_name) || user.last_name.trim() === '') {
+  if (!isNonEmptyString(user.last_name)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "last_name".',
@@ -51,7 +52,7 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(user.phone_number) || !isValidPhoneNumber(user.phone_number)) {
+  if (!isNonEmptyString(user.phone_number) || !isValidPhoneNumber(user.phone_number)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
@@ -60,7 +61,7 @@ function sanitize(user: Model, hasId: boolean): Model {
   }
   if (
     user.additional_phone &&
-    (!isString(user.additional_phone) || !isValidPhoneNumber(user.additional_phone))
+    (!isNonEmptyString(user.additional_phone) || !isValidPhoneNumber(user.additional_phone))
   ) {
     const error: HttpError.Model = {
       status: 400,
@@ -69,56 +70,56 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(user.email) || !isValidEmail(user.email)) {
+  if (!isNonEmptyString(user.email) || !isValidEmail(user.email)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "email".',
     }
     throw error
   }
-  if (!isString(user.city) || user.city.trim() === '') {
+  if (!isNonEmptyString(user.city)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "city".',
     }
     throw error
   }
-  if (!isString(user.address1) || user.address1.trim() === '') {
+  if (!isNonEmptyString(user.address1)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address1".',
     }
     throw error
   }
-  if (user.address2 && !isString(user.address2)) {
+  if (user.address2 && !isNonEmptyString(user.address2)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address2".',
     }
     throw error
   }
-  if (!isString(user.zipCode) || user.zipCode.trim() === '') {
+  if (!isNonEmptyString(user.zipCode)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "zipCode".',
     }
     throw error
   }
-  if (!isString(user.password) || user.password.trim() === '') {
+  if (!isNonEmptyString(user.password)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "password".',
     }
     throw error
   }
-  if (!isString(user.user_name) || user.user_name.trim() === '') {
+  if (!isNonEmptyString(user.user_name)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "user_name".',
     }
     throw error
   }
-  if (!isString(user.role) || user.role.trim() === '') {
+  if (!isNonEmptyString(user.role)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "role".',
@@ -176,8 +177,8 @@ const sanitizeExistingUser = (userExis: Model, user: Model) => {
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (req: Request): void => {
+  if (!req.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -186,7 +187,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Request): void => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

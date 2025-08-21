@@ -1,4 +1,5 @@
 import { HttpError } from '.';
+import { isNonEmptyString, isOptionalString } from './ValidationHelpers';
 
 export enum EntityType {
   Customer = "customer",
@@ -16,11 +17,7 @@ interface Model {
   file_type?: string
 }
 
-const isOptionalString = (val: any) =>
-  val === undefined || (typeof val === "string" && val.trim() !== "");
-
 function sanitize(comment: Model, hasId: boolean): Model {
-  const isString = (val: any) => typeof val === 'string' && val.trim() !== '';
 
   if (hasId && !comment.comment_id) {
     const error: HttpError.Model = {
@@ -30,7 +27,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
     throw error;
   }
 
-  if (!comment.entity_id || !isString(comment.entity_id)) {
+  if (!comment.entity_id || !isNonEmptyString(comment.entity_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Entity ID is required and must be a non-empty string.'
@@ -46,7 +43,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
     throw error;
   }
 
-  if (!isString(comment.content)) {
+  if (!isNonEmptyString(comment.content)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Comment content is required and must be a non-empty string.'

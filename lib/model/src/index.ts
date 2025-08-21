@@ -19,6 +19,8 @@ import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
+import { WidelyUserData, WidelyCreationResult, WidelyEndpoint } from './WidelyTypes'
+import { MobileInfo } from './MobileInfo'
 
 export {
   Customer,
@@ -42,4 +44,8 @@ export {
   EntityType,
   Widely,
   WidelyDeviceDetails,
+  WidelyUserData,
+  WidelyCreationResult,
+  WidelyEndpoint,
+  MobileInfo,
 }

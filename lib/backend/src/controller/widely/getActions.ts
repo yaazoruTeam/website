@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, WidelyDeviceDetails } from '@model'
+import { HttpError, Widely, WidelyDeviceDetails, WidelyUserData } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
@@ -14,8 +14,8 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-const searchUsersData = async (simNumber: string): Promise<any> => {
-  const result: Widely.Model = await callingWidely(
+const searchUsersData = async (simNumber: string): Promise<WidelyUserData> => {
+  const result: Widely.Model<WidelyUserData> = await callingWidely(
     'search_users', {
     account_id: config.widely.accountId,
     search_string: simNumber,
@@ -46,7 +46,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   }
 
   // If exactly one result found, return it (successful search)
-  const userData = dataArray[0]
+  const userData: WidelyUserData = dataArray[0]
 
   // Validate that userData exists and has required fields
   if (!userData || (!userData.domain_user_name && !userData.name)) {
@@ -181,8 +181,8 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
       throw err;
     }
 
-    const domain_user_id = user.domain_user_id
-    if (!domain_user_id) {
+    const domain_user_id: string = String(user.domain_user_id || '')
+    if (!domain_user_id || domain_user_id === '') {
       const error: HttpError.Model = {
         status: 500,
         message: 'Error loading user data - missing domain_user_id.',

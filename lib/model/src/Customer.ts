@@ -1,4 +1,6 @@
 import { HttpError } from '.'
+import { isNonEmptyString } from './ValidationHelpers'
+import { Request } from 'express'
 
 interface Model {
   customer_id: string
@@ -18,7 +20,6 @@ interface Model {
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string | number) => {
     const phoneStr = String(phone) // המרה למחרוזת
@@ -37,7 +38,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.first_name) || customer.first_name.trim() === '') {
+  if (!isNonEmptyString(customer.first_name)) {
     console.log('faild first name: ', customer.first_name)
 
     const error: HttpError.Model = {
@@ -46,7 +47,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.last_name) || customer.last_name.trim() === '') {
+  if (!isNonEmptyString(customer.last_name)) {
     console.log('faild last name: ', customer.last_name)
     const error: HttpError.Model = {
       status: 400,
@@ -84,7 +85,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
+  if (!isNonEmptyString(customer.email) || !isValidEmail(customer.email.trim())) {
     console.log('faild email: ', customer.email)
 
     const error: HttpError.Model = {
@@ -93,7 +94,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.city) || customer.city.trim() === '') {
+  if (!isNonEmptyString(customer.city)) {
     console.log('faild city: ', customer.city)
 
     const error: HttpError.Model = {
@@ -102,7 +103,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.address1) || customer.address1.trim() === '') {
+  if (!isNonEmptyString(customer.address1)) {
     console.log('faild address1: ', customer.address1)
 
     const error: HttpError.Model = {
@@ -111,7 +112,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (customer.address2 && !isString(customer.address2)) {
+  if (customer.address2 && !isNonEmptyString(customer.address2)) {
     console.log('faild address2: ', customer.address2)
 
     const error: HttpError.Model = {
@@ -157,8 +158,8 @@ const sanitizeExistingCustomer = (customerExis: Model, customer: Model) => {
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (req: Request): void => {
+  if (!req.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -167,7 +168,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Request): void => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
