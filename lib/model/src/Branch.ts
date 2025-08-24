@@ -1,4 +1,5 @@
 import { HttpError } from '.'
+import { RequestWithParams, RequestWithBody, isString } from './CommonTypes'
 
 interface Model {
   branch_id: string
@@ -11,7 +12,7 @@ interface Model {
 }
 
 function sanitize(branch: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
   if (hasId && !branch.branch_id) {
@@ -73,7 +74,7 @@ function sanitize(branch: Model, hasId: boolean): Model {
   return newBranch
 }
 
-const sanitizeIdExisting = (id: any) => {
+const sanitizeIdExisting = (id: RequestWithParams): void => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
@@ -83,7 +84,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestWithBody): void => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
