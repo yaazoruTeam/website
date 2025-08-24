@@ -12,7 +12,7 @@ const handleReadExcelFile = async (
 ): Promise<void> => {
   try {
     // בדיקה שקובץ הועלה
-    logger.info('Checking uploaded file...');
+    logger.debug('Checking uploaded file...');
 
     if (!req.file) {
       res.status(400).json({
@@ -22,9 +22,9 @@ const handleReadExcelFile = async (
       return
     }
 
-    logger.info('File uploaded:', req.file.filename)
+    logger.debug('File uploaded:', req.file.filename)
     const filePath = req.file.path
-    logger.info('File path: reading from:', filePath)
+    logger.debug('File path: reading from:', filePath)
 
     // קריאת הקובץ
     const data = await readExcelFile(filePath)

@@ -12,13 +12,15 @@ const createCreditDetails = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+    logger.debug("createCreditDetails called with body:", req.body)
+
     CreditDetails.sanitizeBodyExisting(req)
     const creditDetailsrData = req.body
     const sanitized = CreditDetails.sanitize(creditDetailsrData, false)
-    logger.info(sanitized)
 
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
     if (!existCustomer) {
+      logger.warn('Customer does not exist for ID:', sanitized.customer_id)
       const error: HttpError.Model = {
         status: 404,
         message: 'customer dose not exist',
@@ -26,9 +28,8 @@ const createCreditDetails = async (
       throw error
     }
     const existToken = await db.CreditDetails.doesTokenExist(sanitized.token)
-    logger.info('token: ', existToken)
-
     if (existToken) {
+      logger.warn('Token already exists:', sanitized.token)
       const error: HttpError.Model = {
         status: 490,
         message: 'token already exist',
@@ -36,6 +37,7 @@ const createCreditDetails = async (
       throw error
     }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized)
+    logger.info("CreditDetails created successfully:", creditDetails)
     res.status(201).json(creditDetails)
   } catch (error: any) {
     next(error)

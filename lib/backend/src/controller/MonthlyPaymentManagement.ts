@@ -56,7 +56,7 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       }
     }
     await trx.commit()
-    logger.info('i add monthly payment!! success!!!')
+    logger.info('create monthly payment!! success!!!')
     res.status(201).json(monthlyPaymentData)
   } catch (error: any) {
     next(error)
