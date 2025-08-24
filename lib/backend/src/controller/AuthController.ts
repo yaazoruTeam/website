@@ -8,7 +8,7 @@ import { createUser } from './user'
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await createUser(req, res, next)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -35,7 +35,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
     const accessToken = generateToken(user.user_id, user.role)
 
     res.status(200).json(accessToken)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -63,7 +63,7 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction): Pr
       }
       throw error
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

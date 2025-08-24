@@ -52,7 +52,7 @@ const sanitizeExistingPaymentCreditLink = (
 }
 
 const sanitizeIdExisting = (id: RequestWithParams): void => {
-  if (!id.params.id) {
+  if (!id.params?.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',

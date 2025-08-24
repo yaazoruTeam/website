@@ -34,7 +34,7 @@ const createComment = async (
     const sanitized = Comment.sanitize(req.body, false);
     const comment = await db.Comment.createComment(sanitized);
     res.status(201).json(comment);
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -56,7 +56,7 @@ const getComments = async (
       totalPages: Math.ceil(total / limit),
       total,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -85,7 +85,7 @@ const getCommentById = async (
       throw error;
     }
     res.status(200).json(comment);
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -120,7 +120,7 @@ const getCommentsByEntity = async (
       totalPages: Math.ceil(total / limit),
       total,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -140,7 +140,7 @@ const updateComment = async (
       sanitized
     );
     res.status(200).json(updatedComment);
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -153,7 +153,7 @@ const deleteComment = async (
   try {
     const deletedComment = await db.Comment.deleteComment(req.params.id);
     res.status(200).json(deletedComment);
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -185,7 +185,7 @@ const transcribeAudio = async (
     });
 
     const transcription = response.results
-      ?.map((result: any) => result.alternatives?.[0].transcript)
+      ?.map((result: { alternatives?: Array<{ transcript: string }> }) => result.alternatives?.[0].transcript)
       .join(" ")
       .trim();
 

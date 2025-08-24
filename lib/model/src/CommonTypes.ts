@@ -5,7 +5,8 @@
  */
 export interface RequestWithParams {
   params: {
-    id: string
+    id?: string
+    [key: string]: string | undefined
   }
 }
 
@@ -13,7 +14,7 @@ export interface RequestWithParams {
  * Request object with a body
  */
 export interface RequestWithBody<T = Record<string, unknown>> {
-  body: T
+  body?: T
 }
 
 /**
@@ -21,9 +22,10 @@ export interface RequestWithBody<T = Record<string, unknown>> {
  */
 export interface RequestWithParamsAndBody<T = Record<string, unknown>> {
   params: {
-    id: string
+    id?: string
+    [key: string]: string | undefined
   }
-  body: T
+  body?: T
 }
 
 /**

@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
 })
 
-const charge = async (transactionData: any) => {
+const charge = async (transactionData: Record<string, unknown>) => {
   const { headers } = generateAccessTokenTranzila(appPublicKey, appPrivateKey)
   try {
     await axiosInstance
@@ -20,7 +20,7 @@ const charge = async (transactionData: any) => {
         console.log('Response:', response.data)
         return response.data
       })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.log(err)
     return err
   }

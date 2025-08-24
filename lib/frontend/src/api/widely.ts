@@ -42,7 +42,7 @@ export const ComprehensiveResetDevice = async (endpoint_id: number | string, nam
     success: boolean
     message: string
     data: {
-      originalInfo: any
+      originalInfo: Record<string, unknown>
       terminationSuccess: boolean
       creationSuccess: boolean
       newEndpointId: string | null
@@ -55,7 +55,7 @@ export const ComprehensiveResetDevice = async (endpoint_id: number | string, nam
     success: boolean
     message: string
     data: {
-      originalInfo: any
+      originalInfo: Record<string, unknown>
       terminationSuccess: boolean
       creationSuccess: boolean
       newEndpointId: string | null

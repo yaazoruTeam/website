@@ -16,8 +16,8 @@ describe('Express Server', () => {
 
   it('should handle errors using the errorHandler middleware', async () => {
     app.get('/error', (req, res, next) => {
-      const error = new Error('Test error')
-      ;(error as any).status = 500
+      const error = new Error('Test error') as Error & { status?: number }
+      error.status = 500
       next(error)
     })
 

@@ -1,9 +1,10 @@
 import { HttpError, Payments } from '@model'
+import { Knex } from 'knex'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 const limit = config.database.limit
 
-const createPayments = async (payments: Payments.Model, trx?: any) => {
+const createPayments = async (payments: Payments.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.payments') : knex('yaazoru.payments')

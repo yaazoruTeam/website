@@ -14,7 +14,7 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-const searchUsersData = async (simNumber: string): Promise<any> => {
+const searchUsersData = async (simNumber: string): Promise<Record<string, unknown>[]> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
     account_id: config.widely.accountId,
@@ -60,7 +60,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   return userData
 }
 
-const getMobilesData = async (domain_user_id: string): Promise<any> => {
+const getMobilesData = async (domain_user_id: string): Promise<Record<string, unknown>[]> => {
   const result: Widely.Model = await callingWidely(
     'get_mobiles', {
     domain_user_id: domain_user_id,
@@ -80,7 +80,7 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
   return mobileData
 }
 
-const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
+const getMobileInfoData = async (endpoint_id: string): Promise<Record<string, unknown>> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
@@ -130,7 +130,7 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
 
     const userData = await searchUsersData(simNumber)
     res.status(200).json(userData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -142,7 +142,7 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
 
     const mobileData = await getMobilesData(domain_user_id)
     res.status(200).json(mobileData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -154,7 +154,7 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
 
     const mobileInfoData = await getMobileInfoData(endpoint_id)
     res.status(200).json(mobileInfoData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -168,7 +168,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     let user;
     try {
       user = await searchUsersData(simNumber)
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Pass through SIM not found errors as-is
       if (error.message === 'SIM number not found.') {
         throw error;
@@ -194,7 +194,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     let mobile;
     try {
       mobile = await getMobilesData(domain_user_id)
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If no devices found, treat as SIM not found
       if (error.message === 'No devices found for this user.') {
         const err: HttpError.Model = {
@@ -261,7 +261,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     res.status(200).json(responseData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

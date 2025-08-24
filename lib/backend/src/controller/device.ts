@@ -13,7 +13,7 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
     await existingDevice(sanitized, false)
     const device = await db.Device.createDevice(sanitized)
     res.status(201).json(device)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -31,7 +31,7 @@ const getDevices = async (req: Request, res: Response, next: NextFunction): Prom
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -49,7 +49,7 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
     }
     const device = await db.Device.getDeviceById(req.params.id)
     res.status(200).json(device)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -79,7 +79,7 @@ const getDevicesByStatus = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -92,7 +92,7 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     await existingDevice(sanitized, true)
     const updateDevice = await db.Device.updateDevice(req.params.id, sanitized)
     res.status(200).json(updateDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -110,7 +110,7 @@ const deleteDevice = async (req: Request, res: Response, next: NextFunction): Pr
     }
     const deleteDevice = await db.Device.deleteDevice(req.params.id)
     res.status(200).json(deleteDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
