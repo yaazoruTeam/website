@@ -5,15 +5,28 @@ import * as XLSX from 'xlsx' // ✨ שינוי: נדרש בשביל כתיבה
 import * as path from 'path' // ✨ שינוי: נדרש בשביל כתיבה
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
+import { Knex } from 'knex'
 
-const processExcelData = async (data: any[]): Promise<{
+// Type for Excel row data
+interface ExcelRowData {
+  [key: string]: unknown
+  first_name?: string
+  last_name?: string
+}
+
+// Type for error entries
+interface ErrorEntry extends ExcelRowData {
+  error: string
+}
+
+const processExcelData = async (data: ExcelRowData[]): Promise<{
   totalRows: number;
   errorsCount: number;
   successCount: number;
   errorFilePath?: string;
 }> => {
   const knex = getDbConnection()
-  const errors: any[] = []
+  const errors: ErrorEntry[] = []
   let successCount = 0
 
   for (const item of data) {
@@ -25,10 +38,11 @@ const processExcelData = async (data: any[]): Promise<{
 
     try {
       sanitized = await CustomerDeviceExcel.sanitize(convertFlatRowToModel(item), isCustomer)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'Unknown error')
       errors.push({
         ...item,
-        error: `Sanitize failed: ${err.message || err.toString()}`,
+        error: `Sanitize failed: ${errorMessage}`,
       })
       continue
     }
@@ -62,11 +76,12 @@ const processExcelData = async (data: any[]): Promise<{
         }
         await trx.commit()
         successCount++ // ספירת הצלחה
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'Unknown error')
         console.error('Transaction failed:', err)
         errors.push({
           ...item,
-          error: `Transaction failed: ${err.message || err.toString()}`,
+          error: `Transaction failed: ${errorMessage}`,
         })
         await trx.rollback()
       }
@@ -74,11 +89,12 @@ const processExcelData = async (data: any[]): Promise<{
       try {
         await processDevice(sanitized, null)
         successCount++ // ספירת הצלחה גם ליצירת device בלבד
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'Unknown error')
         console.error('Error creating device (no customer):', err)
         errors.push({
           ...item,
-          error: `Device-only insert failed: ${err.message || err.toString()}`,
+          error: `Device-only insert failed: ${errorMessage}`,
         })
       }
     }
@@ -99,7 +115,7 @@ const processExcelData = async (data: any[]): Promise<{
   }
 }
 
-const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) => {
+const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Transaction) => {
   if (!sanitized.customer) {
     throw new Error('Customer is undefined in sanitized object.')
   }
@@ -118,7 +134,7 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) =
   return existCustomer
 }
 
-const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: any) => {
+const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Transaction | null) => {
   let existDevice = await db.Device.findDevice({
     SIM_number: sanitized.device.SIM_number,
     IMEI_1: sanitized.device.IMEI_1,
