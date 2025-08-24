@@ -18,8 +18,7 @@ const charge = async (transactionData: any) => {
         headers,
       })
       .then((response) => {
-       logger.info('Response:', response.data)
-        return response.data
+      return response.data
       })
   } catch (err: any) {
     logger.error(err)
