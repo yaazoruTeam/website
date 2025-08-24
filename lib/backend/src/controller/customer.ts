@@ -8,7 +8,7 @@ const limit = config.database.limit
 
 const createCustomer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    logger.debug('createCustomer called', { body: req.body });
+    logger.http('POST /customers', { body: req.body });
 
     Customer.sanitizeBodyExisting(req)
     const customerData = req.body
