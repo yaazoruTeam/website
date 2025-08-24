@@ -1,12 +1,32 @@
 import winston from 'winston';
 import path from 'path';
 import fs from 'fs';
+import { AsyncLocalStorage } from 'async_hooks';
 
 // Create log directory if it does not exist
 const logDirectory = path.resolve(__dirname, '../../logs');
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory, { recursive: true });
 }
+
+// AsyncLocalStorage for user context
+const userContext = new AsyncLocalStorage<{ userId?: string }>();
+
+// Function to get current user ID
+const getCurrentUserId = (): string | undefined => {
+  const context = userContext.getStore();
+  return context?.userId;
+};
+
+// Function to set user ID for current context (used internally)
+export const setUserContext = (userId: string): void => {
+  userContext.enterWith({ userId });
+};
+
+// Function to run code with user context
+export const withUser = <T>(userId: string, fn: () => T): T => {
+  return userContext.run({ userId }, fn);
+};
 
 // Enhanced format settings
 const logFormat = winston.format.combine(
@@ -25,10 +45,14 @@ const logFormat = winston.format.combine(
   winston.format.errors({ stack: true }),
   winston.format.json(), // מאפשר הדפסה של אובייקטים
   winston.format.printf(({ level, message, timestamp, stack, ...meta }) => {
+    // Get current user ID - exactly like getting timestamp
+    const userId = getCurrentUserId();
+    const userInfo = userId ? ` [User: ${userId}]` : '';
+    
     const metaString = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
     return stack
-      ? `[${timestamp}] ${level}: ${message}${metaString}\n${stack}`
-      : `[${timestamp}] ${level}: ${message}${metaString}`;
+      ? `[${timestamp}]${userInfo} ${level}: ${message}${metaString}\n${stack}`
+      : `[${timestamp}]${userInfo} ${level}: ${message}${metaString}`;
   })
 );
 
@@ -68,7 +92,16 @@ if (process.env.NODE_ENV !== 'production') {
       level: getLogLevel(), // Also respect log level in console
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple()
+        winston.format.printf(({ level, message, timestamp, stack, ...meta }) => {
+          // Get current user ID for console too
+          const userId = getCurrentUserId();
+          const userInfo = userId ? ` [User: ${userId}]` : '';
+          
+          const metaString = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
+          return stack
+            ? `[${timestamp}]${userInfo} ${level}: ${message}${metaString}\n${stack}`
+            : `[${timestamp}]${userInfo} ${level}: ${message}${metaString}`;
+        })
       )
     })
   );
