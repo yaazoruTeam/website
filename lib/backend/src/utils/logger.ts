@@ -38,7 +38,7 @@ const getLogLevel = (): string => {
     return process.env.LOG_LEVEL;
   }
   // In development mode we want to see debug logs
-  return process.env.NODE_ENV === 'production' ? 'info' : 'debug';
+  return process.env.NODE_ENV === 'production' ? 'info' : 'silly';
 };
 
 // Create the logger
