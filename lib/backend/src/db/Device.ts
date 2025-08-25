@@ -1,9 +1,11 @@
 import { Device, HttpError } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
+import { KnexTransaction } from '../types'
+
 const limit = config.database.limit
 
-const createDevice = async (device: Device.Model, trx?: any) => {
+const createDevice = async (device: Device.Model, trx?: KnexTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.devices') : knex('yaazoru.devices')

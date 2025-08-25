@@ -44,7 +44,7 @@ export const uploadExcel = multer({
 })
 
 // middleware לטיפול בשגיאות העלאה
-export const handleUploadError = (error: any, req: Request, res: Response, next: NextFunction) => {
+export const handleUploadError = (error: unknown, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
@@ -54,7 +54,8 @@ export const handleUploadError = (error: any, req: Request, res: Response, next:
     }
   }
   
-  if (error.message.includes('רק קבצי Excel מותרים')) {
+  // Handle other errors with proper type checking
+  if (error instanceof Error && error.message.includes('רק קבצי Excel מותרים')) {
     return res.status(400).json({
       status: 400,
       message: error.message

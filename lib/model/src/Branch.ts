@@ -1,4 +1,5 @@
-import { HttpError } from '.'
+import { HttpError, ValidationTypes, RequestTypes, SanitizationUtils } from '.'
+import { Request } from 'express'
 
 interface Model {
   branch_id: string
@@ -11,8 +12,7 @@ interface Model {
 }
 
 function sanitize(branch: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
-  const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
+  const isValidPhoneNumber = ValidationTypes.isValidPhoneNumber
 
   if (hasId && !branch.branch_id) {
     const error: HttpError.Model = {
@@ -21,28 +21,28 @@ function sanitize(branch: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(branch.city) || branch.city.trim() === '') {
+  if (!ValidationTypes.isNonEmptyString(branch.city)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "city".',
     }
     throw error
   }
-  if (!isString(branch.address) || branch.address.trim() === '') {
+  if (!ValidationTypes.isNonEmptyString(branch.address)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address".',
     }
     throw error
   }
-  if (!isString(branch.manager_name) || branch.manager_name.trim() === '') {
+  if (!ValidationTypes.isNonEmptyString(branch.manager_name)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "manager_name".',
     }
     throw error
   }
-  if (!isString(branch.phone_number) || !isValidPhoneNumber(branch.phone_number)) {
+  if (!ValidationTypes.isString(branch.phone_number) || !isValidPhoneNumber(branch.phone_number)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
@@ -51,7 +51,7 @@ function sanitize(branch: Model, hasId: boolean): Model {
   }
   if (
     branch.additional_phone &&
-    (!isString(branch.additional_phone) || !isValidPhoneNumber(branch.additional_phone))
+    (!ValidationTypes.isString(branch.additional_phone) || !isValidPhoneNumber(branch.additional_phone))
   ) {
     const error: HttpError.Model = {
       status: 400,
@@ -73,24 +73,12 @@ function sanitize(branch: Model, hasId: boolean): Model {
   return newBranch
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
-  }
+const sanitizeIdExisting = (req: Request): void => {
+  SanitizationUtils.sanitizeIdExisting(req)
 }
 
-const sanitizeBodyExisting = (req: any) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
-  }
+const sanitizeBodyExisting = (req: Request): void => {
+  SanitizationUtils.sanitizeBodyExisting(req)
 }
 
 export { Model, sanitize, sanitizeIdExisting, sanitizeBodyExisting }
