@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   item_id: string
@@ -14,67 +14,31 @@ interface Model {
 
 function sanitize(item: Model, hasId: boolean): Model {
   if (hasId && !item.item_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "item_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "item_id".', 400)
   }
   if (!item.monthlyPayment_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "monthlyPayment_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "monthlyPayment_id".', 400)
   }
   if (!item.description) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "description".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "description".', 400)
   }
   if (!item.quantity) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "quantity".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "quantity".', 400)
   }
   if (!item.price) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "price".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "price".', 400)
   }
   if (!item.total) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "total".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "total".', 400)
   }
   if (!item.paymentType) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "paymentType".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "paymentType".', 400)
   }
   if (!item.created_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "created_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "created_at".', 400)
   }
   if (!item.update_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "update_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "update_at".', 400)
   }
   const newItem: Model = {
     item_id: item.item_id,
@@ -90,23 +54,15 @@ function sanitize(item: Model, hasId: boolean): Model {
   return newItem
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
+    throw new AppError('No body provaider', 400)
   }
 }
 

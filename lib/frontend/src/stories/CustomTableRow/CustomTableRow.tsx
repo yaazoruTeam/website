@@ -5,7 +5,7 @@ import Status from '../../components/designComponent/Status'
 import { colors } from '../../styles/theme'
 
 interface CustomTableRowProps {
-  data: { [key: string]: any }
+  data: { [key: string]: unknown }
 }
 
 const CustomTableRow: React.FC<CustomTableRowProps> = ({ data }) => {
@@ -29,8 +29,11 @@ const CustomTableRow: React.FC<CustomTableRowProps> = ({ data }) => {
           }}
           key={index}
         >
-          {key === 'status' ? <Status status={value} /> : value}
-          {value}
+          {key === 'status' ? (
+            <Status status={value as 'active' | 'inactive' | 'blocked' | 'canceled' | 'imei_locked'} />
+          ) : (
+            String(value)
+          )}
         </TableCell>
       ))}
     </TableRow>

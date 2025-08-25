@@ -1,4 +1,4 @@
-import { Widely, WidelyDeviceDetails } from '@model'
+import { Widely, WidelyDeviceDetails, WidelyTypes } from '@model'
 import {
   apiPost,
 } from './core/apiHelpers'
@@ -42,7 +42,7 @@ export const ComprehensiveResetDevice = async (endpoint_id: number | string, nam
     success: boolean
     message: string
     data: {
-      originalInfo: any
+      originalInfo: WidelyTypes.WidelyMobileInfo
       terminationSuccess: boolean
       creationSuccess: boolean
       newEndpointId: string | null
@@ -55,7 +55,7 @@ export const ComprehensiveResetDevice = async (endpoint_id: number | string, nam
     success: boolean
     message: string
     data: {
-      originalInfo: any
+      originalInfo: WidelyTypes.WidelyMobileInfo
       terminationSuccess: boolean
       creationSuccess: boolean
       newEndpointId: string | null

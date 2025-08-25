@@ -20,7 +20,12 @@ export interface WidelyMobileInfo {
   iccid?: string;
   service_id?: number;
   package_id?: number;
-  dids?: unknown;
+  dids?: Array<{
+    purchase_type: string;
+    type: string;
+    country: string;
+    sms_to_mail?: string;
+  }>;
   sim_data?: {
     msisdn?: string;
     iccid?: string;

@@ -1,6 +1,7 @@
 import {
   CreditDetails,
-  HttpError,
+  AppError,
+  RequestTypes,
   ItemForMonthlyPayment,
   MonthlyPayment,
   PaymentCreditLink,
@@ -20,11 +21,7 @@ function sanitize(monthlyPaymentManagement: Model): Model {
   console.log('sanitize monthly payment management')
 
   if (!monthlyPaymentManagement.customer_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_id".', 400)
   }
   const newMonthlyPaymentManagement: Model = {
     customer_id: monthlyPaymentManagement.customer_id,
@@ -39,23 +36,15 @@ function sanitize(monthlyPaymentManagement: Model): Model {
   return newMonthlyPaymentManagement
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
+    throw new AppError('No body provaider', 400)
   }
 }
 

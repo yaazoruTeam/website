@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   monthlyPayment_id: string
@@ -23,60 +23,28 @@ interface Model {
 
 function sanitize(monthlyPayment: Model, hasId: boolean): Model {
   if (hasId && !monthlyPayment.monthlyPayment_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "monthlyPayment_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "monthlyPayment_id".', 400)
   }
   if (!monthlyPayment.customer_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_id".', 400)
   }
   if (!monthlyPayment.customer_name) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_name".', 400)
   }
   if (!monthlyPayment.belongsOrganization) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "belongs organization".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "belongs organization".', 400)
   }
   if (!monthlyPayment.start_date) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "start_date".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "start_date".', 400)
   }
   if (!monthlyPayment.end_date) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "end_date".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "end_date".', 400)
   }
   if (!monthlyPayment.amount) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "amount".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "amount".', 400)
   }
   if (!monthlyPayment.total_amount) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "total_amount".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "total_amount".', 400)
   }
   // if (!monthlyPayment.oneTimePayment) {
   //     const error: HttpError.Model = {
@@ -86,60 +54,28 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
   //     throw error;
   // }
   if (!monthlyPayment.frequency) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "frequency".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "frequency".', 400)
   }
   if (!monthlyPayment.amountOfCharges) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "amount of charges".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "amount of charges".', 400)
   }
   if (!monthlyPayment.dayOfTheMonth) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "day of the month".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "day of the month".', 400)
   }
   if (!monthlyPayment.next_charge) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "next_charge".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "next_charge".', 400)
   }
   if (!monthlyPayment.last_attempt) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "last_attempt".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "last_attempt".', 400)
   }
   if (!monthlyPayment.last_sucsse) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "last_sucsse".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "last_sucsse".', 400)
   }
   if (!monthlyPayment.created_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "created_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "created_at".', 400)
   }
   if (!monthlyPayment.update_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "update_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "update_at".', 400)
   }
   const newMonthlyPayment: Model = {
     monthlyPayment_id: monthlyPayment.monthlyPayment_id,
@@ -164,23 +100,15 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
   return newMonthlyPayment
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
+    throw new AppError('No body provaider', 400)
   }
 }
 

@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   customer_id: string
@@ -18,7 +18,7 @@ interface Model {
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string | number) => {
     const phoneStr = String(phone) // המרה למחרוזת
@@ -31,45 +31,25 @@ function sanitize(customer: Model, hasId: boolean): Model {
   console.log('customer sanitaized: ', customer)
 
   if (hasId && !customer.customer_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_id".', 400)
   }
   if (!isString(customer.first_name) || customer.first_name.trim() === '') {
     console.log('faild first name: ', customer.first_name)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "first_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "first_name".', 400)
   }
   if (!isString(customer.last_name) || customer.last_name.trim() === '') {
     console.log('faild last name: ', customer.last_name)
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "last_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "last_name".', 400)
   }
   if (!customer.id_number) {
     console.log('faild id number:', customer.id_number)
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "id_number".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "id_number".', 400)
   }
   if (!customer.phone_number || !isValidPhoneNumber(customer.phone_number)) {
     console.log('faild phone number: ', customer.phone_number)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
-    }
-    throw error
+    throw new AppError('Invalid or missing "phone_number". It must be a number between 9 and 15 digits.', 400)
   }
   if (
     customer.additional_phone &&
@@ -77,48 +57,27 @@ function sanitize(customer: Model, hasId: boolean): Model {
   ) {
     console.log('faild additional phone: ', customer.additional_phone)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message:
-        'Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.',
-    }
-    throw error
+    throw new AppError('Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.', 400)
   }
   if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
     console.log('faild email: ', customer.email)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "email".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "email".', 400)
   }
   if (!isString(customer.city) || customer.city.trim() === '') {
     console.log('faild city: ', customer.city)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "city".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "city".', 400)
   }
   if (!isString(customer.address1) || customer.address1.trim() === '') {
     console.log('faild address1: ', customer.address1)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address1".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "address1".', 400)
   }
   if (customer.address2 && !isString(customer.address2)) {
     console.log('faild address2: ', customer.address2)
 
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address2".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "address2".', 400)
   }
 
   const newCustomer: Model = {
@@ -142,38 +101,22 @@ function sanitize(customer: Model, hasId: boolean): Model {
 
 const sanitizeExistingCustomer = (customerExis: Model, customer: Model) => {
   if (customerExis.id_number === customer.id_number) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'id_number already exists',
-    };
-    throw error;
+    throw new AppError('id_number already exists', 409)
   }
   if (customerExis.email === customer.email) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'email already exists',
-    };
-    throw error;
+    throw new AppError('email already exists', 409)
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

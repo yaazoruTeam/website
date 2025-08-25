@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   paymentCreditLink_id: string
@@ -8,25 +8,13 @@ interface Model {
 }
 function sanitize(paymentCreditLink: Model, hasId: boolean): Model {
   if (hasId && !paymentCreditLink.paymentCreditLink_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "paymentCreditLink_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "paymentCreditLink_id".', 400)
   }
   if (!paymentCreditLink.monthlyPayment_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "monthlyPayment_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "monthlyPayment_id".', 400)
   }
   if (!paymentCreditLink.creditDetails_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "creditDetails_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "creditDetails_id".', 400)
   }
   const newPaymentCreditLink: Model = {
     paymentCreditLink_id: paymentCreditLink.paymentCreditLink_id,
@@ -42,31 +30,19 @@ const sanitizeExistingPaymentCreditLink = (
   paymentCreditLink: Model,
 ) => {
   if (PaymentCreditLinkExist.monthlyPayment_id === paymentCreditLink.monthlyPayment_id) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'monthlyPaiment_id already exists',
-    }
-    throw error
+    throw new AppError('monthlyPaiment_id already exists', 409)
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
+    throw new AppError('No body provaider', 400)
   }
 }
 

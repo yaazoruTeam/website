@@ -1,4 +1,4 @@
-import { Customer, Device, HttpError } from '.'
+import { Customer, Device, AppError } from '.'
 
 interface Model {
   customer?: Customer.Model
@@ -35,11 +35,7 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
           ? customerDeviceExcel.receivedAt
           : parseDate(customerDeviceExcel.receivedAt)
       if (!customerDeviceExcel.customer) {
-        const error: HttpError.Model = {
-          status: 400,
-          message: 'Customer is undefined in the input object.',
-        }
-        throw error
+        throw new AppError('Customer is undefined in the input object.', 400)
       }
       return {
         ...customerDeviceExcel,
@@ -53,8 +49,8 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
         device: Device.sanitize(customerDeviceExcel.device, false),
       }
     }
-  } catch (error: any) {
-    console.error('Sanitize failed:', error.message)
+  } catch (error: unknown) {
+    console.error('Sanitize failed:', error instanceof Error ? error.message : String(error))
     throw error
   }
 }

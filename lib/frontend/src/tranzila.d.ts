@@ -16,7 +16,7 @@ declare global {
   }
 
   interface TzlaHostedFieldsInstance {
-    charge(data: ChargeData, callback: (err: any, response: any) => void): void
+    charge(data: ChargeData, callback: (err: unknown, response: unknown) => void): void
   }
 
   interface FieldOptions {
@@ -34,7 +34,7 @@ declare global {
 }
 declare global {
   interface Window {
-    TzlaHostedFields: any // תוכל לשנות את ה-any לסוג מדויק יותר אם יש לך מידע על הפונקציות שלה
+    TzlaHostedFields: TzlaHostedFields // Updated to use proper type instead of any
   }
 }
 
