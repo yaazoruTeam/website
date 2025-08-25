@@ -11,10 +11,11 @@ const chargeTokenTranzila = async (
     const body = req.body
     const transaction = {
       terminal_name: 'yaazorutok',
-      expire_month: 11,
-      expire_year: 2030,
-      cvv: '123',
-      card_number: 'ieff4b4e3bae1df4580',
+      expire_month: 11,//to do:Check where the data comes from.
+      expire_year: 2000,//to do:Check where the data comes from.
+      cvv: '',//to do:Check where the data comes from.
+      card_number: '', //Accepts the credit card token instead of the card number
+      //to do:Check where the data comes from.
       items: [
         {
           name: 'Pen',
