@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { readExcelFile } from '@utils/excel'
 import { processExcelData } from '@service/ReadExcelDevicesForDonors'
+import { ExcelRowData } from '../types'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -29,8 +30,8 @@ const handleReadExcelFile = async (
     const data = await readExcelFile(filePath)
     console.log('Excel file read successfully, rows:', data.length)
 
-    // עיבוד הנתונים
-    const processingResults = await processExcelData(data)
+    // עיבוד הנתונים - Type assertion since we know the structure from Excel
+    const processingResults = await processExcelData(data as ExcelRowData[])
     console.log('Data processed and saved to DB')
     console.log(`✅ Success: ${processingResults.successCount}/${processingResults.totalRows}`)
     if (processingResults.errorsCount > 0) {

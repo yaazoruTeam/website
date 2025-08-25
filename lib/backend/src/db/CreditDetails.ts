@@ -1,10 +1,11 @@
 import { CreditDetails, HttpError } from '@model'
+import { KnexTransaction } from '../types'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 
 const limit = config.database.limit
 
-const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
+const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: KnexTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails')
@@ -57,7 +58,7 @@ const getCreditDetailsById = async (credit_id: string) => {
 const updateCreditDetails = async (
   credit_id: string,
   creditDetails: CreditDetails.Model,
-  trx?: any,
+  trx?: KnexTransaction,
 ) => {
   const knex = getDbConnection()
   try {

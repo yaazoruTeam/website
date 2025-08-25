@@ -1,10 +1,11 @@
 import { HttpError, MonthlyPayment } from '@model'
+import { KnexTransaction } from '../types'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 
 const limit = config.database.limit
 
-const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: any) => {
+const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: KnexTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.monthlyPayment') : knex('yaazoru.monthlyPayment')
@@ -142,7 +143,7 @@ const getMonthlyPaymentsByOrganization = async (
 const updateMonthlyPayment = async (
   monthlyPayment_id: string,
   monthlyPayment: MonthlyPayment.Model,
-  trx?: any,
+  trx?: KnexTransaction,
 ) => {
   const knex = getDbConnection()
   try {
