@@ -1,4 +1,5 @@
-import { HttpError } from '.'
+import { HttpError, ValidationTypes, SanitizationUtils } from '.'
+import { Request } from 'express'
 
 interface Model {
   customerDevice_id: string
@@ -11,7 +12,6 @@ interface Model {
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
 
   if (hasId && !customerDevice.customerDevice_id) {
     const error: HttpError.Model = {
@@ -20,14 +20,14 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customerDevice.customer_id) || customerDevice.customer_id.trim() === '') {
+  if (!ValidationTypes.isNonEmptyString(customerDevice.customer_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
     }
     throw error
   }
-  if (!isString(customerDevice.device_id) || customerDevice.device_id.trim() === '') {
+  if (!ValidationTypes.isNonEmptyString(customerDevice.device_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "device_id".',
@@ -65,24 +65,12 @@ const sanitizeExistingCustomerDevice = (customerDeviceExis: Model, customerDevic
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
-  }
+const sanitizeIdExisting = (req: Request): void => {
+  SanitizationUtils.sanitizeIdExisting(req)
 }
 
-const sanitizeBodyExisting = (req: any) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
-  }
+const sanitizeBodyExisting = (req: Request): void => {
+  SanitizationUtils.sanitizeBodyExisting(req)
 }
 
 export { Model, sanitize, sanitizeExistingCustomerDevice, sanitizeIdExisting, sanitizeBodyExisting }
