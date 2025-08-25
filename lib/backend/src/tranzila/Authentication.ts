@@ -9,7 +9,16 @@ const axiosInstance = axios.create({
   httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
 })
 
-const charge = async (transactionData: any) => {
+// Interface for Tranzila transaction data
+interface TranzilaTransactionData {
+  amount: number
+  currency: string
+  order_id?: string
+  email?: string
+  [key: string]: unknown // Allow additional properties
+}
+
+const charge = async (transactionData: TranzilaTransactionData) => {
   const { headers } = generateAccessTokenTranzila(appPublicKey, appPrivateKey)
   try {
     await axiosInstance

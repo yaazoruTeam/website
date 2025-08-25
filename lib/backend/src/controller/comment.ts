@@ -185,7 +185,7 @@ const transcribeAudio = async (
     });
 
     const transcription = response.results
-      ?.map((result: any) => result.alternatives?.[0].transcript)
+      ?.map((result: { alternatives?: Array<{ transcript: string }> }) => result.alternatives?.[0].transcript)
       .join(" ")
       .trim();
 

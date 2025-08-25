@@ -2,6 +2,10 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, ItemForMonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { Knex } from 'knex'
+
+// Type for database transaction
+type DatabaseTransaction = Knex.Transaction<Record<string, unknown>, unknown[]>
 
 const limit = config.database.limit
 
@@ -115,7 +119,7 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
 const updateItems = async (
   existingItems: ItemForMonthlyPayment.Model[],
   updatedItems: ItemForMonthlyPayment.Model[],
-  trx: any,
+  trx: DatabaseTransaction,
 ) => {
   // 1. חפש פריטים שנמחקו - פריטים קיימים שלא נמצאים במערך החדש
   const deletedItems = existingItems.filter(

@@ -14,7 +14,7 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-const searchUsersData = async (simNumber: string): Promise<any> => {
+const searchUsersData = async (simNumber: string): Promise<Record<string, unknown>[]> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
     account_id: config.widely.accountId,
@@ -60,7 +60,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   return userData
 }
 
-const getMobilesData = async (domain_user_id: string): Promise<any> => {
+const getMobilesData = async (domain_user_id: string): Promise<Record<string, unknown>[]> => {
   const result: Widely.Model = await callingWidely(
     'get_mobiles', {
     domain_user_id: domain_user_id,
@@ -80,7 +80,7 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
   return mobileData
 }
 
-const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
+const getMobileInfoData = async (endpoint_id: string): Promise<Record<string, unknown>> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
