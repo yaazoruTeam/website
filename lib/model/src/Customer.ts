@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, Common } from '.'
 
 interface Model {
   customer_id: string
@@ -18,7 +18,7 @@ interface Model {
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  // Removed local isString - using Common.isString instead
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string | number) => {
     const phoneStr = String(phone) // המרה למחרוזת
@@ -37,7 +37,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.first_name) || customer.first_name.trim() === '') {
+  if (!Common.isString(customer.first_name) || customer.first_name.trim() === '') {
     console.log('faild first name: ', customer.first_name)
 
     const error: HttpError.Model = {
@@ -46,7 +46,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.last_name) || customer.last_name.trim() === '') {
+  if (!Common.isString(customer.last_name) || customer.last_name.trim() === '') {
     console.log('faild last name: ', customer.last_name)
     const error: HttpError.Model = {
       status: 400,
@@ -84,7 +84,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
+  if (!Common.isString(customer.email) || !isValidEmail(customer.email.trim())) {
     console.log('faild email: ', customer.email)
 
     const error: HttpError.Model = {
@@ -93,7 +93,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.city) || customer.city.trim() === '') {
+  if (!Common.isString(customer.city) || customer.city.trim() === '') {
     console.log('faild city: ', customer.city)
 
     const error: HttpError.Model = {
@@ -102,7 +102,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.address1) || customer.address1.trim() === '') {
+  if (!Common.isString(customer.address1) || customer.address1.trim() === '') {
     console.log('faild address1: ', customer.address1)
 
     const error: HttpError.Model = {
@@ -111,7 +111,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (customer.address2 && !isString(customer.address2)) {
+  if (customer.address2 && !Common.isString(customer.address2)) {
     console.log('faild address2: ', customer.address2)
 
     const error: HttpError.Model = {
@@ -157,7 +157,7 @@ const sanitizeExistingCustomer = (customerExis: Model, customer: Model) => {
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
+const sanitizeIdExisting = (id: Common.ExpressRequestWithParams) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
@@ -167,7 +167,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Common.ExpressRequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, Common } from '.'
 
 interface Model {
   monthlyPayment_id: string
@@ -164,7 +164,7 @@ function sanitize(monthlyPayment: Model, hasId: boolean): Model {
   return newMonthlyPayment
 }
 
-const sanitizeIdExisting = (id: any) => {
+const sanitizeIdExisting = (id: Common.ExpressRequestWithParams) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
@@ -174,7 +174,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Common.ExpressRequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

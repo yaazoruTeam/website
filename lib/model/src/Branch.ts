@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, Common } from '.'
 
 interface Model {
   branch_id: string
@@ -11,7 +11,7 @@ interface Model {
 }
 
 function sanitize(branch: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  // Removed local isString - using Common.isString instead
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
   if (hasId && !branch.branch_id) {
@@ -21,28 +21,28 @@ function sanitize(branch: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(branch.city) || branch.city.trim() === '') {
+  if (!Common.isString(branch.city) || branch.city.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "city".',
     }
     throw error
   }
-  if (!isString(branch.address) || branch.address.trim() === '') {
+  if (!Common.isString(branch.address) || branch.address.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address".',
     }
     throw error
   }
-  if (!isString(branch.manager_name) || branch.manager_name.trim() === '') {
+  if (!Common.isString(branch.manager_name) || branch.manager_name.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "manager_name".',
     }
     throw error
   }
-  if (!isString(branch.phone_number) || !isValidPhoneNumber(branch.phone_number)) {
+  if (!Common.isString(branch.phone_number) || !isValidPhoneNumber(branch.phone_number)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
@@ -51,7 +51,7 @@ function sanitize(branch: Model, hasId: boolean): Model {
   }
   if (
     branch.additional_phone &&
-    (!isString(branch.additional_phone) || !isValidPhoneNumber(branch.additional_phone))
+    (!Common.isString(branch.additional_phone) || !isValidPhoneNumber(branch.additional_phone))
   ) {
     const error: HttpError.Model = {
       status: 400,
@@ -73,7 +73,7 @@ function sanitize(branch: Model, hasId: boolean): Model {
   return newBranch
 }
 
-const sanitizeIdExisting = (id: any) => {
+const sanitizeIdExisting = (id: Common.ExpressRequestWithParams) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
@@ -83,7 +83,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Common.ExpressRequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
