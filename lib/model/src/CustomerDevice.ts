@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, Common } from '.'
 
 interface Model {
   customerDevice_id: string
@@ -11,7 +11,7 @@ interface Model {
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  // Removed local isString - using Common.isString instead
 
   if (hasId && !customerDevice.customerDevice_id) {
     const error: HttpError.Model = {
@@ -20,14 +20,14 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customerDevice.customer_id) || customerDevice.customer_id.trim() === '') {
+  if (!Common.isString(customerDevice.customer_id) || customerDevice.customer_id.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
     }
     throw error
   }
-  if (!isString(customerDevice.device_id) || customerDevice.device_id.trim() === '') {
+  if (!Common.isString(customerDevice.device_id) || customerDevice.device_id.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "device_id".',
@@ -65,7 +65,7 @@ const sanitizeExistingCustomerDevice = (customerDeviceExis: Model, customerDevic
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
+const sanitizeIdExisting = (id: Common.ExpressRequestWithParams) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
@@ -75,7 +75,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Common.ExpressRequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

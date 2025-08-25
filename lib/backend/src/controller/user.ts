@@ -15,7 +15,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
     sanitized.password = await hashPassword(sanitized.password)
     const user = await db.User.createUser(sanitized)
     res.status(201).json(user)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -33,7 +33,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction): Promis
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -51,7 +51,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction): Pro
     }
     const user = await db.User.getUserById(req.params.id)
     res.status(200).json(user)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -68,7 +68,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
     await existingUser(sanitized, true)
     const updateUser = await db.User.updateUser(req.params.id, sanitized)
     res.status(200).json(updateUser)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -86,7 +86,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction): Prom
     }
     const deleteUser = await db.User.deleteUser(req.params.id)
     res.status(200).json(deleteUser)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

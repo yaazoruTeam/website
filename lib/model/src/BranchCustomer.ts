@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, Common } from '.'
 
 interface Model {
   branchCustomer_id: string
@@ -7,7 +7,7 @@ interface Model {
 }
 
 function sanitize(branchCustomer: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  // Removed local isString - using Common.isString instead
 
   if (hasId && !branchCustomer.branchCustomer_id) {
     const error: HttpError.Model = {
@@ -16,14 +16,14 @@ function sanitize(branchCustomer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(branchCustomer.branch_id) || branchCustomer.branch_id.trim() === '') {
+  if (!Common.isString(branchCustomer.branch_id) || branchCustomer.branch_id.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "branch_id".',
     }
     throw error
   }
-  if (!isString(branchCustomer.customer_id) || branchCustomer.customer_id.trim() === '') {
+  if (!Common.isString(branchCustomer.customer_id) || branchCustomer.customer_id.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
@@ -38,7 +38,7 @@ function sanitize(branchCustomer: Model, hasId: boolean): Model {
   return newBranchCustomer
 }
 
-const sanitizeIdExisting = (id: any) => {
+const sanitizeIdExisting = (id: Common.ExpressRequestWithParams) => {
   if (!id.params.id) {
     const error: HttpError.Model = {
       status: 400,
@@ -48,7 +48,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Common.ExpressRequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

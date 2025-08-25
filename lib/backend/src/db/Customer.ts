@@ -1,10 +1,14 @@
 import { Customer, HttpError } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
+import { Knex } from 'knex'
+
+// Type for optional database transaction
+type OptionalTransaction = Knex.Transaction<Record<string, unknown>, unknown[]> | undefined
 
 const limit = config.database.limit
 
-const createCustomer = async (customer: Customer.Model, trx?: any) => {
+const createCustomer = async (customer: Customer.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.customers') : knex('yaazoru.customers')
@@ -238,9 +242,9 @@ const searchCustomersByName = async (
 
     const terms = trimmed.split(/\s+/)
 
-    const buildWhereClause = (query: any) => {
+    const buildWhereClause = (query: Knex.QueryBuilder) => {
       terms.forEach((term) => {
-        query.andWhere((qb: any) => {
+        query.andWhere((qb: Knex.QueryBuilder) => {
           qb.whereILike('first_name', `%${term}%`).orWhereILike('last_name', `%${term}%`)
         })
       })

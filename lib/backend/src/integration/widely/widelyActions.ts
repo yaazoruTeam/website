@@ -22,7 +22,7 @@ const sendMobileAction = async (endpoint_id: string | number, action: string): P
     return result
 }
 
-const getMobileInfo = async (endpoint_id: string): Promise<any> => {
+const getMobileInfo = async (endpoint_id: string): Promise<Record<string, unknown>> => {
     const result: Widely.Model = await callingWidely('get_mobile_info', { endpoint_id })
 
     if (result.error_code !== undefined && result.error_code !== 200) {
@@ -78,7 +78,7 @@ const provCreateMobile = async (
 ): Promise<Widely.Model> => {
     validateRequiredParams({ domain_user_id, sim_iccid, service_id, name })
 
-    const data: any = {
+    const data: Record<string, unknown> = {
         domain_user_id,
         iccid: sim_iccid,
         service_id,
@@ -95,13 +95,13 @@ const provCreateMobile = async (
 }
 
 const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Promise<{
-    originalInfo: any
+    originalInfo: Record<string, unknown>
     terminationResult: Widely.Model
     creationResult: Widely.Model
 }> => {
     validateRequiredParams({ endpoint_id, name })
 
-    let originalInfo: any = null
+    let originalInfo: Record<string, unknown> | null = null
     let terminationResult: Widely.Model | null = null
     let creationResult: Widely.Model | null = null
 

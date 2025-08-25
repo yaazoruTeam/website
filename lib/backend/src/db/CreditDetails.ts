@@ -1,10 +1,17 @@
-import { CreditDetails, HttpError } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
+import { CreditDetails, HttpError } from '@model'
+import { Knex } from 'knex'
+
+import { Knex } from 'knex'
+
+// Type for optional database transaction
+type OptionalTransaction = Knex.Transaction<Record<string, unknown>, unknown[]> | undefined
+
 
 const limit = config.database.limit
 
-const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: any) => {
+const createCreditDetails = async (creditDetails: CreditDetails.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.creditDetails') : knex('yaazoru.creditDetails')
@@ -57,7 +64,7 @@ const getCreditDetailsById = async (credit_id: string) => {
 const updateCreditDetails = async (
   credit_id: string,
   creditDetails: CreditDetails.Model,
-  trx?: any,
+  trx?: OptionalTransaction,
 ) => {
   const knex = getDbConnection()
   try {

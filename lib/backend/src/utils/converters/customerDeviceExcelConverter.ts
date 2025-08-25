@@ -1,6 +1,24 @@
 import { CustomerDeviceExcel } from '@model'
 
-const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
+// Interface for Excel row data when importing customer devices
+interface ExcelRowData {
+  first_name?: string
+  last_name?: string
+  id_number?: string
+  phone_number?: string
+  email?: string
+  city?: string
+  address1?: string
+  device_number?: string
+  SIM_number?: string
+  IMEI_1?: string
+  mehalcha_number?: string
+  model?: string
+  receivedAt?: string | number | Date
+  [key: string]: unknown // Allow additional properties
+}
+
+const convertFlatRowToModel = (row: ExcelRowData): CustomerDeviceExcel.Model => {
   return {
     customer: {
       customer_id: '',
@@ -32,4 +50,4 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
   }
 }
 
-export { convertFlatRowToModel }
+export { convertFlatRowToModel, ExcelRowData }
