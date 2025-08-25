@@ -1,10 +1,19 @@
 import { HttpError, MonthlyPayment } from '@model'
-import getDbConnection from '@db/connection'
-import config from '@config/index'
+
+import { Knex } from 'knex'
+
+// Type for optional database transaction
+type OptionalTransaction = Knex.Transaction<Record<string, unknown>, unknown[]> | undefined
+
+
+
+
+
+
 
 const limit = config.database.limit
 
-const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: any) => {
+const createMonthlyPayment = async (monthlyPayment: MonthlyPayment.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.monthlyPayment') : knex('yaazoru.monthlyPayment')
@@ -142,7 +151,7 @@ const getMonthlyPaymentsByOrganization = async (
 const updateMonthlyPayment = async (
   monthlyPayment_id: string,
   monthlyPayment: MonthlyPayment.Model,
-  trx?: any,
+  trx?: OptionalTransaction,
 ) => {
   const knex = getDbConnection()
   try {

@@ -1,9 +1,18 @@
 import { CustomerDevice } from '@model'
-import getDbConnection from '@db/connection'
-import config from '@config/index'
+
+import { Knex } from 'knex'
+
+// Type for optional database transaction
+type OptionalTransaction = Knex.Transaction<Record<string, unknown>, unknown[]> | undefined
+
+
+
+
+
+
 const limit = config.database.limit
 
-const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: any) => {
+const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.customerDevice') : knex('yaazoru.customerDevice')
