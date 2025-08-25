@@ -1,25 +1,3 @@
-/**
- * קובץ טסטים עבור AuthController - מערכת האימות וההרשאות
- * 
- * מטרת הקובץ: בדיקת פונקציונליות הרשמה, התחברות ורענון טוקנים במערכת
- * 
- * הפונקציות הנבדקות:
- * 1. register - הרשמת משתמש חדש (wrapper ל-createUser)
- * 2. login - התחברות עם שם משתמש וסיסמה
- * 3. refreshToken - רענון JWT token קיים
- * 
- * תהליכי האימות:
- * - הרשמה: יצירת משתמש חדש במערכת
- * - התחברות: וולידציה של נתונים + יצירת JWT token
- * - רענון: וולידציה של token קיים + יצירת token חדש
- * 
- * שכבות האבטחה הנבדקות:
- * - הצפנת סיסמאות (bcrypt)
- * - JWT tokens עם תוקף
- * - וולידציה של קלטים
- * - טיפול בשגיאות אבטחה
- */
-
 import { NextFunction, Request, Response } from 'express';
 import { register, login, refreshToken } from '../../controller/AuthController';
 import { createUser } from '../../controller/user';
@@ -27,38 +5,16 @@ import * as db from '../../db/index';
 import { generateToken, verifyToken } from '../../utils/jwt';
 import { comparePasswords } from '../../utils/password';
 
-// מוקים של כל התלויות החיצוניות כדי לשלוט על התנהגותן בטסטים
-jest.mock('../../controller/user');          // מוק יצירת משתמש
-jest.mock('../../db/index');                 // מוק פעולות מסד נתונים  
-jest.mock('../../utils/jwt');                // מוק פעולות JWT (יצירה ווולידציה)
-jest.mock('../../utils/password');           // מוק השוואת סיסמאות
+jest.mock('../../controller/user')
+jest.mock('../../db/index')
+jest.mock('../../utils/jwt')
+jest.mock('../../utils/password')
 
-/**
- * חבילת טסטים עבור AuthController - מערכת האימות המרכזית
- * בודקת 3 פונקציות מרכזיות: הרשמה, התחברות ורענון טוקנים
- * 
- * סוגי הטסטים בקובץ:
- * 1. טסטי יחידה (Unit Tests) - בודקים זרימה טכנית
- * 2. טסטי אינטגרציה (Integration Tests) - בודקים התנהגות אמיתית
- * 3. טסטי הצלחה - תרחישים תקינים של אימות
- * 4. טסטי כשלון - טיפול בשגיאות אבטחה שונות  
- * 5. טסטי וולידציה - בדיקת קלטים לא תקינים
- * 6. טסטי מסד נתונים - טיפול בכשלי DB
- * 7. טסטי JWT - וולידציה של טוקנים
- * 8. טסטי קצה (Edge Cases) - מצבים חריגים ולא צפויים
- */
 describe('AuthController Tests', () => {
-    // אובייקטים מזויפים לסימולציה של Express.js במערכת האימות
-    let req: Partial<Request>;    // בקשת HTTP מזויפת - תכיל נתוני התחברות/הרשמה
-    let res: Partial<Response>;   // תגובת HTTP מזויפת - תחזיר טוקנים או שגיאות
-    let next: NextFunction;       // פונקציה למעבר למטפל שגיאות במקרה של כשל אימות
+    let req: Partial<Request>;
+    let res: Partial<Response>;
+    let next: NextFunction;
 
-    /**
-     * הכנה לפני כל טסט אימות:
-     * - מאתחל אובייקטי בקשה ותגובה נקיים
-     * - מנקה את כל המוקים הקיימים מטסטים קודמים
-     * - מכין סביבה נקייה לבדיקת תרחישי אימות
-     */
     beforeEach(() => {
         req = {};
         res = {
@@ -69,30 +25,11 @@ describe('AuthController Tests', () => {
         jest.clearAllMocks();
     });
 
-    /**
-     * ניקוי אחרי כל טסט אימות:
-     * מחזיר את כל המוקים למצב המקורי למניעת השפעה על טסטים אחרים
-     */
     afterEach(() => {
         jest.restoreAllMocks();
     });
 
-    /**
-     * קבוצת טסטים עבור פונקציית register
-     * בודקת תהליך הרשמת משתמשים חדשים למערכת
-     * הפונקציה היא wrapper ל-createUser ומעבירה את כל העבודה אליה
-     * 
-     * חשיבות הטסטים:
-     * - וולידציה שהמערכת מקבלת משתמשים חדשים
-     * - טיפול בשגיאות וולידציה ומסד נתונים
-     * - הגנה מפני רישום כפול או נתונים פגומים
-     */
     describe('register', () => {
-        /**
-         * טסט הרשמה מוצלחת - תרחיש הזהב
-         * בודק שהפונקציה מעבירה בהצלחה את הבקשה ל-createUser
-         * מוודא שהמשתמש נוצר עם הנתונים הנכונים ומוחזר עם ID
-         */
         it('should register a new user successfully', async () => {
             const userData = {
                 user_name: 'testuser',
@@ -110,11 +47,6 @@ describe('AuthController Tests', () => {
             expect(createUser).toHaveBeenCalledWith(req, res, next);
         });
 
-        /**
-         * בודק טיפול בשגיאות כלליות במהלך הרשמה
-         * מוודא שהפונקציה מעבירה שגיאות מ-createUser ל-middleware הבא
-         * חשוב לטיפול בכשלים טכניים במהלך יצירת המשתמש
-         */
         it('should handle errors during user registration', async () => {
             const userData = {
                 user_name: 'testuser',
@@ -134,12 +66,6 @@ describe('AuthController Tests', () => {
             expect(next).toHaveBeenCalledWith(registrationError);
         });
 
-
-        /**
-         * בודק טיפול בשגיאות וולידציה של נתוני המשתמש
-         * מוודא שהמערכת דוחה נתונים לא תקינים (שם ריק, סיסמה חלשה, תפקיד לא חוקי)
-         * חשוב לאבטחת המערכת מפני קלטים פגומים
-         */
         it('should handle validation errors from createUser', async () => {
             const userData = {
                 user_name: '',
@@ -161,11 +87,6 @@ describe('AuthController Tests', () => {
             expect(createUser).toHaveBeenCalledWith(req, res, next);
         });
 
-        /**
-         * בודק טיפול בשגיאות מסד נתונים במהלך הרשמה
-         * מוודא שהמערכת מטפלת במצבים כמו משתמש קיים או בעיות DB
-         * חשוב לעמידות המערכת מול כשלי מסד נתונים
-         */
         it('should handle database errors during registration', async () => {
             const userData = {
                 user_name: 'existinguser',
@@ -188,17 +109,7 @@ describe('AuthController Tests', () => {
         });
     });
 
-    /**
-     * קבוצת טסטים אינטגרציה עבור פונקציית register
-     * בודקת את ההתנהגות האמיתית של המערכת - כמו בהרצה בפועל
-     * כוללת וולידציה אמיתית של שדות חובה ותנאי קבלה למערכת
-     */
     describe('register - Integration Tests', () => {
-        /**
-         * טסט שבודק דחיית הרשמה עם נתונים חסרים
-         * מחקה את ההתנהגות האמיתית: כשחסרים שדות חובה הוולידציה נכשלת
-         * חשוב לאבטחה - מוודא שלא ניתן לעקוף וולידציה עם נתונים חלקיים
-         */
         it('should reject registration with missing required fields', async () => {
             const incompleteData = {
                 user_name: 'testuser',
@@ -226,11 +137,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק הרשמה מוצלחת עם נתונים מלאים
-         * מחקה את התרחיש האמיתי: כשכל השדות הנדרשים קיימים
-         * מוודא שהמערכת מקבלת משתמשים עם נתונים מלאים ותקינים
-         */
         it('should register successfully with complete user data', async () => {
             const completeUserData = {
                 user_name: 'testuser',
@@ -264,11 +170,6 @@ describe('AuthController Tests', () => {
             expect(next).not.toHaveBeenCalled(); // לא צריכה להיות שגיאה
         });
 
-        /**
-         * טסט שבודק דחיית נתונים לא תקינים
-         * מחקה וולידציה של פורמטים: אימייל שגוי, טלפון לא תקין וכו'
-         * חשוב לאיכות הנתונים במערכת
-         */
         it('should reject registration with invalid data formats', async () => {
             const invalidData = {
                 user_name: 'tu', // קצר מדי
@@ -282,7 +183,6 @@ describe('AuthController Tests', () => {
             };
             req.body = invalidData;
 
-            // מוק שמחקה שגיאות וולידציה מפורטות
             (createUser as jest.Mock).mockImplementation((req, res, next) => {
                 const validationError = {
                     status: 400,
@@ -300,11 +200,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק דחיית משתמש שכבר קיים במערכת
-         * מחקה את הבדיקה האמיתית של existingUser() בcreateUser
-         * חשוב למניעת יצירת משתמשים כפולים
-         */
         it('should reject registration when user already exists', async () => {
             const existingUserData = {
                 user_name: 'existinguser',
@@ -336,11 +231,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק טיפול בכשל הצפנת סיסמה
-         * מחקה כשל בhashPassword() במהלך תהליך היצירה
-         * חשוב לעמידות המערכת מול שגיאות קריפטוגרפיות
-         */
         it('should handle password hashing errors during registration', async () => {
             const userData = {
                 user_name: 'testuser',
@@ -366,25 +256,7 @@ describe('AuthController Tests', () => {
         });
     });
 
-    /**
-     * קבוצת טסטים עבור פונקציית login
-     * בודקת תהליך התחברות משתמשים קיימים למערכת
-     * כוללת וולידציה של נתונים, השוואת סיסמאות ויצירת JWT tokens
-     * 
-     * שלבי התהליך הנבדקים:
-     * 1. חיפוש המשתמש במסד הנתונים
-     * 2. השוואת הסיסמה המוזנת לסיסמה המוצפנת
-     * 3. יצירת JWT token עם פרטי המשתמש והרשאותיו
-     * 4. החזרת הטוקן ללקוח
-     * 
-     * חשיבות אבטחתית גבוהה - נקודת כניסה מרכזית למערכת
-     */
     describe('login', () => {
-        /**
-         * טסט התחברות מוצלחת - תרחיש הזהב
-         * בודק את כל שרשרת האימות: חיפוש משתמש → השוואת סיסמה → יצירת טוקן
-         * מוודא שמוחזר JWT token תקין עם פרטי המשתמש
-         */
         it('should login user successfully with valid credentials', async () => {
             const loginData = {
                 user_name: 'testuser',
@@ -417,11 +289,6 @@ describe('AuthController Tests', () => {
             expect(res.json).toHaveBeenCalledWith(mockToken);
         });
 
-        /**
-         * בודק טיפול במשתמש לא קיים במערכת
-         * מוודא שהמערכת מחזירה שגיאה 404 כשהמשתמש לא נמצא
-         * חשוב למניעת חשיפת מידע על משתמשים קיימים
-         */
         it('should return 404 if user not found', async () => {
             const loginData = {
                 user_name: 'nonexistentuser',
@@ -442,11 +309,6 @@ describe('AuthController Tests', () => {
             expect(generateToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בסיסמה שגויה
-         * מוודא שהמערכת מחזירה שגיאה 401 כשהסיסמה לא תואמת
-         * חשוב לאבטחה - מונע גישה לא מורשית למשתמשים
-         */
         it('should return 401 if password is incorrect', async () => {
             const loginData = {
                 user_name: 'testuser',
@@ -475,11 +337,6 @@ describe('AuthController Tests', () => {
             expect(generateToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בשגיאות מסד נתונים במהלך חיפוש משתמש
-         * מוודא שהמערכת מטפלת בכשלי חיבור או שאילתות DB
-         * חשוב לעמידות המערכת מול בעיות תשתית
-         */
         it('should handle database errors during user lookup', async () => {
             const loginData = {
                 user_name: 'testuser',
@@ -497,11 +354,6 @@ describe('AuthController Tests', () => {
             expect(comparePasswords).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בשגיאות במהלך השוואת סיסמאות
-         * מוודא שהמערכת מטפלת בכשלים בתהליך הצפנה/השוואה
-         * חשוב לטיפול בשגיאות קריפטוגרפיות
-         */
         it('should handle password comparison errors', async () => {
             const loginData = {
                 user_name: 'testuser',
@@ -527,11 +379,6 @@ describe('AuthController Tests', () => {
             expect(next).toHaveBeenCalledWith(passwordError);
         });
 
-        /**
-         * בודק טיפול בשגיאות במהלך יצירת JWT token
-         * מוודא שהמערכת מטפלת בכשלים בתהליך יצירת הטוקן
-         * חשוב לוולידציה של תהליך האימות השלם
-         */
         it('should handle token generation errors', async () => {
             const loginData = {
                 user_name: 'testuser',
@@ -559,11 +406,6 @@ describe('AuthController Tests', () => {
             expect(next).toHaveBeenCalledWith(tokenError);
         });
 
-        /**
-         * בודק טיפול בבקשה ללא נתוני התחברות
-         * מוודא שהמערכת מטפלת בבקשות עם body ריק או חסר
-         * חשוב לעמידות המערכת מול קלטים לא שלמים
-         */
         it('should handle missing login credentials', async () => {
             req.body = {};
 
@@ -580,17 +422,7 @@ describe('AuthController Tests', () => {
         });
     });
 
-    /**
-     * קבוצת טסטים אינטגרציה עבור פונקציית login
-     * בודקת תרחישי התחברות אמיתיים עם וולידציה מלאה
-     * כוללת בדיקות של נתונים שחסרים, פורמטים שגויים ומצבי קצה
-     */
     describe('login - Integration Tests', () => {
-        /**
-         * טסט שבודק דחיית התחברות עם נתונים חסרים
-         * מחקה מצב אמיתי שבו המשתמש לא שולח user_name או password
-         * חשוב לאבטחה - מונע ניסיונות התחברות עם נתונים חלקיים
-         */
         it('should reject login with completely missing credentials', async () => {
             req.body = {}; // בקשה ריקה לגמרי
 
@@ -605,11 +437,6 @@ describe('AuthController Tests', () => {
             expect(comparePasswords).not.toHaveBeenCalled();
         });
 
-        /**
-         * טסט שבודק התחברות עם שם משתמש ריק
-         * מחקה מצב שבו שולחים string ריק במקום שם משתמש תקין
-         * חשוב לוולידציה של קלטים
-         */
         it('should reject login with empty username', async () => {
             const loginData = {
                 user_name: '', // שם משתמש ריק
@@ -628,11 +455,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק התחברות עם סיסמה ריקה
-         * מחקה מצב שבו המשתמש קיים אבל הסיסמה ריקה
-         * בודק שהמערכת מטפלת נכון בהשוואת סיסמה ריקה
-         */
         it('should reject login with empty password', async () => {
             const loginData = {
                 user_name: 'validuser',
@@ -659,11 +481,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק התחברות עם סיסמה שמכילה רווחים בלבד
-         * מחקה ניסיון עקיפה עם סיסמה "חזותית" שהיא למעשה ריקה
-         * חשוב לאבטחה - מונע ניסיונות עקיפה עם רווחים
-         */
         it('should reject login with whitespace-only password', async () => {
             const loginData = {
                 user_name: 'validuser',
@@ -690,11 +507,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק התחברות עם נתונים מסוג שגוי
-         * מחקה מצב שבו שולחים מספרים או אובייקטים במקום strings
-         * חשוב לעמידות המערכת מול קלטים לא צפויים
-         */
         it('should handle login with non-string credentials', async () => {
             const loginData = {
                 user_name: 123, // מספר במקום string
@@ -714,11 +526,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * טסט שבודק התחברות מוצלחת עם נתונים אמיתיים מלאים
-         * מחקה תרחיש אמיתי של התחברות עם כל השדות הנדרשים
-         * מוודא שכל התהליך עובד כשהנתונים תקינים
-         */
         it('should login successfully with realistic user data', async () => {
             const loginData = {
                 user_name: 'real.user@company.com',
@@ -759,26 +566,7 @@ describe('AuthController Tests', () => {
         });
     });
 
-    /**
-     * קבוצת טסטים עבור פונקציית refreshToken
-     * בודקת תהליך רענון JWT tokens לפני תפוגתם
-     * כוללת וולידציה של טוקן קיים ויצירת טוקן חדש עם תוקף מחודש
-     * 
-     * תהליך הרענון:
-     * 1. חילוץ הטוקן מכותרת Authorization
-     * 2. וולידציה של הטוקן הקיים
-     * 3. פענוח פרטי המשתמש מהטוקן
-     * 4. יצירת טוקן חדש עם אותם פרטים
-     * 
-     * חשיבות: מאפשר שמירה על חיבור המשתמש ללא התחברות חוזרת
-     * אבטחה: מונע שימוש בטוקנים פגומים או מזויפים
-     */
     describe('refreshToken', () => {
-        /**
-         * טסט רענון טוקן מוצלח - תרחיש הזהב
-         * בודק את כל התהליך: חילוץ טוקן → וולידציה → יצירת טוקן חדש
-         * מוודא שמוחזר טוקן חדש עם אותם הרשאות כמו הישן
-         */
         it('should refresh token successfully with valid token', async () => {
             const mockToken = 'valid.jwt.token';
             req.headers = {
@@ -809,11 +597,6 @@ describe('AuthController Tests', () => {
             expect(res.json).toHaveBeenCalledWith(mockNewToken);
         });
 
-        /**
-         * בודק טיפול בבקשה ללא כותרת Authorization
-         * מוודא שהמערכת מחזירה שגיאה 403 כשחסר טוקן אימות
-         * חשוב לאבטחה - מונע גישה ללא אימות
-         */
         it('should return 403 if authorization header is missing', async () => {
             req.headers = {};
 
@@ -826,11 +609,6 @@ describe('AuthController Tests', () => {
             expect(verifyToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בכותרת Authorization ללא טוקן
-         * מוודא שהמערכת מטפלת בפורמט "Bearer " ללא טוקן בפועל
-         * חשוב לוולידציה של פורמט הכותרת
-         */
         it('should return 403 if token is missing from authorization header', async () => {
             req.headers = {
                 authorization: 'Bearer '
@@ -845,11 +623,6 @@ describe('AuthController Tests', () => {
             expect(verifyToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בפורמט לא תקין של כותרת Authorization
-         * מוודא שהמערכת דוחה כותרות שלא במבנה "Bearer <token>"
-         * חשוב לאבטחה - מונע ניסיונות עקיפה של מנגנון האימות
-         */
         it('should return 403 if authorization header format is invalid', async () => {
             req.headers = {
                 authorization: 'InvalidFormat'
@@ -864,11 +637,6 @@ describe('AuthController Tests', () => {
             expect(verifyToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בטוקן לא תקין או פגום
-         * מוודא שהמערכת מחזירה שגיאה 401 לטוקנים שלא עוברים וולידציה
-         * חשוב לאבטחה - מונע שימוש בטוקנים מזויפים או פגומים
-         */
         it('should return 401 if token is invalid', async () => {
             const mockToken = 'invalid.jwt.token';
             req.headers = {
@@ -890,11 +658,6 @@ describe('AuthController Tests', () => {
             expect(generateToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בטוקן שעבר וולידציה אך ללא נתונים מפוענחים
-         * מוודא שהמערכת מטפלת במצבים חריגים של וולידציה חלקית
-         * חשוב לעמידות המערכת מול תוצאות לא צפויות מתהליך הוולידציה
-         */
         it('should return 401 if token verification returns no decoded data', async () => {
             const mockToken = 'expired.jwt.token';
             req.headers = {
@@ -916,11 +679,6 @@ describe('AuthController Tests', () => {
             expect(generateToken).not.toHaveBeenCalled();
         });
 
-        /**
-         * בודק טיפול בשגיאות במהלך וולידציה של טוקן
-         * מוודא שהמערכת מטפלת בכשלים טכניים בתהליך בדיקת הטוקן
-         * חשוב לעמידות המערכת מול שגיאות קריפטוגרפיות
-         */
         it('should handle token verification errors', async () => {
             const mockToken = 'valid.jwt.token';
             req.headers = {
@@ -938,11 +696,6 @@ describe('AuthController Tests', () => {
             expect(next).toHaveBeenCalledWith(verificationError);
         });
 
-        /**
-         * בודק טיפול בשגיאות במהלך יצירת טוקן חדש
-         * מוודא שהמערכת מטפלת בכשלים ביצירת הטוקן החדש לאחר וולידציה מוצלחת
-         * חשוב לוולידציה של תהליך הרענון השלם
-         */
         it('should handle new token generation errors during refresh', async () => {
             const mockToken = 'valid.jwt.token';
             req.headers = {
@@ -970,11 +723,6 @@ describe('AuthController Tests', () => {
             expect(next).toHaveBeenCalledWith(tokenGenerationError);
         });
 
-        /**
-         * בודק טיפול בכותרת Authorization פגומה (רק "Bearer" ללא טוקן)
-         * מוודא שהמערכת מטפלת בפורמטים חלקיים או פגומים
-         * חשוב לעמידות המערכת מול קלטים לא תקינים
-         */
         it('should handle malformed authorization header', async () => {
             req.headers = {
                 authorization: 'Bearer'
@@ -988,11 +736,6 @@ describe('AuthController Tests', () => {
             });
         });
 
-        /**
-         * בודק טיפול בכותרת Authorization עם ערך undefined
-         * מוודא שהמערכת מטפלת במצבים שבהם הכותרת קיימת אך ללא ערך
-         * חשוב לעמידות המערכת מול מבני נתונים לא צפויים
-         */
         it('should handle undefined authorization header value', async () => {
             req.headers = {
                 authorization: undefined
