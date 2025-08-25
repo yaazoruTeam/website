@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, WidelyDeviceDetails } from '@model'
+import { AppError, Widely, WidelyDeviceDetails, WidelyTypes } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
@@ -14,7 +14,7 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-const searchUsersData = async (simNumber: string): Promise<any> => {
+const searchUsersData = async (simNumber: string): Promise<WidelyTypes.WidelyUserData> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
     account_id: config.widely.accountId,
@@ -29,32 +29,20 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
 
   // If no results found
   if (dataArray.length === 0) {
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
-    }
-    throw error
+    throw new AppError('SIM number not found.', 404)
   }
 
   // If multiple results found, throw error (ambiguous search)
   if (dataArray.length > 1) {
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'Multiple SIM numbers found - please provide more specific SIM number.',
-    }
-    throw error
+    throw new AppError('Multiple SIM numbers found - please provide more specific SIM number.', 404)
   }
 
   // If exactly one result found, return it (successful search)
-  const userData = dataArray[0]
+  const userData = dataArray[0] as WidelyTypes.WidelyUserData
 
   // Validate that userData exists and has required fields
   if (!userData || (!userData.domain_user_name && !userData.name)) {
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
-    }
-    throw error
+    throw new AppError('SIM number not found.', 404)
   }
 
   return userData
@@ -70,11 +58,7 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
 
   const mobileData = result.data[0]
   if (!mobileData) {
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'No devices found for this user.',
-    }
-    throw error
+    throw new AppError('No devices found for this user.', 404)
   }
 
   return mobileData
@@ -89,11 +73,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
 
   // Check for error_code in response
   if (result.error_code !== undefined && result.error_code !== 200) {
-    const error: HttpError.Model = {
-      status: result.error_code || 500,
-      message: 'Failed to load device details.',
-    }
-    throw error
+    throw new AppError('Failed to load device details.', result.error_code || 500)
   }
 
   // Handle response with data property (Widely.Model structure)
@@ -101,11 +81,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
 
     if (!mobileData || Object.keys(mobileData).length === 0) {
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading device details.',
-      }
-      throw error
+      throw new AppError('Error loading device details.', 500)
     }
 
     return mobileData
@@ -113,11 +89,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
 
   // Handle direct object response (without data property)
   if (!result || Object.keys(result).length === 0) {
-    const error: HttpError.Model = {
-      status: 500,
-      message: 'Error loading device details.',
-    }
-    throw error
+    throw new AppError('Error loading device details.', 500)
   }
 
   return result
@@ -130,7 +102,7 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
 
     const userData = await searchUsersData(simNumber)
     res.status(200).json(userData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -142,7 +114,7 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
 
     const mobileData = await getMobilesData(domain_user_id)
     res.status(200).json(mobileData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -154,7 +126,7 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
 
     const mobileInfoData = await getMobileInfoData(endpoint_id)
     res.status(200).json(mobileInfoData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -168,67 +140,43 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     let user;
     try {
       user = await searchUsersData(simNumber)
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Pass through SIM not found errors as-is
-      if (error.message === 'SIM number not found.') {
+      if (error instanceof Error && error.message === 'SIM number not found.') {
         throw error;
       }
       // Convert other errors to generic search error
-      const err: HttpError.Model = {
-        status: 500,
-        message: 'Error searching for user data.',
-      }
-      throw err;
+      throw new AppError('Error searching for user data.', 500);
     }
 
     const domain_user_id = user.domain_user_id
     if (!domain_user_id) {
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading user data - missing domain_user_id.',
-      }
-      throw error
+      throw new AppError('Error loading user data - missing domain_user_id.', 500)
     }
 
     // Step 2: Get user's mobile devices
     let mobile;
     try {
-      mobile = await getMobilesData(domain_user_id)
-    } catch (error: any) {
+      mobile = await getMobilesData(String(domain_user_id))
+    } catch (error: unknown) {
       // If no devices found, treat as SIM not found
-      if (error.message === 'No devices found for this user.') {
-        const err: HttpError.Model = {
-          status: 404,
-          message: 'SIM number not found.',
-        }
-        throw err;
+      if (error instanceof Error && error.message === 'No devices found for this user.') {
+        throw new AppError('SIM number not found.', 404);
       }
       // Convert other errors to generic device loading error
-      const err: HttpError.Model = {
-        status: 500,
-        message: 'Error loading user devices.',
-      }
-      throw err;
+      throw new AppError('Error loading user devices.', 500);
     }
 
     const endpoint_id = mobile.endpoint_id
     if (!endpoint_id) {
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading device data - missing endpoint_id.',
-      }
-      throw error
+      throw new AppError('Error loading device data - missing endpoint_id.', 500)
     }
 
     // Step 3: Get detailed device information
     const mobileInfo = await getMobileInfoData(endpoint_id)
 
     if (!mobileInfo) {
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading device details.',
-      }
-      throw error
+      throw new AppError('Error loading device details.', 500)
     }
 
     // Extract and format response data
@@ -261,7 +209,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     res.status(200).json(responseData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

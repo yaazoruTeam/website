@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   branchUser_id: string
@@ -7,28 +7,16 @@ interface Model {
 }
 
 function sanitize(branchUser: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
 
   if (hasId && !branchUser.branchUser_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "branchUser_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "branchUser_id".', 400)
   }
   if (!isString(branchUser.branch_id) || branchUser.branch_id.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "branch_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "branch_id".', 400)
   }
   if (!isString(branchUser.user_id) || branchUser.user_id.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "user_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "user_id".', 400)
   }
   const newBranchUser: Model = {
     branchUser_id: branchUser.branchUser_id,
@@ -38,23 +26,15 @@ function sanitize(branchUser: Model, hasId: boolean): Model {
   return newBranchUser
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

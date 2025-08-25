@@ -19,6 +19,9 @@ import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
+import { AppError } from './AppError'
+import * as RequestTypes from './RequestTypes'
+import * as WidelyTypes from './WidelyTypes'
 
 export {
   Customer,
@@ -42,4 +45,7 @@ export {
   EntityType,
   Widely,
   WidelyDeviceDetails,
+  AppError,
+  RequestTypes,
+  WidelyTypes,
 }

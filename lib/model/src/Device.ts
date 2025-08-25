@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   device_id: string
@@ -13,46 +13,22 @@ interface Model {
 
 function sanitize(device: Model, hasId: boolean): Model {
   if (hasId && !device.device_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "device_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "device_id".', 400)
   }
   if (!device.SIM_number) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "SIM_number".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "SIM_number".', 400)
   }
   if (!device.IMEI_1) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "IMEI_1".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "IMEI_1".', 400)
   }
   if (!device.mehalcha_number) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "mehalcha_number".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "mehalcha_number".', 400)
   }
   if (!device.model) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "model".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "model".', 400)
   }
   if (!device.device_number) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "device_number".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "device_number".', 400)
   }
 
   const newDevice: Model = {
@@ -71,45 +47,25 @@ function sanitize(device: Model, hasId: boolean): Model {
 
 const sanitizeExistingDevice = (deviceExis: Model, device: Model) => {
   if (deviceExis.SIM_number === device.SIM_number) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'SIM_number already exists',
-    }
-    throw error
+    throw new AppError('SIM_number already exists', 409)
   }
   if (deviceExis.IMEI_1 === device.IMEI_1) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'IMEI_1 already exists',
-    }
-    throw error
+    throw new AppError('IMEI_1 already exists', 409)
   }
   if (deviceExis.mehalcha_number === device.mehalcha_number) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'mehalcha_number already exists',
-    }
-    throw error
+    throw new AppError('mehalcha_number already exists', 409)
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

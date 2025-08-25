@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   customerDevice_id: string
@@ -11,35 +11,19 @@ interface Model {
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
 
   if (hasId && !customerDevice.customerDevice_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customerDevice_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customerDevice_id".', 400)
   }
   if (!isString(customerDevice.customer_id) || customerDevice.customer_id.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_id".', 400)
   }
   if (!isString(customerDevice.device_id) || customerDevice.device_id.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "device_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "device_id".', 400)
   }
   if (!customerDevice.receivedAt) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "receivedAt".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "receivedAt".', 400)
   }
 
   const newCustomerDevice: Model = {
@@ -57,31 +41,19 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
 
 const sanitizeExistingCustomerDevice = (customerDeviceExis: Model, customerDevice: Model) => {
   if (customerDeviceExis.device_id === customerDevice.device_id) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'device_id already exists',
-    }
-    throw error
+    throw new AppError('device_id already exists', 409)
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   user_id: string
@@ -19,111 +19,54 @@ interface Model {
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
   if (hasId && !user.user_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "user_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "user_id".', 400)
   }
   if (!isString(user.first_name) || user.first_name.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "first_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "first_name".', 400)
   }
   if (!isString(user.last_name) || user.last_name.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "last_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "last_name".', 400)
   }
   if (!user.id_number) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "id_number".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "id_number".', 400)
   }
   if (!isString(user.phone_number) || !isValidPhoneNumber(user.phone_number)) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
-    }
-    throw error
+    throw new AppError('Invalid or missing "phone_number". It must be a number between 9 and 15 digits.', 400)
   }
   if (
     user.additional_phone &&
     (!isString(user.additional_phone) || !isValidPhoneNumber(user.additional_phone))
   ) {
-    const error: HttpError.Model = {
-      status: 400,
-      message:
-        'Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.',
-    }
-    throw error
+    throw new AppError('Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.', 400)
   }
   if (!isString(user.email) || !isValidEmail(user.email)) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "email".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "email".', 400)
   }
   if (!isString(user.city) || user.city.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "city".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "city".', 400)
   }
   if (!isString(user.address1) || user.address1.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address1".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "address1".', 400)
   }
   if (user.address2 && !isString(user.address2)) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address2".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "address2".', 400)
   }
   if (!isString(user.zipCode) || user.zipCode.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "zipCode".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "zipCode".', 400)
   }
   if (!isString(user.password) || user.password.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "password".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "password".', 400)
   }
   if (!isString(user.user_name) || user.user_name.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "user_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "user_name".', 400)
   }
   if (!isString(user.role) || user.role.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "role".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "role".', 400)
   }
   const newUser: Model = {
     user_id: user.user_id,
@@ -147,52 +90,28 @@ function sanitize(user: Model, hasId: boolean): Model {
 
 const sanitizeExistingUser = (userExis: Model, user: Model) => {
   if (userExis.id_number === user.id_number) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'id_number already exists',
-    }
-    throw error
+    throw new AppError('id_number already exists', 409)
   }
   if (userExis.email === user.email) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'email already exists',
-    }
-    throw error
+    throw new AppError('email already exists', 409)
   }
   if (userExis.password === user.password) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'password already exists',
-    }
-    throw error
+    throw new AppError('password already exists', 409)
   }
   if (userExis.user_name === user.user_name) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'user_name already exists',
-    }
-    throw error
+    throw new AppError('user_name already exists', 409)
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

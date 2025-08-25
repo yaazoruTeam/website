@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
-import { Device, HttpError } from '@model'
+import { Device, AppError } from '@model'
 import config from '@config/index'
 
 const limit = config.database.limit
@@ -13,7 +13,7 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
     await existingDevice(sanitized, false)
     const device = await db.Device.createDevice(sanitized)
     res.status(201).json(device)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -31,7 +31,7 @@ const getDevices = async (req: Request, res: Response, next: NextFunction): Prom
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -41,15 +41,11 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
     Device.sanitizeIdExisting(req)
     const existDevice = await db.Device.doesDeviceExist(req.params.id)
     if (!existDevice) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Device does not exist.',
-      }
-      throw error
+      throw new AppError('Device does not exist.', 404)
     }
     const device = await db.Device.getDeviceById(req.params.id)
     res.status(200).json(device)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -62,11 +58,7 @@ const getDevicesByStatus = async (
   try {
     const { status } = req.params
     if (status !== 'active' && status !== 'inactive') {
-      const error: HttpError.Model = {
-        status: 400,
-        message: "Invalid status. Allowed values: 'active' or 'inactive'.",
-      }
-      throw error
+      throw new AppError("Invalid status. Allowed values: 'active' or 'inactive'.", 400)
     }
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
@@ -79,7 +71,7 @@ const getDevicesByStatus = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -92,7 +84,7 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     await existingDevice(sanitized, true)
     const updateDevice = await db.Device.updateDevice(req.params.id, sanitized)
     res.status(200).json(updateDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -102,15 +94,11 @@ const deleteDevice = async (req: Request, res: Response, next: NextFunction): Pr
     Device.sanitizeIdExisting(req)
     const existDevice = await db.Device.doesDeviceExist(req.params.id)
     if (!existDevice) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Device does not exist.',
-      }
-      throw error
+      throw new AppError('Device does not exist.', 404)
     }
     const deleteDevice = await db.Device.deleteDevice(req.params.id)
     res.status(200).json(deleteDevice)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

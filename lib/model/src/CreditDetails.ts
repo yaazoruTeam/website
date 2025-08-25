@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   credit_id: string
@@ -12,53 +12,25 @@ interface Model {
 
 function sanitize(creditDetails: Model, hasId: boolean): Model {
   if (hasId && !creditDetails.credit_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "credit_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "credit_id".', 400)
   }
   if (!creditDetails.customer_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_id".', 400)
   }
   if (!creditDetails.token) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "token".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "token".', 400)
   }
   if (!creditDetails.expiry_month) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "expiry_month".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "expiry_month".', 400)
   }
   if (!creditDetails.expiry_year) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "expiry_year".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "expiry_year".', 400)
   }
   if (!creditDetails.created_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "created_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "created_at".', 400)
   }
   if (!creditDetails.update_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "update_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "update_at".', 400)
   }
   const newCreditDetails: Model = {
     credit_id: creditDetails.credit_id,
@@ -72,23 +44,15 @@ function sanitize(creditDetails: Model, hasId: boolean): Model {
   return newCreditDetails
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
+    throw new AppError('No body provaider', 400)
   }
 }
 

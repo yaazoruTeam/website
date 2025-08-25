@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   branchCustomer_id: string
@@ -7,28 +7,16 @@ interface Model {
 }
 
 function sanitize(branchCustomer: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
 
   if (hasId && !branchCustomer.branchCustomer_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "branchCustomer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "branchCustomer_id".', 400)
   }
   if (!isString(branchCustomer.branch_id) || branchCustomer.branch_id.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "branch_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "branch_id".', 400)
   }
   if (!isString(branchCustomer.customer_id) || branchCustomer.customer_id.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "customer_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "customer_id".', 400)
   }
   const newBranchCustomer: Model = {
     branchCustomer_id: branchCustomer.branchCustomer_id,
@@ -38,23 +26,15 @@ function sanitize(branchCustomer: Model, hasId: boolean): Model {
   return newBranchCustomer
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

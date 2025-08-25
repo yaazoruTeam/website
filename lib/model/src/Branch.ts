@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   branch_id: string
@@ -11,54 +11,29 @@ interface Model {
 }
 
 function sanitize(branch: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
   if (hasId && !branch.branch_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "branch_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "branch_id".', 400)
   }
   if (!isString(branch.city) || branch.city.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "city".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "city".', 400)
   }
   if (!isString(branch.address) || branch.address.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "address".', 400)
   }
   if (!isString(branch.manager_name) || branch.manager_name.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "manager_name".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "manager_name".', 400)
   }
   if (!isString(branch.phone_number) || !isValidPhoneNumber(branch.phone_number)) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
-    }
-    throw error
+    throw new AppError('Invalid or missing "phone_number". It must be a number between 9 and 15 digits.', 400)
   }
   if (
     branch.additional_phone &&
     (!isString(branch.additional_phone) || !isValidPhoneNumber(branch.additional_phone))
   ) {
-    const error: HttpError.Model = {
-      status: 400,
-      message:
-        'Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.',
-    }
-    throw error
+    throw new AppError('Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.', 400)
   }
 
   const newBranch: Model = {
@@ -73,23 +48,15 @@ function sanitize(branch: Model, hasId: boolean): Model {
   return newBranch
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provided',
-    }
-    throw error
+    throw new AppError('No body provided', 400)
   }
 }
 

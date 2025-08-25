@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { AppError, RequestTypes } from '.'
 
 interface Model {
   payments_id: string
@@ -12,53 +12,25 @@ interface Model {
 
 function sanitize(payments: Model, hasId: boolean): Model {
   if (hasId && !payments.payments_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "payments_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "payments_id".', 400)
   }
   if (!payments.monthlyPayment_id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "monthlyPayment_id".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "monthlyPayment_id".', 400)
   }
   if (!payments.amount) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "amount".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "amount".', 400)
   }
   if (!payments.date) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "date".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "date".', 400)
   }
   if (!payments.status) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "status".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "status".', 400)
   }
   if (!payments.created_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "created_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "created_at".', 400)
   }
   if (!payments.update_at) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "update_at".',
-    }
-    throw error
+    throw new AppError('Invalid or missing "update_at".', 400)
   }
   const newPayments: Model = {
     payments_id: payments.payments_id,
@@ -72,23 +44,15 @@ function sanitize(payments: Model, hasId: boolean): Model {
   return newPayments
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
+const sanitizeIdExisting = (req: RequestTypes.RequestWithParams) => {
+  if (!req.params.id) {
+    throw new AppError('No ID provided', 400)
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestTypes.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
+    throw new AppError('No body provaider', 400)
   }
 }
 
