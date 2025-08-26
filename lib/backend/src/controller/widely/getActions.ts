@@ -46,7 +46,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   }
 
   // If exactly one result found, return it (successful search)
-  const userData = dataArray[0]
+  const userData = dataArray[0] as Widely.UserData
 
   // Validate that userData exists and has required fields
   if (!userData || (!userData.domain_user_name && !userData.name)) {
@@ -68,7 +68,8 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
 
   validateWidelyResult(result, 'Failed to load user devices.')
 
-  const mobileData = result.data[0]
+  const mobileDataArray = Array.isArray(result.data) ? result.data as Widely.MobileData[] : [result.data as Widely.MobileData]
+  const mobileData = mobileDataArray[0]
   if (!mobileData) {
     const error: HttpError.Model = {
       status: 404,

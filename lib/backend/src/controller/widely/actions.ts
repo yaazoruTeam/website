@@ -136,7 +136,14 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
         originalInfo: result.originalInfo,
         terminationSuccess,
         creationSuccess,
-        newEndpointId: result.creationResult.data?.[0]?.endpoint_id || null,
+        newEndpointId: (() => {
+          const data = result.creationResult.data
+          if (Array.isArray(data) && data.length > 0) {
+            const firstItem = data[0] as Widely.MobileData
+            return firstItem.endpoint_id || null
+          }
+          return null
+        })(),
         terminationResult: result.terminationResult,
         creationResult: result.creationResult
       }

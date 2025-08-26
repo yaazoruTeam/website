@@ -22,7 +22,7 @@ const sendMobileAction = async (endpoint_id: string | number, action: string): P
     return result
 }
 
-const getMobileInfo = async (endpoint_id: string): Promise<any> => {
+const getMobileInfo = async (endpoint_id: string): Promise<Widely.MobileData> => {
     const result: Widely.Model = await callingWidely('get_mobile_info', { endpoint_id })
 
     if (result.error_code !== undefined && result.error_code !== 200) {
@@ -34,7 +34,7 @@ const getMobileInfo = async (endpoint_id: string): Promise<any> => {
     }
 
     if (result.data !== undefined) {
-        const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
+        const mobileData = Array.isArray(result.data) ? result.data[0] as Widely.MobileData : result.data as Widely.MobileData
         if (!mobileData || Object.keys(mobileData).length === 0) {
             const error: HttpError.Model = {
                 status: 500,
@@ -53,7 +53,8 @@ const getMobileInfo = async (endpoint_id: string): Promise<any> => {
         throw error
     }
 
-    return result
+    // Return empty mobile data object as fallback
+    return {} as Widely.MobileData
 }
 
 const terminateMobile = async (endpoint_id: string | number): Promise<Widely.Model> => {
@@ -94,14 +95,16 @@ const provCreateMobile = async (
     return result
 }
 
-const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Promise<{
-    originalInfo: any
+interface ComprehensiveResetResult {
+    originalInfo: Widely.MobileData | null
     terminationResult: Widely.Model
     creationResult: Widely.Model
-}> => {
+}
+
+const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Promise<ComprehensiveResetResult> => {
     validateRequiredParams({ endpoint_id, name })
 
-    let originalInfo: any = null
+    let originalInfo: Widely.MobileData | null = null
     let terminationResult: Widely.Model | null = null
     let creationResult: Widely.Model | null = null
 
@@ -128,10 +131,17 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
         terminationResult = await terminateMobile(endpoint_id)
 
         // שלב 3: יצירת הקו מחדש עם הנתונים המקוריים
+        const domainUserId = typeof originalInfo.domain_user_id === 'string' 
+            ? parseInt(originalInfo.domain_user_id, 10) 
+            : originalInfo.domain_user_id as number
+        const serviceIdNum = typeof serviceId === 'string' 
+            ? parseInt(serviceId, 10) 
+            : serviceId as number
+            
         creationResult = await provCreateMobile(
-            originalInfo.domain_user_id,
-            originalInfo.iccid,
-            originalInfo.service_id,
+            domainUserId,
+            originalInfo.iccid!,
+            serviceIdNum,
             name,
             originalInfo.dids || undefined
         )
@@ -146,10 +156,18 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
         // אם יש שגיאה אחרי שהמכשיר כבר נמחק, ננסה ליצור אותו מחדש
         if (terminationResult && !creationResult && originalInfo) {
             try {
+                const domainUserId = typeof originalInfo.domain_user_id === 'string' 
+                    ? parseInt(originalInfo.domain_user_id, 10) 
+                    : originalInfo.domain_user_id as number
+                const serviceId = originalInfo.service_id
+                const serviceIdNum = typeof serviceId === 'string' 
+                    ? parseInt(serviceId, 10) 
+                    : serviceId as number
+                    
                 creationResult = await provCreateMobile(
-                    originalInfo.domain_user_id,
-                    originalInfo.iccid,
-                    originalInfo.service_id,
+                    domainUserId,
+                    originalInfo.iccid!,
+                    serviceIdNum,
                     name,
                     originalInfo.dids || undefined
                 )

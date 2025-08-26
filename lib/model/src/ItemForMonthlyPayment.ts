@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, ValidationTypes } from '.'
 
 interface Model {
   item_id: string
@@ -90,8 +90,8 @@ function sanitize(item: Model, hasId: boolean): Model {
   return newItem
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (id: unknown) => {
+  if (!ValidationTypes.hasId(id) || !id.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -100,8 +100,8 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
+const sanitizeBodyExisting = (req: unknown) => {
+  if (!ValidationTypes.hasBody(req) || !req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No body provaider',

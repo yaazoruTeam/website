@@ -20,6 +20,7 @@ import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ErrorTypes from './ErrorTypes'
+import * as ValidationTypes from './ValidationTypes'
 
 export {
   Customer,
@@ -44,4 +45,5 @@ export {
   Widely,
   WidelyDeviceDetails,
   ErrorTypes,
+  ValidationTypes,
 }
