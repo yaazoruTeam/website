@@ -1,4 +1,15 @@
 import { HttpError } from '.'
+import { RequestId } from './ExpressTypes'
+
+interface RequestWithParams {
+  params: {
+    id: RequestId
+  }
+}
+
+interface RequestWithBody {
+  body: object
+}
 
 interface Model {
   payments_id: string
@@ -72,8 +83,8 @@ function sanitize(payments: Model, hasId: boolean): Model {
   return newPayments
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (req: RequestWithParams) => {
+  if (!req.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -82,7 +93,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
