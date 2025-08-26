@@ -219,7 +219,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error in comprehensive reset:', err);
             const errorMsg = err?.response?.data?.message || err?.message || t('comprehensiveResetError');
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
@@ -247,7 +247,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setLineSuspension(previousState);
 
@@ -284,7 +284,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא נעשה refresh כדי לא לדרוס את השינוי
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setImeiLocked(previousState);
 
@@ -396,7 +396,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             // Parse error response to determine appropriate user message
             const errorMessage = err?.response?.data?.message ||
                 err?.response?.data?.error?.message ||

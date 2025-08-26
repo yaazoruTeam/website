@@ -43,7 +43,7 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
     }
     const paymentCreditLink = await db.PaymentCreditLink.createPaymentCreditLink(sanitized)
     res.status(201).json(paymentCreditLink)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -61,7 +61,7 @@ const getPaymentCreditLinks = async (req: Request, res: Response, next: NextFunc
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -81,7 +81,7 @@ const getPaymentCreditLinkId = async (req: Request, res: Response, next: NextFun
     }
     const paymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLinkId(req.params.id)
     res.status(200).json(paymentCreditLink)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -112,7 +112,7 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -144,7 +144,7 @@ const getPaymentCreditLinksByCreditDetailsId = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -189,7 +189,7 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
       sanitized,
     )
     res.status(200).json(updatePaymentCreditLink)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -211,7 +211,7 @@ const deletePaymentCreditLink = async (req: Request, res: Response, next: NextFu
       req.params.id,
     )
     res.status(200).json(deletePaymentCreditLink)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

@@ -1,4 +1,4 @@
-import { Customer, Device, HttpError } from '.'
+import { Customer, Device, HttpError, ErrorTypes } from '.'
 
 interface Model {
   customer?: Customer.Model
@@ -53,8 +53,8 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
         device: Device.sanitize(customerDeviceExcel.device, false),
       }
     }
-  } catch (error: any) {
-    console.error('Sanitize failed:', error.message)
+  } catch (error: unknown) {
+    console.error('Sanitize failed:', ErrorTypes.getErrorMessage(error))
     throw error
   }
 }

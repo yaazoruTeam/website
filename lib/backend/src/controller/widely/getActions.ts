@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, WidelyDeviceDetails } from '@model'
+import { HttpError, Widely, WidelyDeviceDetails, ErrorTypes } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
@@ -130,7 +130,7 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
 
     const userData = await searchUsersData(simNumber)
     res.status(200).json(userData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -142,7 +142,7 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
 
     const mobileData = await getMobilesData(domain_user_id)
     res.status(200).json(mobileData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -154,7 +154,7 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
 
     const mobileInfoData = await getMobileInfoData(endpoint_id)
     res.status(200).json(mobileInfoData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -168,9 +168,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     let user;
     try {
       user = await searchUsersData(simNumber)
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Pass through SIM not found errors as-is
-      if (error.message === 'SIM number not found.') {
+      if (ErrorTypes.isErrorWithMessage(error) && error.message === 'SIM number not found.') {
         throw error;
       }
       // Convert other errors to generic search error
@@ -194,9 +194,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     let mobile;
     try {
       mobile = await getMobilesData(domain_user_id)
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If no devices found, treat as SIM not found
-      if (error.message === 'No devices found for this user.') {
+      if (ErrorTypes.isErrorWithMessage(error) && error.message === 'No devices found for this user.') {
         const err: HttpError.Model = {
           status: 404,
           message: 'SIM number not found.',
@@ -261,7 +261,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     res.status(200).json(responseData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

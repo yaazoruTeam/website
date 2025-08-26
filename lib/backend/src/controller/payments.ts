@@ -23,7 +23,7 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
     }
     const payments = await db.Payments.createPayments(sanitized)
     res.status(201).json(payments)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -41,7 +41,7 @@ const getAllPayments = async (req: Request, res: Response, next: NextFunction) =
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -59,7 +59,7 @@ const getPaymentsId = async (req: Request, res: Response, next: NextFunction) =>
     }
     const payments = await db.Payments.getPaymentsId(req.params.id)
     res.status(200).json(payments)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -89,7 +89,7 @@ const getPaymentsByMonthlyPaymentId = async (req: Request, res: Response, next: 
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -111,7 +111,7 @@ const updatePayments = async (req: Request, res: Response, next: NextFunction) =
     }
     const updatePayments = await db.Payments.updatePayments(req.params.id, sanitized)
     res.status(200).json(updatePayments)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -129,7 +129,7 @@ const deletePayments = async (req: Request, res: Response, next: NextFunction) =
     }
     const deletePayments = await db.Payments.deletePayments(req.params.id)
     res.status(200).json(deletePayments)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

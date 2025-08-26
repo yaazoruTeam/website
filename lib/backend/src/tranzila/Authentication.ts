@@ -20,7 +20,7 @@ const charge = async (transactionData: any) => {
         console.log('Response:', response.data)
         return response.data
       })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.log(err)
     return err
   }

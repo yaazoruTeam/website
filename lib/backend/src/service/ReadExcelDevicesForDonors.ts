@@ -1,6 +1,6 @@
 import getDbConnection from '@db/connection'
 import * as db from '@db/index'
-import { CustomerDeviceExcel } from '@model'
+import { CustomerDeviceExcel, ErrorTypes } from '@model'
 import * as XLSX from 'xlsx' // ✨ שינוי: נדרש בשביל כתיבה
 import * as path from 'path' // ✨ שינוי: נדרש בשביל כתיבה
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
@@ -25,10 +25,10 @@ const processExcelData = async (data: any[]): Promise<{
 
     try {
       sanitized = await CustomerDeviceExcel.sanitize(convertFlatRowToModel(item), isCustomer)
-    } catch (err: any) {
+    } catch (err: unknown) {
       errors.push({
         ...item,
-        error: `Sanitize failed: ${err.message || err.toString()}`,
+        error: `Sanitize failed: ${ErrorTypes.getErrorMessage(err)}`,
       })
       continue
     }
@@ -62,11 +62,11 @@ const processExcelData = async (data: any[]): Promise<{
         }
         await trx.commit()
         successCount++ // ספירת הצלחה
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Transaction failed:', err)
         errors.push({
           ...item,
-          error: `Transaction failed: ${err.message || err.toString()}`,
+          error: `Transaction failed: ${ErrorTypes.getErrorMessage(err)}`,
         })
         await trx.rollback()
       }
@@ -74,11 +74,11 @@ const processExcelData = async (data: any[]): Promise<{
       try {
         await processDevice(sanitized, null)
         successCount++ // ספירת הצלחה גם ליצירת device בלבד
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error creating device (no customer):', err)
         errors.push({
           ...item,
-          error: `Device-only insert failed: ${err.message || err.toString()}`,
+          error: `Device-only insert failed: ${ErrorTypes.getErrorMessage(err)}`,
         })
       }
     }

@@ -59,7 +59,7 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
         setError(null) // Clear any previous errors
         setNoResults(false) // Clear no results flag when we have data
         setNoResultsType('general') // Reset type
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching customers:', error)
 
         // Handle 404 as "no results found" rather than an error
