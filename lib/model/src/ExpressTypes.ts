@@ -13,9 +13,22 @@ interface StringOrNumber {
 
 interface RequestId extends StringOrNumber {}
 
+interface RequestWithParams {
+  params: {
+    id?: RequestId
+    [key: string]: unknown
+  }
+}
+
+interface RequestWithBody {
+  body: object
+}
+
 // Export types
 export {
   RequestWithAuth,
   StringOrNumber,
-  RequestId
+  RequestId,
+  RequestWithParams,
+  RequestWithBody
 }

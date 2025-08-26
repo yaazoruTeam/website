@@ -6,17 +6,7 @@ import {
   PaymentCreditLink,
   Payments,
 } from '.'
-import { RequestId } from './ExpressTypes'
-
-interface RequestWithParams {
-  params: {
-    id: RequestId
-  }
-}
-
-interface RequestWithBody {
-  body: object
-}
+import { RequestWithParams, RequestWithBody } from './ExpressTypes'
 
 interface Model {
   customer_id: string

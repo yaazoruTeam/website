@@ -21,6 +21,7 @@ import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as WidelyApiTypes from './WidelyApiTypes'
 import * as ExpressTypes from './ExpressTypes'
+import * as DatabaseTypes from './DatabaseTypes'
 
 export {
   Customer,
@@ -46,4 +47,5 @@ export {
   WidelyDeviceDetails,
   WidelyApiTypes,
   ExpressTypes,
+  DatabaseTypes,
 }

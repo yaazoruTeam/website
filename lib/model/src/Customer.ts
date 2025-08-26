@@ -1,15 +1,6 @@
 import { HttpError } from '.'
-import { RequestId } from './ExpressTypes'
+import { RequestWithParams, RequestWithBody } from './ExpressTypes'
 
-interface RequestWithParams {
-  params: {
-    id: RequestId
-  }
-}
-
-interface RequestWithBody {
-  body: object
-}
 
 interface Model {
   customer_id: string

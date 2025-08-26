@@ -1,15 +1,5 @@
 import { HttpError } from '.'
-import { RequestId } from './ExpressTypes'
-
-interface RequestWithParams {
-  params: {
-    id: RequestId
-  }
-}
-
-interface RequestWithBody {
-  body: object
-}
+import { RequestWithParams, RequestWithBody } from './ExpressTypes'
 
 interface Model {
   branch_id: string

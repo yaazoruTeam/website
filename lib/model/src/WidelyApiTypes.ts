@@ -52,9 +52,14 @@ interface WidelyUser {
   name?: string
 }
 
-interface WidelySearchResult extends WidelyUser {}
+interface WidelySearchResult extends WidelyUser {
+  domain_user_name?: string
+  name?: string
+}
 
-interface WidelyMobileResult extends WidelyDevice {}
+interface WidelyMobileResult extends WidelyDevice {
+  endpoint_id?: number | string
+}
 
 interface WidelyMobileInfoResult extends WidelyDevice {}
 
@@ -62,7 +67,7 @@ interface WidelyMobileInfoResult extends WidelyDevice {}
 interface WidelyRequestData {
   account_id?: number
   search_string?: string
-  domain_user_id?: number
+  domain_user_id?: number | string
   endpoint_id?: number | string
   [key: string]: unknown
 }

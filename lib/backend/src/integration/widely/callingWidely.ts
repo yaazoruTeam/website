@@ -2,9 +2,9 @@ import axios, { AxiosError } from 'axios'
 import * as https from 'https'
 import { createAuth } from '@integration/widely/auth'
 import { config } from '@config/index'
-import { HttpError } from '@model'
+import { HttpError, WidelyApiTypes } from '@model'
 
-const callingWidely = async (func_name: string, data: any) => {
+const callingWidely = async (func_name: string, data: WidelyApiTypes.WidelyRequestData) => {
   const requestBody = {
     auth: createAuth(),
     func_name,

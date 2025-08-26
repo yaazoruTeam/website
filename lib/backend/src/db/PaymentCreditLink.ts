@@ -1,9 +1,9 @@
-import { HttpError, PaymentCreditLink } from '@model'
+import { HttpError, PaymentCreditLink , DatabaseTypes} from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 const limit = config.database.limit
 
-const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model, trx?: any) => {
+const createPaymentCreditLink = async (paymentCreditLink: PaymentCreditLink.Model, trx?: DatabaseTypes.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.paymentCreditLink') : knex('yaazoru.paymentCreditLink')

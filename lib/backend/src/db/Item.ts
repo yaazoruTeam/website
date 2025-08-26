@@ -1,9 +1,9 @@
-import { HttpError, ItemForMonthlyPayment, Payments } from '@model'
+import { HttpError, ItemForMonthlyPayment, Payments , DatabaseTypes} from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 const limit = config.database.limit
 
-const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
+const createItem = async (item: ItemForMonthlyPayment.Model, trx?: DatabaseTypes.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.item') : knex('yaazoru.item')
@@ -85,7 +85,7 @@ const getAllItemsByMonthlyPaymentIdNoPagination = async (
   return await knex('yaazoru.item').where({ monthlyPayment_id }).orderBy('item_id')
 }
 
-const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, trx?: any) => {
+const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, trx?: DatabaseTypes.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.item') : knex('yaazoru.item')
@@ -99,7 +99,7 @@ const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, tr
   }
 }
 
-const deleteItem = async (item_id: string, trx?: any) => {
+const deleteItem = async (item_id: string, trx?: DatabaseTypes.Transaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.item') : knex('yaazoru.item')

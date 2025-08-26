@@ -1,8 +1,9 @@
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
+import { DatabaseTypes } from '@model'
 
-const readExcelFile = (filePath: string) => {
+const readExcelFile = (filePath: string): DatabaseTypes.ExcelRowData[] => {
   try {
     console.log('Reading excel file from:', filePath)
     
@@ -42,7 +43,7 @@ const readExcelFile = (filePath: string) => {
   }
 }
 
-const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
+const writeErrorsToExcel = async (errors: DatabaseTypes.ExcelRowData[]): Promise<string | null> => {
   try {
     // אם אין שגיאות, לא צריך ליצור קובץ
     if (!errors || errors.length === 0) {
