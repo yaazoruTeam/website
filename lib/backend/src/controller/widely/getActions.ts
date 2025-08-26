@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, WidelyDeviceDetails } from '@model'
+import { HttpError, Widely, WidelyDeviceDetails, MobileInfo, MobileData } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
@@ -60,13 +60,22 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   return userData
 }
 
-const getMobilesData = async (domain_user_id: string): Promise<any> => {
+const getMobilesData = async (domain_user_id: string): Promise<MobileData.Model> => {
   const result: Widely.Model = await callingWidely(
     'get_mobiles', {
     domain_user_id: domain_user_id,
   })
 
   validateWidelyResult(result, 'Failed to load user devices.')
+
+  // Ensure data is an array and get first element
+  if (!result.data || !Array.isArray(result.data) || result.data.length === 0) {
+    const error: HttpError.Model = {
+      status: 404,
+      message: 'No devices found for this user.',
+    }
+    throw error
+  }
 
   const mobileData = result.data[0]
   if (!mobileData) {
@@ -77,10 +86,10 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
     throw error
   }
 
-  return mobileData
+  return mobileData as MobileData.Model
 }
 
-const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
+const getMobileInfoData = async (endpoint_id: string): Promise<MobileInfo.Model> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
@@ -97,10 +106,10 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
   }
 
   // Handle response with data property (Widely.Model structure)
-  if (result.data !== undefined) {
+  if (result.data !== undefined && result.data !== null) {
     const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
 
-    if (!mobileData || Object.keys(mobileData).length === 0) {
+    if (!mobileData || (typeof mobileData === 'object' && Object.keys(mobileData).length === 0)) {
       const error: HttpError.Model = {
         status: 500,
         message: 'Error loading device details.',
@@ -108,7 +117,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
       throw error
     }
 
-    return mobileData
+    return mobileData as unknown as MobileInfo.Model
   }
 
   // Handle direct object response (without data property)
@@ -120,7 +129,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     throw error
   }
 
-  return result
+  return result as unknown as MobileInfo.Model
 }
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -221,7 +230,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     // Step 3: Get detailed device information
-    const mobileInfo = await getMobileInfoData(endpoint_id)
+    const mobileInfo = await getMobileInfoData(endpoint_id.toString())
 
     if (!mobileInfo) {
       const error: HttpError.Model = {
@@ -241,7 +250,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
-      endpoint_id: parseInt(endpoint_id) || 0,
+      endpoint_id: parseInt(endpoint_id.toString()) || 0,
       domain_user_id: mobileInfo?.domain_user_id || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
@@ -257,7 +266,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         name: mobileInfo?.device_info?.name || 'Not available',
       },
       package_id: mobileInfo?.package_id?.toString() || '',
-      active: mobileInfo?.active,
+      active: mobileInfo?.active || false,
     }
 
     res.status(200).json(responseData)

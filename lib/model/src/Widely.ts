@@ -2,7 +2,7 @@ interface Model {
   status: string
   error_code: number
   message: string
-  data: any[]
+  data: Record<string, unknown>[] | Record<string, unknown> | null | undefined
 }
 
 export { Model }
