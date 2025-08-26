@@ -25,10 +25,11 @@ const processExcelData = async (data: any[]): Promise<{
 
     try {
       sanitized = await CustomerDeviceExcel.sanitize(convertFlatRowToModel(item), isCustomer)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : err?.toString() || 'Unknown error'
       errors.push({
         ...item,
-        error: `Sanitize failed: ${err.message || err.toString()}`,
+        error: `Sanitize failed: ${errorMessage}`,
       })
       continue
     }
@@ -62,11 +63,12 @@ const processExcelData = async (data: any[]): Promise<{
         }
         await trx.commit()
         successCount++ // ספירת הצלחה
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Transaction failed:', err)
+        const errorMessage = err instanceof Error ? err.message : err?.toString() || 'Unknown error'
         errors.push({
           ...item,
-          error: `Transaction failed: ${err.message || err.toString()}`,
+          error: `Transaction failed: ${errorMessage}`,
         })
         await trx.rollback()
       }
@@ -74,11 +76,12 @@ const processExcelData = async (data: any[]): Promise<{
       try {
         await processDevice(sanitized, null)
         successCount++ // ספירת הצלחה גם ליצירת device בלבד
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error creating device (no customer):', err)
+        const errorMessage = err instanceof Error ? err.message : err?.toString() || 'Unknown error'
         errors.push({
           ...item,
-          error: `Device-only insert failed: ${err.message || err.toString()}`,
+          error: `Device-only insert failed: ${errorMessage}`,
         })
       }
     }

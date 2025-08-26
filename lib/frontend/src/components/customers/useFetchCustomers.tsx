@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import {
   getCustomers,
   getCustomersByCity,
@@ -59,11 +60,14 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
         setError(null) // Clear any previous errors
         setNoResults(false) // Clear no results flag when we have data
         setNoResultsType('general') // Reset type
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching customers:', error)
 
         // Handle 404 as "no results found" rather than an error
-        if (error.response?.status === 404 || error.message?.includes('404')) {
+        if (
+          (axios.isAxiosError(error) && error.response?.status === 404) ||
+          (error instanceof Error && error.message?.includes('404'))
+        ) {
           setCustomers([])
           setTotal(0)
           setError(null) // Clear error for 404 - this is just "no results"
@@ -84,7 +88,8 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           }
         } else {
           // Real errors (network, 500, etc.)
-          setError(`Failed to fetch customers: ${error.message}`)
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          setError(`Failed to fetch customers: ${errorMessage}`)
           setCustomers([])
           setTotal(0)
           setNoResults(false)

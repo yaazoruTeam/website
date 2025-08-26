@@ -38,7 +38,7 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
     }
     const branchUser = await db.BranchUser.createBranchUser(sanitized)
     res.status(201).json(branchUser)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -56,7 +56,7 @@ const getAllBranchUser = async (req: Request, res: Response, next: NextFunction)
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -78,7 +78,7 @@ const getBranchUserById = async (
     }
     const branchUser = await db.BranchUser.getBranchUserById(req.params.id)
     res.status(200).json(branchUser)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -111,7 +111,7 @@ const getBranchUserByBranch_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -141,7 +141,7 @@ const getBranchUserByUser_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -169,7 +169,7 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
     }
     const updateBranchUser = await db.BranchUser.updateBranchUser(req.params.id, sanitized)
     res.status(200).json(updateBranchUser)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -187,7 +187,7 @@ const deleteBranchUser = async (req: Request, res: Response, next: NextFunction)
     }
     const deleteBranchUser = await db.BranchUser.deleteBranchUser(req.params.id)
     res.status(200).json(deleteBranchUser)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

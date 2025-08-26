@@ -1,5 +1,6 @@
 import { Box } from '@mui/system'
 import React, { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
 import { getAllCustomerDevicesByCustomerId } from '../../../api/customerDevice'
 import { Customer, CustomerDevice, Device } from '@model'
 import CustomTypography from '../../designComponent/Typography'
@@ -36,7 +37,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             try {
               const device = await getDeviceById(customerDevice.device_id)
               return { ...device, customerDevice }
-            } catch (error: any) {
+            } catch (error: unknown) {
               console.error('Error fetching device details:', error)
               return null
             }
@@ -49,9 +50,9 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         )
 
         setDevices(filteredDevices)
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching devices:', error)
-        if (error.response && error.response.status === 404) {
+        if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
           setError(t('noDevicesFound'))
         } else {
           setError(t('errorFetchingDevices'))

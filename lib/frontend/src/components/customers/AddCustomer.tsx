@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import { Box } from '@mui/material'
 import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm'
 import CustomTypography from '../designComponent/Typography'
@@ -15,8 +16,8 @@ const AddCustomer: React.FC = () => {
       alert('הלקוח נוסף בהצלחה')
       console.log(newCustomer)
       window.location.reload()
-    } catch (err: any) {
-      if (err.status === 409) {
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
         alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`)
       }
       alert(`שגיאה: ${err}`)

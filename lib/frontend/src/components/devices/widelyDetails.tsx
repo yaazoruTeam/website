@@ -1,8 +1,23 @@
 import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
+import axios from 'axios'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
+
+// Helper function to extract error message from unknown error
+const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+        return error.response.data.message;
+    }
+    if (axios.isAxiosError(error) && error.response?.data?.error?.message) {
+        return error.response.data.error.message;
+    }
+    if (error instanceof Error) {
+        return error.message;
+    }
+    return fallback;
+}
 
 // Interface עבור פריט חבילה בודד
 interface PackageItem {
@@ -219,9 +234,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error in comprehensive reset:', err);
-            const errorMsg = err?.response?.data?.message || err?.message || t('comprehensiveResetError');
+            const errorMsg = getErrorMessage(err, t('comprehensiveResetError'));
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
         } finally {
             setLoading(false);
@@ -247,14 +262,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setLineSuspension(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                t('errorUpdatingLineSuspension');
+            const errorMessage = getErrorMessage(error, t('errorUpdatingLineSuspension'));
             setLineSuspensionError(errorMessage);
 
             console.error('Error updating line suspension:', error);
@@ -284,14 +297,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא נעשה refresh כדי לא לדרוס את השינוי
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setImeiLocked(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                t('errorUpdatingImeiLock');
+            const errorMessage = getErrorMessage(error, t('errorUpdatingImeiLock'));
             setImeiLockError(errorMessage);
 
             console.error('Error updating IMEI lock:', error);
@@ -396,11 +407,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             // Parse error response to determine appropriate user message
-            const errorMessage = err?.response?.data?.message ||
-                err?.response?.data?.error?.message ||
-                err?.message || '';
+            const errorMessage = getErrorMessage(err, '');
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
                 'SIM number not found.': 'simNumberNotFound',

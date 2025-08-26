@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { Box } from "@mui/material";
 import CustomModal from "../designComponent/Modal";
 import CustomRadioBox from "../designComponent/RadioBox";
@@ -66,8 +67,14 @@ const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelP
                                         close();
                                         //to do:Adding a system message for success
                                     }
-                                } catch (err: any) {
-                                    setError(err?.response?.data?.error || err?.message || t('failedToChangePackage'));
+                                } catch (err: unknown) {
+                                    let errorMessage = t('failedToChangePackage');
+                                    if (axios.isAxiosError(err) && err.response?.data?.error) {
+                                        errorMessage = err.response.data.error;
+                                    } else if (err instanceof Error) {
+                                        errorMessage = err.message;
+                                    }
+                                    setError(errorMessage);
                                 }
                             }
                         }}
