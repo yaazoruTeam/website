@@ -247,14 +247,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setLineSuspension(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                t('errorUpdatingLineSuspension');
+            let errorMessage = t('errorUpdatingLineSuspension');
+            
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { message?: string } } };
+                errorMessage = axiosError?.response?.data?.message || errorMessage;
+            }
+            
             setLineSuspensionError(errorMessage);
 
             console.error('Error updating line suspension:', error);
@@ -284,14 +290,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא נעשה refresh כדי לא לדרוס את השינוי
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setImeiLocked(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                t('errorUpdatingImeiLock');
+            let errorMessage = t('errorUpdatingImeiLock');
+            
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { message?: string } } };
+                errorMessage = axiosError?.response?.data?.message || errorMessage;
+            }
+            
             setImeiLockError(errorMessage);
 
             console.error('Error updating IMEI lock:', error);

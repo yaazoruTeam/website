@@ -16,7 +16,7 @@ const verifyToken = (token: string): { valid: boolean; decoded?: JwtPayload.Mode
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload.Model
     return { valid: true, decoded }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { valid: false }
   }
 }
