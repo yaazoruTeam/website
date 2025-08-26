@@ -1,7 +1,7 @@
+import { Knex } from 'knex'
 import { Comment } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
-import { Knex } from 'knex'
 
 const limit = config.database.limit;
 
