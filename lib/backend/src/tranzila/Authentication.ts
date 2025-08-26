@@ -9,7 +9,14 @@ const axiosInstance = axios.create({
   httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
 })
 
-const charge = async (transactionData: any) => {
+interface TransactionData {
+  amount?: number
+  currency?: string
+  payment_method?: string
+  [key: string]: unknown
+}
+
+const charge = async (transactionData: TransactionData) => {
   const { headers } = generateAccessTokenTranzila(appPublicKey, appPrivateKey)
   try {
     await axiosInstance

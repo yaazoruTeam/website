@@ -42,7 +42,7 @@ const readExcelFile = (filePath: string) => {
   }
 }
 
-const writeErrorsToExcel = async (errors: any[]): Promise<string | null> => {
+const writeErrorsToExcel = async (errors: Record<string, unknown>[]): Promise<string | null> => {
   try {
     // אם אין שגיאות, לא צריך ליצור קובץ
     if (!errors || errors.length === 0) {

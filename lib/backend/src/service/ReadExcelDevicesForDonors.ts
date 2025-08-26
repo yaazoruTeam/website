@@ -1,19 +1,28 @@
 import getDbConnection from '@db/connection'
 import * as db from '@db/index'
-import { CustomerDeviceExcel, ErrorTypes } from '@model'
+import { CustomerDeviceExcel, ErrorTypes, DatabaseTypes } from '@model'
 import * as XLSX from 'xlsx' // ✨ שינוי: נדרש בשביל כתיבה
 import * as path from 'path' // ✨ שינוי: נדרש בשביל כתיבה
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
 
-const processExcelData = async (data: any[]): Promise<{
+// Excel row data type - represents raw data from Excel file
+interface ExcelRowData {
+  [key: string]: string | number | Date | null | undefined
+}
+
+interface ProcessingError extends ExcelRowData {
+  error: string
+}
+
+const processExcelData = async (data: ExcelRowData[]): Promise<{
   totalRows: number;
   errorsCount: number;
   successCount: number;
   errorFilePath?: string;
 }> => {
   const knex = getDbConnection()
-  const errors: any[] = []
+  const errors: ProcessingError[] = []
   let successCount = 0
 
   for (const item of data) {
@@ -99,7 +108,7 @@ const processExcelData = async (data: any[]): Promise<{
   }
 }
 
-const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) => {
+const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: DatabaseTypes.DatabaseTransaction) => {
   if (!sanitized.customer) {
     throw new Error('Customer is undefined in sanitized object.')
   }
@@ -118,7 +127,7 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) =
   return existCustomer
 }
 
-const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: any) => {
+const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: DatabaseTypes.DatabaseTransaction | null) => {
   let existDevice = await db.Device.findDevice({
     SIM_number: sanitized.device.SIM_number,
     IMEI_1: sanitized.device.IMEI_1,

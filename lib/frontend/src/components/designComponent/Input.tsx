@@ -10,7 +10,7 @@ export interface CustomTextFieldProps extends Omit<TextFieldProps, 'variant'> {
   errorMessage?: string
   control: Control<any>
   name: string
-  rules?: any
+  rules?: unknown
   placeholder?: string
   icon?: React.ReactNode
   height?: '44px' | '96px' | '29px'

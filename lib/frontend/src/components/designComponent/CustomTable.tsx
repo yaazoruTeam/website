@@ -8,12 +8,12 @@ import CustomTypography from './Typography'
 
 interface CustomTableProps {
   columns: { label: string, key: string }[]
-  data: { [key: string]: any }[]
-  onRowClick?: (rowData: any, rowIndex: number) => void
+  data: { [key: string]: unknown }[]
+  onRowClick?: (rowData: unknown, rowIndex: number) => void
   showSummary?: { page: number, limit: number, total: number, totalPages: number, onPageChange: (page: number) => void }
   alignLastColumnLeft?: boolean
   expandedRowIndex?: number | null
-  renderExpandedRow?: (rowData: any, rowIndex: number) => React.ReactNode
+  renderExpandedRow?: (rowData: unknown, rowIndex: number) => React.ReactNode
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {

@@ -15,17 +15,17 @@ interface PaymentFormInput {
 }
 declare global {
   interface Window {
-    TzlaHostedFields: any
+    TzlaHostedFields: unknown
     fieldsInitialized: boolean
   }
 }
-let fields: any = null
+let fields: unknown = null
 
 const PaymentForm = forwardRef(
   (
     props: {
-      onPaymentChange: (paymentData: any) => void
-      OnTimeChange: (timeData: any) => void
+      onPaymentChange: (paymentData: unknown) => void
+      OnTimeChange: (timeData: unknown) => void
       defaultValues?: PaymentFormInput
     },
     ref,
@@ -133,7 +133,7 @@ const PaymentForm = forwardRef(
             tokenize: true,
             response_language: 'Hebrew',
           },
-          (err: any, response: any) => {
+          (err: unknown, response: unknown) => {
             if (err) {
               handleError(err)
               reject(err)
@@ -147,9 +147,9 @@ const PaymentForm = forwardRef(
       })
     }
 
-    const handleError = (err: any) => {
+    const handleError = (err: unknown) => {
       console.log('העסקה נכשלה.')
-      const errorMessages = err.messages.map((message: any) => message.message)
+      const errorMessages = err.messages.map((message: unknown) => message.message)
       setErrors(errorMessages)
     }
 

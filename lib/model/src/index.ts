@@ -21,6 +21,7 @@ import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ErrorTypes from './ErrorTypes'
 import * as ValidationTypes from './ValidationTypes'
+import * as DatabaseTypes from './DatabaseTypes'
 
 export {
   Customer,
@@ -46,4 +47,5 @@ export {
   WidelyDeviceDetails,
   ErrorTypes,
   ValidationTypes,
+  DatabaseTypes,
 }

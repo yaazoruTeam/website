@@ -79,7 +79,7 @@ const provCreateMobile = async (
 ): Promise<Widely.Model> => {
     validateRequiredParams({ domain_user_id, sim_iccid, service_id, name })
 
-    const data: any = {
+    const data: Record<string, unknown> = {
         domain_user_id,
         iccid: sim_iccid,
         service_id,

@@ -12,7 +12,7 @@ interface UseFetchCustomersProps {
   page: number
   filterType?: {
     type: 'city' | 'status' | 'date' | 'search'
-    value: any
+    value: unknown
   }
 }
 

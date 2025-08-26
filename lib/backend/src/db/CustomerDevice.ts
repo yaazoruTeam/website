@@ -1,9 +1,9 @@
-import { CustomerDevice } from '@model'
+import { CustomerDevice, DatabaseTypes } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
 const limit = config.database.limit
 
-const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: any) => {
+const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: DatabaseTypes.DatabaseTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.customerDevice') : knex('yaazoru.customerDevice')

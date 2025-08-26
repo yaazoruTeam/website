@@ -22,7 +22,7 @@ interface PackagesData {
 }
 
 // Type guard לבדיקת מבנה החבילות
-const isPackagesData = (obj: any): obj is PackagesData => {
+const isPackagesData = (obj: unknown): obj is PackagesData => {
     return obj && 
            typeof obj.data === 'object' && 
            Array.isArray(obj.data.items);
