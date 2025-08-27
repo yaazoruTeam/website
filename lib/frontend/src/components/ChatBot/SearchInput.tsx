@@ -6,7 +6,7 @@
 import React from 'react';
 import { Box, InputBase, IconButton } from '@mui/material';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { colors } from '../../../styles/theme';
+import { colors } from '../../styles/theme';
 
 interface SearchInputProps {
   searchQuery: string;

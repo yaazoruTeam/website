@@ -4,14 +4,18 @@
  */
 
 import { filterCommentsBySearch, isValidSearchQuery, highlightSearchTerms } from '../utils/searchUtils';
-import { Comment } from '@model';
 
-interface ClientComment extends Comment.Model {
+type ClientComment = {
+  comment_id: string;
+  entity_id: string;
+  entity_type: any;
+  content: string;
+  created_at: Date;
   isPending?: boolean;
   isAudio?: boolean;
   audioDuration?: number;
   audioUrl?: string;
-}
+};
 
 describe('ChatBot Search Utils', () => {
   const mockComments: ClientComment[] = [

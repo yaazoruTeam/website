@@ -3,14 +3,18 @@
  * KAN-206: Comment search feature
  */
 
-import { Comment } from "@model";
-
-interface ClientComment extends Comment.Model {
+// Note: ClientComment type is defined in ChatBot.tsx to match Comment.Model + additional properties
+type ClientComment = {
+  comment_id: string;
+  entity_id: string;
+  entity_type: any;
+  content: string;
+  created_at: Date;
   isPending?: boolean;
   isAudio?: boolean;
   audioDuration?: number;
   audioUrl?: string;
-}
+};
 
 /**
  * Filters comments based on search query
