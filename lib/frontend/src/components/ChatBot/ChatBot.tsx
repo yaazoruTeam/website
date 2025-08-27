@@ -15,6 +15,7 @@ import CustomTypography from "../designComponent/Typography";
 import CommentItem from "./CommentItem";
 import CommentInput from "./CommentInput";
 import DateSeparator from "./DateSeparator";
+import SearchInput from "./SearchInput";
 
 // Models and types
 import { Comment } from "@model";
@@ -30,6 +31,9 @@ import {
 // Styles and assets
 import { colors } from "../../styles/theme";
 import { chatStyles } from "./styles";
+
+// Utils
+import { filterCommentsBySearch } from "./utils/searchUtils";
 
 interface ChatBotProps {
   entityType: EntityType;
@@ -52,6 +56,7 @@ const generateTempId = (): string => {
 const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -238,6 +243,18 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
     return () => container.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  // Search functionality handlers
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
+
+  // Filter comments based on search query
+  const filteredComments = filterCommentsBySearch(comments, searchQuery);
+
   return (
     <Box sx={chatStyles.container}>
       <IconButton title={t('closed')} disableRipple sx={chatStyles.closeButton}>
@@ -252,6 +269,13 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           color={colors.c11}
         />
       </Box>
+      
+      <SearchInput
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        onClearSearch={handleClearSearch}
+        placeholder={t('searchInComments', 'חפש בהודעות...')}
+      />
       
       <Box 
         ref={messagesContainerRef} 
@@ -273,9 +297,20 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
           </Box>
         )}
 
-        {comments.map((comment, index) => {
+        {searchQuery && filteredComments.length === 0 && (
+          <Box sx={{ textAlign: 'center', padding: 3 }}>
+            <CustomTypography
+              text={t('noSearchResults', 'לא נמצאו תוצאות עבור החיפוש שלך')}
+              variant='h4'
+              weight='regular'
+              color={colors.c38}
+            />
+          </Box>
+        )}
+
+        {filteredComments.map((comment, index) => {
           const currentDate = comment.created_at.toDateString();
-          const previousDate = index > 0 ? comments[index - 1].created_at.toDateString() : null;
+          const previousDate = index > 0 ? filteredComments[index - 1].created_at.toDateString() : null;
           const showDateSeparator = currentDate !== previousDate;
 
           return (
