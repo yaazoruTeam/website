@@ -1,4 +1,4 @@
-import { SpeechClient } from "@google-cloud/speech";
+import { protos, SpeechClient } from "@google-cloud/speech";
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
@@ -168,7 +168,11 @@ const transcribeAudio = async (
     const audioBuffer = req.file?.buffer;
 
     if (!audioBuffer) {
-      res.status(400).json({ message: "No audio provided" });
+      const error: HttpError.Model = {
+        status: 400,
+        message: "No audio provided",
+      };
+      next(error)
       return;
     }
 
@@ -186,7 +190,7 @@ const transcribeAudio = async (
     });
 
     const transcription = response.results
-      ?.map((result: any) => result.alternatives?.[0].transcript)
+      ?.map((result: protos.google.cloud.speech.v1.ISpeechRecognitionResult) => result.alternatives?.[0].transcript)
       .join(" ")
       .trim();
 
