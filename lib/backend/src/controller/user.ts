@@ -3,6 +3,7 @@ import * as db from '@db/index'
 import { User, HttpError } from '@model'
 import { hashPassword } from '@utils/password'
 import config from '@config/index'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -15,8 +16,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
     sanitized.password = await hashPassword(sanitized.password)
     const user = await db.User.createUser(sanitized)
     res.status(201).json(user)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -33,8 +34,8 @@ const getUsers = async (req: Request, res: Response, next: NextFunction): Promis
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -51,8 +52,8 @@ const getUserById = async (req: Request, res: Response, next: NextFunction): Pro
     }
     const user = await db.User.getUserById(req.params.id)
     res.status(200).json(user)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -68,8 +69,8 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
     await existingUser(sanitized, true)
     const updateUser = await db.User.updateUser(req.params.id, sanitized)
     res.status(200).json(updateUser)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -86,8 +87,8 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction): Prom
     }
     const deleteUser = await db.User.deleteUser(req.params.id)
     res.status(200).json(deleteUser)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 

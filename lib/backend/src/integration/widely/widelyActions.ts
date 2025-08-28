@@ -78,18 +78,13 @@ const provCreateMobile = async (
 ): Promise<Widely.Model> => {
     validateRequiredParams({ domain_user_id, sim_iccid, service_id, name })
 
-    const data: any = {
+    const result: Widely.Model = await callingWidely('prov_create_mobile', {
         domain_user_id,
         iccid: sim_iccid,
         service_id,
-        name
-    }
-
-    if (dids && dids.length > 0) {
-        data.dids = dids
-    }
-
-    const result: Widely.Model = await callingWidely('prov_create_mobile', data)
+        name,
+        ...(dids && dids.length > 0 && { dids })
+    })
     validateWidelyResult(result, 'Failed to create mobile', false)
     return result
 }

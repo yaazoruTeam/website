@@ -1,6 +1,6 @@
+import { Knex } from 'knex'
 import { User } from '@model'
 import getDbConnection from '@db/connection'
-import { Knex } from 'knex'
 
 const createUserSchema = async () => {
   console.log('create user schema')

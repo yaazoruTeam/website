@@ -51,7 +51,7 @@ const CallCenter: React.FC = () => {
   const editCallCenter = () => {
     console.log('editCallCenter')
   }
-  const callLog = (call: any) => {
+  const callLog = (call: any) => {//to do:Change to an accurate type
     console.log('callLog', call)
     navigate(`./callLog/${call.target}`)
   }
@@ -168,7 +168,7 @@ const CallCenter: React.FC = () => {
     ),
   }))
 
-  const changeDefinedAsAnIdentifier = (e: any) => {
+  const changeDefinedAsAnIdentifier = (e: any) => {//to do:Change to an accurate type
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של מוגדר כמזהה
     console.log('changeDefinedAsAnIdentifier', e)
     //שינוי הסטטוס לבינתיים
@@ -177,7 +177,7 @@ const CallCenter: React.FC = () => {
     )
   }
 
-  const changeOutgoingCalls = (e: any) => {
+  const changeOutgoingCalls = (e: any) => {//to do:Change to an accurate type
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של שיחות יוצאות
     console.log('changeOutgoingCalls', e)
     //שינוי הסטטוס לבינתיים

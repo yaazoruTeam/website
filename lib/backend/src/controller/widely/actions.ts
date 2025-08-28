@@ -4,6 +4,7 @@ import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
+import { handleError } from '../err'
 
 const terminateMobile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -15,8 +16,8 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
       { endpoint_id: endpoint_id }
     )
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -59,7 +60,7 @@ const changeNetwork = async (
 
     res.status(200).json(result);
   } catch (error) {
-    next(error);
+    handleError(error, next)
   }
 };
 
@@ -85,8 +86,8 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
       }
     )
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 const changePackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -112,8 +113,8 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
     )
     validateWidelyResult(result, 'Failed to change package')
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -141,8 +142,8 @@ const ComprehensiveResetDeviceController = async (req: Request, res: Response, n
         creationResult: result.creationResult
       }
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -158,8 +159,8 @@ const sendApn = async (req: Request, res: Response, next: NextFunction): Promise
       message: 'APN settings have been sent successfully',
       data: result
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -171,8 +172,8 @@ const provResetVmPincode = async (req: Request, res: Response, next: NextFunctio
     const result = await sendMobileAction(endpoint_id, 'prov_reset_vm_pincode')
 
     res.status(200).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -202,8 +203,8 @@ const addOneTimePackage = async (req: Request, res: Response, next: NextFunction
 
     validateWidelyResult(result, 'Failed to add one-time package')
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -231,8 +232,8 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
     )
 
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -244,8 +245,8 @@ const reregisterInHlr = async (req: Request, res: Response, next: NextFunction):
     const result: Widely.Model = await sendMobileAction(endpoint_id, 'reregister_in_hlr')
 
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -274,8 +275,8 @@ const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunct
     const operation = action ? 'lock' : 'unlock';
     validateWidelyResult(result, `Failed to ${operation} IMEI lock`);
     res.status(result.error_code).json(result)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 

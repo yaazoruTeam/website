@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { BranchCustomer, HttpError } from '@model'
 import config from '@config/index'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -43,8 +44,8 @@ const createBranchCustomer = async (
     }
     const branchCustomer = await db.BranchCustomer.createBranchCustomer(sanitized)
     res.status(201).json(branchCustomer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -65,8 +66,8 @@ const getAllBranchCustomer = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -87,8 +88,8 @@ const getBranchCustomerById = async (
     }
     const branchCustomer = await db.BranchCustomer.getBranchCustomerById(req.params.id)
     res.status(200).json(branchCustomer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -120,8 +121,8 @@ const getBranchCustomerByBranch_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -153,8 +154,8 @@ const getBranchCustomerByCustomer_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -188,8 +189,8 @@ const updateBranchCustomer = async (
       sanitized,
     )
     res.status(200).json(updateBranchCustomer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -210,8 +211,8 @@ const deleteBranchCustomer = async (
     }
     const deleteBranchCustomer = await db.BranchCustomer.deleteBranchCustomer(req.params.id)
     res.status(200).json(deleteBranchCustomer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 

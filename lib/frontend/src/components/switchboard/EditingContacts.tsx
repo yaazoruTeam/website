@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react'
 export interface EditingContactsRef {
   submitForm: () => Promise<any>
 }
-const EditingContacts: React.FC<{ value: any; onChange: (data: any) => void }> = ({
+const EditingContacts: React.FC<{ value: any; onChange: (data: any) => void }> = ({//to do:Change to an accurate type
   value,
   onChange,
 }) => {
@@ -31,7 +31,7 @@ const EditingContacts: React.FC<{ value: any; onChange: (data: any) => void }> =
     setForms([...forms, counter])
     setCounter(counter + 1)
   }
-  const handleFormChange = (index: number, data: any) => {
+  const handleFormChange = (index: number, data: any) => {//to do: Change to an accurate type
     const newData = Array.isArray(value) ? [...value] : []
     newData[index] = data
     onChange(newData)

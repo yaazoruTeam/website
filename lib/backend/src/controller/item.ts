@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, ItemForMonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { Knex } from 'knex'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -22,8 +24,8 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
     }
     const item = await db.Item.createItem(sanitized)
     res.status(201).json(item)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -40,8 +42,8 @@ const getItems = async (req: Request, res: Response, next: NextFunction) => {
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -58,8 +60,8 @@ const getItemId = async (req: Request, res: Response, next: NextFunction) => {
     }
     const item = await db.Item.getItemId(req.params.id)
     res.status(200).json(item)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -85,8 +87,8 @@ const getAllItemsByMonthlyPaymentId = async (req: Request, res: Response, next: 
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -107,15 +109,15 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
     }
     const updateItem = await db.Item.updateItem(req.params.id, sanitized)
     res.status(200).json(updateItem)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
 const updateItems = async (
   existingItems: ItemForMonthlyPayment.Model[],
   updatedItems: ItemForMonthlyPayment.Model[],
-  trx: any,
+  trx: Knex.Transaction,
 ) => {
   // 1. חפש פריטים שנמחקו - פריטים קיימים שלא נמצאים במערך החדש
   const deletedItems = existingItems.filter(
@@ -156,8 +158,8 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
     }
     const deleteItem = await db.Item.deleteItem(req.params.id)
     res.status(200).json(deleteItem)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 export {

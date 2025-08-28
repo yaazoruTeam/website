@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Device, HttpError } from '@model'
 import config from '@config/index'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -13,8 +14,8 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
     await existingDevice(sanitized, false)
     const device = await db.Device.createDevice(sanitized)
     res.status(201).json(device)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -31,8 +32,8 @@ const getDevices = async (req: Request, res: Response, next: NextFunction): Prom
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -49,8 +50,8 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
     }
     const device = await db.Device.getDeviceById(req.params.id)
     res.status(200).json(device)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -79,8 +80,8 @@ const getDevicesByStatus = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -92,8 +93,8 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     await existingDevice(sanitized, true)
     const updateDevice = await db.Device.updateDevice(req.params.id, sanitized)
     res.status(200).json(updateDevice)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -110,8 +111,8 @@ const deleteDevice = async (req: Request, res: Response, next: NextFunction): Pr
     }
     const deleteDevice = await db.Device.deleteDevice(req.params.id)
     res.status(200).json(deleteDevice)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
