@@ -1,27 +1,28 @@
-import { SpeechClient } from "@google-cloud/speech";
+import { SpeechClient } from "@google-cloud/speech"
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
 
 import config from '@config/index'
+import logger from "../utils/logger"
 
-let client: SpeechClient;
+let client: SpeechClient
 
-const googleCredentials = config.google.applicationCredentialsJson;
+const googleCredentials = config.google.applicationCredentialsJson
 
 if (googleCredentials) {
   try {
-    const credentials = JSON.parse(googleCredentials);
-    client = new SpeechClient({ credentials });
-  } catch (e) {
-    console.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:", e);
-    process.exit(1);
+    const credentials = JSON.parse(googleCredentials)
+    client = new SpeechClient({ credentials })
+  } catch (error) {
+    logger.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:", error)
+    process.exit(1)
   }
 } else {
-  client = new SpeechClient();
+  client = new SpeechClient()
 }
 
-const limit = Number(process.env.LIMIT) || config.database.limit || 10;
+const limit = Number(process.env.LIMIT) || config.database.limit || 10
 
 const createComment = async (
   req: Request,
@@ -29,15 +30,16 @@ const createComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    console.log("createComment called with body:", req.body);
+    logger.debug("createComment called with body:", req.body)
 
-    const sanitized = Comment.sanitize(req.body, false);
-    const comment = await db.Comment.createComment(sanitized);
-    res.status(201).json(comment);
+    const sanitized = Comment.sanitize(req.body, false)
+    const comment = await db.Comment.createComment(sanitized)
+    logger.info("Comment created successfully:", comment)
+    res.status(201).json(comment)
   } catch (error: any) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const getComments = async (
   req: Request,
@@ -45,21 +47,20 @@ const getComments = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1;
-    const offset = (page - 1) * limit;
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
-    const { comments, total } = await db.Comment.getComments(offset);
-
+    const { comments, total } = await db.Comment.getComments(offset)
     res.status(200).json({
       data: comments,
       page,
       totalPages: Math.ceil(total / limit),
       total,
-    });
+    })
   } catch (error: any) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const getCommentById = async (
   req: Request,
@@ -67,28 +68,28 @@ const getCommentById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { id } = req.params
     // בדיקת תקינות id (שהוא מספר חיובי)
     if (!id || isNaN(Number(id)) || Number(id) <= 0) {
       const error: HttpError.Model = {
         status: 400,
         message: "Invalid or missing comment id",
-      };
-      throw error;
+      }
+      throw error
     }
-    const comment = await db.Comment.getCommentById(req.params.id);
+    const comment = await db.Comment.getCommentById(req.params.id)
     if (!comment) {
       const error: HttpError.Model = {
         status: 404,
         message: "Comment not found",
-      };
-      throw error;
+      }
+      throw error
     }
-    res.status(200).json(comment);
+    res.status(200).json(comment)
   } catch (error: any) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const getCommentsByEntity = async (
   req: Request,
@@ -96,34 +97,34 @@ const getCommentsByEntity = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { entity_id, entity_type } = req.params;
+    const { entity_id, entity_type } = req.params
     if (!entity_id || !entity_type) {
       const error: HttpError.Model = {
         status: 400,
         message: "entity_id and entity_type are required",
-      };
-      throw error;
+      }
+      throw error
     }
 
-    const page = parseInt(req.query.page as string, 10) || 1;
-    const offset = (page - 1) * limit;
+    const page = parseInt(req.query.page as string, 10) || 1
+    const offset = (page - 1) * limit
 
     const { comments, total } = await db.Comment.getCommentsByEntity(
       entity_id as string,
       entity_type as string,
       offset
-    );
+    )
 
     res.status(200).json({
       data: comments,
       page,
       totalPages: Math.ceil(total / limit),
       total,
-    });
+    })
   } catch (error: any) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const updateComment = async (
   req: Request,
@@ -134,16 +135,16 @@ const updateComment = async (
     const sanitized = Comment.sanitize(
       { ...req.body, comment_id: req.params.id },
       true
-    );
+    )
     const updatedComment = await db.Comment.updateComment(
       req.params.id,
       sanitized
-    );
-    res.status(200).json(updatedComment);
+    )
+    res.status(200).json(updatedComment)
   } catch (error: any) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const deleteComment = async (
   req: Request,
@@ -151,12 +152,12 @@ const deleteComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const deletedComment = await db.Comment.deleteComment(req.params.id);
-    res.status(200).json(deletedComment);
+    const deletedComment = await db.Comment.deleteComment(req.params.id)
+    res.status(200).json(deletedComment)
   } catch (error: any) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const transcribeAudio = async (
   req: Request,
@@ -164,14 +165,14 @@ const transcribeAudio = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const audioBuffer = req.file?.buffer;
+    const audioBuffer = req.file?.buffer
 
     if (!audioBuffer) {
-      res.status(400).json({ message: "No audio provided" });
-      return;
+      res.status(400).json({ message: "No audio provided" })
+      return
     }
 
-    const audioBytes = audioBuffer.toString("base64");
+    const audioBytes = audioBuffer.toString("base64")
 
     const [response] = await client.recognize({
       audio: {
@@ -182,18 +183,18 @@ const transcribeAudio = async (
         sampleRateHertz: 48000,
         languageCode: "he-IL",
       },
-    });
+    })
 
     const transcription = response.results
       ?.map((result: any) => result.alternatives?.[0].transcript)
       .join(" ")
-      .trim();
+      .trim()
 
-    res.status(200).json({ transcription });
+    res.status(200).json({ transcription })
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 export {
   createComment,
@@ -203,4 +204,4 @@ export {
   updateComment,
   deleteComment,
   transcribeAudio,
-};
+}

@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx' // ✨ שינוי: נדרש בשביל כתיבה
 import * as path from 'path' // ✨ שינוי: נדרש בשביל כתיבה
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
+import logger from '../utils/logger'
 
 const processExcelData = async (data: any[]): Promise<{
   totalRows: number;
@@ -63,7 +64,7 @@ const processExcelData = async (data: any[]): Promise<{
         await trx.commit()
         successCount++ // ספירת הצלחה
       } catch (err: any) {
-        console.error('Transaction failed:', err)
+        logger.error('Transaction failed:', err)
         errors.push({
           ...item,
           error: `Transaction failed: ${err.message || err.toString()}`,
@@ -75,7 +76,7 @@ const processExcelData = async (data: any[]): Promise<{
         await processDevice(sanitized, null)
         successCount++ // ספירת הצלחה גם ליצירת device בלבד
       } catch (err: any) {
-        console.error('Error creating device (no customer):', err)
+        logger.error('Error creating device (no customer):', err)
         errors.push({
           ...item,
           error: `Device-only insert failed: ${err.message || err.toString()}`,
@@ -110,9 +111,9 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: any) =
   })
 
   if (!existCustomer) {
-    console.log('Creating customer...')
+    logger.debug('Creating customer...')
     existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
-    console.log('Customer created.')
+    logger.debug('Customer created.')
   }
 
   return existCustomer
@@ -127,9 +128,9 @@ const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: any) => 
   })
 
   if (!existDevice) {
-    console.log('Creating device...')
+    logger.debug('Creating device...')
     existDevice = await db.Device.createDevice(sanitized.device, trx)
-    console.log('Device created.')
+    logger.debug('Device created.')
   }
 
   return existDevice
