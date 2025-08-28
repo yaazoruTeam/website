@@ -58,29 +58,7 @@ services:
       - NODE_ENV=${NODE_ENV:-development}
       - VITE_BASE_URL=${VITE_BASE_URL:-/}
     networks:
-      - yaazoru-network
-
-  # datadog-agent:
-  #   image: gcr.io/datadoghq/agent:7
-  #   container_name: dd-agent
-  #   environment:
-  #     DD_API_KEY: 95592e18b88e6df7c4cce485cace7df5
-  #     DD_SITE: "us5.datadoghq.com"
-  #     DD_DOGSTATSD_NON_LOCAL_TRAFFIC: true
-  #     DD_APM_ENABLED: true
-  #     DD_APM_NON_LOCAL_TRAFFIC: true
-  #     DD_APM_RECEIVER_SOCKET: /var/run/datadog/apm.socket
-  #     DD_DOGSTATSD_SOCKET: /var/run/datadog/dsd.socket
-  #   volumes:
-  #     - /var/run/datadog:/var/run/datadog
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - /proc/:/host/proc/:ro
-  #     - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
-  #   networks:
-  #     - yaazoru-network
-  #   restart: unless-stopped
-    
+      - yaazoru-network   
 volumes:
   db-data:
 
