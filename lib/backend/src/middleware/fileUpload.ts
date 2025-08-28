@@ -44,7 +44,7 @@ export const uploadExcel = multer({
 })
 
 // middleware לטיפול בשגיאות העלאה
-export const handleUploadError = (error: any, req: Request, res: Response, next: NextFunction) => {
+export const handleUploadError = (error: unknown, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({

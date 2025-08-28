@@ -1,4 +1,5 @@
 import { HttpError } from '.';
+import { isOptionalString } from './CommonTypes';
 
 export enum EntityType {
   Customer = "customer",
@@ -16,11 +17,8 @@ interface Model {
   file_type?: string
 }
 
-const isOptionalString = (val: any) =>
-  val === undefined || (typeof val === "string" && val.trim() !== "");
-
 function sanitize(comment: Model, hasId: boolean): Model {
-  const isString = (val: any) => typeof val === 'string' && val.trim() !== '';
+  const isString = (val: unknown): val is string => typeof val === 'string' && val.trim() !== '';
 
   if (hasId && !comment.comment_id) {
     const error: HttpError.Model = {

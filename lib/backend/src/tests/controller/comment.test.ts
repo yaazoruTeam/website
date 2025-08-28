@@ -2,7 +2,7 @@ import request from 'supertest'
 import express from 'express'
 import * as commentsController from '../../controller/comment'
 import * as db from '../../db'
-import { Comment } from '../../../../model/src';
+import { Comment, EntityType } from '../../../../model/src';
 
 jest.mock('../../db')
 
@@ -114,7 +114,7 @@ describe('Comment Model - sanitize function', () => {
     });
 
     it('should throw error for invalid entity_type', () => {
-      const invalidComment = { ...validComment, entity_type: 'invalid' as any };
+      const invalidComment = { ...validComment, entity_type: 'invalid' as unknown as EntityType };
       expect(() => {
         Comment.sanitize(invalidComment, false);
       }).toThrow('Entity type "invalid" is invalid. Allowed values are: customer, device, branch.');

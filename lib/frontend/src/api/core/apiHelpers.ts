@@ -14,7 +14,7 @@ export interface ApiConfig extends AxiosRequestConfig {
   /** האם להחזיר fallback במקום לזרוק שגיאה */
   safe?: boolean
   /** ערך ברירת מחדל במידה ו-safe=true */
-  fallback?: any
+  fallback?: unknown
   /** האם הבקשה צריכה authentication */
   requireAuth?: boolean
 }
@@ -23,7 +23,7 @@ export interface ApiConfig extends AxiosRequestConfig {
 const makeRequest = async <T>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
-  data?: any,
+  data?: unknown,
   config: ApiConfig = {}
 ): Promise<T> => {
   const { safe = false, fallback, requireAuth = true, ...axiosConfig } = config
@@ -79,11 +79,11 @@ export const apiGet = async <T>(url: string, config: ApiConfig = {}): Promise<T>
   return makeRequest<T>('GET', url, undefined, config)
 }
 
-export const apiPost = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+export const apiPost = async <T>(url: string, data?: unknown, config: ApiConfig = {}): Promise<T> => {
   return makeRequest<T>('POST', url, data, config)
 }
 
-export const apiPut = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+export const apiPut = async <T>(url: string, data?: unknown, config: ApiConfig = {}): Promise<T> => {
   return makeRequest<T>('PUT', url, data, config)
 }
 
@@ -100,7 +100,7 @@ export const apiGetPublic = async <T>(url: string, config: ApiConfig = {}): Prom
   return apiGet<T>(url, { ...config, requireAuth: false })
 }
 
-export const apiPostPublic = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+export const apiPostPublic = async <T>(url: string, data?: unknown, config: ApiConfig = {}): Promise<T> => {
   return apiPost<T>(url, data, { ...config, requireAuth: false })
 }
 

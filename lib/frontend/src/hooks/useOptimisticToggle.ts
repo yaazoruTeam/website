@@ -17,9 +17,10 @@ export const useOptimisticToggle = (
 
     try {
       await updateFunction(newValue);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setValue(previousValue); // Rollback on error
-      setError(err.message || 'שגיאה בעדכון');
+      const errorMessage = err instanceof Error ? err.message : 'שגיאה בעדכון'
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
