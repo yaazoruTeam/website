@@ -5,7 +5,9 @@ import {
   MonthlyPayment,
   PaymentCreditLink,
   Payments,
+  SanitizationUtils,
 } from '.'
+import { Request } from 'express'
 
 interface Model {
   customer_id: string
@@ -39,24 +41,12 @@ function sanitize(monthlyPaymentManagement: Model): Model {
   return newMonthlyPaymentManagement
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No ID provided',
-    }
-    throw error
-  }
+const sanitizeIdExisting = (req: Request): void => {
+  SanitizationUtils.sanitizeIdExisting(req)
 }
 
-const sanitizeBodyExisting = (req: any) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'No body provaider',
-    }
-    throw error
-  }
+const sanitizeBodyExisting = (req: Request): void => {
+  SanitizationUtils.sanitizeBodyExisting(req)
 }
 
 export type { Model }

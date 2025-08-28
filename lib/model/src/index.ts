@@ -19,6 +19,13 @@ import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
+// New type modules
+import * as ValidationTypes from './ValidationTypes'
+import * as RequestTypes from './RequestTypes'
+import * as DatabaseTypes from './DatabaseTypes'
+import * as ErrorTypes from './ErrorTypes'
+import * as SanitizationUtils from './SanitizationUtils'
+import * as ExternalApiTypes from './ExternalApiTypes'
 
 export {
   Customer,
@@ -42,4 +49,11 @@ export {
   EntityType,
   Widely,
   WidelyDeviceDetails,
+  // New type modules
+  ValidationTypes,
+  RequestTypes,
+  DatabaseTypes,
+  ErrorTypes,
+  SanitizationUtils,
+  ExternalApiTypes,
 }
