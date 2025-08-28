@@ -12,7 +12,7 @@ const Customers: React.FC = () => {
     | { type: 'status'; value: 'active' | 'inactive' }
     | null
   >(null)
-  const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10
+  const limit = import.meta.env.VITE_LIMIT ? parseInt(import.meta.env.VITE_LIMIT) : 10
 
   const { customers, total, isLoading, error, noResults, noResultsType } = useFetchCustomers({
     page,
@@ -35,7 +35,7 @@ const Customers: React.FC = () => {
         noResults={noResults}
         noResultsType={noResultsType}
       />
-      <ChatBot entityType={EntityType.Customer} entityId='1'/>
+      <ChatBot entityType={EntityType.Customer} entityId='1' />
     </>
   )
 }
