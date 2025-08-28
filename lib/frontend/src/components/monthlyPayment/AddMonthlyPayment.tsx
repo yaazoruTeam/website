@@ -143,7 +143,7 @@ const AddMonthlyPayment: React.FC = () => {
       timeData,
     })
     try {
-      const responsePyment: any = await paymentFormRef.current?.chargeCcData()
+      const responsePyment: unknown = await paymentFormRef.current?.chargeCcData()
       console.log('Payment completed')
       console.log(responsePyment)
       console.log('pymentData:', paymentData)

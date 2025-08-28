@@ -55,7 +55,7 @@ const Switchboard: React.FC = () => {
     ),
   }))
   //to do : לשנות את זה למודל
-  const onClickAccountSwitchboard = (row: any) => {
+  const onClickAccountSwitchboard = (row: unknown) => {
     navigate(`/switchboard/callcenter/${row.ID}`, {
       state: {
         ID: row.ID,

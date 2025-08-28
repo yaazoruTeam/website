@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, ValidationTypes } from '.'
 
 interface Model {
   branch_id: string
@@ -11,7 +11,7 @@ interface Model {
 }
 
 function sanitize(branch: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = ValidationTypes.isStringValue
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
   if (hasId && !branch.branch_id) {
@@ -73,8 +73,8 @@ function sanitize(branch: Model, hasId: boolean): Model {
   return newBranch
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (id: unknown) => {
+  if (!ValidationTypes.hasId(id) || !id.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -83,8 +83,8 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
+const sanitizeBodyExisting = (req: unknown) => {
+  if (!ValidationTypes.hasBody(req) || !req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No body provided',

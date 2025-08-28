@@ -7,7 +7,7 @@ import CustomTypography from './Typography'
 
 interface CustomSelectProps {
   name: string
-  control: any
+  control: unknown
   options: { label: string; value: string; icon?: React.ReactNode }[]
   label: string
   variant?: 'default' | 'changeAccount'

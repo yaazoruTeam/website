@@ -17,7 +17,7 @@ interface DevicesListProps {
   page: number
   limit: number
   onPageChange: (page: number) => void
-  onFilterChange: (filter: any) => void
+  onFilterChange: (filter: unknown) => void
 }
 
 const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, onPageChange, onFilterChange }) => {
@@ -57,7 +57,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
       ),
   }))
 
-  const onClickDevice = (device: any) => {
+  const onClickDevice = (device: unknown) => {
     navigate(`/device/card/${device.device_id}`)
   }
 

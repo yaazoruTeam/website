@@ -1,6 +1,6 @@
 import { CustomerDeviceExcel } from '@model'
 
-const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
+const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExcel.Model => {
   return {
     customer: {
       customer_id: '',

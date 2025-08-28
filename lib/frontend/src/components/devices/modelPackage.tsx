@@ -66,7 +66,7 @@ const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelP
                                         close();
                                         //to do:Adding a system message for success
                                     }
-                                } catch (err: any) {
+                                } catch (err: unknown) {
                                     setError(err?.response?.data?.error || err?.message || t('failedToChangePackage'));
                                 }
                             }

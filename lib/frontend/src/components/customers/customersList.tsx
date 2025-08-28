@@ -19,7 +19,7 @@ interface CustomersListProps {
   page: number
   limit: number
   onPageChange: (page: number) => void
-  onFilterChange: (filter: any) => void
+  onFilterChange: (filter: unknown) => void
   noResults?: boolean
   noResultsType?: string
 }
@@ -78,7 +78,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
       ),
   }))
 
-  const onClickCustomer = (customer: any) => {
+  const onClickCustomer = (customer: unknown) => {
     console.log(customer.customer_id)
     navigate(`/customer/card/${customer.customer_id}`)
   }

@@ -15,7 +15,7 @@ const AddCustomer: React.FC = () => {
       alert('הלקוח נוסף בהצלחה')
       console.log(newCustomer)
       window.location.reload()
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err.status === 409) {
         alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`)
       }
