@@ -12,7 +12,7 @@ const createBranch = async (req: Request, res: Response, next: NextFunction): Pr
     const sanitized = Branch.sanitize(branchData, false)
     const branch = await db.Branch.createBranch(sanitized)
     res.status(201).json(branch)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -29,7 +29,7 @@ const getBranches = async (req: Request, res: Response, next: NextFunction): Pro
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -47,7 +47,7 @@ const getBranchById = async (req: Request, res: Response, next: NextFunction): P
     }
     const branch = await db.Branch.getBranchById(req.params.id)
     res.status(200).json(branch)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -83,7 +83,7 @@ const getBranchesByCity = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -95,7 +95,7 @@ const updateBranch = async (req: Request, res: Response, next: NextFunction): Pr
     const sanitized = Branch.sanitize(req.body, true)
     const updateBranch = await db.Branch.updateBranch(req.params.id, sanitized)
     res.status(200).json(updateBranch)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -113,7 +113,7 @@ const deleteBranch = async (req: Request, res: Response, next: NextFunction): Pr
     }
     const deleteBranch = await db.Branch.deleteBranch(req.params.id)
     res.status(200).json(deleteBranch)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

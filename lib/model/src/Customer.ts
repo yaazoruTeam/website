@@ -1,4 +1,5 @@
 import { HttpError } from '.'
+import { CommonTypes } from '.'
 
 interface Model {
   customer_id: string
@@ -18,7 +19,7 @@ interface Model {
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown): value is string => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string | number) => {
     const phoneStr = String(phone) // המרה למחרוזת
@@ -157,8 +158,8 @@ const sanitizeExistingCustomer = (customerExis: Model, customer: Model) => {
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (req: CommonTypes.RequestWithId): void => {
+  if (!req.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -167,7 +168,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: CommonTypes.RequestWithBody): void => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,
