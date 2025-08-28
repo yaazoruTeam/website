@@ -15,9 +15,9 @@ const Switchboard: React.FC = () => {
   const { control } = useForm<{ search: string }>()
   const navigate = useNavigate()
 
-  // @ts-ignore
   //to do : לשנות את זה למערך מסוד המרכזיה וליצור useEffect ששולף את הנתונים הנכונים מהשרת
-  const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([
+  // @ts-ignore
+  const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([//to do: Change to an accurate type
     {
       ID: 1111,
       customerName: 'יעזורו',
@@ -55,7 +55,7 @@ const Switchboard: React.FC = () => {
     ),
   }))
   //to do : לשנות את זה למודל
-  const onClickAccountSwitchboard = (row: any) => {
+  const onClickAccountSwitchboard = (row: any) => {//to do:Change to an accurate type
     navigate(`/switchboard/callcenter/${row.ID}`, {
       state: {
         ID: row.ID,
@@ -95,7 +95,7 @@ const Switchboard: React.FC = () => {
               icon={<MagnifyingGlassIcon />}
               control={control}
               name='search'
-              // sx={{ border: `1px solid ${colors.c22}`, width: '250px' }}
+            // sx={{ border: `1px solid ${colors.c22}`, width: '250px' }}
             />
           </Box>
           <CustomButton label={t('addAnAccount')} buttonType='first' state='default' />

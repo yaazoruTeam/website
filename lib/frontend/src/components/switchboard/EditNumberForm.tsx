@@ -18,7 +18,7 @@ interface EditNumberFormInputs {
   toReceiveSMSToEmail: string
 }
 
-const EditNumberForm: React.FC<{ value: any; onChange: (data: any) => void }> = ({
+const EditNumberForm: React.FC<{ value: any; onChange: (data: any) => void }> = ({//to do:Change to an accurate type
   value,
   onChange,
 }) => {

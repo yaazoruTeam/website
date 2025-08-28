@@ -16,7 +16,7 @@ const SwitchboardTabs = () => {
     speedDial: [],
   })
 
-  const handleFormChange = (key: string, data: any) => {
+  const handleFormChange = (key: string, data: any) => {//to do: Change to an accurate type
     setFormData((prevData) => ({
       ...prevData,
       [key]: data,
