@@ -21,7 +21,7 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     }
     const monthlyPayment = await db.MonthlyPayment.createMonthlyPayment(sanitized)
     res.status(201).json(monthlyPayment)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -39,7 +39,7 @@ const getMonthlyPayments = async (req: Request, res: Response, next: NextFunctio
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -57,7 +57,7 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
     }
     const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(req.params.id)
     res.status(200).json(monthlyPayment)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -94,7 +94,7 @@ const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: 
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -122,7 +122,7 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -158,7 +158,7 @@ const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -181,7 +181,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       sanitized,
     )
     res.status(200).json(updateMonthlyPayment)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -200,7 +200,7 @@ const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     }
     const deleteMonthlyPayment = await db.MonthlyPayment.deleteMonthlyPayment(req.params.id)
     res.status(200).json(deleteMonthlyPayment)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@model': path.resolve(process.cwd(), 'model/src'),
+      '@model': path.resolve(process.cwd(), '../model/src'),
     },
   },
   server: {

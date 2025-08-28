@@ -1,3 +1,4 @@
+import { DatabaseTransaction } from "@db/types"
 import { createSchema } from '@db/schema'
 
 createSchema()

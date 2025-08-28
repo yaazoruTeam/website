@@ -10,11 +10,11 @@ export interface PaginatedResponse<T> {
   totalPages: number
 }
 
-export interface ApiConfig extends AxiosRequestConfig {
+export interface ApiConfig<T = unknown> extends AxiosRequestConfig {
   /** האם להחזיר fallback במקום לזרוק שגיאה */
   safe?: boolean
   /** ערך ברירת מחדל במידה ו-safe=true */
-  fallback?: any
+  fallback?: T
   /** האם הבקשה צריכה authentication */
   requireAuth?: boolean
 }
@@ -23,8 +23,8 @@ export interface ApiConfig extends AxiosRequestConfig {
 const makeRequest = async <T>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
-  data?: any,
-  config: ApiConfig = {}
+  data?: unknown,
+  config: ApiConfig<T> = {}
 ): Promise<T> => {
   const { safe = false, fallback, requireAuth = true, ...axiosConfig } = config
   
@@ -75,44 +75,44 @@ const makeRequest = async <T>(
 }
 
 // פונקציות ה-API החדשות - אחידות וגמישות
-export const apiGet = async <T>(url: string, config: ApiConfig = {}): Promise<T> => {
+export const apiGet = async <T>(url: string, config: ApiConfig<T> = {}): Promise<T> => {
   return makeRequest<T>('GET', url, undefined, config)
 }
 
-export const apiPost = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+export const apiPost = async <T>(url: string, data?: unknown, config: ApiConfig<T> = {}): Promise<T> => {
   return makeRequest<T>('POST', url, data, config)
 }
 
-export const apiPut = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+export const apiPut = async <T>(url: string, data?: unknown, config: ApiConfig<T> = {}): Promise<T> => {
   return makeRequest<T>('PUT', url, data, config)
 }
 
-export const apiDelete = async <T>(url: string, config: ApiConfig = {}): Promise<T> => {
+export const apiDelete = async <T>(url: string, config: ApiConfig<T> = {}): Promise<T> => {
   return makeRequest<T>('DELETE', url, undefined, config)
 }
 
-export const apiDeleteById = async <T>(endpoint: string, id: string | number, config: ApiConfig = {}): Promise<T> => {
+export const apiDeleteById = async <T>(endpoint: string, id: string | number, config: ApiConfig<T> = {}): Promise<T> => {
   return apiDelete<T>(`${endpoint}/${id}`, config)
 }
 
 // פונקציות לבקשות ללא טוקן (public)
-export const apiGetPublic = async <T>(url: string, config: ApiConfig = {}): Promise<T> => {
+export const apiGetPublic = async <T>(url: string, config: ApiConfig<T> = {}): Promise<T> => {
   return apiGet<T>(url, { ...config, requireAuth: false })
 }
 
-export const apiPostPublic = async <T>(url: string, data?: any, config: ApiConfig = {}): Promise<T> => {
+export const apiPostPublic = async <T>(url: string, data?: unknown, config: ApiConfig<T> = {}): Promise<T> => {
   return apiPost<T>(url, data, { ...config, requireAuth: false })
 }
 
 // פונקציות עם safe mode מובנה
-export const safeApiGet = async <T>(url: string, fallback: T, config: ApiConfig = {}): Promise<T> => {
+export const safeApiGet = async <T>(url: string, fallback: T, config: ApiConfig<T> = {}): Promise<T> => {
   return apiGet<T>(url, { ...config, safe: true, fallback })
 }
 
 export const safePaginated = async <T>(
   endpoint: string,
   page: number = 1,
-  config: ApiConfig = {}
+  config: ApiConfig<PaginatedResponse<T>> = {}
 ): Promise<PaginatedResponse<T>> => {
   const fallback: PaginatedResponse<T> = { data: [], total: 0, page, totalPages: 0 }
   return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`, { 

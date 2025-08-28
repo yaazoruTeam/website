@@ -37,32 +37,27 @@ export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely
 }
 
 // איפוס מקיף של מכשיר כטרנזקציה
-export const ComprehensiveResetDevice = async (endpoint_id: number | string, name: string): Promise<
-  {
-    success: boolean
-    message: string
-    data: {
-      originalInfo: any
-      terminationSuccess: boolean
-      creationSuccess: boolean
-      newEndpointId: string | null
-      terminationResult: Widely.Model
-      creationResult: Widely.Model
-    }
+interface DeviceOriginalInfo {
+  endpoint_id: number | string
+  name: string
+  [key: string]: unknown
+}
+
+interface ResetDeviceResponse {
+  success: boolean
+  message: string
+  data: {
+    originalInfo: DeviceOriginalInfo
+    terminationSuccess: boolean
+    creationSuccess: boolean
+    newEndpointId: string | null
+    terminationResult: Widely.Model
+    creationResult: Widely.Model
   }
-> => {
-  return apiPost<{
-    success: boolean
-    message: string
-    data: {
-      originalInfo: any
-      terminationSuccess: boolean
-      creationSuccess: boolean
-      newEndpointId: string | null
-      terminationResult: Widely.Model
-      creationResult: Widely.Model
-    }
-  }>(`${ENDPOINT}/reset_device`, {
+}
+
+export const ComprehensiveResetDevice = async (endpoint_id: number | string, name: string): Promise<ResetDeviceResponse> => {
+  return apiPost<ResetDeviceResponse>(`${ENDPOINT}/reset_device`, {
     endpoint_id,
     name
   })

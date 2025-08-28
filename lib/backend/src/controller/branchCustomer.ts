@@ -43,7 +43,7 @@ const createBranchCustomer = async (
     }
     const branchCustomer = await db.BranchCustomer.createBranchCustomer(sanitized)
     res.status(201).json(branchCustomer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -65,7 +65,7 @@ const getAllBranchCustomer = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -87,7 +87,7 @@ const getBranchCustomerById = async (
     }
     const branchCustomer = await db.BranchCustomer.getBranchCustomerById(req.params.id)
     res.status(200).json(branchCustomer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -120,7 +120,7 @@ const getBranchCustomerByBranch_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -153,7 +153,7 @@ const getBranchCustomerByCustomer_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -188,7 +188,7 @@ const updateBranchCustomer = async (
       sanitized,
     )
     res.status(200).json(updateBranchCustomer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
@@ -210,7 +210,7 @@ const deleteBranchCustomer = async (
     }
     const deleteBranchCustomer = await db.BranchCustomer.deleteBranchCustomer(req.params.id)
     res.status(200).json(deleteBranchCustomer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error)
   }
 }
