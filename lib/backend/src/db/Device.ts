@@ -1,9 +1,14 @@
 import { Device, HttpError } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
+import { Knex } from 'knex'
+
+// Type for optional database transaction
+type OptionalTransaction = Knex.Transaction<Record<string, unknown>, unknown[]> | undefined
+
 const limit = config.database.limit
 
-const createDevice = async (device: Device.Model, trx?: any) => {
+const createDevice = async (device: Device.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.devices') : knex('yaazoru.devices')

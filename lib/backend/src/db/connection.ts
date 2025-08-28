@@ -1,9 +1,9 @@
 import knex, { Knex } from 'knex'
 import config from '@config/index'
 
-let connection: Knex<any, unknown[]> | null = null
+let connection: Knex<Record<string, unknown>, unknown[]> | null = null
 
-function getDbConnection(): Knex<any, unknown[]> {
+function getDbConnection(): Knex<Record<string, unknown>, unknown[]> {
   if (connection == null) {
     connection = knex({
       client: 'pg',

@@ -1,9 +1,18 @@
 import { HttpError, ItemForMonthlyPayment, Payments } from '@model'
-import getDbConnection from '@db/connection'
-import config from '@config/index'
+
+import { Knex } from 'knex'
+
+// Type for optional database transaction
+type OptionalTransaction = Knex.Transaction<Record<string, unknown>, unknown[]> | undefined
+
+
+
+
+
+
 const limit = config.database.limit
 
-const createItem = async (item: ItemForMonthlyPayment.Model, trx?: any) => {
+const createItem = async (item: ItemForMonthlyPayment.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.item') : knex('yaazoru.item')
@@ -85,7 +94,7 @@ const getAllItemsByMonthlyPaymentIdNoPagination = async (
   return await knex('yaazoru.item').where({ monthlyPayment_id }).orderBy('item_id')
 }
 
-const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, trx?: any) => {
+const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.item') : knex('yaazoru.item')
@@ -99,7 +108,7 @@ const updateItem = async (item_id: string, item: ItemForMonthlyPayment.Model, tr
   }
 }
 
-const deleteItem = async (item_id: string, trx?: any) => {
+const deleteItem = async (item_id: string, trx?: OptionalTransaction) => {
   const knex = getDbConnection()
   try {
     const query = trx ? trx('yaazoru.item') : knex('yaazoru.item')

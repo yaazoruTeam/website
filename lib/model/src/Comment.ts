@@ -1,4 +1,4 @@
-import { HttpError } from '.';
+import { HttpError, Common } from '.';
 
 export enum EntityType {
   Customer = "customer",
@@ -16,11 +16,10 @@ interface Model {
   file_type?: string
 }
 
-const isOptionalString = (val: any) =>
+const isOptionalString = (val: unknown) =>
   val === undefined || (typeof val === "string" && val.trim() !== "");
 
 function sanitize(comment: Model, hasId: boolean): Model {
-  const isString = (val: any) => typeof val === 'string' && val.trim() !== '';
 
   if (hasId && !comment.comment_id) {
     const error: HttpError.Model = {
@@ -30,7 +29,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
     throw error;
   }
 
-  if (!comment.entity_id || !isString(comment.entity_id)) {
+  if (!comment.entity_id || !Common.isString(comment.entity_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Entity ID is required and must be a non-empty string.'
@@ -46,7 +45,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
     throw error;
   }
 
-  if (!isString(comment.content)) {
+  if (!Common.isString(comment.content)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Comment content is required and must be a non-empty string.'
