@@ -3,6 +3,7 @@ import { HttpError, Widely, WidelyDeviceDetails } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
+import { handleError } from '../err'
 
 // Function for network identification
 const getNetworkConnection = (mccMnc: string): string => {
@@ -133,7 +134,7 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
     const userData = await searchUsersData(simNumber)
     res.status(200).json(userData)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -145,7 +146,7 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
     const mobileData = await getMobilesData(domain_user_id)
     res.status(200).json(mobileData)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -157,7 +158,7 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
     const mobileInfoData = await getMobileInfoData(endpoint_id)
     res.status(200).json(mobileInfoData)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -274,7 +275,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
     res.status(200).json(responseData)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 

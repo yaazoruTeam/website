@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { charge } from '@tranzila/Authentication'
+import { handleError } from './err'
 
 const chargeTokenTranzila = async (
   req: Request,
@@ -30,7 +31,7 @@ const chargeTokenTranzila = async (
     res.status(200).json(result)
   } catch (error: unknown) {
     console.log('error in charge!!')
-    next(error)
+    handleError(error, next)
   }
 }
 

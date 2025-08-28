@@ -3,6 +3,7 @@ import { readExcelFile } from '@utils/excel'
 import { processExcelData, ExcelRowData } from '@service/ReadExcelDevicesForDonors'
 import * as fs from 'fs'
 import * as path from 'path'
+import { handleError } from './err'
 
 const handleReadExcelFile = async (
   req: Request,
@@ -66,8 +67,7 @@ const handleReadExcelFile = async (
         console.warn('Could not delete temporary file after error:', deleteError)
       }
     }
-    
-    next(error)
+    handleError(error, next)
   }
 }
 

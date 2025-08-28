@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, Payments } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { handleError } from './err'
 
 
 const limit = config.database.limit
@@ -24,7 +25,7 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
     const payments = await db.Payments.createPayments(sanitized)
     res.status(201).json(payments)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -42,7 +43,7 @@ const getAllPayments = async (req: Request, res: Response, next: NextFunction) =
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -60,7 +61,7 @@ const getPaymentsId = async (req: Request, res: Response, next: NextFunction) =>
     const payments = await db.Payments.getPaymentsId(req.params.id)
     res.status(200).json(payments)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -90,7 +91,7 @@ const getPaymentsByMonthlyPaymentId = async (req: Request, res: Response, next: 
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -112,7 +113,7 @@ const updatePayments = async (req: Request, res: Response, next: NextFunction) =
     const updatePayments = await db.Payments.updatePayments(req.params.id, sanitized)
     res.status(200).json(updatePayments)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -130,7 +131,7 @@ const deletePayments = async (req: Request, res: Response, next: NextFunction) =
     const deletePayments = await db.Payments.deletePayments(req.params.id)
     res.status(200).json(deletePayments)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 export {

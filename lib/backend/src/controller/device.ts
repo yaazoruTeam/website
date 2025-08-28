@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Device, HttpError } from '@model'
 import config from '@config/index'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -14,7 +15,7 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
     const device = await db.Device.createDevice(sanitized)
     res.status(201).json(device)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -32,7 +33,7 @@ const getDevices = async (req: Request, res: Response, next: NextFunction): Prom
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -50,7 +51,7 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
     const device = await db.Device.getDeviceById(req.params.id)
     res.status(200).json(device)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -80,7 +81,7 @@ const getDevicesByStatus = async (
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -93,7 +94,7 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     const updateDevice = await db.Device.updateDevice(req.params.id, sanitized)
     res.status(200).json(updateDevice)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -111,7 +112,7 @@ const deleteDevice = async (req: Request, res: Response, next: NextFunction): Pr
     const deleteDevice = await db.Device.deleteDevice(req.params.id)
     res.status(200).json(deleteDevice)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 

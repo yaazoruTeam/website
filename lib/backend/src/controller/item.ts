@@ -3,6 +3,7 @@ import { HttpError, ItemForMonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
 import { Knex } from 'knex'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -24,7 +25,7 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
     const item = await db.Item.createItem(sanitized)
     res.status(201).json(item)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -42,7 +43,7 @@ const getItems = async (req: Request, res: Response, next: NextFunction) => {
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -60,7 +61,7 @@ const getItemId = async (req: Request, res: Response, next: NextFunction) => {
     const item = await db.Item.getItemId(req.params.id)
     res.status(200).json(item)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -87,7 +88,7 @@ const getAllItemsByMonthlyPaymentId = async (req: Request, res: Response, next: 
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -109,7 +110,7 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
     const updateItem = await db.Item.updateItem(req.params.id, sanitized)
     res.status(200).json(updateItem)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -158,7 +159,7 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
     const deleteItem = await db.Item.deleteItem(req.params.id)
     res.status(200).json(deleteItem)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 export {

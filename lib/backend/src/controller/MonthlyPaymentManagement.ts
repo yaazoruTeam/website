@@ -9,6 +9,7 @@ import {
 import * as db from '@db/index'
 import getDbConnection from '@db/connection'
 import { updateItems } from './item'
+import { handleError } from './err'
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
   const knex = getDbConnection()
@@ -58,10 +59,10 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     console.log('i add monthly payment!! sucss!!!')
     res.status(201).json(monthlyPaymentData)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
     await trx.rollback()
     console.error('Transaction failed, all actions rolled back:', error)
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -107,19 +108,19 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       throw error
     }
 
-        await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx)
+    await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx)
 
-        const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id)
-        await updateItems(existingItems, items, trx)
+    const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id)
+    await updateItems(existingItems, items, trx)
 
-        await trx.commit()
-        console.log('Monthly payment updated successfully!')
-        res.status(200).json({ message: 'Monthly payment updated successfully!' })
-    } catch (error: unknown) {
-        await trx.rollback()
-        console.error('Transaction failed, all actions rolled back:', error)
-        next(error)
-    }
+    await trx.commit()
+    console.log('Monthly payment updated successfully!')
+    res.status(200).json({ message: 'Monthly payment updated successfully!' })
+  } catch (error: unknown) {
+    await trx.rollback()
+    console.error('Transaction failed, all actions rolled back:', error)
+    handleError(error, next)
+  }
 }
 
 export { createMonthlyPayment, updateMonthlyPayment }

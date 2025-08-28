@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, MonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { handleError } from './err'
 
 
 const limit = config.database.limit
@@ -22,7 +23,7 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     const monthlyPayment = await db.MonthlyPayment.createMonthlyPayment(sanitized)
     res.status(201).json(monthlyPayment)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -40,7 +41,7 @@ const getMonthlyPayments = async (req: Request, res: Response, next: NextFunctio
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -58,7 +59,7 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
     const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(req.params.id)
     res.status(200).json(monthlyPayment)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -95,7 +96,7 @@ const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: 
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: NextFunction) => {
@@ -123,7 +124,7 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -159,7 +160,7 @@ const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -182,7 +183,7 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     )
     res.status(200).json(updateMonthlyPayment)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -201,7 +202,7 @@ const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     const deleteMonthlyPayment = await db.MonthlyPayment.deleteMonthlyPayment(req.params.id)
     res.status(200).json(deleteMonthlyPayment)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 export {

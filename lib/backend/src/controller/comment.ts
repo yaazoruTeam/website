@@ -4,6 +4,7 @@ import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
 
 import config from '@config/index'
+import { handleError } from "./err";
 
 let client: SpeechClient;
 
@@ -35,7 +36,7 @@ const createComment = async (
     const comment = await db.Comment.createComment(sanitized);
     res.status(201).json(comment);
   } catch (error: unknown) {
-    next(error);
+    handleError(error, next)
   }
 };
 
@@ -57,7 +58,7 @@ const getComments = async (
       total,
     });
   } catch (error: unknown) {
-    next(error);
+    handleError(error, next)
   }
 };
 
@@ -86,7 +87,7 @@ const getCommentById = async (
     }
     res.status(200).json(comment);
   } catch (error: unknown) {
-    next(error);
+    handleError(error, next);
   }
 };
 
@@ -121,7 +122,7 @@ const getCommentsByEntity = async (
       total,
     });
   } catch (error: unknown) {
-    next(error);
+    handleError(error, next);
   }
 };
 
@@ -141,7 +142,7 @@ const updateComment = async (
     );
     res.status(200).json(updatedComment);
   } catch (error: unknown) {
-    next(error);
+    handleError(error, next);
   }
 };
 
@@ -154,7 +155,7 @@ const deleteComment = async (
     const deletedComment = await db.Comment.deleteComment(req.params.id);
     res.status(200).json(deletedComment);
   } catch (error: unknown) {
-    next(error);
+    handleError(error, next);
   }
 };
 
@@ -191,7 +192,7 @@ const transcribeAudio = async (
 
     res.status(200).json({ transcription });
   } catch (error) {
-    next(error);
+    handleError(error, next);
   }
 };
 

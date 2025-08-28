@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, PaymentCreditLink } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { handleError } from './err'
 
 
 const limit = config.database.limit
@@ -44,7 +45,7 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
     const paymentCreditLink = await db.PaymentCreditLink.createPaymentCreditLink(sanitized)
     res.status(201).json(paymentCreditLink)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -62,7 +63,7 @@ const getPaymentCreditLinks = async (req: Request, res: Response, next: NextFunc
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -82,7 +83,7 @@ const getPaymentCreditLinkId = async (req: Request, res: Response, next: NextFun
     const paymentCreditLink = await db.PaymentCreditLink.getPaymentCreditLinkId(req.params.id)
     res.status(200).json(paymentCreditLink)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 const getPaymentCreditLinksByMonthlyPaymentId = async (
@@ -113,7 +114,7 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 const getPaymentCreditLinksByCreditDetailsId = async (
@@ -145,7 +146,7 @@ const getPaymentCreditLinksByCreditDetailsId = async (
       total,
     })
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFunction) => {
@@ -190,7 +191,7 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
     )
     res.status(200).json(updatePaymentCreditLink)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -212,7 +213,7 @@ const deletePaymentCreditLink = async (req: Request, res: Response, next: NextFu
     )
     res.status(200).json(deletePaymentCreditLink)
   } catch (error: unknown) {
-    next(error)
+    handleError(error, next)
   }
 }
 export {
