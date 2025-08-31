@@ -15,7 +15,7 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-const searchUsersData = async (simNumber: string): Promise<Widely.WidelyUserData> => {
+const searchUsersData = async (simNumber: number): Promise<Widely.WidelyUserData> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
     account_id: config.widely.accountId,

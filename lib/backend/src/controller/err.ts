@@ -1,6 +1,6 @@
 import { NextFunction } from "express"
 
-const handleError = (error: unknown,next: NextFunction) => {
+const handleError = (error: unknown, next: NextFunction) => {
     if (error instanceof Error) {
         next(error)
     }
