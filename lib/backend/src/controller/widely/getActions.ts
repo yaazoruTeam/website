@@ -86,15 +86,8 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     endpoint_id: endpoint_id
   })
 
-
-  // Check for error_code in response
-  if (result.error_code !== undefined && result.error_code !== 200) {
-    const error: HttpError.Model = {
-      status: result.error_code || 500,
-      message: 'Failed to load device details.',
-    }
-    throw error
-  }
+  // Use the updated validateWidelyResult function instead of manual checks
+  validateWidelyResult(result, 'Failed to load device details', false)
 
   // Handle response with data property (Widely.Model structure)
   if (result.data !== undefined) {
