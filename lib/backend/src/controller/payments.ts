@@ -17,7 +17,7 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthly payment dose not exist',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -53,7 +53,7 @@ const getPaymentsId = async (req: Request, res: Response, next: NextFunction) =>
     if (!existPayments) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'Payments does not exist.',
+        message: 'payments does not exist',
       }
       throw error
     }
@@ -71,7 +71,7 @@ const getPaymentsByMonthlyPaymentId = async (req: Request, res: Response, next: 
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthlyPayment does not exist.',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -105,7 +105,7 @@ const updatePayments = async (req: Request, res: Response, next: NextFunction) =
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthly payment dose not exist',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -123,7 +123,7 @@ const deletePayments = async (req: Request, res: Response, next: NextFunction) =
     if (!existPayments) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'Payments does not exist.',
+        message: 'payments does not exist',
       }
       throw error
     }

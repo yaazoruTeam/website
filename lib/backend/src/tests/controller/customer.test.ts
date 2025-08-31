@@ -1,5 +1,16 @@
 jest.mock('@db');
-jest.mock('@model');
+jest.mock('../../../../model/src', () => ({
+  Customer: {
+    sanitizeBodyExisting: jest.fn(),
+    sanitize: jest.fn(),
+    sanitizeIdExisting: jest.fn(),
+    sanitizeExistingCustomer: jest.fn(),
+  },
+  HttpError: {
+    create: jest.fn(),
+  }
+}))
+
 import { Request, Response, NextFunction } from "express";
 import * as db from '../../db';
 import { Customer, HttpError } from '../../../../model/src';
