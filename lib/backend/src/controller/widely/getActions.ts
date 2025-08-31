@@ -158,21 +158,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     validateRequiredParams({ simNumber })
 
     // Step 1: Search for user based on SIM number
-    let user;
-    try {
-      user = await searchUsersData(simNumber)
-    } catch (error: any) {
-      // Pass through SIM not found errors as-is
-      if (error.message === 'SIM number not found.') {
-        throw error;
-      }
-      // Convert other errors to generic search error
-      const err: HttpError.Model = {
-        status: 500,
-        message: 'Error searching for user data.',
-      }
-      throw err;
-    }
+    const user = await searchUsersData(simNumber)
 
     const domain_user_id = user.domain_user_id
     if (!domain_user_id) {
@@ -184,25 +170,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     // Step 2: Get user's mobile devices
-    let mobile;
-    try {
-      mobile = await getMobilesData(domain_user_id)
-    } catch (error: any) {
-      // If no devices found, treat as SIM not found
-      if (error.message === 'No devices found for this user.') {
-        const err: HttpError.Model = {
-          status: 404,
-          message: 'SIM number not found.',
-        }
-        throw err;
-      }
-      // Convert other errors to generic device loading error
-      const err: HttpError.Model = {
-        status: 500,
-        message: 'Error loading user devices.',
-      }
-      throw err;
-    }
+    const mobile = await getMobilesData(domain_user_id)
 
     const endpoint_id = mobile.endpoint_id
     if (!endpoint_id) {
