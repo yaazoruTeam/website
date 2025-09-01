@@ -25,11 +25,20 @@ const validateRequiredParams = (params: Record<string, unknown>): void => {
 }
 
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
-    // Check for API error response
-    if (result.error_code !== undefined && result.error_code !== 200) {
+    // Check for API error response - both error_code and status
+    const hasError = (result.error_code !== undefined && result.error_code !== 200) || 
+                     (result.status && result.status === "ERROR")
+
+    if (hasError) {
+        // Use Widely's message if available, otherwise use our custom message
+        const widelyMessage = result.message || errorMessage
+        const finalMessage = result.error_code 
+            ? `${errorMessage} - Widely Error Code: ${result.error_code}, Message: ${widelyMessage}`
+            : `${errorMessage} - Message: ${widelyMessage}`
+
         const error: HttpError.Model = {
-            status: result.error_code || 500,
-            message: errorMessage,
+            status: 500, // Always return 500 for Widely API errors
+            message: finalMessage,
         }
         throw error
     }

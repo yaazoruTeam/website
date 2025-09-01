@@ -87,15 +87,8 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
     endpoint_id: endpoint_id
   })
 
-
-  // Check for error_code in response
-  if (result.error_code !== undefined && result.error_code !== 200) {
-    const error: HttpError.Model = {
-      status: result.error_code || 500,
-      message: 'Failed to load device details.',
-    }
-    throw error
-  }
+  // Use the updated validateWidelyResult function instead of manual checks
+  validateWidelyResult(result, 'Failed to load device details', false)
 
   // Handle response with data property (Widely.Model structure)
   if (result.data !== undefined) {
@@ -168,24 +161,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     validateRequiredParams({ simNumber })
 
     // Step 1: Search for user based on SIM number
-    let user;
-    try {
-      user = await searchUsersData(simNumber)
-    } catch (error: unknown) {
-      // Pass through SIM not found errors as-is
-      if (error instanceof Error && error.message === 'SIM number not found.') {
-        throw error;
-      }
-      if (error && typeof error === 'object' && 'message' in error && error.message === 'SIM number not found.') {
-        throw error;
-      }
-      // Convert other errors to generic search error
-      const err: HttpError.Model = {
-        status: 500,
-        message: 'Error searching for user data.',
-      }
-      throw err;
-    }
+    const user = await searchUsersData(simNumber)
 
     const domain_user_id = user.domain_user_id
     if (!domain_user_id) {
@@ -197,32 +173,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     // Step 2: Get user's mobile devices
-    let mobile;
-    try {
-      mobile = await getMobilesData(domain_user_id)
-    } catch (error: unknown) {
-      // If no devices found, treat as SIM not found
-      if (error instanceof Error && error.message === 'No devices found for this user.') {
-        const err: HttpError.Model = {
-          status: 404,
-          message: 'SIM number not found.',
-        }
-        throw err;
-      }
-      if (error && typeof error === 'object' && 'message' in error && error.message === 'No devices found for this user.') {
-        const err: HttpError.Model = {
-          status: 404,
-          message: 'SIM number not found.',
-        }
-        throw err;
-      }
-      // Convert other errors to generic device loading error
-      const err: HttpError.Model = {
-        status: 500,
-        message: 'Error loading user devices.',
-      }
-      throw err;
-    }
+    const mobile = await getMobilesData(domain_user_id)
 
     const endpoint_id = mobile.endpoint_id
     if (!endpoint_id) {

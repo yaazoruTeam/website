@@ -25,9 +25,15 @@ const callingWidely = async (func_name: string, data: Record<string, unknown>) =
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError
+      // Always return 500 for Widely API errors, include original status in message
+      const originalStatus = axiosError.response?.status
+      const errorMessage = originalStatus 
+        ? `Widely API Error - HTTP ${originalStatus}: ${axiosError.message}`
+        : `Widely API Error: ${axiosError.message}`
+      
       throw <HttpError.Model>{
-        message: axiosError.message,
-        status: axiosError.response?.status || 500,
+        message: errorMessage,
+        status: 500, // Always return 500 for external API errors
       }
     } else {
       throw error
