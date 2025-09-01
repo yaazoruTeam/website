@@ -17,7 +17,6 @@ RUN mkdir -p /var/lib/postgresql/data/log && \
 # Copy configuration files
 COPY db-config/postgresql-simple.conf /tmp/postgresql.conf
 COPY db-config/docker-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
-COPY db-config/init-yaazoru-schema.sql /docker-entrypoint-initdb.d/01-init-yaazoru-schema.sql
 
 # Make entrypoint executable
 RUN chmod +x /usr/local/bin/custom-entrypoint.sh
