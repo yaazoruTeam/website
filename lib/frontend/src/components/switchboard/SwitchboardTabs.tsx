@@ -34,7 +34,7 @@ const SwitchboardTabs = () => {
     speedDial: [],
   })
 
-  const handleFormChange = (key: 'editNumber' | 'speedDial', data: EditNumberFormData | Partial<EditingContactsFormInputs>[]) => {
+  const handleFormChange = (key: 'editNumber' | 'speedDial', data: Partial<EditNumberFormData> | Partial<EditingContactsFormInputs>[]) => {
     setFormData((prevData) => ({
       ...prevData,
       [key]: data,

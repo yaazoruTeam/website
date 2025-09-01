@@ -6,6 +6,10 @@ import { useForm } from 'react-hook-form'
 import SettingPersonalID from './SettingPersonalID'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
+import { Switchboard } from '@model'
+
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type EditNumberFormData = Switchboard.EditNumberFormData
 
 export interface EditNumberRef {
   submitForm: () => void
@@ -18,7 +22,10 @@ interface EditNumberFormInputs {
   toReceiveSMSToEmail: string
 }
 
-const EditNumberForm: React.FC<{ value: any; onChange: (data: any) => void }> = ({//to do:Change to an accurate type
+const EditNumberForm: React.FC<{ 
+  value: Partial<EditNumberFormData>; 
+  onChange: (data: Partial<EditNumberFormData>) => void 
+}> = ({
   value,
   onChange,
 }) => {

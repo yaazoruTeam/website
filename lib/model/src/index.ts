@@ -21,6 +21,7 @@ import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ComprehensiveResetResponse from './ComprehensiveResetResponse'
 import * as Request from './Request'
+import * as Switchboard from './Switchboard'
 
 export {
   Customer,
@@ -46,4 +47,5 @@ export {
   WidelyDeviceDetails,
   ComprehensiveResetResponse,
   Request,
+  Switchboard,
 }
