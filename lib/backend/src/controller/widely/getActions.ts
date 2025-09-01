@@ -279,4 +279,4 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData }
+export { searchUsers, getMobiles, getMobileInfo, getAllUserData, getMobileInfoData }

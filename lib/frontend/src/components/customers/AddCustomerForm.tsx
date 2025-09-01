@@ -147,7 +147,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               rules={{
                 required: t('requiredField'),
                 pattern: {
-                  value: /^[\d\s\-\+\(\)]{9,15}$/,
+                  value: /^[\d\s\-+()]{9,15}$/,
                   message: t('errorPhone'),
                 },
               }}
@@ -158,7 +158,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               label={t('additionalPhone')}
               rules={{
                 pattern: {
-                  value: /^[\d\s\-\+\(\)]{9,15}$/,
+                  value: /^[\d\s\-+()]{9,15}$/,
                   message: t('errorPhone'),
                 },
               }}

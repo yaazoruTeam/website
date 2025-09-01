@@ -4,10 +4,22 @@ import EditingContactsForm from './EditingContactsForm'
 import { CustomIconButton } from '../designComponent/ButtonIcon'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useRef, useState } from 'react'
-export interface EditingContactsRef {
-  submitForm: () => Promise<any>
+
+interface EditingContactsFormInputs {
+  number: string
+  directNumber: string
+  target: string
+  'notes/name': string
 }
-const EditingContacts: React.FC<{ value: any; onChange: (data: any) => void }> = ({//to do:Change to an accurate type
+
+export interface EditingContactsRef {
+  submitForm: () => Promise<EditingContactsFormInputs>
+}
+
+const EditingContacts: React.FC<{ 
+  value: Partial<EditingContactsFormInputs>[]
+  onChange: (data: Partial<EditingContactsFormInputs>[]) => void 
+}> = ({
   value,
   onChange,
 }) => {
@@ -31,7 +43,7 @@ const EditingContacts: React.FC<{ value: any; onChange: (data: any) => void }> =
     setForms([...forms, counter])
     setCounter(counter + 1)
   }
-  const handleFormChange = (index: number, data: any) => {//to do: Change to an accurate type
+  const handleFormChange = (index: number, data: Partial<EditingContactsFormInputs>) => {
     const newData = Array.isArray(value) ? [...value] : []
     newData[index] = data
     onChange(newData)

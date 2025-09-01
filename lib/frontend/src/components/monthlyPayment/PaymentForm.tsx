@@ -15,17 +15,17 @@ interface PaymentFormInput {
 }
 declare global {
   interface Window {
-    TzlaHostedFields: any
+    TzlaHostedFields: any //to do:Change to an accurate type
     fieldsInitialized: boolean
   }
 }
-let fields: any = null
+let fields: any = null //to do:Change to an accurate type
 
 const PaymentForm = forwardRef(
   (
     props: {
-      onPaymentChange: (paymentData: any) => void
-      OnTimeChange: (timeData: any) => void
+      onPaymentChange: (paymentData: any) => void //to do:Change to an accurate type
+      OnTimeChange: (timeData: any) => void //to do:Change to an accurate type
       defaultValues?: PaymentFormInput
     },
     ref,
@@ -133,7 +133,7 @@ const PaymentForm = forwardRef(
             tokenize: true,
             response_language: 'Hebrew',
           },
-          (err: any, response: any) => {
+          (err: any, response: any) => {//to do:Change to an accurate type
             if (err) {
               handleError(err)
               reject(err)
@@ -147,9 +147,9 @@ const PaymentForm = forwardRef(
       })
     }
 
-    const handleError = (err: any) => {
+    const handleError = (err: any) => {//to do:Change to an accurate type
       console.log('העסקה נכשלה.')
-      const errorMessages = err.messages.map((message: any) => message.message)
+      const errorMessages = err.messages.map((message: any) => message.message) //to do:Change to an accurate type
       setErrors(errorMessages)
     }
 

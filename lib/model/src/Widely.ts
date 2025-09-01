@@ -26,7 +26,14 @@ interface WidelyMobileData {
   msisdn?: string
   iccid?: string
   package_id?: string
+  service_id?: string | number
   active?: boolean
+  dids?: Array<{
+    purchase_type: string
+    type: string
+    country: string
+    sms_to_mail?: string
+  }>
   // Additional fields found in API responses
   subscriptions?: Array<{
     data?: Array<{

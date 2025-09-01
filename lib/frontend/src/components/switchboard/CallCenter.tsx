@@ -267,7 +267,7 @@ const CallCenter: React.FC = () => {
       <CustomTable
         columns={columns}
         data={tableData}
-        onRowClick={(index) => handleRowClick(index)}
+        onRowClick={(_, index) => handleRowClick(index)}
         expandedRowIndex={expandedRowIndex}
         renderExpandedRow={() => <SwitchboardTabs />}
       />

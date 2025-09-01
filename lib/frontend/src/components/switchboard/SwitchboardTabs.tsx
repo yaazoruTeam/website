@@ -6,17 +6,35 @@ import CustomTabs from '../designComponent/Tab'
 import EditNumberForm from './EditNumberForm'
 import EditingContacts from './EditingContacts'
 import { useState } from 'react'
+
+interface EditNumberFormData {
+  target: string
+  notes: string
+  notifyEmailOfAllCalls: string
+  toReceiveSMSToEmail: string
+}
+
+interface EditingContactsFormInputs {
+  number: string
+  directNumber: string
+  target: string
+  'notes/name': string
+}
+
 const SwitchboardTabs = () => {
   const isMobile = useMediaQuery('(max-width:600px)')
   const { t } = useTranslation()
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0)
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    editNumber: EditNumberFormData
+    speedDial: Partial<EditingContactsFormInputs>[]
+  }>({
     editNumber: { target: '', notes: '', notifyEmailOfAllCalls: '', toReceiveSMSToEmail: '' },
     speedDial: [],
   })
 
-  const handleFormChange = (key: string, data: any) => {//to do: Change to an accurate type
+  const handleFormChange = (key: 'editNumber' | 'speedDial', data: EditNumberFormData | Partial<EditingContactsFormInputs>[]) => {
     setFormData((prevData) => ({
       ...prevData,
       [key]: data,

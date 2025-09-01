@@ -8,12 +8,15 @@ import {
 } from '../../api/customerApi'
 import { Customer } from '@model'
 
+type FilterType = 
+  | { type: 'city'; value: string }
+  | { type: 'status'; value: 'active' | 'inactive' }
+  | { type: 'date'; value: { start: Date; end: Date } }
+  | { type: 'search'; value: string }
+
 interface UseFetchCustomersProps {
   page: number
-  filterType?: {
-    type: 'city' | 'status' | 'date' | 'search'
-    value: any
-  }
+  filterType?: FilterType
 }
 
 export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) => {
