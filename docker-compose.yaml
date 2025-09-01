@@ -31,21 +31,26 @@ services:
     networks:
       - yaazoru-internal
   db:
-    image: postgres:15-alpine
-    container_name: yaazoru-postgres-db
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres-audit
+    container_name: yaazoru-postgres-db-prod
     restart: always
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Jerusalem
     ports:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+      - db-logs:/var/lib/postgresql/data/log
     networks:
       - yaazoru-internal
 volumes:
   db-data:
+  db-logs:
 networks:
   yaazoru-internal:
     driver: bridge
