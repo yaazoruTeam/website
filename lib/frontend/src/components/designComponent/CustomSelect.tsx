@@ -1,25 +1,25 @@
 import React, { useState } from 'react'
 import { FormControl, Select, MenuItem, InputAdornment, Box } from '@mui/material'
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, FieldValues, Path } from 'react-hook-form'
 import { colors } from '../../styles/theme'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import CustomTypography from './Typography'
 
-interface CustomSelectProps {
-  name: string
-  control: Control<any>
+interface CustomSelectProps<TFieldValues extends FieldValues> {
+  name: Path<TFieldValues>
+  control: Control<TFieldValues>
   options: { label: string; value: string; icon?: React.ReactNode }[]
   label: string
   variant?: 'default' | 'changeAccount'
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({
+const CustomSelect = <TFieldValues extends FieldValues>({
   name,
   control,
   options,
   label,
   variant = 'default',
-}) => {
+}: CustomSelectProps<TFieldValues>) => {
   const [open, setOpen] = useState(false)
 
   const handleIconClick = () => {
