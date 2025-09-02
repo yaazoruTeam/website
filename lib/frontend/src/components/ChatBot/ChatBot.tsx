@@ -34,6 +34,7 @@ import { chatStyles } from "./styles";
 interface ChatBotProps {
   entityType: EntityType;
   entityId: string;
+  onClose?: () => void;
 }
 
 interface ClientComment extends Comment.Model {
@@ -49,7 +50,7 @@ const generateTempId = (): string => {
   return `temp-${Date.now()}-${tempIdCounter}`;
 };
 
-const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -240,7 +241,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId }) => {
 
   return (
     <Box sx={chatStyles.container}>
-      <IconButton title={t('closed')} disableRipple sx={chatStyles.closeButton}>
+      <IconButton 
+        title={t('closed')} 
+        disableRipple 
+        sx={chatStyles.closeButton}
+        onClick={onClose}
+      >
         <XMarkIcon style={chatStyles.closeIcon} />
       </IconButton>
       
