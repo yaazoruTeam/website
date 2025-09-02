@@ -197,8 +197,8 @@ const logActivity = async (
   userId: string,
   userName: string,
   userRole: 'admin' | 'branch',
-  oldValues?: Record<string, any>,
-  newValues?: Record<string, any>,
+  oldValues?: Record<string, unknown>,
+  newValues?: Record<string, unknown>,
   ipAddress?: string,
   userAgent?: string
 ): Promise<AuditLogs.Model> => {
@@ -232,3 +232,4 @@ export {
   doesAuditLogExist,
   logActivity,
 }
+

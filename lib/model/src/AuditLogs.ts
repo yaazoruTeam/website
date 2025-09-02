@@ -5,8 +5,8 @@ interface Model {
   table_name: string
   record_id: string
   action: 'INSERT' | 'UPDATE' | 'DELETE'
-  old_values?: Record<string, any>
-  new_values?: Record<string, any>
+  old_values?: Record<string, unknown>
+  new_values?: Record<string, unknown>
   user_id: string
   user_name: string
   user_role: 'admin' | 'branch'
@@ -16,9 +16,11 @@ interface Model {
 }
 
 function sanitize(auditLog: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
-  const isValidAction = (action: any) => ['INSERT', 'UPDATE', 'DELETE'].includes(action)
-  const isValidRole = (role: any) => ['admin', 'branch'].includes(role)
+  const isString = (value: unknown): value is string => typeof value === 'string'
+  const isValidAction = (action: unknown): action is Model['action'] => 
+    typeof action === 'string' && ['INSERT', 'UPDATE', 'DELETE'].includes(action)
+  const isValidRole = (role: unknown): role is Model['user_role'] => 
+    typeof role === 'string' && ['admin', 'branch'].includes(role)
 
   if (hasId && !auditLog.audit_id) {
     const error: HttpError.Model = {

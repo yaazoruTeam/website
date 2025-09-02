@@ -12,6 +12,11 @@ interface AuditableRequest extends Request {
     auditQuery?: string;
 }
 
+// טיפוס לשגיאות
+interface ErrorWithMessage extends Error {
+    message: string;
+}
+
 class AuditMiddleware {
     // Middleware לרישום פעילויות CREATE
     static logCreate(tableName: string) {
@@ -19,25 +24,24 @@ class AuditMiddleware {
             const originalSend = res.send;
             
             res.send = function(body) {
-                // רק אם הפעולה הצליחה
                 if (res.statusCode >= 200 && res.statusCode < 300) {
                     const username = req.user?.username || req.user?.email || 'anonymous';
                     const query = `INSERT INTO ${tableName}`;
                     const bodyData = typeof body === 'string' ? body : JSON.stringify(body);
-                    
+
                     db.AuditLogs.logActivity(
                         tableName,
                         'new_record',
                         'INSERT',
                         req.user?.id || 'anonymous',
                         username,
-                        'branch', // ברירת מחדל
+                        'branch',
                         undefined,
                         req.body,
                         req.ip,
                         req.get('User-Agent')
-                    ).catch((err: any) => {
-                        console.error('Failed to log audit activity:', err);
+                    ).catch((err: ErrorWithMessage) => {
+                        console.error('Failed to log audit activity:', err.message);
                     });
                 }
                 
@@ -70,8 +74,8 @@ class AuditMiddleware {
                         req.body,
                         req.ip,
                         req.get('User-Agent')
-                    ).catch((err: any) => {
-                        console.error('Failed to log audit activity:', err);
+                    ).catch((err: ErrorWithMessage) => {
+                        console.error('Failed to log audit activity:', err.message);
                     });
                 }
                 
@@ -104,8 +108,8 @@ class AuditMiddleware {
                         undefined,
                         req.ip,
                         req.get('User-Agent')
-                    ).catch((err: any) => {
-                        console.error('Failed to log audit activity:', err);
+                    ).catch((err: ErrorWithMessage) => {
+                        console.error('Failed to log audit activity:', err.message);
                     });
                 }
                 
@@ -139,8 +143,8 @@ class AuditMiddleware {
                             { query: req.query },
                             req.ip,
                             req.get('User-Agent')
-                        ).catch((err: any) => {
-                            console.error('Failed to log audit activity:', err);
+                        ).catch((err: ErrorWithMessage) => {
+                            console.error('Failed to log audit activity:', err.message);
                         });
                     }
                 }
@@ -154,7 +158,7 @@ class AuditMiddleware {
 
     // Middleware כללי לרישום שגיאות
     static logError(tableName: string, action: string) {
-        return async (err: Error, req: AuditableRequest, res: Response, next: NextFunction) => {
+        return async (err: ErrorWithMessage, req: AuditableRequest, res: Response, next: NextFunction) => {
             const username = req.user?.username || req.user?.email || 'anonymous';
             
             db.AuditLogs.logActivity(
@@ -168,8 +172,8 @@ class AuditMiddleware {
                 { error: err.message, action: action.toUpperCase() },
                 req.ip,
                 req.get('User-Agent')
-            ).catch((logErr: any) => {
-                console.error('Failed to log error audit activity:', logErr);
+            ).catch((logErr: ErrorWithMessage) => {
+                console.error('Failed to log error audit activity:', logErr.message);
             });
             
             next(err);
