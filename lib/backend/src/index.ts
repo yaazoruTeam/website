@@ -5,6 +5,19 @@ import config from '@config/index'
 import { createSchema } from '@db/schema'
 import logger from '@utils/logger'
 
+// Import express type extensions globally
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        user_id: string;
+        role?: string;
+      };
+    }
+  }
+}
+
 const cors = require('cors')
 
 const app = express()
