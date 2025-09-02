@@ -12,6 +12,7 @@ import { createPayments } from './payments'
 import { createItem } from './itemForMonthlyPayment'
 import { createPaymentCreditLink } from './paymentCreditLink'
 import { createCommentsSchema } from './comments'
+import { createAuditLogsSchema } from './auditLogs'
 
 const createSchema = async () => {
   console.log('Creating schema...')
@@ -30,6 +31,7 @@ const createSchema = async () => {
     await createItem()
     await createPaymentCreditLink()
     await createCommentsSchema()
+    await createAuditLogsSchema() // Add audit logs table
     console.log('Schema created successfully')
   } catch (err) {
     console.error('Error creating schema', err)

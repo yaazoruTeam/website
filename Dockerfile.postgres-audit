@@ -1,0 +1,38 @@
+# Dockerfile for PostgreSQL with comprehensive audit logging
+FROM postgres:15-alpine
+
+# Install required packages for logging and utilities
+RUN apk add --no-cache \
+    bash \
+    curl \
+    tzdata
+
+# Set timezone
+ENV TZ=Asia/Jerusalem
+
+# Create necessary directories
+RUN mkdir -p /var/lib/postgresql/data/log && \
+    chown -R postgres:postgres /var/lib/postgresql/data
+
+# Copy configuration files
+COPY db-config/postgresql-simple.conf /tmp/postgresql.conf
+COPY db-config/docker-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
+
+# Make entrypoint executable
+RUN chmod +x /usr/local/bin/custom-entrypoint.sh
+
+# Set custom entrypoint
+ENTRYPOINT ["/usr/local/bin/custom-entrypoint.sh"]
+CMD ["postgres"]
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-yaazoru} || exit 1
+
+# Labels for better organization
+LABEL maintainer="Yaazoru Team"
+LABEL description="PostgreSQL 15 with comprehensive audit logging and native PostgreSQL logging features"
+LABEL version="1.0"

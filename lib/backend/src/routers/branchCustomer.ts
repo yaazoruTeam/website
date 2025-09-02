@@ -1,10 +1,11 @@
 import { Router } from 'express'
 import * as branchCustomerController from '@controller/branchCustomer'
 import { hasRole } from '@middleware/auth'
+import AuditMiddleware from '../middleware/auditMiddleware'
 
 const branchCustomerRouter = Router()
 
-branchCustomerRouter.post('/', hasRole('admin'), branchCustomerController.createBranchCustomer)
+branchCustomerRouter.post('/', hasRole('admin'), AuditMiddleware.logCreate('branch_customers'), branchCustomerController.createBranchCustomer)
 branchCustomerRouter.get('/', hasRole('admin'), branchCustomerController.getAllBranchCustomer)
 branchCustomerRouter.get('/:id', hasRole('admin'), branchCustomerController.getBranchCustomerById)
 branchCustomerRouter.get(
@@ -17,7 +18,7 @@ branchCustomerRouter.get(
   hasRole('admin'),
   branchCustomerController.getBranchCustomerByCustomer_id,
 )
-branchCustomerRouter.put('/:id', hasRole('admin'), branchCustomerController.updateBranchCustomer)
-branchCustomerRouter.delete('/:id', hasRole('admin'), branchCustomerController.deleteBranchCustomer)
+branchCustomerRouter.put('/:id', hasRole('admin'), AuditMiddleware.logUpdate('branch_customers'), branchCustomerController.updateBranchCustomer)
+branchCustomerRouter.delete('/:id', hasRole('admin'), AuditMiddleware.logDelete('branch_customers'), branchCustomerController.deleteBranchCustomer)
 
 export default branchCustomerRouter
