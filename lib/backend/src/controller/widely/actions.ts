@@ -14,7 +14,9 @@ const terminateMobile = async (req: Request, res: Response, next: NextFunction):
       'prov_terminate_mobile',
       { endpoint_id: endpoint_id }
     )
-    res.status(result.error_code).json(result)
+    
+    validateWidelyResult(result, 'Failed to terminate mobile', false)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
@@ -84,7 +86,8 @@ const getPackagesWithInfo = async (req: Request, res: Response, next: NextFuncti
         package_types: [package_types]
       }
     )
-    res.status(result.error_code).json(result)
+    validateWidelyResult(result, 'Failed to get packages with info', false)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
@@ -111,7 +114,7 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
       }
     )
     validateWidelyResult(result, 'Failed to change package')
-    res.status(result.error_code).json(result)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
@@ -201,7 +204,7 @@ const addOneTimePackage = async (req: Request, res: Response, next: NextFunction
     )
 
     validateWidelyResult(result, 'Failed to add one-time package')
-    res.status(result.error_code).json(result)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
@@ -230,7 +233,8 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
       }
     )
 
-    res.status(result.error_code).json(result)
+    validateWidelyResult(result, `Failed to ${action} mobile`, false)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
@@ -243,7 +247,8 @@ const reregisterInHlr = async (req: Request, res: Response, next: NextFunction):
 
     const result: Widely.Model = await sendMobileAction(endpoint_id, 'reregister_in_hlr')
 
-    res.status(result.error_code).json(result)
+    validateWidelyResult(result, 'Failed to reregister in HLR', false)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
@@ -273,7 +278,7 @@ const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunct
 
     const operation = action ? 'lock' : 'unlock';
     validateWidelyResult(result, `Failed to ${operation} IMEI lock`);
-    res.status(result.error_code).json(result)
+    res.status(200).json(result)
   } catch (error: any) {
     next(error)
   }
