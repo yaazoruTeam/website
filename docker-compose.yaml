@@ -1,6 +1,8 @@
 services:
   backend:
-    image: yaazoru/backend:latest
+    build:
+      context: .
+      dockerfile: lib/backend/Dockerfile
     container_name: yaazoru-backend-prod
     ports:
       - "3006:3006"
@@ -13,14 +15,15 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       NODE_ENV: production
-    command: sh -c "npm install && npm run start"
     depends_on:
       - db
     networks:
       - yaazoru-internal
 
   frontend:
-    image: yaazoru/frontend:latest
+    build:
+      context: .
+      dockerfile: lib/frontend/Dockerfile
     container_name: react-frontend-nginx
     working_dir: /app
     ports:
