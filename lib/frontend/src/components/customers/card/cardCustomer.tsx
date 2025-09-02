@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Customer, EntityType } from '@model'
 import { deleteCustomer, getCustomerById } from '../../../api/customerApi'
 import CustomTypography from '../../designComponent/Typography'
