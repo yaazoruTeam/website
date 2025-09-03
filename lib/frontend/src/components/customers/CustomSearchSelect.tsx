@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FormControl, Select, MenuItem, Box /*, InputBase*/, OutlinedInput } from '@mui/material'
+import { FormControl, Select, MenuItem, OutlinedInput } from '@mui/material'
 import DateRangePickerComponent from '../designComponent/InlineDateRangePicker'
-import { ChevronDownIcon, ChevronLeftIcon, CalendarIcon } from '@heroicons/react/24/outline'
-import { colors } from '../../styles/theme'
 import { getCities } from '../../api/customerApi'
 import CityOptions from '../designComponent/CityOptions'
 import StatusCard from '../designComponent/StatusCard'
+import {
+  SelectContainer,
+  SelectWrapper,
+  CustomSearchSelectChevronDownIcon,
+  CustomSearchSelectChevronLeftIcon,
+  CustomSearchSelectCalendarIcon,
+} from '../designComponent/styles/customersStyles'
+import { colors } from 'src/styles/theme'
 
 interface CustomSearchSelectProps {
   placeholder?: string
@@ -91,23 +97,8 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
   }
 
   return (
-    <Box
-      ref={selectRef}
-      sx={{
-        width: 100,
-        height: 100,
-        display: 'grid',
-        position: 'relative',
-        zIndex: 1,
-      }}
-    >
-      <Box
-        sx={{
-          gridArea: '1 / 1',
-          width: '100%',
-          height: '100%',
-        }}
-      >
+    <SelectContainer ref={selectRef}>
+      <SelectWrapper>
         <FormControl fullWidth>
           <Select
             open={false}
@@ -119,57 +110,21 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
               backgroundColor: colors.neutral75,
               border: `1px solid ${colors.blueOverlay700}`,
               borderRadius: SwitchboardSelect ? 1 : 4,
-              width: '200px',
-              height: '50px',
-              padding: '0 10px',
-              display: 'flex',
-              alignItems: 'center',
               '& fieldset': { border: 'none' },
-              textAlign: 'right',
-              justifyContent: 'flex-end',
-              position: 'relative',
               '& .MuiSelect-icon': {
                 display: 'none',
               },
-              zIndex: 5,
             }}
             input={<OutlinedInput />}
             endAdornment={
               searchType === 'city' || searchType === 'status' || searchType === 'other' ? (
                 open ? (
-                  <ChevronDownIcon
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      color: colors.blue900,
-                      position: 'absolute',
-                      top: 16,
-                      left: '10px',
-                    }}
-                  />
+                  <CustomSearchSelectChevronDownIcon />
                 ) : (
-                  <ChevronLeftIcon
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      color: colors.blue900,
-                      position: 'absolute',
-                      top: 16,
-                      left: '10px',
-                    }}
-                  />
+                  <CustomSearchSelectChevronLeftIcon />
                 )
               ) : (
-                <CalendarIcon
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    color: colors.blue900,
-                    position: 'absolute',
-                    top: 16,
-                    left: '10px',
-                  }}
-                />
+                <CustomSearchSelectCalendarIcon />
               )
             }
           >
@@ -178,7 +133,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             </MenuItem>
           </Select>
         </FormControl>
-      </Box>
+      </SelectWrapper>
       {searchType === 'city' && open && (
         <CityOptions cities={options} onCitySelect={handleCitySelect} />
       )}
@@ -192,7 +147,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
           onClose={() => setOpen(false)}
         />
       )}
-    </Box>
+    </SelectContainer>
   )
 }
 
