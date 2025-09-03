@@ -71,7 +71,7 @@ export const SelectWrapper = styled(Box)({
 })
 
 // סלקט מותאם עם רקע, גבול ו-radius
-export const StyledSelect = styled('div') ({
+export const StyledSelect = styled('div')({
   backgroundColor: colors.c15,
   border: `1px solid ${colors.c22}`,
   width: '200px',
@@ -99,3 +99,29 @@ const IconBase = styled('div')({
 export const CustomSearchSelectChevronDownIcon = styled(ChevronDownIcon)(IconBase)
 export const CustomSearchSelectChevronLeftIcon = styled(ChevronLeftIcon)(IconBase)
 export const CustomSearchSelectCalendarIcon = styled(CalendarIcon)(IconBase)
+
+// ===========
+// AddCustomer
+// ===========
+
+export const AddCustomerContainer = styled(FlexColumn)({
+  width: '100%',
+  height: '100%',
+  alignItems: 'flex-start',
+  gap: '28px',
+})
+
+export const HeaderWrapper = styled(FlexRow)({
+  alignSelf: 'stretch',
+  justifyContent: 'flex-end',
+  alignItems: 'flex-start',
+  gap: '28px',
+  width: '100%',
+})
+
+export const TitleWrapper = styled(FlexRow)({
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  gap: '28px',
+  width: '100%',
+})
