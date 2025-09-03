@@ -39,4 +39,4 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 3006
 
 # פקודת ההפעלה של השרת
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
