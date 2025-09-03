@@ -24,14 +24,19 @@ services:
     build:
       context: .
       dockerfile: lib/frontend/Dockerfile
+      args:
+        VITE_BASE_URL: ${VITE_BASE_URL:-/api}
+        VITE_LIMIT: ${VITE_LIMIT:-50}
     container_name: react-frontend-nginx
     working_dir: /app
     ports:
       - "80:80"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-      - VITE_BASE_URL=${VITE_BASE_URL:-/}
+      - VITE_BASE_URL=${VITE_BASE_URL:-/api}
       - VITE_LIMIT=${VITE_LIMIT}
+    depends_on:
+      - backend
     networks:
       - yaazoru-internal
   db:

@@ -14,6 +14,12 @@ COPY lib/model ./model
 # העתקת קוד המקור
 COPY lib/frontend/. .
 
+# הגדרת משתני סביבה לבניה
+ARG VITE_BASE_URL=/api
+ARG VITE_LIMIT=50
+ENV VITE_BASE_URL=${VITE_BASE_URL}
+ENV VITE_LIMIT=${VITE_LIMIT}
+
 # בניית הפרויקט
 RUN npm run build
 
