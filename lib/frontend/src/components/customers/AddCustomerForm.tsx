@@ -4,6 +4,7 @@ import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { CustomButton } from '../designComponent/Button'
 import { useTranslation } from 'react-i18next'
+import { validatePhoneNumber } from '../../utils/phoneValidate'
 
 interface AddCustomerFormProps {
   onSubmit: (data: AddCustomerFormInputs) => void
@@ -142,14 +143,11 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
           >
             <CustomTextField
               control={control}
-              name='phone_number'
+              name="phone_number"
               label={t('phone')}
               rules={{
                 required: t('requiredField'),
-                pattern: {
-                  value: /^[\d\s\-\+\(\)]{9,15}$/,
-                  message: t('errorPhone'),
-                },
+                validate: (value: string) => validatePhoneNumber(value, t),
               }}
             />
             <CustomTextField
@@ -157,10 +155,8 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               name='additional_phone'
               label={t('additionalPhone')}
               rules={{
-                pattern: {
-                  value: /^[\d\s\-\+\(\)]{9,15}$/,
-                  message: t('errorPhone'),
-                },
+                required: t('requiredField'),
+                validate: (value: string) => validatePhoneNumber(value, t),
               }}
             />
             <CustomTextField
