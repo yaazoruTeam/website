@@ -23,7 +23,7 @@ FROM nginx:alpine
 # Copy the built React app
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx configuration
+# Copy custom nginx configuration (relative to build context root)
 COPY lib/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create startup script with logging
