@@ -46,7 +46,6 @@ const AddCustomer: React.FC = () => {
       >
         <Box
           sx={{
-            justifyContent: 'flex-end',
             alignItems: 'center',
             gap: 3.5,
             display: 'flex',

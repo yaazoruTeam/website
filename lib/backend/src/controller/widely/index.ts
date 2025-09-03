@@ -12,5 +12,6 @@ export {
     changeNetwork,
     addOneTimePackage,
     freezeUnFreezeMobile,
-    updateImeiLockStatus
+    updateImeiLockStatus,
+    reregisterInHlr
 } from './actions'
