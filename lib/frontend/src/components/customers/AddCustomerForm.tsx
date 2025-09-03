@@ -155,8 +155,12 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               name='additional_phone'
               label={t('additionalPhone')}
               rules={{
-                required: t('requiredField'),
-                validate: (value: string) => validatePhoneNumber(value, t),
+                validate: (value: string) => {
+                  if (value) {
+                    return validatePhoneNumber(value, t);
+                  }
+                  return true;
+                },
               }}
             />
             <CustomTextField

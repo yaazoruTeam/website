@@ -1,4 +1,3 @@
-// phoneValidation.ts
 export const validatePhoneNumber = (value: string, t: (key: string) => string) => {
   // לוודא שרק ספרות
   if (!/^\d+$/.test(value)) {
@@ -16,7 +15,7 @@ export const validatePhoneNumber = (value: string, t: (key: string) => string) =
     if (value.length !== 9) {
       return t('errorPhone');
     }
-  } else if (/^05[0-9]/.test(value)) {
+  } else if (/^05[02345789]/.test(value)) {
     // מספר סלולרי (050, 052, 053, 054, 055, 058, 059)
     if (value.length !== 10) {
       return t('errorPhone');
