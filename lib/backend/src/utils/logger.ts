@@ -28,31 +28,55 @@ export const withUser = <T>(userId: string, fn: () => T): T => {
   return userContext.run({ userId }, fn);
 };
 
-// Enhanced format settings
-const logFormat = winston.format.combine(
-  winston.format.timestamp({ 
-    format: () => new Date().toLocaleString('he-IL', {
-      timeZone: 'Asia/Jerusalem',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }).replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}:\d{2})/, '$3-$2-$1 $4')
-  }),
+// ✅ CHANGE: JSON format for file logs (suitable for Datadog Agent)
+const jsonFileFormat = winston.format.combine(
+  winston.format.timestamp({ format: () => new Date().toLocaleString('he-IL',{
+    timeZone: 'Asia/Jerusalem',
+    year:'2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).replace(/(d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}:\(d{2})/, '$3-$2-$1 $4'),
+}),
   winston.format.errors({ stack: true }),
-  winston.format.json(), // מאפשר הדפסה של אובייקטים
-  winston.format.printf(({ level, message, timestamp, stack, ...meta }) => {
-    // Get current user ID - exactly like getting timestamp
+  // ✅ Add userId to log info
+  winston.format((info) => {
     const userId = getCurrentUserId();
-    const userInfo = userId ? ` [User: ${userId}]` : '';
-    
-    const metaString = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
-    return stack
-      ? `[${timestamp}]${userInfo} ${level}: ${message}${metaString}\n${stack}`
-      : `[${timestamp}]${userInfo} ${level}: ${message}${metaString}`;
+    if (userId) {
+      info.userId = userId;
+    }
+    return info;
+  })(),
+  // ✅ Custom JSON formatter to ensure proper JSON output
+  winston.format.printf((info) => {
+    const logObject: Record<string, any> = {
+      timestamp: info.timestamp,
+      level: info.level,
+      message: info.message,
+      service: info.service || 'yaazoru-backend'
+    };
+
+    // Add userId if exists
+    if (info.userId) {
+      logObject.userId = info.userId;
+    }
+
+    // Add stack trace if exists
+    if (info.stack) {
+      logObject.stack = info.stack;
+    }
+
+    // Add any additional metadata
+    Object.keys(info).forEach(key => {
+      if (!['timestamp', 'level', 'message', 'service', 'userId', 'stack', 'splat', Symbol.for('level'), Symbol.for('message')].includes(key)) {
+        logObject[key] = info[key];
+      }
+    });
+
+    return JSON.stringify(logObject);
   })
 );
 
@@ -68,19 +92,21 @@ const getLogLevel = (): string => {
 // Create the logger
 const logger = winston.createLogger({
   level: getLogLevel(),
-  format: logFormat,
+  format: jsonFileFormat, // ✅ שימוש בפורמט JSON לקבצים
   defaultMeta: { service: 'yaazoru-backend' },
   transports: [
     // Save error logs to error.log file
     new winston.transports.File({
       filename: path.join(logDirectory, 'error.log'),
-      level: 'error'
+      level: 'error',
+      format: jsonFileFormat // ✅ JSON עבור קובץ השגיאות
     }),
 
     // Save all logs to combined.log file (including debug in development)
     new winston.transports.File({
       filename: path.join(logDirectory, 'combined.log'),
-      level: getLogLevel()
+      level: getLogLevel(),
+      format: jsonFileFormat // ✅ JSON עבור קובץ הלוגים המשולב
     }),
   ],
 });
@@ -103,6 +129,14 @@ if (process.env.NODE_ENV !== 'production') {
             : `[${timestamp}]${userInfo} ${level}: ${message}${metaString}`;
         })
       )
+    })
+  );
+} else {
+  // ✅ בפרודקשן - גם הקונסול יהיה בפורמט JSON
+  logger.add(
+    new winston.transports.Console({
+      level: getLogLevel(),
+      format: jsonFileFormat
     })
   );
 }
