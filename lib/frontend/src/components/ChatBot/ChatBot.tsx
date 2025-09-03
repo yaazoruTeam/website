@@ -58,13 +58,34 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isRecordingState, setIsRecordingState] = useState(false);
-  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
+  const [isUserNearBottom, setIsUserNearBottom] = useState(true);
   
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentTempAudioCommentIdRef = useRef<string | null>(null);
 
   const { t } = useTranslation();
+
+  // פונקציה לבדיקה אם המשתמש נמצא קרוב לתחתית הצ'אט
+  const checkIfUserNearBottom = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return true;
+    
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 50; // 50px tolerance
+    setIsUserNearBottom(isNearBottom);
+    return isNearBottom;
+  }, []);
+
+  // פונקציה חכמה לגלילה לתחתית
+  const scrollToBottomIfNeeded = useCallback(() => {
+    if (isUserNearBottom && messagesEndRef.current) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [isUserNearBottom]);
 
   const addCommentsToList = (newComments: ClientComment[], isLoadMore: boolean) => {
     if (isLoadMore) {
@@ -83,6 +104,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
       setComments(sorted);
+      // גלול לתחתית רק אם זו הטעינה הראשונה או אם המשתמש נמצא בתחתית
       setShouldScrollToBottom(true);
     }
   };
@@ -108,6 +130,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
       if (prev.some(c => String(c.comment_id) === String(tempComment.comment_id))) return prev;
       return [...prev, tempComment];
     });
+    // כשמוסיפים הודעה חדשה, תמיד גלול לתחתית
     setShouldScrollToBottom(true);
   };
 
@@ -200,12 +223,16 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
 
     const { scrollTop } = messagesContainerRef.current;
     
+    // בדיקה אם המשתמש גלל למעלה לטעינת הודעות נוספות
     if (scrollTop <= 50) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
       fetchComments(nextPage, true);
     }
-  }, [isLoadingMore, hasMore, currentPage, fetchComments]);
+    
+    // עדכון המצב אם המשתמש נמצא קרוב לתחתית
+    checkIfUserNearBottom();
+  }, [isLoadingMore, hasMore, currentPage, fetchComments, checkIfUserNearBottom]);
 
   const handleRecordingStateChange = useCallback((isRecording: boolean) => {
     setIsRecordingState(isRecording);
@@ -222,15 +249,15 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
     fetchComments(1);
   }, [fetchComments]);
 
+  // useEffect לגלילה חכמה
   useEffect(() => {
     if (shouldScrollToBottom) {
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        setShouldScrollToBottom(false);
-      }, 100);
+      scrollToBottomIfNeeded();
+      setShouldScrollToBottom(false);
     }
-  }, [shouldScrollToBottom]);
+  }, [shouldScrollToBottom, scrollToBottomIfNeeded]);
 
+  // useEffect לטיפול בגלילת המשתמש
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
