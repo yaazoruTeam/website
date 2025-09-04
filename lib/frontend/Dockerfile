@@ -26,6 +26,9 @@ RUN npm run build
 # שלב 2: Nginx להגשָת האתר
 FROM nginx:alpine
 
+# Install OpenSSL for generating SSL certificates
+RUN apk add --no-cache openssl
+
 # Copy the built React app
 COPY --from=builder /app/dist /usr/share/nginx/html
 
