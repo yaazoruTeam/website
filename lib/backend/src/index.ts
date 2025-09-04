@@ -3,6 +3,20 @@ import { router } from '@routers/router'
 import { errorHandler } from '@middleware/errorHandler'
 import config from '@config/index'
 import { createSchema } from '@db/schema'
+import logger from '@utils/logger'
+
+// Import express type extensions globally
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        user_id: string;
+        role?: string;
+      };
+    }
+  }
+}
 
 const cors = require('cors')
 
@@ -24,27 +38,26 @@ app.use(errorHandler)
 // פונקציה להפעלת השרת
 const startServer = async () => {
   try {
-    console.log("Creating database schema...");
+    logger.debug("Creating database schema...");
     await createSchema();
-    
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-      console.log(`Health check available at http://localhost:${PORT}/health`);
+      logger.info(`Server is running on http://localhost:${PORT}`);
+      logger.info(`Health check available at http://localhost:${PORT}/health`);
     });
   } catch (error) {
-    console.error("Failed to start server:", error);
+    logger.error("Failed to start server:", error);
     process.exit(1);
   }
 };
 
 // טיפול בסגירה נכונה
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
+  logger.info('SIGTERM received, shutting down gracefully');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
+  logger.info('SIGINT received, shutting down gracefully');
   process.exit(0);
 });
 

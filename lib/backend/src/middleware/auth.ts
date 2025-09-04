@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { HttpError, User, JwtPayload } from '@model'
 import config from '@config/index'
+import { setUserContext } from '../utils/logger'
 
 const JWT_SECRET = config.jwt.secret
 
@@ -26,6 +27,15 @@ const hasRole = (...roles: Array<User.Model['role']>) => {
         }
         return next(error)
       }
+
+      // Add user info to request
+      req.user = {
+        id: decoded.user_id,
+        user_id: decoded.user_id
+      };
+
+      // Set user context for logger
+      setUserContext(decoded.user_id);
 
       next()
     } catch (error) {
