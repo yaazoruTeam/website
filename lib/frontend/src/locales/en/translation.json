@@ -300,5 +300,6 @@
   "serialNumber": "Serial Number",
   "plan": "Plan",
   "registrationDateDevice": "Registration Date Device",
-  "releaseDate": "Release Date"
+  "releaseDate": "Release Date",
+  "noPreviousComments": "No previous comments"
 }

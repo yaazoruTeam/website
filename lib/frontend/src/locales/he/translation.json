@@ -301,5 +301,6 @@
   "serialNumber": "מספר סידורי",
   "plan": "מסלול",
   "registrationDateDevice": "תאריך רישום מכשיר",
-  "releaseDate": "תאריך הקמה"
+  "releaseDate": "תאריך הקמה",
+  "No previous comments": "אין הערות קודמות"
 }
