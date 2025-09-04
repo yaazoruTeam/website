@@ -1,8 +1,9 @@
-import { styled, Box, BoxProps } from '@mui/material'
+import { styled, Box, BoxProps, TextField } from '@mui/material'
 import { FlexRow, FlexRowSpaceBetween, FlexColumn } from './baseStyles'
 import { colors } from '../../../styles/theme'
 import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { CalendarIcon } from '@mui/x-date-pickers'
+import { Customer } from '@model'
 
 // =============
 // CustomersList
@@ -176,4 +177,106 @@ export const AddressRow = styled(FlexRow)<{ isMobile?: boolean }>(({ theme, isMo
 export const ActionsRow = styled(FlexRow)(() => ({
   width: '100%',
   justifyContent: 'flex-end',
+}))
+
+// ================
+// CustomerSelector
+// ================
+
+// עוטף ראשי של כל הקומפוננטה
+export const CustomerSelectorSelectorContainer = styled(FlexColumn)(({ theme }) => ({
+  width: '100%',
+  height: '100%',
+  padding: theme.spacing(3.5),
+  backgroundColor: colors.c6,
+  borderRadius: theme.shape.borderRadius,
+  justifyContent: 'flex-start',
+  alignItems: 'flex-end',
+  gap: theme.spacing(3.5),
+  direction: 'rtl',
+}))
+
+// עוטף עליון של הכותרת + השדות
+export const CustomerSelectorHeaderSection = styled(FlexColumn)({
+  width: '100%',
+  direction: 'rtl',
+})
+
+// Box ל-noOptionsText
+export const NoOptionsContainer = styled(Box)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+}))
+
+// TextField מותאם ל-autocomplete
+export const CustomerAutocompleteInput = styled(TextField)(() => ({
+  borderRadius: '6px',
+  background: colors.feild,
+  alignSelf: 'stretch',
+  height: '44px',
+  width: '100%',
+  '& .MuiInputBase-root': {
+    height: '44px',
+    display: 'flex',
+    alignItems: 'center',
+    paddingRight: '12px',
+    paddingLeft: '12px',
+  },
+  '& input': {
+    textAlign: 'right',
+    direction: 'rtl',
+    padding: 0,
+  },
+  '@media (max-width: 600px)': {
+    width: '100%',
+    padding: '8px',
+    gap: '8px',
+  },
+  '@media (min-width: 600px)': {
+    width: '100%',
+    padding: '10px',
+  },
+}))
+
+// שורה של האוטוקומפליט + טלפונים + מייל
+export const CustomerSelectorFieldsRow = styled(FlexRow)(({ theme }) => ({
+  width: '100%',
+  alignSelf: 'stretch',
+  justifyContent: 'flex-end',
+  alignItems: 'flex-start',
+  gap: theme.spacing(3.5),
+  display: 'inline-flex',
+}))
+
+// Box ראשון – עם justifyContent: 'flex-end' + display: 'flex'
+export const CustomerSelectorBoxEndFlex = styled(FlexColumn)(() => ({
+  width: 393.33,
+  height: 83,
+  alignItems: 'flex-end',
+  gap: 1,
+  justifyContent: 'flex-end',
+  textAlign: 'right',
+  direction: 'rtl',
+}))
+
+// Box שני – עם justifyContent: 'center' + display: 'inline-flex' + visibility דינמי
+export const CustomerSelectorBoxCenter = styled(Box)<{ selectedCustomer: Customer.Model | null }>(({ selectedCustomer }) => ({
+  width: 393.33,
+  height: 90,
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-end',
+  gap: 1,
+  display: 'inline-flex',
+  visibility: selectedCustomer ? 'visible' : 'hidden',
+}))
+
+// מודל הוספת לקוח
+export const CustomerSelectorModalContent = styled(Box)<{ isMobile: boolean }>(({ theme, isMobile }) => ({
+  width: isMobile ? '100%' : 400,
+  backgroundColor: '#fff',
+  borderRadius: 2,
+  padding: theme.spacing(3),
+  direction: 'rtl',
 }))
