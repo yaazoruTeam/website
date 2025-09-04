@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { CreditDetails, HttpError } from '@model'
 import config from '@config/index'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -36,8 +37,8 @@ const createCreditDetails = async (
     }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized)
     res.status(201).json(creditDetails)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -54,8 +55,8 @@ const getCreditDetails = async (req: Request, res: Response, next: NextFunction)
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -76,8 +77,8 @@ const getCreditDetailsById = async (
     }
     const creditDetails = await db.CreditDetails.getCreditDetailsById(req.params.id)
     res.status(200).json(creditDetails)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -100,8 +101,8 @@ const updateCreditDetails = async (
     }
     const updateCreditDetails = await db.CreditDetails.updateCreditDetails(req.params.id, sanitized)
     res.status(200).json(updateCreditDetails)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -119,8 +120,8 @@ const updateCreditDetails = async (
 //         }
 //         const deleteCreditDetails = await db.CreditDetails.(req.params.id);
 //         res.status(200).json(deleteCustomer);
-//     } catch (error: any) {
-//         next(error);
+//     } catch (error: unknown) {
+//             handleError(error, next)
 //     }
 // };
 

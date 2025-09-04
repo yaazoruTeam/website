@@ -7,6 +7,7 @@ import { colors } from "../../styles/theme";
 import { useTranslation } from "react-i18next";
 import { CustomButton } from "../designComponent/Button";
 import { Widely } from "@model";
+import { AxiosError } from "axios";
 
 interface ModelPackagesProps {
     packages: { value: string; label: string }[];
@@ -66,8 +67,9 @@ const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelP
                                         close();
                                         //to do:Adding a system message for success
                                     }
-                                } catch (err: any) {
-                                    setError(err?.response?.data?.error || err?.message || t('failedToChangePackage'));
+                                } catch (err: AxiosError | unknown) {
+                                    setError(err instanceof AxiosError && err?.response?.data?.error || err instanceof AxiosError && err?.message || t('failedToChangePackage'));
+                                    alert(`Error changing package: ${err instanceof AxiosError ? err?.response?.data?.error || err?.message : err}`);
                                 }
                             }
                         }}

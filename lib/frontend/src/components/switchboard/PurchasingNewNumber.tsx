@@ -12,25 +12,24 @@ import usaIcon from '../../assets/USA.svg'
 import israelIcon from '../../assets/Israel.svg'
 import englandIcon from '../../assets/England.svg'
 import CustomSelect from '../designComponent/CustomSelect'
+import { Switchboard } from '@model'
+
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type NumberPlan = Switchboard.NumberPlan
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type PurchasingNumberFormData = Switchboard.PurchasingNumberFormData
 interface PurchasingNewNumberProps {
   open: boolean
   onClose: () => void
-}
-interface DeatailsFormInputs {
-  personalID: string
-  target: string
-  notes: string
-  SMSToEmail: string
-  notifyEmailCalls: string
 }
 
 const PurchasingNewNumber: React.FC<PurchasingNewNumberProps> = ({ open, onClose }) => {
   const { t } = useTranslation()
   //to do : קריאת שרת לכל סוגי המספרים והמחירים שלהם לפי זה להציג את זה
-  const [numbers, setNumbers] = useState<any[]>([])
+  const [numbers, setNumbers] = useState<NumberPlan[]>([])
   const [selectedPrice, setSelectedPrice] = useState<string>('') // או '24' כברירת מחדל
   const [openDetailsForm, setOpenDetailsForm] = useState<boolean>(false)
-  const { control, handleSubmit } = useForm<DeatailsFormInputs>({})
+  const { control, handleSubmit } = useForm<PurchasingNumberFormData>({})
   const [errorNotSelectedNumber, setErrorNotSelectedNumber] = useState<boolean>(false)
 
   useEffect(() => {

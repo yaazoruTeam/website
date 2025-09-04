@@ -8,11 +8,15 @@ import { ArrowDownOnSquareIcon, ArrowPathIcon } from '@heroicons/react/24/outlin
 import PhoneNumber from './PhoneNumer'
 import { formatDateToString } from '../designComponent/FormatDate'
 import CustomTable from '../designComponent/CustomTable'
+import { Switchboard } from '@model'
+
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type CallLogEntry = Switchboard.CallLogEntry
 
 const CallLog: React.FC = () => {
   const { t } = useTranslation()
   const { callId } = useParams()
-  const [calls, setCalls] = useState<any[]>([
+  const [calls, setCalls] = useState<CallLogEntry[]>([
     //to do:Change the data type to match the actual data.
     {
       country: '972-79-606-4286',
@@ -40,7 +44,7 @@ const CallLog: React.FC = () => {
   const tableData = calls.map((call) => ({
     country: <PhoneNumber country='Israel' phoneNumber={call.country} />,
     target: <PhoneNumber country='USA' phoneNumber={call.target} />,
-    date: formatDateToString(call.date),
+    date: formatDateToString(new Date(call.date)),
     durationCall: call.durationCall,
     timeCall: call.timeCall,
     costInShekels: call.costInShekels,

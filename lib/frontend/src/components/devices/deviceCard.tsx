@@ -5,6 +5,7 @@ import { getDeviceById } from '../../api/device'
 import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
 import { Device, CustomerDevice } from '@model'
 import DeviceCardContent from './DeviceCardContent'
+import { AxiosError } from 'axios'
 
 const DeviceCard: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -32,9 +33,10 @@ const DeviceCard: React.FC = () => {
         const customerDeviceData = await getCustomerDeviceByDeviceId(id)
         setCustomerDevice(customerDeviceData)
         
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch device data')
-        console.error('Error fetching device:', err)
+      } catch (err: AxiosError | unknown) {
+        // if (err instanceof AxiosError && err.response?.status === 409) {
+        setError(err instanceof AxiosError && err.response?.data || 'Failed to fetch device data')
+        alert(`Error fetching device: ${err instanceof AxiosError ? err.response?.data : err}`)
       } finally {
         setLoading(false)
       }

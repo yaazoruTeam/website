@@ -22,11 +22,17 @@ interface PackagesData {
 }
 
 // Type guard לבדיקת מבנה החבילות
-const isPackagesData = (obj: any): obj is PackagesData => {
-    return obj && 
+const isPackagesData = (obj: unknown): obj is PackagesData => {
+    return obj !== null && 
+           obj !== undefined &&
+           typeof obj === 'object' && 
+           'data' in obj &&
+           obj.data !== null &&
            typeof obj.data === 'object' && 
+           'items' in obj.data &&
            Array.isArray(obj.data.items);
 }
+
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { CustomTextField } from '../designComponent/Input'
@@ -46,6 +52,7 @@ import {
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import ModelPackages from './modelPackage'
 import SwitchWithLoader from '../designComponent/SwitchWithLoader'
+import { AxiosError } from 'axios'
 
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -219,10 +226,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
             }
-        } catch (err: any) {
+        } catch (err: AxiosError | unknown) {
             console.error('Error in comprehensive reset:', err);
-            const errorMsg = err?.response?.data?.message || err?.message || t('comprehensiveResetError');
+            const errorMsg = err instanceof AxiosError ? err.response?.data?.message || err.message : t('comprehensiveResetError');
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
+            alert(`Error in comprehensive reset: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -247,14 +255,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setLineSuspension(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                t('errorUpdatingLineSuspension');
+            let errorMessage = t('errorUpdatingLineSuspension');
+            
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { message?: string } } };
+                errorMessage = axiosError?.response?.data?.message || errorMessage;
+            }
+            
             setLineSuspensionError(errorMessage);
 
             console.error('Error updating line suspension:', error);
@@ -284,14 +298,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא נעשה refresh כדי לא לדרוס את השינוי
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setImeiLocked(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                t('errorUpdatingImeiLock');
+            let errorMessage = t('errorUpdatingImeiLock');
+            
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { message?: string } } };
+                errorMessage = axiosError?.response?.data?.message || errorMessage;
+            }
+            
             setImeiLockError(errorMessage);
 
             console.error('Error updating IMEI lock:', error);
@@ -396,11 +416,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
-        } catch (err: any) {
+        } catch (err: AxiosError | unknown) {
             // Parse error response to determine appropriate user message
-            const errorMessage = err?.response?.data?.message ||
-                err?.response?.data?.error?.message ||
-                err?.message || '';
+            const errorMessage = err instanceof AxiosError ? err.response?.data?.message || err.message : '';
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
                 'SIM number not found.': 'simNumberNotFound',

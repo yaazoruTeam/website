@@ -1,5 +1,5 @@
-import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
+import getDbConnection from '@db/connection'
 
 const createBranchSchema = async () => {
   console.log('create branch schema')

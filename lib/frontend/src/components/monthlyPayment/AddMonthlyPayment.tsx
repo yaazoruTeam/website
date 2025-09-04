@@ -3,7 +3,7 @@ import CustomerSelector from '../customers/CustomerSelector'
 import PaymentForm from './PaymentForm'
 import FormToAddItems from './FormToAddItems'
 import { CustomButton } from '../designComponent/Button'
-import { ItemForMonthlyPayment, MonthlyPaymentManagement } from '@model'
+import { Customer, ItemForMonthlyPayment, MonthlyPaymentManagement } from '@model'
 import { useMediaQuery } from '@mui/material'
 import { createMonthlyPayment } from '../../api/monthlyPaymentManagement'
 import { useNavigate } from 'react-router-dom'
@@ -16,10 +16,10 @@ export interface AddMonthlyPaymentFormInputs {
 
 const AddMonthlyPayment: React.FC = () => {
   const { t } = useTranslation()
-  const [customerData, setCustomerData] = useState<any>(null) // נתוני לקוח
+  const [customerData, setCustomerData] = useState<Customer.Model | null>(null) // נתוני לקוח
   const [itemsData, setItemsData] = useState<ItemForMonthlyPayment.Model[]>([]) // נתוני פריטים
-  const [paymentData, setPaymentData] = useState<any>(null) // נתוני תשלום
-  const [timeData, setTimeData] = useState<any>(null) // נתוני זמן ההוראת קבע
+  const [paymentData, setPaymentData] = useState<any>(null) // נתוני תשלום//to do:Change to an accurate type 
+  const [timeData, setTimeData] = useState<any>(null) // נתוני זמן ההוראת קבע //to do:Change to an accurate type
   const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null)
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
@@ -41,11 +41,11 @@ const AddMonthlyPayment: React.FC = () => {
     })
 
     const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
-      customer_id: customerData.customer_id,
+      customer_id: customerData?.customer_id || '',
       monthlyPayment: {
         monthlyPayment_id: '',
-        customer_id: customerData.customer_id,
-        customer_name: `${customerData.first_name} ${customerData.last_name}`,
+        customer_id: customerData?.customer_id || '',
+        customer_name: `${customerData?.first_name || ''} ${customerData?.last_name || ''}`,
         belongsOrganization: 'יעזורו',
         start_date: timeData.startDate,
         end_date: calculateEndDate(
@@ -68,10 +68,10 @@ const AddMonthlyPayment: React.FC = () => {
       },
       creditDetails: {
         credit_id: '',
-        customer_id: customerData.customer_id,
-        token: paymentData.token,
-        expiry_month: paymentData.expiry_month,
-        expiry_year: paymentData.expiry_year,
+        customer_id: customerData?.customer_id || '',
+        token: paymentData?.token || '',
+        expiry_month: paymentData?.expiry_month || '',
+        expiry_year: paymentData?.expiry_year || '',
         created_at: new Date(Date.now()),
         update_at: new Date(Date.now()),
       },
@@ -143,10 +143,10 @@ const AddMonthlyPayment: React.FC = () => {
       timeData,
     })
     try {
-      const responsePyment: any = await paymentFormRef.current?.chargeCcData()
+      const responsePayment: any = await paymentFormRef.current?.chargeCcData() //to do:Change to an accurate type
       console.log('Payment completed')
-      console.log(responsePyment)
-      console.log('pymentData:', paymentData)
+      console.log(responsePayment)
+      console.log('paymentData:', paymentData)
     } catch (error) {
       console.error('Error during payment:', error)
     }

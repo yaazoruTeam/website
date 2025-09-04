@@ -1,9 +1,10 @@
-import { SpeechClient } from "@google-cloud/speech";
+import { protos, SpeechClient } from "@google-cloud/speech";
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
 
 import config from '@config/index'
+import { handleError } from "./err";
 
 let client: SpeechClient;
 
@@ -34,8 +35,8 @@ const createComment = async (
     const sanitized = Comment.sanitize(req.body, false);
     const comment = await db.Comment.createComment(sanitized);
     res.status(201).json(comment);
-  } catch (error: any) {
-    next(error);
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 };
 
@@ -56,8 +57,8 @@ const getComments = async (
       totalPages: Math.ceil(total / limit),
       total,
     });
-  } catch (error: any) {
-    next(error);
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 };
 
@@ -85,8 +86,8 @@ const getCommentById = async (
       throw error;
     }
     res.status(200).json(comment);
-  } catch (error: any) {
-    next(error);
+  } catch (error: unknown) {
+    handleError(error, next);
   }
 };
 
@@ -120,8 +121,8 @@ const getCommentsByEntity = async (
       totalPages: Math.ceil(total / limit),
       total,
     });
-  } catch (error: any) {
-    next(error);
+  } catch (error: unknown) {
+    handleError(error, next);
   }
 };
 
@@ -140,8 +141,8 @@ const updateComment = async (
       sanitized
     );
     res.status(200).json(updatedComment);
-  } catch (error: any) {
-    next(error);
+  } catch (error: unknown) {
+    handleError(error, next);
   }
 };
 
@@ -153,8 +154,8 @@ const deleteComment = async (
   try {
     const deletedComment = await db.Comment.deleteComment(req.params.id);
     res.status(200).json(deletedComment);
-  } catch (error: any) {
-    next(error);
+  } catch (error: unknown) {
+    handleError(error, next);
   }
 };
 
@@ -167,7 +168,11 @@ const transcribeAudio = async (
     const audioBuffer = req.file?.buffer;
 
     if (!audioBuffer) {
-      res.status(400).json({ message: "No audio provided" });
+      const error: HttpError.Model = {
+        status: 400,
+        message: "No audio provided",
+      };
+      next(error)
       return;
     }
 
@@ -185,13 +190,13 @@ const transcribeAudio = async (
     });
 
     const transcription = response.results
-      ?.map((result: any) => result.alternatives?.[0].transcript)
+      ?.map((result: protos.google.cloud.speech.v1.ISpeechRecognitionResult) => result.alternatives?.[0].transcript)
       .join(" ")
       .trim();
 
     res.status(200).json({ transcription });
   } catch (error) {
-    next(error);
+    handleError(error, next);
   }
 };
 

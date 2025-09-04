@@ -4,8 +4,9 @@ import '@fontsource/heebo'
 import Status from '../../components/designComponent/Status'
 import { colors } from '../../styles/theme'
 
+type StatusType = "active" | "inactive" | "blocked" | "canceled" | "imei_locked"
 interface CustomTableRowProps {
-  data: { [key: string]: any }
+  data: { [key: string]: string | number | boolean | StatusType | undefined }
 }
 
 const CustomTableRow: React.FC<CustomTableRowProps> = ({ data }) => {
@@ -29,8 +30,11 @@ const CustomTableRow: React.FC<CustomTableRowProps> = ({ data }) => {
           }}
           key={index}
         >
-          {key === 'status' ? <Status status={value} /> : value}
-          {value}
+          {key === 'status' && typeof value === 'string' && ['active', 'inactive', 'blocked', 'canceled', 'imei_locked'].includes(value) ? (
+            <Status status={value as StatusType} />
+          ) : (
+            value
+          )}
         </TableCell>
       ))}
     </TableRow>

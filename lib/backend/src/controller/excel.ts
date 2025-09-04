@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { readExcelFile } from '@utils/excel'
-import { processExcelData } from '@service/ReadExcelDevicesForDonors'
+import { processExcelData, ExcelRowData } from '@service/ReadExcelDevicesForDonors'
 import * as fs from 'fs'
 import * as path from 'path'
+import { handleError } from './err'
 
 const handleReadExcelFile = async (
   req: Request,
@@ -30,7 +31,7 @@ const handleReadExcelFile = async (
     console.log('Excel file read successfully, rows:', data.length)
 
     // עיבוד הנתונים
-    const processingResults = await processExcelData(data)
+    const processingResults = await processExcelData(data as ExcelRowData[])
     console.log('Data processed and saved to DB')
     console.log(`✅ Success: ${processingResults.successCount}/${processingResults.totalRows}`)
     if (processingResults.errorsCount > 0) {
@@ -57,7 +58,7 @@ const handleReadExcelFile = async (
       }),
       data: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     // מחיקת הקובץ הזמני במקרה של שגיאה
     if (req.file?.path) {
       try {
@@ -66,8 +67,7 @@ const handleReadExcelFile = async (
         console.warn('Could not delete temporary file after error:', deleteError)
       }
     }
-    
-    next(error)
+    handleError(error, next)
   }
 }
 

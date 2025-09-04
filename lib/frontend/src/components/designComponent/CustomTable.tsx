@@ -6,14 +6,16 @@ import { useTranslation } from 'react-i18next'
 import { colors } from '../../styles/theme'
 import CustomTypography from './Typography'
 
+export type TableRowData = Record<string, React.ReactNode>
+
 interface CustomTableProps {
   columns: { label: string, key: string }[]
-  data: { [key: string]: any }[]
-  onRowClick?: (rowData: any, rowIndex: number) => void
+  data: TableRowData[]
+  onRowClick?: (rowData: TableRowData, rowIndex: number) => void
   showSummary?: { page: number, limit: number, total: number, totalPages: number, onPageChange: (page: number) => void }
   alignLastColumnLeft?: boolean
   expandedRowIndex?: number | null
-  renderExpandedRow?: (rowData: any, rowIndex: number) => React.ReactNode
+  renderExpandedRow?: (rowData: TableRowData, rowIndex: number) => React.ReactNode
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {

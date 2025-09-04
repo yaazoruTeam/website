@@ -8,12 +8,15 @@ import {
 } from '../../api/customerApi'
 import { Customer } from '@model'
 
+type FilterType = 
+  | { type: 'city'; value: string }
+  | { type: 'status'; value: 'active' | 'inactive' }
+  | { type: 'date'; value: { start: Date; end: Date } }
+  | { type: 'search'; value: string }
+
 interface UseFetchCustomersProps {
   page: number
-  filterType?: {
-    type: 'city' | 'status' | 'date' | 'search'
-    value: any
-  }
+  filterType?: FilterType
 }
 
 export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) => {
@@ -59,11 +62,16 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
         setError(null) // Clear any previous errors
         setNoResults(false) // Clear no results flag when we have data
         setNoResultsType('general') // Reset type
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching customers:', error)
 
         // Handle 404 as "no results found" rather than an error
-        if (error.response?.status === 404 || error.message?.includes('404')) {
+        const isAxiosError = error && typeof error === 'object' && 'response' in error;
+        const axiosError = isAxiosError ? error as { response?: { status?: number } } : null;
+        const is404 = axiosError?.response?.status === 404 || 
+                     (error instanceof Error && error.message?.includes('404'));
+        
+        if (is404) {
           setCustomers([])
           setTotal(0)
           setError(null) // Clear error for 404 - this is just "no results"
@@ -84,7 +92,8 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           }
         } else {
           // Real errors (network, 500, etc.)
-          setError(`Failed to fetch customers: ${error.message}`)
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          setError(`Failed to fetch customers: ${errorMessage}`)
           setCustomers([])
           setTotal(0)
           setNoResults(false)

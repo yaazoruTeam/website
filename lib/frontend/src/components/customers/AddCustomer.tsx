@@ -5,6 +5,7 @@ import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { addCustomer } from './addCustomerLogic'
+import {  AxiosError } from 'axios'
 
 const AddCustomer: React.FC = () => {
   const { t } = useTranslation()
@@ -15,8 +16,8 @@ const AddCustomer: React.FC = () => {
       alert('הלקוח נוסף בהצלחה')
       console.log(newCustomer)
       window.location.reload()
-    } catch (err: any) {
-      if (err.status === 409) {
+    } catch (err: AxiosError | unknown) {
+      if (err instanceof AxiosError && err.response?.status === 409) {
         alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`)
       }
       alert(`שגיאה: ${err}`)

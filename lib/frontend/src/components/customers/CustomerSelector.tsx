@@ -22,8 +22,8 @@ interface CustomerSelectorProps {
 
 interface SelectCustomerFormInputs {
     full_name: string
-    email?: string
-    phone_number?: string
+    customerEmail?: string
+    customerPhone?: string
 }
 const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, initialCustomer }) => {
     const { t } = useTranslation()

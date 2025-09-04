@@ -46,7 +46,7 @@ export const refresh = async (): Promise<string> => {
       },
     )
     return response.data
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error refresh token', error)
     throw error
   }

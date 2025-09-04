@@ -1,36 +1,41 @@
 import React from 'react'
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, RegisterOptions, FieldValues, Path } from 'react-hook-form'
 import { TextField, Box, TextFieldProps, InputAdornment } from '@mui/material'
 import CustomTypography from './Typography'
 import { colors } from '../../styles/theme'
 
-export interface CustomTextFieldProps extends Omit<TextFieldProps, 'variant'> {
+export interface CustomTextFieldProps<TFieldValues extends FieldValues = FieldValues> extends Omit<TextFieldProps, 'variant'> {
   label?: string
   helperText?: string
   errorMessage?: string
-  control: Control<any>
-  name: string
-  rules?: any
+  // CHANGED: במקום any - שימוש בגנרי
+  control: Control<TFieldValues>
+  // CHANGED: name מוכרח להיות אחד מהמפתחות של הטופס
+  name: Path<TFieldValues>
+  rules?: RegisterOptions<TFieldValues>
   placeholder?: string
   icon?: React.ReactNode
   height?: '44px' | '96px' | '29px'
   width?: string
 }
 
-export const CustomTextField: React.FC<CustomTextFieldProps> = ({
-  label,
-  helperText,
-  errorMessage,
-  control,
-  name,
-  rules,
-  placeholder,
-  icon,
-  height = '44px',
-  width,
-  sx,
-  ...props
-}) => {
+export const CustomTextField = <TFieldValues extends FieldValues = FieldValues>(
+  props: CustomTextFieldProps<TFieldValues>
+): React.ReactElement => {
+  const {
+    label,
+    helperText,
+    errorMessage,
+    control,
+    name,
+    rules,
+    placeholder,
+    icon,
+    height = '44px',
+    width,
+    sx,
+    ...textFieldProps
+  } = props
   const isLargeHeight = height === '96px'
   return (
     <Box
@@ -72,7 +77,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
           >
             <TextField
               {...field}
-              {...props}
+              {...textFieldProps}
               error={!!fieldState.error || !!errorMessage}
               placeholder={placeholder}
               helperText={fieldState.error?.message || errorMessage || helperText}

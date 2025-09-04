@@ -36,7 +36,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             try {
               const device = await getDeviceById(customerDevice.device_id)
               return { ...device, customerDevice }
-            } catch (error: any) {
+            } catch (error: unknown) {
               console.error('Error fetching device details:', error)
               return null
             }
@@ -49,10 +49,15 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         )
 
         setDevices(filteredDevices)
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching devices:', error)
-        if (error.response && error.response.status === 404) {
-          setError(t('noDevicesFound'))
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { status?: number } };
+          if (axiosError.response && axiosError.response.status === 404) {
+            setError(t('noDevicesFound'))
+          } else {
+            setError(t('errorFetchingDevices'))
+          }
         } else {
           setError(t('errorFetchingDevices'))
         }

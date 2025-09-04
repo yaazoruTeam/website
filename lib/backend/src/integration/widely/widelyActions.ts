@@ -1,6 +1,7 @@
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
+import { getMobileInfoData } from '@controller/widely/getActions'
 
 const sendMobileAction = async (endpoint_id: string | number, action: string): Promise<Widely.Model> => {
     // Validate required parameters
@@ -19,35 +20,6 @@ const sendMobileAction = async (endpoint_id: string | number, action: string): P
     validateWidelyResult(result, 'Failed to send mobile action', false)
 
     // Return the result
-    return result
-}
-
-const getMobileInfo = async (endpoint_id: string): Promise<any> => {
-    const result: Widely.Model = await callingWidely('get_mobile_info', { endpoint_id })
-
-    // Use the updated validateWidelyResult function instead of manual checks
-    validateWidelyResult(result, 'Failed to load device details', false)
-
-    if (result.data !== undefined) {
-        const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
-        if (!mobileData || Object.keys(mobileData).length === 0) {
-            const error: HttpError.Model = {
-                status: 500,
-                message: 'Error loading device details.',
-            }
-            throw error
-        }
-        return mobileData
-    }
-
-    if (!result || Object.keys(result).length === 0) {
-        const error: HttpError.Model = {
-            status: 500,
-            message: 'Error loading device details.',
-        }
-        throw error
-    }
-
     return result
 }
 
@@ -73,36 +45,31 @@ const provCreateMobile = async (
 ): Promise<Widely.Model> => {
     validateRequiredParams({ domain_user_id, sim_iccid, service_id, name })
 
-    const data: any = {
+    const result: Widely.Model = await callingWidely('prov_create_mobile', {
         domain_user_id,
         iccid: sim_iccid,
         service_id,
-        name
-    }
-
-    if (dids && dids.length > 0) {
-        data.dids = dids
-    }
-
-    const result: Widely.Model = await callingWidely('prov_create_mobile', data)
+        name,
+        ...(dids && dids.length > 0 && { dids })
+    })
     validateWidelyResult(result, 'Failed to create mobile', false)
     return result
 }
 
 const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Promise<{
-    originalInfo: any
+    originalInfo: Widely.WidelyMobileData
     terminationResult: Widely.Model
     creationResult: Widely.Model
 }> => {
     validateRequiredParams({ endpoint_id, name })
 
-    let originalInfo: any = null
+    let originalInfo: Widely.WidelyMobileData | null = null
     let terminationResult: Widely.Model | null = null
     let creationResult: Widely.Model | null = null
 
     try {
         // שלב 1: קבלת מידע על המכשיר הקיים
-        const mobileInfoResult = await getMobileInfo(endpoint_id)
+        const mobileInfoResult = await getMobileInfoData(Number(endpoint_id))
         if (!mobileInfoResult) {
             throw new Error('Mobile info not found or invalid response')
         }
@@ -125,8 +92,8 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
         // שלב 3: יצירת הקו מחדש עם הנתונים המקוריים
         creationResult = await provCreateMobile(
             originalInfo.domain_user_id,
-            originalInfo.iccid,
-            originalInfo.service_id,
+            originalInfo.iccid as string,
+            Number(originalInfo.service_id),
             name,
             originalInfo.dids || undefined
         )
@@ -143,8 +110,8 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
             try {
                 creationResult = await provCreateMobile(
                     originalInfo.domain_user_id,
-                    originalInfo.iccid,
-                    originalInfo.service_id,
+                    originalInfo.iccid as string,
+                    Number(originalInfo.service_id),
                     name,
                     originalInfo.dids || undefined
                 )
@@ -163,4 +130,4 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
     }
 }
 
-export { sendMobileAction, getMobileInfo, terminateMobile, provCreateMobile, ComprehensiveResetDevice }
+export { sendMobileAction, terminateMobile, provCreateMobile, ComprehensiveResetDevice }

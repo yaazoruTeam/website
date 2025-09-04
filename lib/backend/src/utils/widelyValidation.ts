@@ -1,6 +1,6 @@
 import { HttpError, Widely } from '@model'
 
-const validateRequiredParams = (params: Record<string, any>): void => {
+const validateRequiredParams = (params: Record<string, unknown>): void => {
     const missingParams: string[] = []
 
     // Check each parameter for null, undefined, or empty string values

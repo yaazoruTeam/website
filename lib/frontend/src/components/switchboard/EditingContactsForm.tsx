@@ -3,26 +3,30 @@ import { useForm } from 'react-hook-form'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { CustomTextField } from '../designComponent/Input'
 import { useTranslation } from 'react-i18next'
-import { AddCustomerFormInputs } from '../customers/AddCustomerForm'
 import { colors } from '../../styles/theme'
 import { forwardRef, useEffect, useImperativeHandle } from 'react'
-interface EditingContactsFormProps {
-  value: Partial<AddCustomerFormInputs>
-  onChange: (data: Partial<AddCustomerFormInputs>) => void
+
+interface EditingContactsFormInputs {
+  number: string
+  directNumber: string
+  target: string
+  'notes/name': string
 }
+
+interface EditingContactsFormProps {
+  value: Partial<EditingContactsFormInputs>
+  onChange: (data: Partial<EditingContactsFormInputs>) => void
+}
+
 const EditingContactsForm = forwardRef<any, EditingContactsFormProps>(
   ({ value, onChange }, ref) => {
     const { t } = useTranslation()
-    const { control, watch, handleSubmit } = useForm<AddCustomerFormInputs>({
+    const { control, watch, handleSubmit } = useForm<EditingContactsFormInputs>({
       defaultValues: value || {
-        first_name: '',
-        last_name: '',
-        id_number: '',
-        phone_number: '',
-        additional_phone: '',
-        email: '',
-        address: '',
-        city: '',
+        number: '',
+        directNumber: '',
+        target: '',
+        'notes/name': '',
       },
     })
 

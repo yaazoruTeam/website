@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { config } from '@config/index'
 import * as db from '@db/index'
 import { Customer, HttpError } from '@model'
+import { handleError } from './err'
 
 const limit = config.database.limit
 
@@ -13,8 +14,8 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
     await existingCustomer(sanitized, false)
     const customer = await db.Customer.createCustomer(sanitized)
     res.status(201).json(customer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -31,10 +32,10 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log('Error in getCustomers: in controller: ', error)
 
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -51,8 +52,8 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     }
     const customer = await db.Customer.getCustomerById(req.params.id)
     res.status(200).json(customer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -91,7 +92,7 @@ const getCustomersByCity = async (
       total,
     })
   } catch (error) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -121,8 +122,8 @@ const getCustomersByStatus = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -166,8 +167,8 @@ const getCustomersByDateRange = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -179,8 +180,8 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
     await existingCustomer(sanitized, true)
     const updateCustomer = await db.Customer.updateCustomer(req.params.id, sanitized)
     res.status(200).json(updateCustomer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -197,8 +198,8 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
     }
     const deleteCustomer = await db.Customer.deleteCustomer(req.params.id)
     res.status(200).json(deleteCustomer)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -226,7 +227,7 @@ const getCities = async (req: Request, res: Response, next: NextFunction): Promi
     const cities = await db.Customer.getUniqueCities()
     res.status(200).json(cities)
   } catch (error) {
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -250,7 +251,7 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
       total,
     })
   } catch (error) {
-    next(error)
+    handleError(error, next)
   }
 }
 

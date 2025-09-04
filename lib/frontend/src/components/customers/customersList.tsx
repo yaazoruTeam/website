@@ -6,12 +6,26 @@ import CustomTypography from '../designComponent/Typography'
 import NoResultsMessage from '../designComponent/NoResultsMessage'
 import { useTranslation } from 'react-i18next'
 import { Customer } from '@model'
-import CustomTable from '../designComponent/CustomTable'
+import CustomTable, { TableRowData } from '../designComponent/CustomTable'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
 import { formatDateToString } from '../designComponent/FormatDate'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
+
+type FilterType = 
+  | { type: 'city'; value: string }
+  | { type: 'status'; value: 'active' | 'inactive' }
+  | { type: 'date'; value: { start: Date; end: Date } }
+  | { type: 'search'; value: string }
+
+type CustomerTableRow = {
+  customer_id: string
+  customer_name: string
+  registration_date: string
+  city: string
+  status: React.ReactNode
+}
 
 interface CustomersListProps {
   customers: Customer.Model[]
@@ -19,7 +33,7 @@ interface CustomersListProps {
   page: number
   limit: number
   onPageChange: (page: number) => void
-  onFilterChange: (filter: any) => void
+  onFilterChange: (filter: FilterType | null) => void
   noResults?: boolean
   noResultsType?: string
 }
@@ -65,7 +79,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
     { label: '', key: 'status' },
   ]
 
-  const tableData = customers.map((customer) => ({
+  const tableData: CustomerTableRow[] = customers.map((customer) => ({
     customer_id: customer.customer_id,
     customer_name: `${customer.first_name} ${customer.last_name}`,
     registration_date: `${formatDateToString(customer.created_at)}`,
@@ -78,9 +92,10 @@ const CustomersList: React.FC<CustomersListProps> = ({
       ),
   }))
 
-  const onClickCustomer = (customer: any) => {
-    console.log(customer.customer_id)
-    navigate(`/customer/card/${customer.customer_id}`)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onClickCustomer = (rowData: TableRowData, _rowIndex: number) => {
+    console.log(rowData.customer_id)
+    navigate(`/customer/card/${rowData.customer_id}`)
   }
 
   return (

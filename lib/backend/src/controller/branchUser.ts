@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { BranchUser, HttpError } from '@model'
 import config from '@config/index'
+import { handleError } from './err'
 
 const limit = config.database.limit
 const createBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -38,8 +39,8 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
     }
     const branchUser = await db.BranchUser.createBranchUser(sanitized)
     res.status(201).json(branchUser)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -56,8 +57,8 @@ const getAllBranchUser = async (req: Request, res: Response, next: NextFunction)
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -78,8 +79,8 @@ const getBranchUserById = async (
     }
     const branchUser = await db.BranchUser.getBranchUserById(req.params.id)
     res.status(200).json(branchUser)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -111,8 +112,8 @@ const getBranchUserByBranch_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -141,8 +142,8 @@ const getBranchUserByUser_id = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -169,8 +170,8 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
     }
     const updateBranchUser = await db.BranchUser.updateBranchUser(req.params.id, sanitized)
     res.status(200).json(updateBranchUser)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -187,8 +188,8 @@ const deleteBranchUser = async (req: Request, res: Response, next: NextFunction)
     }
     const deleteBranchUser = await db.BranchUser.deleteBranchUser(req.params.id)
     res.status(200).json(deleteBranchUser)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
