@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Customer } from '@model'
 import { deleteCustomer, getCustomerById } from '../../../api/customerApi'
 import CustomTypography from '../../designComponent/Typography'
@@ -22,6 +22,7 @@ const CardCustomer: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:600px)')
   const [openModal, setOpenModal] = useState(false)
   const formRef = useRef<CustomerDetailsRef>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getCustomer = async (id: string) => {
@@ -49,6 +50,7 @@ const CardCustomer: React.FC = () => {
     console.log('delete customer: ', customer?.customer_id)
     if (customer) await deleteCustomer(parseInt(customer.customer_id))
     setOpenModal(false)
+    navigate('/customers')
   }
 
   return (
@@ -99,6 +101,7 @@ const CardCustomer: React.FC = () => {
             buttonType='third'
             icon={<TrashIcon />}
             onClick={() => setOpenModal(true)}
+            disabled={customer?.status === 'inactive'}
           />
           <CustomButton
             label={t('savingChanges')}

@@ -18,7 +18,7 @@
   "addingNewCustomer": "הוספת לקוח חדש",
   "addCustomer": "הוספת לקוח",
   "IdNumber": "מספר ת.ז",
-  "errorIdNumber": "מספר ת.ז צריך להיות 9 ספרות",
+  "errorIdNumber": "מספר ת.ז לא תקין",
   "lastName": "שם משפחה",
   "firstName": "שם פרטי",
   "email": "אימייל",
@@ -26,7 +26,7 @@
   "errorEmail": "כתובת אימייל לא תקינה",
   "additionalPhone": "מספר נוסף",
   "warningPhone": "מספר טלפון צריך להיות לפחות 9 ספרות",
-  "errorPhone": "מספר טלפון לא יכול להיות יותר מ-15 ספרות",
+  "errorPhone": "מספר טלפון לא תקין",
   "errorPhoneDigit": "מספר הטלפון חייב להכיל רק ספרות",
   "phone": "טלפון",
   "city": "עיר",
@@ -284,5 +284,8 @@
   "imeiLock": "נעילת IMEI",
   "errorUpdatingImeiLock": "שגיאה בעדכון נעילת IMEI",
   "preferredNetworkChangedSuccessfully": "רשת מועדפת שונתה בהצלחה",
-  "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת"
+  "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת",
+  "softReset": "איפוס קל",
+  "softResetSuccess": "איפוס קל הושלם בהצלחה",
+  "softResetError": "שגיאה בביצוע איפוס קל"
 }

@@ -18,7 +18,7 @@
   "addingNewCustomer": "adding a new customer",
   "addCustomer": "add customer",
   "IdNumber": "ID Number",
-  "errorIdNumber": "the ID number must be 9 digits",
+  "errorIdNumber": "Invalid ID number",
   "lastName": "last name",
   "firstName": "first name",
   "email": "email",
@@ -26,7 +26,7 @@
   "errorEmail": "Invalid email address",
   "additionalPhone": "additional phone",
   "warningPhone": "Phone number must be at least 9 digits",
-  "errorPhone": "Phone number cannot be longer than 15 digits",
+  "errorPhone": "Invalid phone number",
   "errorPhoneDigit": "The phone number must contain only digits",
   "phone": "phone",
   "city": "city",
@@ -283,5 +283,8 @@
   "imeiLock": "IMEI Lock",
   "errorUpdatingImeiLock": "Error updating IMEI lock",
   "preferredNetworkChangedSuccessfully": "Preferred network changed successfully",
-  "errorSettingPreferredNetwork": "Error setting preferred network"
+  "errorSettingPreferredNetwork": "Error setting preferred network",
+  "softReset": "Soft Reset",
+  "softResetSuccess": "Soft reset completed successfully",
+  "softResetError": "Error performing soft reset"
 }

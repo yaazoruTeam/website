@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useMediaQuery } from '@mui/material'
+import { Box, useMediaQuery } from '@mui/material'
 import AddCustomer from './AddCustomer'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
@@ -44,7 +44,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
 }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
-  const [showAddCustomer, setShowAddCustomer] = useState(false)
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
@@ -64,6 +63,9 @@ const CustomersList: React.FC<CustomersListProps> = ({
     setTimeout(() => setResetTrigger(false), 0)
   }
 
+  const handleAddCustomer = () => {
+    navigate('/customer/add')
+  }
   const columns = [
     { label: t('customerName'), key: 'customer_name' },
     { label: t('registrationDate'), key: 'registration_date' },
@@ -90,12 +92,31 @@ const CustomersList: React.FC<CustomersListProps> = ({
   }
 
   return (
-    <CustomersListContainer>
+    <Box
+      sx={{
+        width: '100%',
+        height: '50%',
+        borderRadius: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 4,
+      }}
+    >
       {showAddCustomer ? (
         <AddCustomer />
       ) : (
         <>
-          <CustomersListHeader>
+          <Box
+            sx={{
+              direction: 'rtl',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <CustomTypography
               text={t('customerManagement')}
               variant='h1'
@@ -109,10 +130,20 @@ const CustomersList: React.FC<CustomersListProps> = ({
               buttonType='first'
               onClick={() => setShowAddCustomer(true)}
             />
-          </CustomersListHeader>
-
-          <CustomersListFilters>
-            <CustomersListFilterBox>
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              direction: 'rtl',
+              marginTop: 2,
+              display: 'flex',
+              gap: 2,
+              justifyContent: 'flex-start',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+            }}
+          >
+            <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
               <CustomSearchSelect
                 searchType='city'
                 placeholder={t('CustomerCity')}
@@ -122,8 +153,8 @@ const CustomersList: React.FC<CustomersListProps> = ({
                 }}
                 resetTrigger={resetTrigger}
               />
-            </CustomersListFilterBox>
-            <CustomersListFilterBox>
+            </Box>
+            <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
               <CustomSearchSelect
                 searchType='date'
                 placeholder={t('DateInRange')}
@@ -133,8 +164,8 @@ const CustomersList: React.FC<CustomersListProps> = ({
                 }}
                 resetTrigger={resetTrigger}
               />
-            </CustomersListFilterBox>
-            <CustomersListFilterBox>
+            </Box>
+            <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
               <CustomSearchSelect
                 searchType='status'
                 placeholder={t('customerStatus')}
@@ -144,13 +175,21 @@ const CustomersList: React.FC<CustomersListProps> = ({
                 }}
                 resetTrigger={resetTrigger}
               />
-            </CustomersListFilterBox>
-            <CustomersListFilterBox>
+            </Box>
+            <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
               <FilterResetButton onReset={handleResetFilters} />
-            </CustomersListFilterBox>
-          </CustomersListFilters>
-
-          <CustomersListTable>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              gap: 3,
+            }}
+          >
             {noResults ? (
               <NoResultsMessage
                 messageType={noResultsType as 'date' | 'status' | 'general'}
@@ -171,10 +210,10 @@ const CustomersList: React.FC<CustomersListProps> = ({
                 alignLastColumnLeft={true}
               />
             )}
-          </CustomersListTable>
+          </Box>
         </>
       )}
-    </CustomersListContainer>
+    </Box>
   )
 }
 
