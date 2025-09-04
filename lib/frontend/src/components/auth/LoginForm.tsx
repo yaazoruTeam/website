@@ -7,6 +7,7 @@ import logo2 from '../../assets/logo2.svg'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormInputs) => void
@@ -21,6 +22,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation()
   const { control, handleSubmit } = useForm<LoginFormInputs>()
   const isMobile = useMediaQuery('(max-width:600px)')
+  const navigate = useNavigate()
+
+  const handleRegisterClick = () => {
+    navigate('/register')
+  }
 
   return (
     <Box
@@ -92,6 +98,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             cursor: 'pointer',
           }}
         />
+        <Box
+          onClick={handleRegisterClick}
+          sx={{
+            textAlign: 'center',
+            cursor: 'pointer',
+            marginTop: 1,
+          }}
+        >
+          <CustomTypography
+            text="צריך להירשם? לחץ כאן"
+            variant='h3'
+            weight='medium'
+            color={colors.c11}
+            sx={{
+              textDecoration: 'underline',
+            }}
+          />
+        </Box>
       </Box>
 
       <CustomButton
