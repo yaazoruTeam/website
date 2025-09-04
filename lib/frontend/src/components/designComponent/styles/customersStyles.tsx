@@ -1,4 +1,4 @@
-import { styled, Box } from '@mui/material'
+import { styled, Box, BoxProps } from '@mui/material'
 import { FlexRow, FlexRowSpaceBetween, FlexColumn } from './baseStyles'
 import { colors } from '../../../styles/theme'
 import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
@@ -125,3 +125,55 @@ export const TitleWrapper = styled(FlexRow)({
   gap: '28px',
   width: '100%',
 })
+
+// ===============
+// AddCustomerForm
+// ===============
+
+// עטיפת כל הטופס
+export const FormContainer = styled(Box)<BoxProps>({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: '100%',
+  borderRadius: 1.5,
+  direction: 'rtl',
+})
+
+// כרטיס חיצוני
+export const OuterCard = styled(FlexColumn)(({ theme }) => ({
+  height: '100%',
+  boxShadow: theme.shadows[1],
+  justifyContent: 'flex-end',
+}))
+
+// תוכן פנימי
+export const InnerContent = styled(FlexColumn)(({ theme }) => ({
+  height: '100%',
+  padding: theme.spacing(3.5),
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0.75,
+  gap: theme.spacing(3.5),
+}))
+
+// שורות שדות
+export const FieldsRow = styled(FlexRow)<{ isMobile?: boolean }>(({ theme, isMobile }) => ({
+  justifyContent: 'flex-end',
+  gap: theme.spacing(3.5),
+  flexWrap: isMobile ? 'wrap' : 'nowrap',
+}))
+
+// שורה של כתובת+עיר
+export const AddressRow = styled(FlexRow)<{ isMobile?: boolean }>(({ theme, isMobile }) => ({
+  width: '100%',
+  maxWidth: '66%',
+  justifyContent: 'flex-start',
+  gap: theme.spacing(3.5),
+  flexWrap: isMobile ? 'wrap' : 'nowrap',
+}))
+
+// שורת כפתור שמירה
+export const ActionsRow = styled(FlexRow)(() => ({
+  width: '100%',
+  justifyContent: 'flex-end',
+}))

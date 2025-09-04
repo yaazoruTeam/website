@@ -1,9 +1,17 @@
 import React, { useEffect } from 'react'
-import { Box, useMediaQuery } from '@mui/material'
+import { useMediaQuery } from '@mui/material'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { CustomButton } from '../designComponent/Button'
 import { useTranslation } from 'react-i18next'
+import {
+  FormContainer,
+  OuterCard,
+  InnerContent,
+  FieldsRow,
+  AddressRow,
+  ActionsRow,
+} from '../designComponent/styles/customersStyles' // ← הנתיב בהתאם לפרויקט שלך
 
 interface AddCustomerFormProps {
   onSubmit: (data: AddCustomerFormInputs) => void
@@ -29,10 +37,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<AddCustomerFormInputs>({
+  const { control, handleSubmit } = useForm<AddCustomerFormInputs>({
     defaultValues: initialValues || {
       first_name: '',
       last_name: '',
@@ -55,46 +60,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   const hasInitialValues = !!initialValues
 
   return (
-    <Box
-      component='form'
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
-        width: '100%',
-        height: '100%',
-        borderRadius: 1.5,
-        display: 'flex',
-        flexDirection: 'column',
-        direction: 'rtl',
-      }}
-    >
-      <Box
-        sx={{
-          height: '100%',
-          boxShadow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <Box
-          sx={{
-            height: '100%',
-            p: 3.5,
-            bgcolor: 'background.paper',
-            borderRadius: 0.75,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3.5,
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 3.5,
-              flexWrap: isMobile ? 'wrap' : 'nowrap',
-            }}
-          >
+    <FormContainer component='form' onSubmit={handleSubmit(onSubmit)}>
+      <OuterCard>
+        <InnerContent>
+          <FieldsRow isMobile={isMobile}>
             <CustomTextField
               name='first_name'
               label={t('firstName')}
@@ -131,15 +100,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                 },
               }}
             />
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 3.5,
-              flexWrap: isMobile ? 'wrap' : 'nowrap',
-            }}
-          >
+          </FieldsRow>
+
+          <FieldsRow isMobile={isMobile}>
             <CustomTextField
               control={control}
               name='phone_number'
@@ -176,16 +139,9 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                 },
               }}
             />
-          </Box>
-          <Box
-            sx={{
-              width: { xs: '100%', md: '66%' },
-              display: 'flex',
-              justifyContent: 'flex-start',
-              gap: 3.5,
-              flexWrap: isMobile ? 'wrap' : 'nowrap',
-            }}
-          >
+          </FieldsRow>
+
+          <AddressRow isMobile={isMobile}>
             <CustomTextField
               control={control}
               name='address'
@@ -202,15 +158,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                 required: t('requiredField'),
               }}
             />
-          </Box>
+          </AddressRow>
+
           {!hasInitialValues && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'flex-end',
-              }}
-            >
+            <ActionsRow>
               <CustomButton
                 label={t('saving')}
                 state='default'
@@ -218,11 +169,11 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                 buttonType='first'
                 type='submit'
               />
-            </Box>
+            </ActionsRow>
           )}
-        </Box>
-      </Box>
-    </Box>
+        </InnerContent>
+      </OuterCard>
+    </FormContainer>
   )
 }
 
