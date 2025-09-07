@@ -1,0 +1,87 @@
+import React from 'react'
+import { colors } from '../../styles/theme'
+import CustomTypography from './Typography'
+import {
+  ChatCommentCardContainer,
+  ChatCommentCardMainBox,
+  ChatCommentCardInnerBox,
+  ChatCommentCardContentSection,
+  ChatCommentCardCommentSection,
+  ChatCommentCardCommentBox,
+  ChatCommentCardChatButtonContainer
+} from './styles/chatCommentCardStyles'
+
+interface ChatCommentCardProps {
+  customerName?: string
+  commentsType: string
+  lastCommentDate: string
+  lastComment: string
+  onCommentClick?: () => void
+  chatButton?: React.ReactNode
+}
+
+const ChatCommentCard: React.FC<ChatCommentCardProps> = ({
+  commentsType,
+  lastCommentDate,
+  lastComment,
+  onCommentClick,
+  chatButton,
+}) => {
+  return (
+    <ChatCommentCardContainer>
+      <CustomTypography
+        text={commentsType}
+        variant='h3'
+        weight='medium'
+        color={colors.c10}
+        sx={{
+          textAlign: 'right',
+          wordWrap: 'break-word',
+        }}
+      />
+      <ChatCommentCardMainBox>
+        <ChatCommentCardInnerBox>
+          <ChatCommentCardContentSection>
+            {/* Date */}
+            <CustomTypography
+              text={lastCommentDate}
+              variant='h3'
+              weight='regular'
+              color={colors.c10}
+              sx={{
+                textAlign: 'flex-start',
+                wordWrap: 'break-word',
+                width: '100%',
+              }}
+            />
+            <ChatCommentCardCommentSection>
+              <ChatCommentCardCommentBox onClick={onCommentClick}>
+                <CustomTypography
+                  text={lastComment}
+                  variant='h3'
+                  weight='regular'
+                  color={colors.c48}
+                  sx={{
+                    flex: '1 1 0',
+                    textAlign: 'right',
+                    wordWrap: 'break-word',
+                    whiteSpace: 'pre-wrap',
+                    overflowWrap: 'break-word',
+                  }}
+                />
+              </ChatCommentCardCommentBox>
+
+              {chatButton && (
+                <ChatCommentCardChatButtonContainer>
+                  {chatButton}
+                </ChatCommentCardChatButtonContainer>
+              )}
+            </ChatCommentCardCommentSection>
+          </ChatCommentCardContentSection>
+        </ChatCommentCardInnerBox>
+      </ChatCommentCardMainBox>
+    </ChatCommentCardContainer>
+  )
+}
+
+export default ChatCommentCard
