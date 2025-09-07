@@ -286,5 +286,8 @@
   "errorSettingPreferredNetwork": "Error setting preferred network",
   "softReset": "Soft Reset",
   "softResetSuccess": "Soft reset completed successfully",
-  "softResetError": "Error performing soft reset"
+  "softResetError": "Error performing soft reset",
+  "invalidAddress": "Invalid address",
+  "invalidCity": "Invalid city",
+  "invalidName": "Invalid name"
 }
