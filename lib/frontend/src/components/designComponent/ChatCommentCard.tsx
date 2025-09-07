@@ -16,7 +16,6 @@ interface ChatCommentCardProps {
   commentsType: string
   lastCommentDate: string
   lastComment: string
-  onCommentClick?: () => void
   chatButton?: React.ReactNode
 }
 
@@ -24,7 +23,6 @@ const ChatCommentCard: React.FC<ChatCommentCardProps> = ({
   commentsType,
   lastCommentDate,
   lastComment,
-  onCommentClick,
   chatButton,
 }) => {
   return (
@@ -55,7 +53,7 @@ const ChatCommentCard: React.FC<ChatCommentCardProps> = ({
               }}
             />
             <ChatCommentCardCommentSection>
-              <ChatCommentCardCommentBox onClick={onCommentClick}>
+              <ChatCommentCardCommentBox>
                 <CustomTypography
                   text={lastComment}
                   variant='h3'
