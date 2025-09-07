@@ -1,0 +1,13 @@
+# האתר שלך - מחליפים ל-domain אמיתי
+main.yaazoru.net {
+
+    # הגדרת static site של ה-frontend
+    reverse_proxy react-frontend-nginx:80
+
+    # קריאות API יעברו ל-backend
+    handle_path /api/* {
+        reverse_proxy yaazoru-backend-prod:3006
+    }
+
+    encode gzip
+}

@@ -53,8 +53,28 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - yaazoru-internal
+      
+  caddy:
+    image: caddy:2
+    container_name: yaazoru-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - yaazoru-internal
+
 volumes:
   db-data:
+  caddy_data:
+  caddy_config:
 networks:
   yaazoru-internal:
     driver: bridge
