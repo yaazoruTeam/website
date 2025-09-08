@@ -5,7 +5,7 @@ export const chatStyles = {
     position: 'relative' as const,
     width: 420,
     margin: '0 auto',
-    marginBottom: 50,
+    marginBottom: 16,
     padding: 3,
     paddingTop: 8,
     background: colors.c6,

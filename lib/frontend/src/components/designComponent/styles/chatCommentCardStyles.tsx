@@ -118,7 +118,6 @@ export const ChatModalOverlay = styled(Box)({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  padding: '20px',
 })
 
 export const ChatModalContainer = styled(Box)({
