@@ -1,4 +1,4 @@
-import { styled } from '@mui/material'
+import { Box, styled } from '@mui/material'
 import { FlexBase, FlexColumn } from './baseStyles'
 import { colors } from '../../../styles/theme'
 
@@ -70,4 +70,64 @@ export const ChatCommentCardChatButtonContainer = styled(FlexBase)({
   flexShrink: 0,
   position: 'relative',
   top: '-40px',
+})
+
+// AddCustomerForm ChatBot specific styled components
+export const CustomerFormContainer = styled(Box)({
+  width: '100%',
+  height: '100%',
+  borderRadius: '12px',
+  display: 'flex',
+  flexDirection: 'column',
+  direction: 'rtl',
+})
+
+export const CustomerFormInnerContainer = styled(FlexColumn)({
+  height: '100%',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  justifyContent: 'flex-end',
+})
+
+export const CustomerFormContentBox = styled(FlexColumn)({
+  height: '100%',
+  padding: '28px',
+  backgroundColor: 'background.paper',
+  borderRadius: '6px',
+  gap: '28px',
+})
+
+export const CustomerCommentsSection = styled(Box)({
+  width: '100%',
+  marginTop: '16px',
+})
+
+export const CustomerFormButtonSection = styled(FlexBase)({
+  width: '100%',
+  justifyContent: 'flex-end',
+})
+
+// Chat Modal styled components
+export const ChatModalOverlay = styled(Box)({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  zIndex: 9999,
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  padding: '20px',
+})
+
+export const ChatModalContainer = styled(Box)({
+  marginTop: '38px',
+  marginRight: '-3px',
+  backgroundColor: 'white',
+  borderTopLeftRadius: '6px',
+  borderBottomLeftRadius: '6px',
+  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+  display: 'flex',
+  flexDirection: 'column',
 })
