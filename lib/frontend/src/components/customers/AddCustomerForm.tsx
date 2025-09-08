@@ -143,7 +143,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
           >
             <CustomTextField
               control={control}
-              name="phone_number"
+              name='phone_number'
               label={t('phone')}
               rules={{
                 required: t('requiredField'),
