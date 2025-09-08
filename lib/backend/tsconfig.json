@@ -8,7 +8,7 @@
     "baseUrl": ".",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "src/types"],
        "paths": {
       "@/*": ["*"]   ,
       "@model": ["./model/src", "../model/src"],
@@ -22,6 +22,7 @@
       "@middleware/*": ["src/middleware/*"],
       "@tranzila/*": ["src/tranzila/*"],
       "@integration/*": ["src/integration/*"],
+      "@types/*": ["src/types/*"]
     }
   },
   "include": ["src/**/*"],

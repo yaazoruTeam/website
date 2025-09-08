@@ -59,12 +59,12 @@ services:
       - VITE_BASE_URL=${VITE_BASE_URL:-/}
       - VITE_LIMIT=${VITE_LIMIT}
     networks:
-      - yaazoru-network
-    
+      - yaazoru-network 
+
 volumes:
   db-data:
-
+  
 networks:
   yaazoru-network:
     driver: bridge
-                                                                                                                             
+      

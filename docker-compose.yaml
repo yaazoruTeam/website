@@ -57,6 +57,30 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - yaazoru-internal
+
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:7
+    container_name: dd-agent
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_SITE: ${DD_SITE}
+      DD_DOGSTATSD_NON_LOCAL_TRAFFIC: ${DD_DOGSTATSD_NON_LOCAL_TRAFFIC}
+      DD_APM_ENABLED: ${DD_APM_ENABLED}
+      DD_APM_NON_LOCAL_TRAFFIC: ${DD_APM_NON_LOCAL_TRAFFIC}
+      DD_APM_RECEIVER_SOCKET: ${DD_APM_RECEIVER_SOCKET}
+      DD_DOGSTATSD_SOCKET: ${DD_DOGSTATSD_SOCKET}
+      DD_LOGS_ENABLED: "true"  
+    volumes:
+      - /var/run/datadog:/var/run/datadog
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /app/logs:/logs:ro
+    networks:
+      - yaazoru-internal
+    # restart: unless-stopped
+
       
   caddy:
     image: caddy:2

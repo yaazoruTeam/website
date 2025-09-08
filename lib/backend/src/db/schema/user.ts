@@ -1,16 +1,17 @@
 import { User } from '@model'
 import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
+import logger from '@/src/utils/logger'
 
 const createUserSchema = async () => {
-  console.log('create user schema')
+  logger.debug('create user schema')
 
   const knex = getDbConnection()
   try {
     const roles: Array<User.Model['role']> = ['admin', 'branch']
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('users')
     if (!tableExists) {
-      console.log('Creating user table...')
+      logger.debug('Creating user table...')
       await knex.schema.withSchema('yaazoru').createTable('users', (table: Knex.TableBuilder) => {
         table.increments('user_id').primary()
         table.string('first_name', 20).notNullable()
@@ -28,12 +29,12 @@ const createUserSchema = async () => {
         table.enu('role', roles).notNullable()
         table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
       })
-      console.log('User table created successfully.')
+      logger.debug('User table created successfully.')
     } else {
-      console.log('User table already exists. Skipping creation.')
+      logger.debug('User table already exists. Skipping creation.')
     }
   } catch (err) {
-    console.error('error creat schema user', err)
+    logger.error('error creat schema user', err)
   }
 }
 
