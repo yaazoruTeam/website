@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import loginImage from '../../assets/loginImage.svg'
 import LoginForm from './LoginForm'
 import { Box } from '@mui/material'
@@ -16,6 +16,15 @@ interface LoginFormInputs {
 const Login2222: React.FC = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  // בדיקה אם כבר יש טוקן - אם כן, לכוון למקום הנכון
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      navigate('/dashboard')
+    }
+  }, [navigate])
+
   const handleLogin = async (data: LoginFormInputs) => {
     console.log('Form Data:', data)
     try {
