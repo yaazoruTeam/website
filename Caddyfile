@@ -4,6 +4,7 @@ main.yaazoru.net {
 
     # ניתוב backend לכל מה שמתחיל ב /api/
     handle_path /api/* {
+        rewrite * /controller{path}
         reverse_proxy yaazoru-backend-prod:3006
     }
 

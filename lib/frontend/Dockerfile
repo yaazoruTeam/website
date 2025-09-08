@@ -52,6 +52,6 @@ RUN echo '#!/bin/sh' > /startup.sh && \
     echo 'exec nginx -g "daemon off;"' >> /startup.sh && \
     chmod +x /startup.sh
 
-EXPOSE 443
+EXPOSE 80
 
 CMD ["/startup.sh"]
