@@ -200,6 +200,7 @@
   "DateInRange": "Date Range",
   "deviceManagement": "Device Management",
   "addingNewDevice": "Add New Device",
+  "addingDevice": "Adding a Device",
   "deviceNumber": "Device Number",
   "simNumber": "SIM Number",
   "imei": "IMEI",
@@ -289,5 +290,8 @@
   "softResetError": "Error performing soft reset",
   "invalidAddress": "Invalid address",
   "invalidCity": "Invalid city",
-  "invalidName": "Invalid name"
+  "invalidName": "Invalid name",
+  "deviceAddedSuccessfully": "Device added successfully",
+  "deviceAddFailed": "Failed to add device",
+  "numbersOnlyError": "Only numbers are allowed"
 }

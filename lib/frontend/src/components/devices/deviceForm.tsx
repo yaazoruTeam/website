@@ -26,7 +26,6 @@ export interface deviceFormInputs {
   //פרטים שקיימים כבר על מכשיר ולא צריך אותם כאן
   // device_id: string;
   // status: string;
-  // isDonator: boolean;
 }
 
 const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialValues }) => {
