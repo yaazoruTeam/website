@@ -46,7 +46,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       const deviceData: Omit<Device.Model, 'device_id'> = {
         ...data,
         status: 'active',
-        isDonator: true,
       }
 
       await createDevice(deviceData)
@@ -81,16 +80,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
 
   return (
     <CustomModal open={open} onClose={handleClose} maxWidth={600}>
-      {/* <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-          borderRadius: 1.5,
-          display: 'flex',
-          flexDirection: 'column',
-          direction: 'rtl',
-        }}
-      > */}
       {/* Header */}
       <Box sx={{ mb: 2 }}>
         <CustomTypography

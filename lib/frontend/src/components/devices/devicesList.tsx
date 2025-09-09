@@ -148,44 +148,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           <FilterResetButton onReset={handleResetFilters} />
         </Box>
       </Box>
-      {/* <Box
-        sx={{
-          width: '100%',
-          direction: 'rtl',
-          marginTop: 2,
-          display: 'flex',
-          gap: 2,
-          justifyContent: 'flex-start',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
-        <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-          <CustomSearchSelect
-            searchType='status'
-            placeholder={t('deviceStatus')}
-            onStatusSelect={(status: 'active' | 'inactive') => {
-              onFilterChange(status ? { type: 'status', value: status } : null)
-              onPageChange(1)
-            }}
-            resetTrigger={resetTrigger}
-          />
-        </Box>
-        <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-          <CustomSearchSelect
-            searchType='date'
-            placeholder={t('DateInRange')}
-            onDateRangeSelect={(start: Date, end: Date) => {
-              onFilterChange({ type: 'date', value: { start, end } })
-              onPageChange(1)
-            }}
-            resetTrigger={resetTrigger}
-          />
-        </Box>
-        <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-          <FilterResetButton onReset={handleResetFilters} />
-        </Box>
-      </Box> */}
       <Box
         sx={{
           width: '100%',
