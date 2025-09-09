@@ -7,6 +7,7 @@ import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConv
 import { writeErrorsToExcel } from '@utils/excel'
 import logger from '../utils/logger'
 
+//גם פה לעדכן לפי השינויים
 const processExcelData = async (data: any[]): Promise<{
   totalRows: number;
   errorsCount: number;

@@ -1,6 +1,8 @@
 import { CustomerDeviceExcel } from '@model'
 
 const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
+
+  //לסדר את זה לפי השינויים
   return {
     customer: {
       customer_id: '',

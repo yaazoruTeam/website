@@ -61,6 +61,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       const deviceData: Omit<Device.Model, 'device_id'> = {
         ...data,
         status: 'active',
+        serialNumber: '',//?? מאיפה מקבלים את זה ?? צריך לבצע קריאת שרת לסמסונג
+        purchaseDate: new Date(),  // מה לשים פה עד שרוכשים את המכשיר??? תאיריך ברירת מחדל איפה אפשר לקשר בין מכשיר ללקוח
       }
 
       await createDevice(deviceData)

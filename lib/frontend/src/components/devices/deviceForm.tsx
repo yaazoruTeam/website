@@ -4,6 +4,7 @@ import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import CustomTypography from '../designComponent/Typography'
 
 export interface deviceFormInputs {
   device_number: string
@@ -43,8 +44,6 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
       received_at: '',//תאריך קבלת המכשיר
       planEndDate: '',//תאריך סיום התוכנית
       Plan: '',//מסלול
-      // filterVersion: '',//X
-      // deviceProgram: '',//X
       notes: '',
     },
   })
@@ -57,17 +56,17 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
         padding: '28px',
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '28px',
-          paddingBottom: '24px',
-        }}
-      >
-        <CustomTextField control={control} name='device_number' label={t('device_number')} />
-        <CustomTextField control={control} name='SIM_number' label={t('SIM_number')} />
-        <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
-        <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} />
+      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px' }}>
+        <CustomTypography
+          text={t('deviceData')}
+          variant='h3'
+          weight='medium'
+        />
+        <CustomTypography
+          text={initialValues ? initialValues.device_number : ''}
+          variant='h4'
+          weight='regular'
+        />
       </Box>
       <Box
         sx={{
@@ -76,21 +75,37 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
           paddingBottom: '24px',
         }}
       >
-        <CustomTextField control={control} name='model' label={t('model')} />
+        {/* <CustomTextField control={control} name='device_number' label={t('device_number')} /> */}
+        {/* <CustomTextField control={control} name='SIM_number' label={t('SIM_number')}
+         /> */}
         <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
+        <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
+        <CustomTextField control={control} name='model' label={t('modelDevice')} />
+        {/* <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} /> */}
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '28px',
+          paddingBottom: '24px',
+        }}
+      >
+        {/* <CustomTextField control={control} name='model' label={t('model')} /> */}
+        {/* <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} /> */}
         <CustomTextField control={control} name='purchaseDate' label={t('purchaseDate')} />
         <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} />
+        <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
+
       </Box>
-      <Box
+      {/* <Box
         sx={{
           display: 'flex',
           gap: '28px',
           paddingBottom: '24px',
         }}
-      >
-        <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
-        <CustomTextField control={control} name='Plan' label={t('plan')} />
-      </Box>
+      > */}
+        {/* <CustomTextField control={control} name='Plan' label={t('plan')} /> */}
+      {/* </Box> */}
       <Box
         sx={{
           display: 'flex',

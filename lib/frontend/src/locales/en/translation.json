@@ -105,6 +105,7 @@
   "IMEI_1": "IMEI 1",
   "mehalcha_number": "mehalcha number",
   "model": "model",
+  "modelDevice": "model device",
   "dateReceiptDevice": "date of receipt of the device",
   "programEndDate": "program end date",
   "filterVersion": "filter version",
@@ -293,5 +294,8 @@
   "invalidName": "Invalid name",
   "deviceAddedSuccessfully": "Device added successfully",
   "deviceAddFailed": "Failed to add device",
-  "numbersOnlyError": "Only numbers are allowed"
+  "numbersOnlyError": "Only numbers are allowed",
+  "deviceData": "Device Data",
+  "serialNumber": "Serial Number",
+  "plan": "Plan"
 }

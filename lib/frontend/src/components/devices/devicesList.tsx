@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
 import AddDeviceForm from './AddDeviceForm'
+import { formatDateToString } from '../designComponent/FormatDate'
 
 interface DevicesListProps {
   devices: Device.Model[]
@@ -39,19 +40,26 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
 
   const columns = [
     { label: t('deviceNumber'), key: 'device_number' },
-    { label: t('mehalchaNumber'), key: 'mehalcha_number' },
-    { label: t('openingDate'), key: 'opening_date' },
+    // { label: t('mehalchaNumber'), key: 'mehalcha_number' },
+    { label: t('serialNumber'), key: 'serialNumber' },
+    // { label: t('openingDate'), key: 'opening_date' },
+    //תאריך הקמה
     { label: t('purchaseDate'), key: 'purchase_date' },
+    { label: t('plan'), key: 'plan' },
+
     { label: '', key: 'status' },
   ]
 
   const tableData = (devices ?? []).map((device) => ({
     device_id: device.device_id,
     device_number: device.device_number,
-    mehalcha_number: device.mehalcha_number,
-    opening_date: '-', // TODO: Add opening_date field to device model
-    purchase_date: '-', // TODO: Add purchase_date field to device model
-    status:
+    // mehalcha_number: device.mehalcha_number,
+    serialNumber: device.serialNumber || '-',
+    //תאריך הקמה
+    // opening_date: '-', // TODO: Add opening_date field to device model
+    purchase_date: `${formatDateToString(new Date(device.purchaseDate))}`, // TODO: Add purchase_date field to device model
+    plan: /*device.Plan ||*/ '-', //אולי כן כדאי לשים את המסלול בתוך ה- device  כי חבל לעשות כאן עוד קריאת שרת...
+    status://במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר
       device.status === 'active' ? (
         <StatusTag status='active' />
       ) : (
