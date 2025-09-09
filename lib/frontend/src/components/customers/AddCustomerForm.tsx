@@ -1,14 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, useMediaQuery } from '@mui/material'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { CustomButton } from '../designComponent/Button'
 import { useTranslation } from 'react-i18next'
+import ChatCommentCard from '../designComponent/ChatCommentCard'
+import ArrowToChatComments from '../designComponent/ArrowToChatComments'
+import ChatBot from '../ChatBot/ChatBot'
+import { EntityType } from '@model'
+import {
+  CustomerCommentsSection,
+  CustomerFormButtonSection,
+  ChatModalOverlay,
+  ChatModalContainer
+} from '../designComponent/styles/chatCommentCardStyles'
 
 interface AddCustomerFormProps {
   onSubmit: (data: AddCustomerFormInputs) => void
   initialValues?: AddCustomerFormInputs
   setSubmitHandler?: (submit: () => void) => void
+  customerId?: string // לצורך הצ'אט בוט
+  lastCommentDate?: string // תאריך ההערה האחרונה
+  lastComment?: string // ההערה האחרונה
+  onCommentsRefresh?: () => Promise<void> // פונקציה לרענון ההערות לאחר סגירת הצ'אט
 }
 
 export interface AddCustomerFormInputs {
@@ -26,8 +40,13 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   onSubmit,
   initialValues,
   setSubmitHandler,
+  customerId,
+  lastCommentDate,
+  lastComment,
+  onCommentsRefresh,
 }) => {
   const { t } = useTranslation()
+  const [isChatOpen, setIsChatOpen] = useState(false)
 
   const {
     control,
@@ -55,18 +74,19 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   const hasInitialValues = !!initialValues
 
   return (
-    <Box
-      component='form'
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
-        width: '100%',
-        height: '100%',
-        borderRadius: 1.5,
-        display: 'flex',
-        flexDirection: 'column',
-        direction: 'rtl',
-      }}
-    >
+    <>
+      <Box
+        component='form'
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{
+          width: '100%',
+          height: '100%',
+          borderRadius: 1.5,
+          display: 'flex',
+          flexDirection: 'column',
+          direction: 'rtl',
+        }}
+      >
       <Box
         sx={{
           height: '100%',
@@ -219,14 +239,25 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               }}
             />
           </Box>
+          
+          {/* Customer Comments Section with Chat Button */}
+          <CustomerCommentsSection>
+            <ChatCommentCard
+              commentsType={t('customerComments')}
+              lastCommentDate={lastCommentDate || 'אין הערות'}
+              lastComment={lastComment || 'אין הערות קודמות עבור הלקוח'}
+              chatButton={
+                <ArrowToChatComments
+                  onClick={() => {
+                    setIsChatOpen(true);
+                  }}
+                />
+              }
+            />
+          </CustomerCommentsSection>
+          
           {!hasInitialValues && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'flex-end',
-              }}
-            >
+            <CustomerFormButtonSection>
               <CustomButton
                 label={t('saving')}
                 state='default'
@@ -234,11 +265,41 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                 buttonType='first'
                 type='submit'
               />
-            </Box>
+            </CustomerFormButtonSection>
           )}
         </Box>
       </Box>
     </Box>
+
+      {/* Chat Modal */}
+      {isChatOpen && customerId && (
+        <ChatModalOverlay
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            if (e.target === e.currentTarget) {
+              setIsChatOpen(false)
+              // רענון ההערות לאחר סגירת הצ'אט
+              if (onCommentsRefresh) {
+                onCommentsRefresh()
+              }
+            }
+          }}
+        >
+          <ChatModalContainer>
+            <ChatBot
+              entityType={EntityType.Customer}
+              entityId={customerId}
+              onClose={() => {
+                setIsChatOpen(false)
+                // רענון ההערות לאחר סגירת הצ'אט
+                if (onCommentsRefresh) {
+                  onCommentsRefresh()
+                }
+              }}
+            />
+          </ChatModalContainer>
+        </ChatModalOverlay>
+      )}
+    </>
   )
 }
 
