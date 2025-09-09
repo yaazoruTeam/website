@@ -14,7 +14,6 @@ import DeviceDetails from './deviceDetails'
 import MonthlyPaymentDetails from './monthlyPaymentDetails'
 import CustomerDetails, { CustomerDetailsRef } from './customerDetails'
 import CustomModal from '../../designComponent/Modal'
-import ArrowToChatComments from '../../designComponent/ArrowToChatComments'
 import ChatBot from '../../ChatBot/ChatBot'
 
 const CardCustomer: React.FC = () => {
@@ -97,11 +96,6 @@ const CardCustomer: React.FC = () => {
             direction: 'rtl',
           }}
         >
-          {/* רכיב החץ לצ'אט */}
-          <Box sx={{ width: '60px', height: '60px' }}>
-            <ArrowToChatComments onClick={() => setIsChatOpen(true)} />
-          </Box>
-
           <CustomButton
             label={t('deletingCustomer')}
             size={isMobile ? 'small' : 'large'}
@@ -202,15 +196,14 @@ const CardCustomer: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)', // רקע כהה יותר
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             zIndex: 9999,
             display: 'flex',
-            justifyContent: 'start', // מרכז המסך
-            alignItems: 'center', // מרכז המסך אנכית
-            padding: '20px', // רווח מהקצוות
+            justifyContent: 'start',
+            alignItems: 'center',
+            padding: '20px',
           }}
           onClick={(e) => {
-            // סגור את הצ'אט רק אם לוחצים על ה-overlay ולא על הצ'אט עצמו
             if (e.target === e.currentTarget) {
               setIsChatOpen(false)
             }
@@ -222,15 +215,15 @@ const CardCustomer: React.FC = () => {
               marginRight: -3,
               backgroundColor: 'white',
               borderTopLeftRadius: 6,
-              borderBottomLeftRadius: 6, // פינות מעוגלות
-              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)', // צל
+              borderBottomLeftRadius: 6,
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
             <ChatBot
               entityType={EntityType.Customer}
-              entityId={String(customer.customer_id)} // המרה למחרוזת
+              entityId={String(customer.customer_id)}
               onClose={() => setIsChatOpen(false)}
             />
           </Box>
