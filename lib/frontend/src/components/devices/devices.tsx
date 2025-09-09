@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import DevicesList from './devicesList'
 import { useFetchDevices } from './useFetchDevices'
-import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
 
 const Devices: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -29,7 +27,6 @@ const Devices: React.FC = () => {
           onFilterChange={setFilterType}
           onRefresh={refetch}
       />
-      <ChatBot entityType={EntityType.Device} entityId='1' />
     </>
   )
 }
