@@ -9,6 +9,7 @@ import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import { createDevice } from '../../api/device'
 import { Device } from '@model'
+import { AxiosError } from 'axios'
 
 interface AddDeviceFormProps {
   open: boolean
@@ -30,6 +31,20 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null)
   const isMobile = useMediaQuery('(max-width:600px)')
+
+  // Common configuration for numeric fields
+  const numericInputProps = {
+    inputMode: 'numeric' as const,
+    pattern: '[0-9]*'
+  }
+
+  const getNumericFieldRules = () => ({
+    required: t('requiredField'),
+    pattern: {
+      value: /^\d+$/,
+      message: t('numbersOnlyError')
+    }
+  })
 
   const { control, handleSubmit, reset } = useForm<DeviceFormData>({
     defaultValues: {
@@ -55,8 +70,20 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       reset()
       onClose()
       onSuccess() // Refresh the devices list
-    } catch (error: any) {
-      const errorMsg = error.response?.data?.message || t('deviceAddFailed')
+    } catch (error: unknown) {
+      let errorMsg = t('deviceAddFailed')
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as AxiosError
+        if (axiosError.response?.data && 
+            typeof axiosError.response.data === 'object' && 
+            axiosError.response.data !== null &&
+            'message' in axiosError.response.data) {
+          const responseData = axiosError.response.data as { message: string }
+          errorMsg = responseData.message
+        }
+      }
+      
       setErrorMessage(errorMsg)
     }
   }, [t, reset, onClose, onSuccess])
@@ -103,17 +130,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           control={control}
           name="mehalcha_number"
           label={t('mehalchaNumber')}
-          inputProps={{
-            inputMode: 'numeric',
-            pattern: '[0-9]*'
-          }}
-          rules={{
-            required: t('requiredField'),
-            pattern: {
-              value: /^\d+$/,
-              message: t('numbersOnlyError')
-            }
-          }}
+          inputProps={numericInputProps}
+          rules={getNumericFieldRules()}
         />
         <CustomTextField
           control={control}
@@ -136,33 +154,15 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           control={control}
           name="device_number"
           label={t('deviceNumber')}
-          inputProps={{
-            inputMode: 'numeric',
-            pattern: '[0-9]*'
-          }}
-          rules={{
-            required: t('requiredField'),
-            pattern: {
-              value: /^\d+$/,
-              message: t('numbersOnlyError')
-            }
-          }}
+          inputProps={numericInputProps}
+          rules={getNumericFieldRules()}
         />
         <CustomTextField
           control={control}
           name="SIM_number"
           label={t('simNumber')}
-          inputProps={{
-            inputMode: 'numeric',
-            pattern: '[0-9]*'
-          }}
-          rules={{
-            required: t('requiredField'),
-            pattern: {
-              value: /^\d+$/,
-              message: t('numbersOnlyError')
-            }
-          }}
+          inputProps={numericInputProps}
+          rules={getNumericFieldRules()}
         />
       </Box>
 
@@ -178,17 +178,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           control={control}
           name="IMEI_1"
           label="IMEI 1"
-          inputProps={{
-            inputMode: 'numeric',
-            pattern: '[0-9]*'
-          }}
-          rules={{
-            required: t('requiredField'),
-            pattern: {
-              value: /^\d+$/,
-              message: t('numbersOnlyError')
-            }
-          }}
+          inputProps={numericInputProps}
+          rules={getNumericFieldRules()}
         />
       </Box>
 
