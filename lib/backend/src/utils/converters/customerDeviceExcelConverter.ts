@@ -26,7 +26,8 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
       mehalcha_number: row.mehalcha_number || '',
       model: row.model || '',
       status: 'active',
-      isDonator: true,
+      serialNumber: row.serialNumber || '',
+      purchaseDate: row.purchaseDate || new Date(),
     },
     receivedAt: row.receivedAt,
   }

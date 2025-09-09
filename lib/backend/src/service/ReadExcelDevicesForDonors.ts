@@ -55,8 +55,9 @@ const processExcelData = async (data: any[]): Promise<{
               device_id: existDevice.device_id,
               receivedAt: date,
               planEndDate: planEndDate,
-              filterVersion: '1.7',
-              deviceProgram: '0',
+              Plan: ''//sanitized.Plan,
+              // filterVersion: '1.7',
+              // deviceProgram: '0',
             },
             trx,
           )
@@ -125,6 +126,7 @@ const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: any) => 
     IMEI_1: sanitized.device.IMEI_1,
     mehalcha_number: sanitized.device.mehalcha_number,
     device_number: sanitized.device.device_number,
+    serialNumber: sanitized.device.serialNumber,
   })
 
   if (!existDevice) {

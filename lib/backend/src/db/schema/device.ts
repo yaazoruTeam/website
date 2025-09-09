@@ -17,6 +17,8 @@ const createDeviceSchema = async () => {
         table.string('mehalcha_number').notNullable().unique()
         table.string('device_number').notNullable().unique()
         table.string('model').notNullable()
+        table.string("serialNumber").notNullable().unique()
+        table.date('purchaseDate').notNullable()
         table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
       })
       logger.debug('Device table created successfully.')

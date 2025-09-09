@@ -13,8 +13,9 @@ const createCustomerDevice = async (customerDevice: CustomerDevice.Model, trx?: 
         device_id: customerDevice.device_id,
         receivedAt: customerDevice.receivedAt,
         planEndDate: customerDevice.planEndDate,
-        filterVersion: customerDevice.filterVersion,
-        deviceProgram: customerDevice.deviceProgram,
+        Plan: customerDevice.Plan,
+        // filterVersion: customerDevice.filterVersion,
+        // deviceProgram: customerDevice.deviceProgram,
       })
       .returning('*')
     return newCustomerDevice

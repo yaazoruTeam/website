@@ -125,6 +125,7 @@ const existingDevice = async (device: Device.Model, hasId: boolean) => {
         IMEI_1: device.IMEI_1,
         mehalcha_number: device.mehalcha_number,
         device_number: device.device_number,
+        serialNumber: device.serialNumber,
       })
     } else {
       deviceEx = await db.Device.findDevice({
@@ -132,6 +133,7 @@ const existingDevice = async (device: Device.Model, hasId: boolean) => {
         IMEI_1: device.IMEI_1,
         mehalcha_number: device.mehalcha_number,
         device_number: device.device_number,
+        serialNumber: device.serialNumber,
       })
     }
     if (deviceEx) {

@@ -1,13 +1,12 @@
 import { HttpError } from '.'
 
 interface Model {
-  customerDevice_id: string
-  customer_id: string
-  device_id: string
+  customerDevice_id: string//✅
+  customer_id: string//✅
+  device_id: string//✅
   receivedAt: Date
   planEndDate?: Date
-  filterVersion?: '1.7' | '1.8'
-  deviceProgram?: '0' | '2'
+  Plan: string//מסלול
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
@@ -41,6 +40,13 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     }
     throw error
   }
+  if (!isString(customerDevice.Plan) || customerDevice.Plan.trim() === '') {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "Plan".',
+    }
+    throw error
+  }
 
   const newCustomerDevice: Model = {
     customerDevice_id: customerDevice.customerDevice_id,
@@ -48,8 +54,7 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     device_id: customerDevice.device_id,
     receivedAt: customerDevice.receivedAt,
     planEndDate: customerDevice.planEndDate,
-    filterVersion: customerDevice.filterVersion,
-    deviceProgram: customerDevice.deviceProgram,
+    Plan: customerDevice.Plan,
   }
 
   return newCustomerDevice

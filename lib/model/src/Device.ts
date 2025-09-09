@@ -1,14 +1,15 @@
 import { HttpError } from '.'
 
 interface Model {
-  device_id: string
-  device_number: string
-  SIM_number: string
-  IMEI_1: string
-  mehalcha_number: string
-  model: string
-  status: string
-  isDonator: boolean
+  device_id: string//✅
+  device_number: string//✅
+  SIM_number: string//✅
+  IMEI_1: string//✅
+  mehalcha_number: string//✅
+  model: string//✅
+  status: string//✅
+  serialNumber: string
+  purchaseDate: Date
 }
 
 function sanitize(device: Model, hasId: boolean): Model {
@@ -54,6 +55,20 @@ function sanitize(device: Model, hasId: boolean): Model {
     }
     throw error
   }
+  if (!device.serialNumber) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "serialNumber".',
+    }
+    throw error
+  }
+  if (!device.purchaseDate) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "purchaseDate".',
+    }
+    throw error
+  }
 
   const newDevice: Model = {
     device_id: device.device_id,
@@ -63,7 +78,8 @@ function sanitize(device: Model, hasId: boolean): Model {
     mehalcha_number: device.mehalcha_number,
     model: device.model,
     status: device.status || 'active',
-    isDonator: device.isDonator,
+    serialNumber: device.serialNumber,
+    purchaseDate: device.purchaseDate,
   }
 
   return newDevice
@@ -88,6 +104,13 @@ const sanitizeExistingDevice = (deviceExis: Model, device: Model) => {
     const error: HttpError.Model = {
       status: 409,
       message: 'mehalcha_number already exists',
+    }
+    throw error
+  }
+  if (deviceExis.serialNumber === device.serialNumber) {
+    const error: HttpError.Model = {
+      status: 409,
+      message: 'serialNumber already exists',
     }
     throw error
   }

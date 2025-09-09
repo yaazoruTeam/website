@@ -6,14 +6,18 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 export interface deviceFormInputs {
+  device_number: string
   SIM_number: string
   IMEI_1: string
   mehalcha_number: string
   model: string
+  serialNumber: string
+  purchaseDate: string
   received_at: string //להוסיף את זה לטבלה מכשירים //תאריך קבלת המכשיר
   planEndDate: string //להוסיף את זה לטבלת מכשירים     //תאריך סיום התוכנית - 5 שנים מאז הקבלה של המכשיר
-  filterVersion: string //להוסיף את זה לטבלת מכשירים//גרסת סינון
-  deviceProgram: string //להוסיף את זה לטבלת מכשירים    //תכנית מכשיר
+  Plan: string //מסלול
+  // filterVersion: string //להוסיף את זה לטבלת מכשירים//גרסת סינון
+  // deviceProgram: string //להוסיף את זה לטבלת מכשירים    //תכנית מכשיר
   notes: string //לבדות איך בדיוק לבצע את זה!
   //הערות מכשיר
 
@@ -21,7 +25,6 @@ export interface deviceFormInputs {
 
   //פרטים שקיימים כבר על מכשיר ולא צריך אותם כאן
   // device_id: string;
-  // device_number: string;
   // status: string;
   // isDonator: boolean;
 }
@@ -30,14 +33,19 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
   const { t } = useTranslation()
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
-      SIM_number: '',
-      IMEI_1: '',
-      mehalcha_number: '',
-      model: '',
-      received_at: '',
-      planEndDate: '',
-      filterVersion: '',
-      deviceProgram: '',
+      device_number: '',
+      SIM_number: '',//מספר סידורי במקום זה 
+      IMEI_1: '',//V
+      mehalcha_number: '',//X
+      model: '',//V
+      serialNumber: '',
+      purchaseDate: '',
+      //תאריך רישום המכשיר
+      received_at: '',//תאריך קבלת המכשיר
+      planEndDate: '',//תאריך סיום התוכנית
+      Plan: '',//מסלול
+      // filterVersion: '',//X
+      // deviceProgram: '',//X
       notes: '',
     },
   })
@@ -57,10 +65,10 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
           paddingBottom: '24px',
         }}
       >
+        <CustomTextField control={control} name='device_number' label={t('device_number')} />
         <CustomTextField control={control} name='SIM_number' label={t('SIM_number')} />
         <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
         <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} />
-        <CustomTextField control={control} name='model' label={t('model')} />
       </Box>
       <Box
         sx={{
@@ -69,10 +77,20 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
           paddingBottom: '24px',
         }}
       >
+        <CustomTextField control={control} name='model' label={t('model')} />
+        <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
+        <CustomTextField control={control} name='purchaseDate' label={t('purchaseDate')} />
         <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} />
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '28px',
+          paddingBottom: '24px',
+        }}
+      >
         <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
-        <CustomTextField control={control} name='filterVersion' label={t('filterVersion')} />
-        <CustomTextField control={control} name='deviceProgram' label={t('deviceProgram')} />
+        <CustomTextField control={control} name='Plan' label={t('plan')} />
       </Box>
       <Box
         sx={{

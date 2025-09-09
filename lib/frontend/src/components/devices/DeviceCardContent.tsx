@@ -16,18 +16,24 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
       {/* טופס פרטי המכשיר */}
       <DeviceForm
         initialValues={{
+          device_number: device.device_number,
           SIM_number: device.SIM_number,
           IMEI_1: device.IMEI_1,
           mehalcha_number: device.mehalcha_number,
           model: device.model,
+          serialNumber: device.serialNumber || '',
+          purchaseDate: device.purchaseDate 
+            ? formatDateToString(new Date(device.purchaseDate))
+            : '',
           received_at: customerDevice?.receivedAt 
             ? formatDateToString(new Date(customerDevice.receivedAt))
             : '',
           planEndDate: customerDevice?.planEndDate 
             ? formatDateToString(new Date(customerDevice.planEndDate))
             : '',
-          filterVersion: customerDevice?.filterVersion || '',
-          deviceProgram: customerDevice?.deviceProgram || '',
+          Plan: customerDevice?.Plan || '',
+          // filterVersion: customerDevice?.filterVersion || '',
+          // deviceProgram: customerDevice?.deviceProgram || '',
           notes: '',
         }}
       />
