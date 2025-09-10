@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { charge } from '@tranzila/Authentication'
 import logger from '../utils/logger'
+import config from '../config'
 
 const chargeTokenTranzila = async (
   req: Request,
@@ -10,11 +11,11 @@ const chargeTokenTranzila = async (
   try {
     const body = req.body
     const transaction = {
-      terminal_name: process.env.TRANZILA_TERMINAL_NAME || '',
-      expire_month: parseInt(process.env.TRANZILA_EXPIRE_MONTH || ''),//to do:Check where the data comes from.
-      expire_year: parseInt(process.env.TRANZILA_EXPIRE_YEAR || ''),//to do:Check where the data comes from.
-      cvv: process.env.TRANZILA_CVV || '',//to do:Check where the data comes from.
-      card_number: process.env.TRANZILA_CARD_NUMBER || '', //Accepts the credit card token instead of the card number
+      terminal_name: config.tranzila.terminalName,
+      expire_month: config.tranzila.expireMonth,//to do:Check where the data comes from.
+      expire_year: config.tranzila.expireYear,//to do:Check where the data comes from.
+      cvv: config.tranzila.cvv,//to do:Check where the data comes from.
+      card_number: config.tranzila.cardNumber, //Accepts the credit card token instead of the card number
       //to do:Check where the data comes from.
       items: [
         {
