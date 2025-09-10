@@ -1,6 +1,7 @@
 import { Box, styled } from '@mui/material'
 import { FlexBase, FlexColumn } from './baseStyles'
 import { colors } from '../../../styles/theme'
+import { FlexRowSpaceBetween } from './calendarStyles'
 
 // Main container for the entire ChatCommentCard
 export const ChatCommentCardContainer = styled(FlexColumn)({
@@ -26,11 +27,9 @@ export const ChatCommentCardMainBox = styled(FlexBase)({
 })
 
 // Inner box container
-export const ChatCommentCardInnerBox = styled(FlexBase)({
+export const ChatCommentCardInnerBox = styled(FlexRowSpaceBetween)({
   alignSelf: 'stretch',
-  justifyContent: 'space-between',
   alignItems: 'flex-start',
-  width: '100%',
 })
 
 // Content section (date and comments)
@@ -43,9 +42,7 @@ export const ChatCommentCardContentSection = styled(FlexColumn)({
 })
 
 // Comment section wrapper
-export const ChatCommentCardCommentSection = styled(FlexBase)({
-  width: '100%',
-  justifyContent: 'space-between',
+export const ChatCommentCardCommentSection = styled(FlexRowSpaceBetween)({
   alignItems: 'flex-start',
   gap: '40px',
   direction: 'rtl',
@@ -73,18 +70,16 @@ export const ChatCommentCardChatButtonContainer = styled(FlexBase)({
 })
 
 // AddCustomerForm ChatBot specific styled components
-export const CustomerFormContainer = styled(Box)({
+export const CustomerFormContainer = styled(FlexColumn)({
   width: '100%',
   height: '100%',
   borderRadius: '12px',
-  display: 'flex',
-  flexDirection: 'column',
   direction: 'rtl',
 })
 
 export const CustomerFormInnerContainer = styled(FlexColumn)({
   height: '100%',
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  boxShadow: `0 2px 4px ${colors.c47}`,
   justifyContent: 'flex-end',
 })
 
@@ -107,26 +102,22 @@ export const CustomerFormButtonSection = styled(FlexBase)({
 })
 
 // Chat Modal styled components
-export const ChatModalOverlay = styled(Box)({
+export const ChatModalOverlay = styled(FlexBase)({
   position: 'fixed',
   top: 0,
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  backgroundColor: colors.c49,
   zIndex: 9999,
-  display: 'flex',
   justifyContent: 'flex-start',
-  alignItems: 'center',
 })
 
-export const ChatModalContainer = styled(Box)({
+export const ChatModalContainer = styled(FlexColumn)({
   marginTop: '38px',
   marginRight: '-3px',
-  backgroundColor: 'white',
+  backgroundColor: colors.c6,
   borderTopLeftRadius: '6px',
   borderBottomLeftRadius: '6px',
-  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
-  display: 'flex',
-  flexDirection: 'column',
+  boxShadow: `0 10px 25px ${colors.c50}`,
 })

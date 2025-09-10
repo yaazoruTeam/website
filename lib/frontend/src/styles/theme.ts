@@ -52,6 +52,8 @@ const colors = {
   c47: 'rgba(0, 0, 0, 0.1)', // Light shadow color
   n50: '#94A3B8',
   c48: '#555758',
+  c49: 'rgba(0, 0, 0, 0.7)',
+  c50: 'rgba(0, 0, 0, 0.3)'
 }
 
 // הגדרת הצבעים של ה-theme
