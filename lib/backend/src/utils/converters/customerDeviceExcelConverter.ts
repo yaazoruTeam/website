@@ -28,7 +28,7 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
       serialNumber: row.serialNumber || '',
       purchaseDate: row.receivedAt || null,
       releaseDate: row.releaseDate || new Date(),
-      plan: /*row.plan ||*/ '',
+      plan: row.plan || '',
     },
     receivedAt: row.receivedAt,
   }

@@ -7,7 +7,7 @@ interface Model {
   IMEI_1: string
   // mehalcha_number: string
   model: string
-  status: string // active, inactive, blocked, lock in imei, 
+  status: string // active, inactive, blocked, lock in imei
   serialNumber: string //במסונג?
   releaseDate: Date  //תאריך הקמה
   purchaseDate: Date | null //תאריך רכישה

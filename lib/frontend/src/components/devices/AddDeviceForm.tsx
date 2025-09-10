@@ -65,7 +65,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
         status: 'active',
         purchaseDate: null,
         releaseDate: new Date(),
-        plan: '', //?? מאיפה מקבלים את זה
+        plan: '', //?? מאיפה מקבלים את זה to do
       }
 
       await createDevice(deviceData)
@@ -142,8 +142,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           control={control}
           name="serialNumber"
           label={t('serialNumber')}
-        // inputProps={numericInputProps}
-        // rules={getNumericFieldRules()}
+        // to do : להוסיף ולידציות 
         />
         <CustomTextField
           control={control}

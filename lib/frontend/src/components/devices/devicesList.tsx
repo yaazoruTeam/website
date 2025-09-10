@@ -37,7 +37,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     setResetTrigger(true)
     setTimeout(() => setResetTrigger(false), 0)
   }
-console.log(devices);
 
   const columns = [
     { label: t('deviceNumber'), key: 'device_number' },
@@ -58,7 +57,8 @@ console.log(devices);
     releaseDate: `${formatDateToString(new Date(device.releaseDate))}`,
     purchaseDate: device.purchaseDate != null ? `${formatDateToString(new Date(device.purchaseDate))}` : '--',
     plan: device.plan,
-    status://במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר
+    //במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר לבדוק את זה to do
+    status:
       device.status === 'active' ? (
         <StatusTag status='active' />
       ) : (
