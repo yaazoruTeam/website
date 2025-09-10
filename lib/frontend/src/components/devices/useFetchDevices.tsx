@@ -14,6 +14,7 @@ interface UseFetchDevicesReturn {
   total: number
   isLoading: boolean
   error: string | null
+  refetch: () => void
 }
 
 export const useFetchDevices = ({ page, filterType }: UseFetchDevicesProps): UseFetchDevicesReturn => {
@@ -21,6 +22,11 @@ export const useFetchDevices = ({ page, filterType }: UseFetchDevicesProps): Use
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [refetchTrigger, setRefetchTrigger] = useState(0)
+
+  const refetch = () => {
+    setRefetchTrigger(prev => prev + 1)
+  }
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -65,7 +71,7 @@ export const useFetchDevices = ({ page, filterType }: UseFetchDevicesProps): Use
     }
 
     fetchDevices()
-  }, [page, filterType])
+  }, [page, filterType, refetchTrigger])
 
-  return { devices, total, isLoading, error }
+  return { devices, total, isLoading, error, refetch }
 }

@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import DevicesList from './devicesList'
 import { useFetchDevices } from './useFetchDevices'
-import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
 
 const Devices: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -13,7 +11,7 @@ const Devices: React.FC = () => {
   >(null);
   const limit = import.meta.env.VITE_LIMIT ? parseInt(import.meta.env.VITE_LIMIT) : 10
 
-  const { devices, total, isLoading, error } = useFetchDevices({ page, filterType: filterType ?? undefined })
+  const { devices, total, isLoading, error, refetch } = useFetchDevices({ page, filterType: filterType ?? undefined })
 
   if (isLoading) return <div>Loading devices...</div>
   if (error) return <div>{error}</div>
@@ -26,8 +24,9 @@ const Devices: React.FC = () => {
           page={page} 
           limit={limit}
           onPageChange={setPage}
-          onFilterChange={setFilterType} />
-      <ChatBot entityType={EntityType.Device} entityId='1' />
+          onFilterChange={setFilterType}
+          onRefresh={refetch}
+      />
     </>
   )
 }

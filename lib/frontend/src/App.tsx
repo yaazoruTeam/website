@@ -10,6 +10,7 @@ import Customers from './components/customers/customers'
 import Devices from './components/devices/devices'
 import Header from './components/layout/Header'
 import Login from './components/auth/Login'
+import Register from './components/auth/Register'
 import MonthlyPaymentComponen from './components/monthlyPayment/MonthlyPayment'
 import Orders from './components/orders/Orders'
 import Branches from './components/branches/Branches'
@@ -55,193 +56,105 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <ProtectedRoute>
-        <Header />
-      </ProtectedRoute>
-
-      <div style={{ display: 'flex' }}>
-        <ProtectedRoute>
-          <SideNav
-            listItems={[
-              {
-                iconWhite: dashboardIconWhite,
-                iconBlue: dashboardIconBlue,
-                link: '../dashboard',
-                text: t('dashboard'),
-              },
-              {
-                iconWhite: customerIconWhite,
-                iconBlue: customerIconBlue,
-                link: '../customers',
-                text: t('customers'),
-              },
-              {
-                iconWhite: devicesIconWhite,
-                iconBlue: devicesIconBlue,
-                link: '../devices',
-                text: t('devices'),
-              },
-              {
-                iconWhite: ordersIconWhite,
-                iconBlue: ordersIconBlue,
-                link: '../orders',
-                text: t('orders'),
-              },
-              {
-                iconWhite: branchesIconWhite,
-                iconBlue: branchesIconBlue,
-                link: '../branches',
-                text: t('branches'),
-              },
-              {
-                iconWhite: monthlyPaymentIconWhite,
-                iconBlue: monthlyPaymentIconBlue,
-                link: '../monthlyPayment',
-                text: t('standingOrder'),
-              },
-              {
-                iconWhite: switchboardIconWhite,
-                iconBlue: switchboardIconBlue,
-                link: '../switchboard',
-                text: t('switchboard'),
-              },
-              {
-                iconWhite: permissionsIconWhite,
-                iconBlue: permissionsIconBlue,
-                link: '../permissions',
-                text: t('permissions'),
-              },
-            ]}
-          />
-        </ProtectedRoute>
-        <main
-          style={{
-            flexGrow: 1,
-            padding: '20px',
-            overflow: 'auto',
-            background: colors.c15,
-          }}
-        >
-          <AppLayout>
-            <Routes>
-              <Route path='/login' element={<Login />} />
-              <Route
-                path='/dashboard'
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/customers'
-                element={
-                  <ProtectedRoute>
-                    <Customers />
-                  </ProtectedRoute>
-                }
-              />
-               <Route
-                path='/customer/add'
-                element={
-                  <ProtectedRoute>
-                    <AddCustomer />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/customer/card/:id'
-                element={
-                  <ProtectedRoute>
-                    <CardCustomer />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/devices'
-                element={
-                  <ProtectedRoute>
-                    <Devices />
-                  </ProtectedRoute>
-                }
-              />
-                 <Route
-                path='/device/card/:id'
-                element={
-                  <ProtectedRoute>
-                    <DeviceCard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/orders'
-                element={
-                  <ProtectedRoute>
-                    <Orders />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/branches'
-                element={
-                  <ProtectedRoute>
-                    <Branches />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/monthlyPayment'
-                element={
-                  <ProtectedRoute>
-                    <MonthlyPaymentComponen />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/monthlyPayment/edit/:id'
-                element={
-                  <ProtectedRoute>
-                    <EditMonthlyPayment />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/permissions'
-                element={
-                  <ProtectedRoute>
-                    <Permissions />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/switchboard'
-                element={
-                  <ProtectedRoute>
-                    <Switchboard />
-                  </ProtectedRoute>
-                }
-              />
-              {/* to do : לבדוק איזה ניווט הכי נכון לעשות פה. */}
-              <Route
-                path='/switchboard/callCenter/:id'
-                element={
-                  <ProtectedRoute>
-                    <CallCenter />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path='/switchboard/callCenter/:id/callLog/:callId'
-                element={
-                  <ProtectedRoute>
-                    <CallLog />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </AppLayout>
-        </main>
-      </div>
+      <Routes>
+        {/* עמודים ללא הגנה */}
+        <Route path='/' element={<Login />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        
+        {/* עמודים מוגנים עם Header ו-SideNav */}
+        <Route
+          path='/*'
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <div style={{ display: 'flex' }}>
+                  <SideNav
+                    listItems={[
+                      {
+                        iconWhite: dashboardIconWhite,
+                        iconBlue: dashboardIconBlue,
+                        link: '../dashboard',
+                        text: t('dashboard'),
+                      },
+                      {
+                        iconWhite: customerIconWhite,
+                        iconBlue: customerIconBlue,
+                        link: '../customers',
+                        text: t('customers'),
+                      },
+                      {
+                        iconWhite: devicesIconWhite,
+                        iconBlue: devicesIconBlue,
+                        link: '../devices',
+                        text: t('devices'),
+                      },
+                      {
+                        iconWhite: ordersIconWhite,
+                        iconBlue: ordersIconBlue,
+                        link: '../orders',
+                        text: t('orders'),
+                      },
+                      {
+                        iconWhite: branchesIconWhite,
+                        iconBlue: branchesIconBlue,
+                        link: '../branches',
+                        text: t('branches'),
+                      },
+                      {
+                        iconWhite: monthlyPaymentIconWhite,
+                        iconBlue: monthlyPaymentIconBlue,
+                        link: '../monthlyPayment',
+                        text: t('standingOrder'),
+                      },
+                      {
+                        iconWhite: switchboardIconWhite,
+                        iconBlue: switchboardIconBlue,
+                        link: '../switchboard',
+                        text: t('switchboard'),
+                      },
+                      {
+                        iconWhite: permissionsIconWhite,
+                        iconBlue: permissionsIconBlue,
+                        link: '../permissions',
+                        text: t('permissions'),
+                      },
+                    ]}
+                  />
+                  <main
+                    style={{
+                      flexGrow: 1,
+                      padding: '20px',
+                      overflow: 'auto',
+                      background: colors.c15,
+                    }}
+                  >
+                    <AppLayout>
+                      <Routes>
+                        <Route path='/dashboard' element={<Dashboard />} />
+                        <Route path='/customers' element={<Customers />} />
+                        <Route path='/customer/add' element={<AddCustomer />} />
+                        <Route path='/customer/card/:id' element={<CardCustomer />} />
+                        <Route path='/devices' element={<Devices />} />
+                        <Route path='/device/card/:id' element={<DeviceCard />} />
+                        <Route path='/orders' element={<Orders />} />
+                        <Route path='/branches' element={<Branches />} />
+                        <Route path='/monthlyPayment' element={<MonthlyPaymentComponen />} />
+                        <Route path='/monthlyPayment/edit/:id' element={<EditMonthlyPayment />} />
+                        <Route path='/permissions' element={<Permissions />} />
+                        <Route path='/switchboard' element={<Switchboard />} />
+                        <Route path='/switchboard/callCenter/:id' element={<CallCenter />} />
+                        <Route path='/switchboard/callCenter/:id/callLog/:callId' element={<CallLog />} />
+                      </Routes>
+                    </AppLayout>
+                  </main>
+                </div>
+              </>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </ThemeProvider>
   )
 }
