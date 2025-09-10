@@ -1,14 +1,15 @@
+import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
 import { Knex } from 'knex'
 
 const createDeviceSchema = async () => {
-  console.log('create device schema')
+  logger.debug('create device schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('devices')
     if (!tableExists) {
-      console.log('Creating devices table...')
+      logger.debug('Creating devices table...')
       await knex.schema.withSchema('yaazoru').createTable('devices', (table: Knex.TableBuilder) => {
         table.increments('device_id').primary()
         table.string('SIM_number').notNullable().unique()
@@ -18,12 +19,12 @@ const createDeviceSchema = async () => {
         table.string('model').notNullable()
         table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
       })
-      console.log('Device table created successfully.')
+      logger.debug('Device table created successfully.')
     } else {
-      console.log('device table already exists. Skipping creation.')
+      logger.debug('device table already exists. Skipping creation.')
     }
   } catch (err) {
-    console.error('error creat schema device', err)
+    logger.error('error creat schema device', err)
   }
 }
 

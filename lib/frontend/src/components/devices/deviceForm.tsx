@@ -32,7 +32,6 @@ export interface deviceFormInputs {
   // device_id: string;
   // device_number: string;
   // status: string;
-  // isDonator: boolean;
 }
 
 interface DeviceFormProps {

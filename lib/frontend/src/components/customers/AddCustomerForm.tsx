@@ -124,6 +124,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                   value: 50,
                   message: t('maxLength', { max: 50 }),
                 },
+                pattern: {
+                  value: /^[A-Za-zא-ת\s'-]+$/,
+                  message: t('invalidName'),
+                },
               }}
               control={control}
             />
@@ -136,6 +140,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                 maxLength: {
                   value: 50,
                   message: t('maxLength', { max: 50 }),
+                },
+                 pattern: {
+                  value: /^[A-Za-zא-ת\s'-]+$/,
+                  message: t('invalidName'),
                 },
               }}
             />
@@ -212,6 +220,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               label={t('address')}
               rules={{
                 required: t('requiredField'),
+                pattern: {
+                  value: /^[A-Za-zא-ת0-9\s'",.\-/]+$/,
+                  message: t('invalidAddress'),
+                },
               }}
             />
             <CustomTextField
@@ -220,6 +232,10 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               label={t('city')}
               rules={{
                 required: t('requiredField'),
+                 pattern: {
+                  value: /^[A-Za-zא-ת\s'-]+$/,
+                  message: t('invalidCity'),
+                },
               }}
             />
           </Box>
