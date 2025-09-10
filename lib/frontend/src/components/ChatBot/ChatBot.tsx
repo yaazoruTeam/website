@@ -35,6 +35,7 @@ interface ChatBotProps {
   entityType: EntityType;
   entityId: string;
   onClose?: () => void;
+  commentType?: string;
 }
 
 interface ClientComment extends Comment.Model {
@@ -50,7 +51,7 @@ const generateTempId = (): string => {
   return `temp-${Date.now()}-${tempIdCounter}`;
 };
 
-const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commentType }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -279,7 +280,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
       
       <Box sx={chatStyles.header}>
         <CustomTypography
-          text={t('customerComments')}
+          text={commentType || ''}
           variant='h2'
           weight='bold'
           color={colors.c11}
