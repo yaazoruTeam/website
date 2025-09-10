@@ -2,56 +2,71 @@ import { createTheme } from '@mui/material/styles'
 import '@fontsource/heebo'
 
 const colors = {
-  c0: '#1F1F1F', //brand color_10
-  c1: '',
-  c2: '#0A425F', //brand color_8
-  c3: '#FF7F07', //brand color_4
-  c4: '#80E4FF', //brand color_3
-  c5: 'rgba(205, 244, 255, 0.44)',
-  c6: '#FFFFFF', //neutral white
-  c7: '#007AFF', //brand color_6
-  c8: '#0059BA', //brand color_7
-  c9: '',
-  c10: 'rgba(21, 54, 70, 0.37)', //'#153646 · 37%',//brand color_2
-  c11: '#032B40', //brand color_9
-  c12: '#E4E4E4', //brand color_13
-  c13: '#D0E6FF', //brand color_17
-  c14: 'rgba(246, 246, 246, 0.67)', //'#F6F6F6 · 67%',//brand color_15
-  c15: '#F5F6FA', //brand color_14
-  c16: '#E5F2FF', //brand color_18
-  c17: '#D55188', //brand.color_5
-  c18: 'rgba(253, 209, 220, 0.74)', //'#FDD1DC · 74%',//status error light
-  c19: 'rgba(255, 253, 184, 0.74)', //'#FFFDB8 · 74%',//status yellow light
-  c20: 'rgba(224, 223, 255, 0.5)', //'#E0DFFF · 50%',//brand color_20
-  c21: 'rgba(229, 242, 255, 0.7)', //'#E5F2FF · 70%',//brand color_19
-  c22: 'rgba(11, 58, 82, 0.36)', //'#0B3A52 · 36%',//brand color_12
-  c23: 'rgba(23, 42, 51, 0.52)', //'#172A33 · 52%',
-  c24: 'rgba(255, 255, 255, 0.5)', //'#FFFFFF · 50%',//brand color_16
-  c25: 'rgba(182, 255, 203, 0.7)', //'#B6FFCB · 70%',//status success light
-  c26: 'rgba(255, 226, 185, 0.76)', //'#FFE2B9 · 76%',//status warning light
-  c27: '#F3F4F6',
-  c28: '#D83232', //status error dark
-  c29: '#F68C23', //status warning dark
-  c30: '#47BA79', //status success dark
-  feild: 'rgba(246, 248, 252, 0.58)', //'#F6F8FC · 58%',//brand color_11
-  c32: 'rgba(253, 209, 220, 1)',
-  c33: 'rgba(182, 255, 203, 1)',
-  c34: '#0a3b55',
-  c35: 'rgba(10, 66, 95, 0.04)',
-  c36: '#E0E0E0',
-  c37: '#1D75DD',
-  c38: '#989BA1', //neutral gray
-  c39: '#DDDDDD', //neutral light gray
-  c40: '#121212', // Main text color
-  c41: '#666', // Disabled text
-  c42: '#858585', // Secondary text
-  c43: '#083647', // Button hover state
-  c44: '#ccc', // Disabled button background
-  c45: 'rgba(255, 127, 7, 0.1)', // Selected range background
-  c46: 'rgba(133, 133, 133, 0.08)', // Hover state for buttons
-  c47: 'rgba(0, 0, 0, 0.1)', // Light shadow color
-  n50: '#94A3B8',
-  c48: '#555758',
+  // ===== NEUTRALS - DARK TO LIGHT =====
+  neutral900: '#121212',
+  neutral800: '#1F1F1F',
+  neutral700: '#555758',
+  neutral600: '#666',
+  neutral500: '#858585',
+  neutral400: '#94A3B8',
+  neutral350: '#989BA1',
+  neutral300: '#ccc',
+  neutral200: '#DDDDDD',
+  neutral150: '#E0E0E0',
+  neutral100: '#E4E4E4',
+  neutral75:  '#F5F6FA',
+  neutral50:  '#F3F4F6',
+  neutral0:   '#FFFFFF',
+
+  // ===== BLUES - DARK TO LIGHT =====
+  blue900: '#032B40',
+  blue800: '#083647',
+  blue700: '#0a3b55',
+  blue600: '#0A425F',
+  blue500: '#0059BA',
+  blue400: '#007AFF',
+  blue300: '#1D75DD',
+  blue200: '#80E4FF',
+  blue100: '#D0E6FF',
+  blue50:  '#E5F2FF',
+
+  // ===== PURPLES =====
+  purple500: '#D55188',
+  purple100: '#e0dfff80',
+
+  // ===== REDS =====
+  red500: '#D83232',
+  red100: '#fdd1dc',
+  red75:  '#fdd1dcbd',
+
+  // ===== ORANGES =====
+  orange500: '#FF7F07',
+  orange400: '#F68C23',
+  orange100: '#ffe2b9c2',
+
+  // ===== YELLOWS =====
+  yellow100: '#fffdb8bd',
+
+  // ===== GREENS =====
+  green500: '#47BA79',
+  green100: '#b6ffcb',
+  green75:  '#b6ffcbb3',
+
+  // ===== BLUE OVERLAYS & TRANSPARENCIES =====
+  blueOverlay700: '#0b3a525c',
+  blueOverlay650: '#1536465e',
+  blueOverlay600: '#172a3385',
+  blueOverlay200: '#cdf4ff70',
+  blueOverlay100: '#e5f2ffb3',
+  blueOverlay50:  '#0a425f0a',
+
+  // ===== UTILITY OVERLAYS =====
+  orangeSelection: '#ff7f071a',
+  fieldBg:         '#f6f8fc94',
+  grayOverlay:     '#f6f6f6ab',
+  whiteOverlay:    '#ffffff80',
+  hoverGray:       '#85858514',
+  shadowLight:     '#0000001a',
 }
 
 // הגדרת הצבעים של ה-theme
