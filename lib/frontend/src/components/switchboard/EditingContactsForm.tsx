@@ -129,7 +129,7 @@ const EditingContactsForm = forwardRef<any, EditingContactsFormProps>(
                 sx={{
                   marginTop: 3,
                   marginRight: 2,
-                  color: colors.c22,
+                  color: colors.blueOverlay700,
                   '&:hover': {
                     backgroundColor: 'transparent',
                   },

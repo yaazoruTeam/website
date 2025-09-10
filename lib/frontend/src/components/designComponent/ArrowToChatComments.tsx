@@ -15,7 +15,7 @@ const ArrowToChatComments: React.FC<ArrowToChatCommentsProps> = ({ onClick }) =>
       sx={{
         width: '70%',
         height: '70%',
-        backgroundColor: colors.c8,
+        backgroundColor: colors.blue500,
         borderRadius: '50px',
         display: 'inline-flex',
         justifyContent: 'center',

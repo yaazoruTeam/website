@@ -67,7 +67,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       sx={{
         width: '100%',
         padding: 6,
-        backgroundColor: colors.c6,
+        backgroundColor: colors.neutral0,
         borderRadius: 2,
         flexDirection: 'column',
         justifyContent: 'center',
@@ -81,7 +81,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         text="הוספת משתמש חדש למערכת"
         variant='h1'
         weight='bold'
-        color={colors.c11}
+        color={colors.blue900}
         sx={{
           textAlign: 'center',
           marginBottom: 3,

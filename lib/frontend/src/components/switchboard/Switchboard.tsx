@@ -85,7 +85,7 @@ const Switchboard: React.FC = () => {
               width: '250px',
               height: '44px',
               mx: '24px',
-              border: `1px solid ${colors.c22}`,
+              border: `1px solid ${colors.blueOverlay700}`,
               paddingLeft: '10px',
               borderRadius: '8px',
             }}
@@ -95,7 +95,7 @@ const Switchboard: React.FC = () => {
               icon={<MagnifyingGlassIcon />}
               control={control}
               name='search'
-              // sx={{ border: `1px solid ${colors.c22}`, width: '250px' }}
+              // sx={{ border: `1px solid ${colors.blueOverlay700}`, width: '250px' }}
             />
           </Box>
           <CustomButton label={t('addAnAccount')} buttonType='first' state='default' />

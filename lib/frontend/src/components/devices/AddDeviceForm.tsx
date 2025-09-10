@@ -113,7 +113,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           text={t('addingDevice')}
           variant='h1'
           weight='bold'
-          color={colors.c11}
+          color={colors.blue900}
         />
       </Box>
 

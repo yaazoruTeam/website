@@ -48,7 +48,7 @@ const SwitchWithLoader: React.FC<SwitchWithLoaderProps> = ({
               <CircularProgress 
                 size={12} 
                 sx={{ 
-                  color: variant === 'modern' ? colors.c3 : colors.c11,
+                  color: variant === 'modern' ? colors.orange500 : colors.blue900,
                 }} 
               />
           )}
@@ -57,7 +57,7 @@ const SwitchWithLoader: React.FC<SwitchWithLoaderProps> = ({
           text={label}
           variant="h5"
           weight="regular"
-          color={colors.c0}
+          color={colors.neutral800}
         />
       </Box>
       
@@ -68,7 +68,7 @@ const SwitchWithLoader: React.FC<SwitchWithLoaderProps> = ({
             text={error}
             variant="h5"
             weight="regular"
-            color={colors.c28} // צבע אדום לשגיאה
+            color={colors.red500} // צבע אדום לשגיאה
           />
         </Box>
       )}

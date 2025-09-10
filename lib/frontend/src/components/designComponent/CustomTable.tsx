@@ -43,7 +43,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                 <CustomTypography
                   variant='h4'
                   weight='medium'
-                  color={colors.c11}
+                  color={colors.blue900}
                   text={column.label}
                 />
               </TableCell>
@@ -72,8 +72,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       paddingRight: 24,
                       paddingTop: 16,
                       paddingBottom: 16,
-                      background: colors.c6,
-                      borderBottom: `1px ${colors.c15} solid`,
+                      background: colors.neutral0,
+                      borderBottom: `1px ${colors.neutral75} solid`,
                       cursor: onRowClick ? 'pointer' : 'auto',
                     }}
                   >
@@ -88,7 +88,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                                 ? 'left'
                                 : 'right',
                             padding: '10px 20px',
-                            backgroundColor: colors.c6,
+                            backgroundColor: colors.neutral0,
                             whiteSpace: key === 'dates' ? 'nowrap' : 'normal',
                           }}
                         >
@@ -98,7 +98,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                             <CustomTypography
                               variant='h4'
                               weight='regular'
-                              color={colors.c11}
+                              color={colors.blue900}
                               text={String(row[key] || t('dataNotAvailable'))}
                             />
                           ) : (
@@ -133,7 +133,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
         {showSummary && (
           <TableFooter
             sx={{
-              backgroundColor: colors.c6,
+              backgroundColor: colors.neutral0,
               borderBottom: `none`,
             }}
           >
@@ -161,31 +161,31 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       text={`${(showSummary.page - 1) * showSummary.limit + 1}`}
                       variant='h4'
                       weight='medium'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={t('to')}
                       variant='h4'
                       weight='regular'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={`${Math.min(showSummary.page * showSummary.limit, showSummary.total)}`}
                       variant='h4'
                       weight='medium'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={t('of')}
                       variant='h4'
                       weight='regular'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={`${showSummary.total}`}
                       variant='h4'
                       weight='medium'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                   </Box>
                   <Box
@@ -199,7 +199,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       style={{
                         width: '16px',
                         height: '16px',
-                        color: colors.c11,
+                        color: colors.blue900,
                         pointerEvents: showSummary.page === 1 ? 'none' : 'auto',
                         opacity: showSummary.page === 1 ? 0.5 : 1,
                         cursor: 'pointer',
@@ -214,31 +214,31 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
                       text={t('page')}
                       variant='h4'
                       weight='regular'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={`${showSummary.page}`}
                       variant='h4'
                       weight='medium'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={t('of')}
                       variant='h4'
                       weight='regular'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <CustomTypography
                       text={`${showSummary.totalPages}`}
                       variant='h4'
                       weight='medium'
-                      color={colors.c11}
+                      color={colors.blue900}
                     />
                     <ChevronLeftIcon
                       style={{
                         width: '16px',
                         height: '16px',
-                        color: colors.c11,
+                        color: colors.blue900,
                         pointerEvents: showSummary.page === showSummary.totalPages ? 'none' : 'auto',
                         opacity: showSummary.page === showSummary.totalPages ? 0.5 : 1,
                         cursor: 'pointer',

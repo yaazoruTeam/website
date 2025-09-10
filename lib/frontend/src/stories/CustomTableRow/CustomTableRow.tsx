@@ -20,12 +20,12 @@ const CustomTableRow: React.FC<CustomTableRowProps> = ({ data }) => {
             paddingTop: 1,
             paddingBottom: 1,
             textAlign: 'right',
-            color: colors.c11,
+            color: colors.blue900,
             fontSize: 17,
             fontFamily: 'Heebo',
             fontWeight: '400',
             // wordWrap: "break-word",
-            borderBottom: `1px ${colors.c15} solid`,
+            borderBottom: `1px ${colors.neutral75} solid`,
           }}
           key={index}
         >

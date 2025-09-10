@@ -8,7 +8,7 @@ export const chatStyles = {
     marginBottom: 16,
     padding: 3,
     paddingTop: 8,
-    background: colors.c6,
+    background: colors.neutral0,
   },
   
   closeButton: {
@@ -23,7 +23,7 @@ export const chatStyles = {
   },
   
   closeIcon: {
-    color: colors.c8,
+    color: colors.blue500,
     width: 28,
     height: 28,
     paddingLeft: 12,
@@ -33,7 +33,7 @@ export const chatStyles = {
   header: {
     height: 21,
     p: 2.5,
-    background: colors.c5,
+    background: colors.blueOverlay200,
     borderRadius: 3,
     textAlign: 'center' as const,
   },
@@ -59,7 +59,7 @@ export const chatStyles = {
     background: 'white',
     overflow: 'hidden',
     borderRadius: 0.8,
-    outline: `1px ${colors.c39} solid`,
+    outline: `1px ${colors.neutral200} solid`,
     outlineOffset: '-1px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -76,11 +76,11 @@ export const chatStyles = {
     fontSize: 18,
     fontFamily: 'Heebo',
     fontWeight: 400,
-    color: colors.c10,
+    color: colors.blueOverlay650,
     outline: 'none',
     direction: 'rtl' as const,
     '& .MuiInputBase-input::placeholder': {
-      color: colors.c10,
+      color: colors.blueOverlay650,
       opacity: 1,
     },
     '& .MuiInputBase-root': {
@@ -98,12 +98,12 @@ export const chatStyles = {
   emojiIcon: {
     width: 18,
     height: 18,
-    color: colors.c38,
+    color: colors.neutral350,
     cursor: 'pointer',
   },
   
   sendButton: {
-    backgroundColor: colors.c37,
+    backgroundColor: colors.blue300,
     border: 'none',
     borderRadius: 0.4,
     width: 20,
@@ -114,7 +114,7 @@ export const chatStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     '&:hover': {
-      backgroundColor: colors.c37,
+      backgroundColor: colors.blue300,
     },
   },
   
@@ -166,8 +166,8 @@ export const commentStyles = {
     maxWidth: "100%",
     p: 1.5,
     borderRadius: 1.5,
-    backgroundColor: colors.c6,
-    border: `1px solid ${colors.c37}`,
+    backgroundColor: colors.neutral0,
+    border: `1px solid ${colors.blue300}`,
     minWidth: 160,
     position: "relative" as const,
   },
@@ -175,16 +175,16 @@ export const commentStyles = {
   microphoneIcon: {
     width: 20,
     height: 20,
-    color: colors.c37,
+    color: colors.blue300,
     flexShrink: 0,
   },
   
   textMessage: {
     maxWidth: "100%",
     borderRadius: 1.5,
-    backgroundColor: colors.c6,
-    border: `1px solid ${colors.c37}`,
-    color: colors.c11,
+    backgroundColor: colors.neutral0,
+    border: `1px solid ${colors.blue300}`,
+    color: colors.blue900,
     textAlign: "right" as const,
     fontFamily: "Heebo",
     fontSize: 16,
@@ -199,7 +199,7 @@ export const commentStyles = {
     justifyContent: "center",
     display: "flex",
     flexDirection: "column" as const,
-    color: colors.c38,
+    color: colors.neutral350,
     fontSize: 14,
     fontFamily: 'Heebo',
     fontWeight: '400',
@@ -221,7 +221,7 @@ export const dateSeparatorStyles = {
     flex: '1 1 0',
     height: 1.07,
     opacity: 0.2,
-    background: colors.c38,
+    background: colors.neutral350,
     borderRadius: 10,
   },
   
@@ -231,7 +231,7 @@ export const dateSeparatorStyles = {
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column' as const,
-    color: colors.c38,
+    color: colors.neutral350,
     fontSize: 14,
     fontFamily: 'Heebo',
     fontWeight: '400',

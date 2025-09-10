@@ -32,7 +32,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         text={label}
         variant='h4'
         weight='regular'
-        color={colors.c11}
+        color={colors.blue900}
         sx={{ marginBottom: '5px' }}
       />
       <Controller
@@ -57,7 +57,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                     text={selectedOption?.label || ''}
                     variant='h4'
                     weight='regular'
-                    color={colors.c11}
+                    color={colors.blue900}
                   />
                   {selectedOption?.icon && (
                     <Box
@@ -75,7 +75,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             }}
             sx={{
               textAlign: 'right',
-              backgroundColor: colors.feild,
+              backgroundColor: colors.fieldBg,
               border: 'none',
               boxShadow: 'none',
               '.MuiOutlinedInput-notchedOutline': { border: 'none' },
@@ -92,7 +92,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             value={field.value || ''}
             endAdornment={
               <InputAdornment position='end' onClick={handleIconClick}>
-                <ChevronDownIcon style={{ width: '21.5px', height: '16px', color: colors.c2 }} />
+                <ChevronDownIcon style={{ width: '21.5px', height: '16px', color: colors.blue600 }} />
               </InputAdornment>
             }
             MenuProps={
@@ -100,7 +100,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 ? {
                     PaperProps: {
                       sx: {
-                        outline: `1px solid ${colors.c22}`,
+                        outline: `1px solid ${colors.blueOverlay700}`,
                         mt: '4px',
                       },
                     },
@@ -143,7 +143,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                           text={option.label}
                           variant='h4'
                           weight='regular'
-                          color={colors.c11}
+                          color={colors.blue900}
                         />
                         {option.icon && (
                           <Box
@@ -163,7 +163,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                         width: 14,
                         height: 14,
                         borderRadius: '50%',
-                        backgroundColor: field.value === option.value ? colors.c2 : 'transparent',
+                        backgroundColor: field.value === option.value ? colors.blue600 : 'transparent',
                         border:
                           field.value === option.value
                             ? 'none'
@@ -185,7 +185,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                         text={option.label}
                         variant='h4'
                         weight='regular'
-                        color={colors.c11}
+                        color={colors.blue900}
                       />
                       {option.icon && (
                         <Box

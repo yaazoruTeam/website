@@ -28,8 +28,8 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
         flexShrink: 0,
         '& .MuiDrawer-paper': {
           width: '130px',
-          backgroundColor: colors.c2,
-          color: colors.c6,
+          backgroundColor: colors.blue600,
+          color: colors.neutral0,
           borderRadius: '22px 0px 0px 22px',
           display: 'flex',
           flexDirection: 'column',
@@ -65,7 +65,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
             to={li.link}
             onClick={() => handleLinkClick(li.link)}
             sx={{
-              color: selectedLink === li.link ? colors.c4 : colors.c6,
+              color: selectedLink === li.link ? colors.blue200 : colors.neutral0,
               textAlign: 'center',
               flexDirection: 'column',
               alignItems: 'center',
@@ -100,7 +100,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
               text={li.text}
               variant='h4'
               weight='regular'
-              color={selectedLink === li.link ? colors.c4 : colors.c6}
+              color={selectedLink === li.link ? colors.blue200 : colors.neutral0}
             />
           </ListItem>
         ))}

@@ -23,81 +23,81 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   const buttonStyles = {
     first: {
       default: {
-        backgroundColor: colors.c3,
-        color: colors.c6,
+        backgroundColor: colors.orange500,
+        color: colors.neutral0,
         border: `none`,
-        hover: colors.c2,
+        hover: colors.blue600,
       },
       hover: {
-        backgroundColor: colors.c10,
-        color: colors.c6,
+        backgroundColor: colors.blueOverlay650,
+        color: colors.neutral0,
         border: `none`,
         hover: '',
       },
       active: {
-        backgroundColor: colors.c6,
-        color: colors.c0,
-        border: `1px solid ${colors.c0} `,
+        backgroundColor: colors.neutral0,
+        color: colors.neutral800,
+        border: `1px solid ${colors.neutral800} `,
         hover: '',
       },
     },
     second: {
       default: {
-        backgroundColor: colors.c2,
-        color: colors.c6,
+        backgroundColor: colors.blue600,
+        color: colors.neutral0,
         border: `none`,
         hover: '',
       },
       hover: {
-        backgroundColor: colors.c22,
-        color: colors.c6,
+        backgroundColor: colors.blueOverlay700,
+        color: colors.neutral0,
         border: `none`,
         hover: '',
       },
       active: {
-        backgroundColor: colors.c6,
-        color: colors.c2,
-        border: `1px solid ${colors.c2} `,
+        backgroundColor: colors.neutral0,
+        color: colors.blue600,
+        border: `1px solid ${colors.blue600} `,
         hover: '',
       },
     },
     third: {
       default: {
-        backgroundColor: colors.c6,
-        color: colors.c2,
-        border: `1px solid ${colors.c22} `,
+        backgroundColor: colors.neutral0,
+        color: colors.blue600,
+        border: `1px solid ${colors.blueOverlay700} `,
         hover: '',
       },
       hover: {
-        backgroundColor: colors.c22,
-        color: colors.c6,
+        backgroundColor: colors.blueOverlay700,
+        color: colors.neutral0,
         border: `none`,
         hover: '',
       },
       active: {
-        backgroundColor: colors.c6,
-        color: colors.c2,
-        border: `1px solid ${colors.c22} `,
+        backgroundColor: colors.neutral0,
+        color: colors.blue600,
+        border: `1px solid ${colors.blueOverlay700} `,
         hover: '',
       },
     },
     fourth: {
       default: {
         backgroundColor: 'transparent',
-        color: colors.c11,
-        border: `1px solid ${colors.c8}`,
-        hover: colors.c5,
+        color: colors.blue900,
+        border: `1px solid ${colors.blue500}`,
+        hover: colors.blueOverlay200,
       },
       hover: {
-        backgroundColor: colors.c5,
-        color: colors.c11,
-        border: `1px solid ${colors.c8}`,
+        backgroundColor: colors.blueOverlay200,
+        color: colors.blue900,
+        border: `1px solid ${colors.blue500}`,
         hover: '',
       },
       active: {
         backgroundColor: 'transparent',
-        color: colors.c11,
-        border: `1px solid ${colors.c8}`,
+        color: colors.blue900,
+        border: `1px solid ${colors.blue500}`,
         hover: '',
       },
     },
@@ -137,7 +137,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         text={label}
         variant={size === 'large' ? 'h4' : 'h5'}
         weight={state === 'active' ? (size === 'large' ? 'medium' : 'bold') : 'regular'}
-        color={disabled ? colors.c22 : currentButtonStyle.color}
+        color={disabled ? colors.blueOverlay700 : currentButtonStyle.color}
       />
       {icon && React.isValidElement(icon) && (
         <span style={{ display: 'flex', justifyContent: 'flex-end' }}>

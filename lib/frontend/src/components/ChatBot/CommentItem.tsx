@@ -58,7 +58,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               }
               variant="h4"
               weight="medium"
-              color={colors.c11}
+              color={colors.blue900}
               sx={{
                 wordWrap: "break-word",
                 flexGrow: 1,
@@ -70,7 +70,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   text={formatDuration(comment.audioDuration)}
                   variant="h4"
                   weight="regular"
-                  color={colors.c37}
+                  color={colors.blue300}
                   sx={{
                     wordWrap: "break-word",
                     lineHeight: 1,

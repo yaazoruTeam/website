@@ -57,7 +57,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
           <DayOfWeekCell
             key={index}
             sx={{
-              color: index === 6 ? colors.c2 : colors.c40,
+              color: index === 6 ? colors.blue600 : colors.neutral900,
             }}
           >
             {day}
