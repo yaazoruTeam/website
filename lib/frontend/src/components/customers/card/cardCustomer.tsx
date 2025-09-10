@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Customer, EntityType } from '@model'
+import { Customer } from '@model'
 import { deleteCustomer, getCustomerById } from '../../../api/customerApi'
 import CustomTypography from '../../designComponent/Typography'
 import { colors } from '../../../styles/theme'
@@ -14,7 +14,6 @@ import DeviceDetails from './deviceDetails'
 import MonthlyPaymentDetails from './monthlyPaymentDetails'
 import CustomerDetails, { CustomerDetailsRef } from './customerDetails'
 import CustomModal from '../../designComponent/Modal'
-import ChatBot from '../../ChatBot/ChatBot'
 
 const CardCustomer: React.FC = () => {
   const { id } = useParams()
@@ -22,7 +21,6 @@ const CardCustomer: React.FC = () => {
   const [customer, setCustomer] = useState<Customer.Model>()
   const isMobile = useMediaQuery('(max-width:600px)')
   const [openModal, setOpenModal] = useState(false)
-  const [isChatOpen, setIsChatOpen] = useState(false)
   const formRef = useRef<CustomerDetailsRef>(null)
   const navigate = useNavigate()
 
@@ -186,49 +184,6 @@ const CardCustomer: React.FC = () => {
           />
         </Box>
       </CustomModal>
-
-      {/* Chat Modal */}
-      {isChatOpen && customer && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            zIndex: 9999,
-            display: 'flex',
-            justifyContent: 'start',
-            alignItems: 'center',
-            padding: '20px',
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setIsChatOpen(false)
-            }
-          }}
-        >
-          <Box
-            sx={{
-              marginTop: 38,
-              marginRight: -3,
-              backgroundColor: 'white',
-              borderTopLeftRadius: 6,
-              borderBottomLeftRadius: 6,
-              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <ChatBot
-              entityType={EntityType.Customer}
-              entityId={String(customer.customer_id)}
-              onClose={() => setIsChatOpen(false)}
-            />
-          </Box>
-        </Box>
-      )}
     </>
   )
 }
