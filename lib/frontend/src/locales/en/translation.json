@@ -297,5 +297,7 @@
   "numbersOnlyError": "Only numbers are allowed",
   "deviceData": "Device Data",
   "serialNumber": "Serial Number",
-  "plan": "Plan"
+  "plan": "Plan",
+  "registrationDateDevice": "Registration Date Device",
+  "releaseDate": "Release Date"
 }

@@ -8,42 +8,34 @@ import CustomTypography from '../designComponent/Typography'
 
 export interface deviceFormInputs {
   device_number: string
-  SIM_number: string
+  // SIM_number: string
   IMEI_1: string
-  mehalcha_number: string
+  // mehalcha_number: string
   model: string
   serialNumber: string
-  purchaseDate: string
+  registrationDate: string
   received_at: string //להוסיף את זה לטבלה מכשירים //תאריך קבלת המכשיר
   planEndDate: string //להוסיף את זה לטבלת מכשירים     //תאריך סיום התוכנית - 5 שנים מאז הקבלה של המכשיר
-  Plan: string //מסלול
-  // filterVersion: string //להוסיף את זה לטבלת מכשירים//גרסת סינון
-  // deviceProgram: string //להוסיף את זה לטבלת מכשירים    //תכנית מכשיר
-  notes: string //לבדות איך בדיוק לבצע את זה!
-  //הערות מכשיר
-
-  //נתוני סים
-
-  //פרטים שקיימים כבר על מכשיר ולא צריך אותם כאן
-  // device_id: string;
-  // status: string;
+  // plan: string //מסלול
+  notes: string //לבדות איך בדיוק לבצע את זה
 }
 
 const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialValues }) => {
   const { t } = useTranslation()
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
-      device_number: '',
-      SIM_number: '',//מספר סידורי במקום זה 
+      // device_number: '',
+      // SIM_number: '',//מספר סידורי במקום זה 
       IMEI_1: '',//V
-      mehalcha_number: '',//X
+      // mehalcha_number: '',//X
       model: '',//V
       serialNumber: '',
-      purchaseDate: '',
+      registrationDate: '', //תאריך רישום המכשיר
+      // purchaseDate: '',
       //תאריך רישום המכשיר
       received_at: '',//תאריך קבלת המכשיר
       planEndDate: '',//תאריך סיום התוכנית
-      Plan: '',//מסלול
+      // Plan: '',//מסלול
       notes: '',
     },
   })
@@ -56,7 +48,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
         padding: '28px',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
         <CustomTypography
           text={t('deviceData')}
           variant='h3'
@@ -92,7 +84,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
       >
         {/* <CustomTextField control={control} name='model' label={t('model')} /> */}
         {/* <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} /> */}
-        <CustomTextField control={control} name='purchaseDate' label={t('purchaseDate')} />
+        <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} />
         <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} />
         <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
 

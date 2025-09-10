@@ -18,7 +18,7 @@ const createCustomerDeviceSchema = async () => {
           table.string('device_id').notNullable().unique()
           table.date('receivedAt').nullable()
           table.date('planEndDate').nullable()
-          table.string('Plan').notNullable()
+          // table.string('Plan').notNullable()
           // table.enu('filterVersion', ['1.7', '1.8']).nullable()
           // table.enu('deviceProgram', ['0', '2']).nullable()
         })

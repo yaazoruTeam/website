@@ -37,16 +37,16 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     setResetTrigger(true)
     setTimeout(() => setResetTrigger(false), 0)
   }
+console.log(devices);
 
   const columns = [
     { label: t('deviceNumber'), key: 'device_number' },
     // { label: t('mehalchaNumber'), key: 'mehalcha_number' },
     { label: t('serialNumber'), key: 'serialNumber' },
     // { label: t('openingDate'), key: 'opening_date' },
-    //תאריך הקמה
-    { label: t('purchaseDate'), key: 'purchase_date' },
+    { label: t('releaseDate'), key: 'releaseDate' },
+    { label: t('purchaseDate'), key: 'purchaseDate' },
     { label: t('plan'), key: 'plan' },
-
     { label: '', key: 'status' },
   ]
 
@@ -55,10 +55,9 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     device_number: device.device_number,
     // mehalcha_number: device.mehalcha_number,
     serialNumber: device.serialNumber || '-',
-    //תאריך הקמה
-    // opening_date: '-', // TODO: Add opening_date field to device model
-    purchase_date: `${formatDateToString(new Date(device.purchaseDate))}`, // TODO: Add purchase_date field to device model
-    plan: /*device.Plan ||*/ '-', //אולי כן כדאי לשים את המסלול בתוך ה- device  כי חבל לעשות כאן עוד קריאת שרת...
+    releaseDate: `${formatDateToString(new Date(device.releaseDate))}`,
+    purchaseDate: device.purchaseDate != null ? `${formatDateToString(new Date(device.purchaseDate))}` : '--',
+    plan: device.plan,
     status://במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר
       device.status === 'active' ? (
         <StatusTag status='active' />

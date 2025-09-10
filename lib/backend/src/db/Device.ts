@@ -11,11 +11,12 @@ const createDevice = async (device: Device.Model, trx?: any) => {
       .insert({
         SIM_number: device.SIM_number,
         IMEI_1: device.IMEI_1,
-        mehalcha_number: device.mehalcha_number,
         model: device.model,
         device_number: device.device_number,
         serialNumber: device.serialNumber,
         purchaseDate: device.purchaseDate,
+        releaseDate: device.releaseDate,
+        plan: device.plan,
         status: device.status,
       })
       .returning('*')
@@ -118,7 +119,6 @@ const findDevice = async (criteria: {
   device_id?: string
   SIM_number?: string
   IMEI_1?: string
-  mehalcha_number?: string
   device_number?: string
   serialNumber?: string
 }) => {
@@ -131,9 +131,6 @@ const findDevice = async (criteria: {
         }
         if (criteria.IMEI_1) {
           this.orWhere({ IMEI_1: criteria.IMEI_1 })
-        }
-        if (criteria.mehalcha_number) {
-          this.orWhere({ mehalcha_number: criteria.mehalcha_number })
         }
         if (criteria.device_number) {
           this.orWhere({ device_number: criteria.device_number })

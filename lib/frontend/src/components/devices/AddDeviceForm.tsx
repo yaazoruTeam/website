@@ -21,7 +21,8 @@ interface DeviceFormData {
   device_number: string
   SIM_number: string
   IMEI_1: string
-  mehalcha_number: string
+  // mehalcha_number: string
+  serialNumber: string
   model: string
 }
 
@@ -51,7 +52,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       device_number: '',
       SIM_number: '',
       IMEI_1: '',
-      mehalcha_number: '',
+      // mehalcha_number: '',
+      serialNumber: '',
       model: '',
     }
   })
@@ -61,8 +63,9 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       const deviceData: Omit<Device.Model, 'device_id'> = {
         ...data,
         status: 'active',
-        serialNumber: '',//?? מאיפה מקבלים את זה ?? צריך לבצע קריאת שרת לסמסונג
-        purchaseDate: new Date(),  // מה לשים פה עד שרוכשים את המכשיר??? תאיריך ברירת מחדל איפה אפשר לקשר בין מכשיר ללקוח
+        purchaseDate: null,
+        releaseDate: new Date(),
+        plan: '', //?? מאיפה מקבלים את זה
       }
 
       await createDevice(deviceData)
@@ -74,18 +77,18 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       onSuccess() // Refresh the devices list
     } catch (error: unknown) {
       let errorMsg = t('deviceAddFailed')
-      
+
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as AxiosError
-        if (axiosError.response?.data && 
-            typeof axiosError.response.data === 'object' && 
-            axiosError.response.data !== null &&
-            'message' in axiosError.response.data) {
+        if (axiosError.response?.data &&
+          typeof axiosError.response.data === 'object' &&
+          axiosError.response.data !== null &&
+          'message' in axiosError.response.data) {
           const responseData = axiosError.response.data as { message: string }
           errorMsg = responseData.message
         }
       }
-      
+
       setErrorMessage(errorMsg)
     }
   }, [t, reset, onClose, onSuccess])
@@ -128,12 +131,19 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           flexWrap: isMobile ? 'wrap' : 'nowrap',
         }}
       >
-        <CustomTextField
+        {/* <CustomTextField
           control={control}
           name="mehalcha_number"
           label={t('mehalchaNumber')}
           inputProps={numericInputProps}
           rules={getNumericFieldRules()}
+        /> */}
+        <CustomTextField
+          control={control}
+          name="serialNumber"
+          label={t('serialNumber')}
+        // inputProps={numericInputProps}
+        // rules={getNumericFieldRules()}
         />
         <CustomTextField
           control={control}

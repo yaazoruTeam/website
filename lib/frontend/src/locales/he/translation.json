@@ -298,5 +298,7 @@
   "numbersOnlyError": "ניתן להזין רק מספרים",
   "deviceData": "נתוני מכשיר",
   "serialNumber": "מספר סידורי",
-  "plan": "מסלול"
+  "plan": "מסלול",
+  "registrationDateDevice": "תאריך רישום מכשיר",
+  "releaseDate": "תאריך הקמה"
 }

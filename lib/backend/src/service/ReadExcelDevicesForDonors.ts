@@ -21,7 +21,9 @@ const processExcelData = async (data: any[]): Promise<{
   for (const item of data) {
     const isCustomer: boolean =
       !!(typeof item.first_name === 'string' && item.first_name.trim()) ||
-      (typeof item.last_name === 'string' && item.last_name.trim())
+      (typeof item.last_name === 'string' && item.last_name.trim()) ||
+      (typeof item.phone_number === 'string' && item.phone_number.trim()) ||
+      (typeof item.email === 'string' && item.email.trim())
 
     let sanitized: CustomerDeviceExcel.Model | null = null
 
@@ -56,9 +58,6 @@ const processExcelData = async (data: any[]): Promise<{
               device_id: existDevice.device_id,
               receivedAt: date,
               planEndDate: planEndDate,
-              Plan: ''//sanitized.Plan,
-              // filterVersion: '1.7',
-              // deviceProgram: '0',
             },
             trx,
           )
@@ -125,7 +124,6 @@ const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: any) => 
   let existDevice = await db.Device.findDevice({
     SIM_number: sanitized.device.SIM_number,
     IMEI_1: sanitized.device.IMEI_1,
-    mehalcha_number: sanitized.device.mehalcha_number,
     device_number: sanitized.device.device_number,
     serialNumber: sanitized.device.serialNumber,
   })
