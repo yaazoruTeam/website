@@ -33,24 +33,27 @@ const CommentInput: React.FC<CommentInputProps> = ({
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        showEmojiPicker &&
-        emojiPickerRef.current &&
-        !emojiPickerRef.current.contains(event.target as Node)
-      ) {
-        setShowEmojiPicker(false);
-        setEmojiPickerPosition(null);
-      }
-    };
+  // פונקציה פשוטה לטיפול בלחיצה מחוץ לאזור
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      emojiPickerRef.current &&
+      !emojiPickerRef.current.contains(event.target as Node)
+    ) {
+      setShowEmojiPicker(false);
+      setEmojiPickerPosition(null);
+    }
+  };
 
+  useEffect(() => {
+    // הוספת event listener רק כשה-picker פתוח
     if (showEmojiPicker) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
     }
+
+    // cleanup תמיד מתבצע
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [showEmojiPicker]);
 
   const handleEmojiClick = () => {
