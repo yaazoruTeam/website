@@ -1,4 +1,5 @@
 import { HttpError, Widely } from '@model'
+import logger from './logger'
 
 const validateRequiredParams = (params: Record<string, any>): void => {
     const missingParams: string[] = []
@@ -25,11 +26,28 @@ const validateRequiredParams = (params: Record<string, any>): void => {
 }
 
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
-    // Check for API error response
-    if (result.error_code !== undefined && result.error_code !== 200) {
+    // Check for API error response - both error_code and status
+    const hasError = (result.error_code !== undefined && result.error_code !== 200) || 
+                     (result.status && result.status === "ERROR")
+    if (hasError) {
+        // Log the Widely error in a structured format for debugging
+        logger.error('Widely API Error:', {
+            errorCode: result.error_code || 'Unknown',
+            widelyMessage: result.message || 'No message provided',
+            status: result.status || 'Not provided',
+            customErrorMessage: errorMessage,
+            fullWidelyResponse: result
+        })
+
+        // Use Widely's message if available, otherwise use our custom message
+        const widelyMessage = result.message || errorMessage
+        const finalMessage = result.error_code 
+            ? `${errorMessage} - Widely Error Code: ${result.error_code}, Message: ${widelyMessage}`
+            : `${errorMessage} - Message: ${widelyMessage}`
+
         const error: HttpError.Model = {
-            status: result.error_code || 500,
-            message: errorMessage,
+            status: 500, // Always return 500 for Widely API errors
+            message: finalMessage,
         }
         throw error
     }

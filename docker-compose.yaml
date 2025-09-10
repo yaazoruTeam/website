@@ -1,9 +1,13 @@
 services:
   backend:
-    image: yaazoru/backend:latest
+    build:
+      context: .
+      dockerfile: lib/backend/Dockerfile
     container_name: yaazoru-backend-prod
-    ports:
-      - "3006:3006"
+    # ports:
+    #   - "3006:3006"
+    expose:
+      - "3006"
     env_file:
       - .env
     environment:
@@ -13,21 +17,30 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       NODE_ENV: production
-    command: sh -c "npm install && npm run start"
     depends_on:
       - db
     networks:
       - yaazoru-internal
 
   frontend:
-    image: yaazoru/frontend:latest
+    build:
+      context: .
+      dockerfile: lib/frontend/Dockerfile
+      args:
+        VITE_BASE_URL: ${VITE_BASE_URL:-/api}
+        VITE_LIMIT: ${VITE_LIMIT:-50}
     container_name: react-frontend-nginx
     working_dir: /app
-    ports:
-      - "80:80"
+    # ports:
+    #   - "443:443"
+    expose:
+      - "80"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-      - VITE_BASE_URL=${VITE_BASE_URL:-/}
+      - VITE_BASE_URL=${VITE_BASE_URL:-/api}
+      - VITE_LIMIT=${VITE_LIMIT}
+    depends_on:
+      - backend
     networks:
       - yaazoru-internal
   db:
@@ -38,14 +51,58 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
       - yaazoru-internal
+
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:7
+    container_name: dd-agent
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_SITE: ${DD_SITE}
+      DD_DOGSTATSD_NON_LOCAL_TRAFFIC: ${DD_DOGSTATSD_NON_LOCAL_TRAFFIC}
+      DD_APM_ENABLED: ${DD_APM_ENABLED}
+      DD_APM_NON_LOCAL_TRAFFIC: ${DD_APM_NON_LOCAL_TRAFFIC}
+      DD_APM_RECEIVER_SOCKET: ${DD_APM_RECEIVER_SOCKET}
+      DD_DOGSTATSD_SOCKET: ${DD_DOGSTATSD_SOCKET}
+      DD_LOGS_ENABLED: "true"  
+    volumes:
+      - /var/run/datadog:/var/run/datadog
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /app/logs:/logs:ro
+    networks:
+      - yaazoru-internal
+    # restart: unless-stopped
+
+      
+  caddy:
+    image: caddy:2
+    container_name: yaazoru-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - yaazoru-internal
+
 volumes:
   db-data:
+  caddy_data:
+  caddy_config:
 networks:
   yaazoru-internal:
     driver: bridge

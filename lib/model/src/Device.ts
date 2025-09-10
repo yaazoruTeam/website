@@ -8,7 +8,6 @@ interface Model {
   mehalcha_number: string
   model: string
   status: string
-  isDonator: boolean
 }
 
 function sanitize(device: Model, hasId: boolean): Model {
@@ -63,7 +62,6 @@ function sanitize(device: Model, hasId: boolean): Model {
     mehalcha_number: device.mehalcha_number,
     model: device.model,
     status: device.status || 'active',
-    isDonator: device.isDonator,
   }
 
   return newDevice

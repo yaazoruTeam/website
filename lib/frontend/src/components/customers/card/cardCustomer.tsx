@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
-import { Customer } from '@model'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Customer, EntityType } from '@model'
 import { deleteCustomer, getCustomerById } from '../../../api/customerApi'
 import CustomTypography from '../../designComponent/Typography'
 import { colors } from '../../../styles/theme'
@@ -14,6 +14,8 @@ import DeviceDetails from './deviceDetails'
 import MonthlyPaymentDetails from './monthlyPaymentDetails'
 import CustomerDetails, { CustomerDetailsRef } from './customerDetails'
 import CustomModal from '../../designComponent/Modal'
+import ArrowToChatComments from '../../designComponent/ArrowToChatComments'
+import ChatBot from '../../ChatBot/ChatBot'
 
 const CardCustomer: React.FC = () => {
   const { id } = useParams()
@@ -21,7 +23,9 @@ const CardCustomer: React.FC = () => {
   const [customer, setCustomer] = useState<Customer.Model>()
   const isMobile = useMediaQuery('(max-width:600px)')
   const [openModal, setOpenModal] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const formRef = useRef<CustomerDetailsRef>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getCustomer = async (id: string) => {
@@ -49,6 +53,7 @@ const CardCustomer: React.FC = () => {
     console.log('delete customer: ', customer?.customer_id)
     if (customer) await deleteCustomer(parseInt(customer.customer_id))
     setOpenModal(false)
+    navigate('/customers')
   }
 
   return (
@@ -92,6 +97,11 @@ const CardCustomer: React.FC = () => {
             direction: 'rtl',
           }}
         >
+          {/* רכיב החץ לצ'אט */}
+          <Box sx={{ width: '60px', height: '60px' }}>
+            <ArrowToChatComments onClick={() => setIsChatOpen(true)} />
+          </Box>
+
           <CustomButton
             label={t('deletingCustomer')}
             size={isMobile ? 'small' : 'large'}
@@ -99,6 +109,7 @@ const CardCustomer: React.FC = () => {
             buttonType='third'
             icon={<TrashIcon />}
             onClick={() => setOpenModal(true)}
+            disabled={customer?.status === 'inactive'}
           />
           <CustomButton
             label={t('savingChanges')}
@@ -181,6 +192,50 @@ const CardCustomer: React.FC = () => {
           />
         </Box>
       </CustomModal>
+
+      {/* Chat Modal */}
+      {isChatOpen && customer && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)', // רקע כהה יותר
+            zIndex: 9999,
+            display: 'flex',
+            justifyContent: 'start', // מרכז המסך
+            alignItems: 'center', // מרכז המסך אנכית
+            padding: '20px', // רווח מהקצוות
+          }}
+          onClick={(e) => {
+            // סגור את הצ'אט רק אם לוחצים על ה-overlay ולא על הצ'אט עצמו
+            if (e.target === e.currentTarget) {
+              setIsChatOpen(false)
+            }
+          }}
+        >
+          <Box
+            sx={{
+              marginTop: 38,
+              marginRight: -3,
+              backgroundColor: 'white',
+              borderTopLeftRadius: 6,
+              borderBottomLeftRadius: 6, // פינות מעוגלות
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)', // צל
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <ChatBot
+              entityType={EntityType.Customer}
+              entityId={String(customer.customer_id)} // המרה למחרוזת
+              onClose={() => setIsChatOpen(false)}
+            />
+          </Box>
+        </Box>
+      )}
     </>
   )
 }

@@ -5,7 +5,7 @@ export const chatStyles = {
     position: 'relative' as const,
     width: 420,
     margin: '0 auto',
-    marginBottom: 50,
+    marginBottom: 16,
     padding: 3,
     paddingTop: 8,
     background: colors.c6,
@@ -41,10 +41,8 @@ export const chatStyles = {
   messagesContainer: {
     paddingRight: 1,
     paddingLeft: 1,
-    paddingBottom: 3,
     overflowY: 'scroll' as const,
-    maxHeight: 400,
-    height: 400,
+    height: 500,
     minHeight: 400,
     display: 'flex',
     flexDirection: 'column' as const,
@@ -67,7 +65,7 @@ export const chatStyles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 1,
-    marginTop: 2,
+    marginTop: 4,
   },
   
   textField: {
