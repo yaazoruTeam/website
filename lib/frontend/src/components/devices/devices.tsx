@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import DevicesList from './devicesList'
 import { useFetchDevices } from './useFetchDevices'
-import WidelyDetails from './widelyDetails'
 
 const Devices: React.FC = () => {
   const [page, setPage] = useState(1);

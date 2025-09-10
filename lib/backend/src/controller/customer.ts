@@ -14,16 +14,16 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
     Customer.sanitizeBodyExisting(req)
     const customerData = req.body
     const sanitized = Customer.sanitize(customerData, false)
-    
+
     logger.debug('Checking for existing customer', { email: sanitized.email, id_number: sanitized.id_number });
     await existingCustomer(sanitized, false)
-    
+
     const customer = await db.Customer.createCustomer(sanitized)
 
     logger.info('Customer created successfully', { customer_id: customer.customer_id });
     res.status(201).json(customer)
   } catch (error: unknown) {
-    logger.error('Error in createCustomer', { error: error.message })
+    logger.error('Error in createCustomer', { error: error instanceof Error ? error.message : String(error) })
     handleError(error, next)
   }
 }
@@ -45,7 +45,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
       total,
     })
   } catch (error: unknown) {
-    logger.error('Error in getCustomers', { error: error.message });
+    logger.error('Error in getCustomers', { error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -68,7 +68,7 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     logger.info('getCustomerById success', { id: req.params.id });
     res.status(200).json(customer)
   } catch (error: unknown) {
-    logger.error('Error in getCustomerById', { id: req.params.id, error: error.message });
+    logger.error('Error in getCustomerById', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -149,7 +149,7 @@ const getCustomersByStatus = async (
       total,
     })
   } catch (error: unknown) {
-    logger.error('Error in getCustomersByStatus', { status: req.params.status, error: error.message });
+    logger.error('Error in getCustomersByStatus', { status: req.params.status, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -198,7 +198,7 @@ const getCustomersByDateRange = async (
       total,
     })
   } catch (error: unknown) {
-    logger.error('Error in getCustomersByDateRange', { startDate: req.query.startDate, endDate: req.query.endDate, error: error.message });
+    logger.error('Error in getCustomersByDateRange', { startDate: req.query.startDate, endDate: req.query.endDate, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -216,7 +216,7 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
     logger.info('Customer updated successfully', { id: req.params.id });
     res.status(200).json(updateCustomer)
   } catch (error: unknown) {
-    logger.error('Error in updateCustomer', { id: req.params.id, error: error.message });
+    logger.error('Error in updateCustomer', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -240,15 +240,15 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
     logger.info('Customer deleted successfully', { id: req.params.id });
     res.status(200).json(deleteCustomer)
   } catch (error: unknown) {
-    logger.error('Error in deleteCustomer', { id: req.params.id, error: error.message });
+    logger.error('Error in deleteCustomer', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
 
 const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
-  logger.debug('Checking for existing customer', { 
-    hasId, 
-    email: customer.email, 
+  logger.debug('Checking for existing customer', {
+    hasId,
+    email: customer.email,
     id_number: customer.id_number,
     customer_id: hasId ? customer.customer_id : 'new'
   });
@@ -266,9 +266,9 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       id_number: customer.id_number,
     })
   }
-  
+
   if (customerEx) {
-    logger.warn('Found conflicting customer', { 
+    logger.warn('Found conflicting customer', {
       existing_id: customerEx.customer_id,
       conflict_field: customerEx.email === customer.email ? 'email' : 'id_number'
     });

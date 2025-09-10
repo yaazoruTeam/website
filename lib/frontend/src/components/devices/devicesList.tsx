@@ -17,11 +17,6 @@ type DeviceFilterType =
   | { type: 'date'; value: { start: Date; end: Date } }
   | null
 
-type DeviceFilterType = 
-  | { type: 'status'; value: 'active' | 'inactive' }
-  | { type: 'date'; value: { start: Date; end: Date } }
-  | null
-
 interface DevicesListProps {
   devices: Device.Model[]
   total: number
