@@ -3,70 +3,70 @@ import '@fontsource/heebo'
 
 const colors = {
   // ===== NEUTRALS - DARK TO LIGHT =====
-  neutral900: '#121212',
-  neutral800: '#1F1F1F',
-  neutral700: '#555758',
-  neutral600: '#666',
-  neutral500: '#858585',
-  neutral400: '#94A3B8',
-  neutral350: '#989BA1',
-  neutral300: '#ccc',
-  neutral200: '#DDDDDD',
-  neutral150: '#E0E0E0',
-  neutral100: '#E4E4E4',
-  neutral75:  '#F5F6FA',
-  neutral50:  '#F3F4F6',
-  neutral0:   '#FFFFFF',
+  neutral900: '#121212',  // Main text color (darkest black) - c40
+  neutral800: '#1F1F1F',  // Brand color_10 (very dark gray) - c0
+  neutral700: '#555758',  // Dark gray - c48
+  neutral600: '#666',     // Disabled text (medium dark gray) - c41
+  neutral500: '#858585',  // Secondary text - c42
+  neutral400: '#94A3B8',  // Medium gray - n50
+  neutral350: '#989BA1',  // Neutral gray - c38
+  neutral300: '#ccc',     // Disabled button background - c44
+  neutral200: '#DDDDDD',  // Neutral light gray - c39
+  neutral150: '#E0E0E0',  // Light gray - c36
+  neutral100: '#E4E4E4',  // Brand color_13 - c12
+  neutral75:  '#F5F6FA',  // Brand color_14 - c15
+  neutral50:  '#F3F4F6',  // Very light gray - c27
+  neutral0:   '#FFFFFF',  // Pure white - c6
 
   // ===== BLUES - DARK TO LIGHT =====
-  blue900: '#032B40',
-  blue800: '#083647',
-  blue700: '#0a3b55',
-  blue600: '#0A425F',
-  blue500: '#0059BA',
-  blue400: '#007AFF',
-  blue300: '#1D75DD',
-  blue200: '#80E4FF',
-  blue100: '#D0E6FF',
-  blue50:  '#E5F2FF',
+  blue900: '#032B40',     // Brand color_9 (darkest blue) - c11
+  blue800: '#083647',     // Button hover state - c43
+  blue700: '#0a3b55',     // Dark blue - c34
+  blue600: '#0A425F',     // Brand color_8 - c2
+  blue500: '#0059BA',     // Brand color_7 - c8
+  blue400: '#007AFF',     // Brand color_6 (iOS blue) - c7
+  blue300: '#1D75DD',     // Medium blue - c37
+  blue200: '#80E4FF',     // Brand color_3 (light blue) - c4
+  blue100: '#D0E6FF',     // Brand color_17 - c13
+  blue50:  '#E5F2FF',     // Brand color_18 - c16
 
   // ===== PURPLES =====
-  purple500: '#D55188',
-  purple100: '#e0dfff80',
+  purple500: '#D55188',    // Brand color_5 (pink-purple) - c17
+  purple100: '#e0dfff80',  // Light purple with transparency - c20
 
   // ===== REDS =====
-  red500: '#D83232',
-  red100: '#fdd1dc',
-  red75:  '#fdd1dcbd',
+  red500: '#D83232',       // Status error dark (dark red) - c28
+  red100: '#fdd1dc',       // Light pink - c32
+  red75:  '#fdd1dcbd',     // Light pink with transparency - c18
 
   // ===== ORANGES =====
-  orange500: '#FF7F07',
-  orange400: '#F68C23',
-  orange100: '#ffe2b9c2',
+  orange500: '#FF7F07',    // Brand color_4 (bright orange) - c3
+  orange400: '#F68C23',    // Status warning dark (darker orange) - c29
+  orange100: '#ffe2b9c2',  // Light orange with transparency - c26
 
   // ===== YELLOWS =====
-  yellow100: '#fffdb8bd',
+  yellow100: '#fffdb8bd',  // Light yellow with transparency - c19
 
   // ===== GREENS =====
-  green500: '#47BA79',
-  green100: '#b6ffcb',
-  green75:  '#b6ffcbb3',
+  green500: '#47BA79',     // Status success dark (forest green) - c30
+  green100: '#b6ffcb',     // Light green - c33
+  green75:  '#b6ffcbb3',   // Light green with transparency - c25
 
   // ===== BLUE OVERLAYS & TRANSPARENCIES =====
-  blueOverlay700: '#0b3a525c',
-  blueOverlay650: '#1536465e',
-  blueOverlay600: '#172a3385',
-  blueOverlay200: '#cdf4ff70',
-  blueOverlay100: '#e5f2ffb3',
-  blueOverlay50:  '#0a425f0a',
+  blueOverlay700: '#0b3a525c', // Dark blue with 36% transparency - c22
+  blueOverlay650: '#1536465e', // Dark blue with 37% transparency - c10
+  blueOverlay600: '#172a3385', // Dark blue with 52% transparency - c23
+  blueOverlay200: '#cdf4ff70', // Light blue with transparency - c5
+  blueOverlay100: '#e5f2ffb3', // Very light blue with 70% transparency - c21
+  blueOverlay50:  '#0a425f0a', // Very transparent blue - c35
 
   // ===== UTILITY OVERLAYS =====
-  orangeSelection: '#ff7f071a',
-  fieldBg:         '#f6f8fc94',
-  grayOverlay:     '#f6f6f6ab',
-  whiteOverlay:    '#ffffff80',
-  hoverGray:       '#85858514',
-  shadowLight:     '#0000001a',
+  orangeSelection: '#ff7f071a', // Orange selected range background - c45
+  fieldBg:         '#f6f8fc94', // Light blue-gray with transparency - feild
+  grayOverlay:     '#f6f6f6ab', // Light gray with transparency - c14
+  whiteOverlay:    '#ffffff80', // White with 50% transparency - c24
+  hoverGray:       '#85858514', // Gray hover state - c46
+  shadowLight:     '#0000001a', // Light shadow color - c47
 }
 
 // הגדרת הצבעים של ה-theme
