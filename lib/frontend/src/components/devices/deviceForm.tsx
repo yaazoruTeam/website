@@ -1,9 +1,18 @@
 import { Box } from '@mui/system'
-import React from 'react'
+import React, { useState } from 'react'
 import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import {
+  ChatModalContainer,
+  ChatModalOverlay,
+  CustomerCommentsSection,
+} from '../designComponent/styles/chatCommentCardStyles'
+import ChatBot from '../ChatBot/ChatBot'
+import { EntityType } from '@model'
+import ChatCommentCard from '../designComponent/ChatCommentCard'
+import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 
 export interface deviceFormInputs {
   SIM_number: string
@@ -26,8 +35,24 @@ export interface deviceFormInputs {
   // isDonator: boolean;
 }
 
-const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialValues }) => {
+interface DeviceFormProps {
+  initialValues?: deviceFormInputs
+  deviceId?: string
+  lastCommentDate?: string
+  lastComment?: string
+  onCommentsRefresh?: () => Promise<void>
+}
+
+const DeviceForm: React.FC<DeviceFormProps> = ({
+  initialValues,
+  deviceId,
+  lastCommentDate,
+  lastComment,
+  onCommentsRefresh,
+}) => {
   const { t } = useTranslation()
+  const [isChatOpen, setIsChatOpen] = useState(false)
+
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
       SIM_number: '',
@@ -79,14 +104,53 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
           display: 'flex',
           gap: '28px',
         }}
-      >
-        <CustomTextField
-          control={control}
-          name='notes'
-          label={t('deviceNotes')}
-          placeholder={t('noCommentsYet')}
+      ></Box>
+
+      {/* Device Comments Section with Chat Button */}
+      <CustomerCommentsSection>
+        <ChatCommentCard
+          commentsType={t('deviceComments')}
+          lastCommentDate={lastCommentDate || ''}
+          lastComment={lastComment || 'אין הערות קודמות עבור המכשיר'}
+          chatButton={
+            <ArrowToChatComments
+              onClick={() => {
+                setIsChatOpen(true)
+              }}
+            />
+          }
         />
-      </Box>
+      </CustomerCommentsSection>
+
+      {/* Chat Modal */}
+      {isChatOpen && deviceId && (
+        <ChatModalOverlay
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            if (e.target === e.currentTarget) {
+              setIsChatOpen(false)
+              // רענון ההערות לאחר סגירת הצ'אט
+              if (onCommentsRefresh) {
+                onCommentsRefresh()
+              }
+            }
+          }}
+        >
+          <ChatModalContainer>
+            <ChatBot
+              entityType={EntityType.Device}
+              entityId={deviceId}
+              onClose={() => {
+                setIsChatOpen(false)
+                // רענון ההערות לאחר סגירת הצ'אט
+                if (onCommentsRefresh) {
+                  onCommentsRefresh()
+                }
+              }}
+              commentType={t('deviceComments')}
+            />
+          </ChatModalContainer>
+        </ChatModalOverlay>
+      )}
     </Box>
   )
 }
