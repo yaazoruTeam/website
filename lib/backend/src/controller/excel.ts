@@ -4,6 +4,7 @@ import { processExcelData, ExcelRowData } from '@service/ReadExcelDevicesForDono
 import * as fs from 'fs'
 import * as path from 'path'
 import { handleError } from './err'
+import logger from '../utils/logger'
 
 const handleReadExcelFile = async (
   req: Request,
@@ -12,8 +13,8 @@ const handleReadExcelFile = async (
 ): Promise<void> => {
   try {
     // בדיקה שקובץ הועלה
-    console.log('Checking uploaded file...');
-    
+    logger.debug('Checking uploaded file...');
+
     if (!req.file) {
       res.status(400).json({
         status: 400,
@@ -22,28 +23,28 @@ const handleReadExcelFile = async (
       return
     }
 
-    console.log('File uploaded:', req.file.filename)
+    logger.debug('File uploaded:', req.file.filename)
     const filePath = req.file.path
-    console.log('File path: reading from:', filePath)
+    logger.debug('File path: reading from:', filePath)
 
     // קריאת הקובץ
     const data = await readExcelFile(filePath)
-    console.log('Excel file read successfully, rows:', data.length)
+    logger.info('Excel file read successfully, rows:', data.length)
 
     // עיבוד הנתונים
     const processingResults = await processExcelData(data as ExcelRowData[])
-    console.log('Data processed and saved to DB')
-    console.log(`✅ Success: ${processingResults.successCount}/${processingResults.totalRows}`)
+    logger.info('Data processed and saved to DB')
+    logger.info(`✅ Success: ${processingResults.successCount}/${processingResults.totalRows}`)
     if (processingResults.errorsCount > 0) {
-      console.log(`❌ Errors: ${processingResults.errorsCount}`)
+      logger.error(`❌ Errors: ${processingResults.errorsCount}`)
     }
 
     // מחיקת הקובץ הזמני אחרי העיבוד
     try {
       fs.unlinkSync(filePath)
-      console.log('Temporary file deleted')
+      logger.info('Temporary file deleted')
     } catch (deleteError) {
-      console.warn('Could not delete temporary file:', deleteError)
+      logger.warn('Could not delete temporary file:', deleteError)
     }
 
     res.status(200).json({
@@ -53,7 +54,7 @@ const handleReadExcelFile = async (
       totalRows: processingResults.totalRows,
       successCount: processingResults.successCount,
       errorsCount: processingResults.errorsCount,
-      ...(processingResults.errorFilePath && { 
+      ...(processingResults.errorFilePath && {
         errorFileGenerated: true
       }),
       data: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
@@ -67,7 +68,7 @@ const handleReadExcelFile = async (
         console.warn('Could not delete temporary file after error:', deleteError)
       }
     }
-    handleError(error, next)
+handleError(error, next)
   }
 }
 

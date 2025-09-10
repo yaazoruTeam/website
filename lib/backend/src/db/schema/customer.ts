@@ -1,14 +1,15 @@
 import { Knex } from 'knex'
+import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
 
 const createCustomerSchema = async () => {
-  console.log('create customer schema')
+  logger.debug('create customer schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('customers')
     if (!tableExists) {
-      console.log('Creating customer table...')
+      logger.debug('Creating customer table...')
       await knex.schema
         .withSchema('yaazoru')
         .createTable('customers', (table: Knex.TableBuilder) => {
@@ -28,12 +29,12 @@ const createCustomerSchema = async () => {
           table.date('updated_at').notNullable()
           // table.text("customer_notes");
         })
-      console.log('Customer table created successfully.')
+      logger.debug('Customer table created successfully.')
     } else {
-      console.log('Customer table already exists. Skipping creation.')
+      logger.debug('Customer table already exists. Skipping creation.')
     }
   } catch (err) {
-    console.error('error creat schema customer', err)
+    logger.error('error creat schema customer', err)
   }
 }
 

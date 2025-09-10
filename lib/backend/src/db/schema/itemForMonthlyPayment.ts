@@ -1,14 +1,15 @@
 import { Knex } from 'knex'
+import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
 
 const createItem = async () => {
-  console.log('create item schema')
+  logger.debug('create item schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('item')
     if (!tableExists) {
-      console.log('Creating item table...')
+      logger.debug('Creating item table...')
       await knex.schema.withSchema('yaazoru').createTable('item', (table: Knex.TableBuilder) => {
         table.increments('item_id').primary()
         table.string('monthlyPayment_id').notNullable()
@@ -20,12 +21,12 @@ const createItem = async () => {
         table.date('created_at').notNullable()
         table.date('update_at').notNullable()
       })
-      console.log('item table created successfully.')
+      logger.debug('item table created successfully.')
     } else {
-      console.log('item table already exists. Skipping creation.')
+      logger.debug('item table already exists. Skipping creation.')
     }
   } catch (err) {
-    console.error('error creat schema item', err)
+    logger.error('error creat schema item', err)
   }
 }
 

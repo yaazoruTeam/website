@@ -10,6 +10,7 @@ import * as db from '@db/index'
 import getDbConnection from '@db/connection'
 import { updateItems } from './item'
 import { handleError } from './err'
+import logger from '../utils/logger'
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
   const knex = getDbConnection()
@@ -56,12 +57,12 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       }
     }
     await trx.commit()
-    console.log('i add monthly payment!! sucss!!!')
+    logger.info('create monthly payment!! success!!!')
     res.status(201).json(monthlyPaymentData)
   } catch (error: unknown) {
     handleError(error, next)
     await trx.rollback()
-    console.error('Transaction failed, all actions rolled back:', error)
+    logger.error('Transaction failed, all actions rolled back:', error)
     handleError(error, next)
   }
 }
@@ -114,11 +115,11 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     await updateItems(existingItems, items, trx)
 
     await trx.commit()
-    console.log('Monthly payment updated successfully!')
+    logger.info('Monthly payment updated successfully!')
     res.status(200).json({ message: 'Monthly payment updated successfully!' })
   } catch (error: unknown) {
     await trx.rollback()
-    console.error('Transaction failed, all actions rolled back:', error)
+    logger.error('Transaction failed, all actions rolled back:', error)
     handleError(error, next)
   }
 }

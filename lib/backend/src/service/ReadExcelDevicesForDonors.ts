@@ -18,6 +18,7 @@ interface ProcessError {
 }
 
 export { ExcelRowData, ProcessError }
+import logger from '../utils/logger'
 
 const processExcelData = async (data: ExcelRowData[]): Promise<{
   totalRows: number;
@@ -77,7 +78,7 @@ const processExcelData = async (data: ExcelRowData[]): Promise<{
         await trx.commit()
         successCount++ // ספירת הצלחה
       } catch (err: unknown) {
-        console.error('Transaction failed:', err)
+        logger.error('Transaction failed:', err)
         errors.push({
           row: data.indexOf(item) + 1,
           error: `Transaction failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -90,7 +91,7 @@ const processExcelData = async (data: ExcelRowData[]): Promise<{
         await processDevice(sanitized, undefined)
         successCount++ // ספירת הצלחה גם ליצירת device בלבד
       } catch (err: unknown) {
-        console.error('Error creating device (no customer):', err)
+        logger.error('Error creating device (no customer):', err)
         errors.push({
           row: data.indexOf(item) + 1,
           error: `Device-only insert failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -126,9 +127,9 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.T
   })
 
   if (!existCustomer) {
-    console.log('Creating customer...')
+    logger.debug('Creating customer...')
     existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
-    console.log('Customer created.')
+    logger.debug('Customer created.')
   }
 
   return existCustomer
@@ -143,9 +144,9 @@ const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Tra
   })
 
   if (!existDevice) {
-    console.log('Creating device...')
+    logger.debug('Creating device...')
     existDevice = await db.Device.createDevice(sanitized.device, trx || undefined)
-    console.log('Device created.')
+    logger.debug('Device created.')
   }
 
   return existDevice

@@ -1,14 +1,15 @@
 import { Knex } from 'knex'
+import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
 
 const createCommentsSchema = async () => {
-  console.log('create comments schema')
+  logger.debug('create comments schema')
 
   const knex = getDbConnection()
   try {
     const tableExists = await knex.schema.withSchema('yaazoru').hasTable('comments')
     if (!tableExists) {
-      console.log('Creating comments table...')
+      logger.debug('Creating comments table...')
       await knex.schema
         .withSchema('yaazoru')
         .createTable('comments', (table: Knex.TableBuilder) => {
@@ -18,12 +19,12 @@ const createCommentsSchema = async () => {
           table.text('content').notNullable()
           table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
         })
-      console.log('Comments table created successfully.')
+      logger.debug('Comments table created successfully.')
     } else {
-      console.log('Comments table already exists. Skipping creation.')
+      logger.debug('Comments table already exists. Skipping creation.')
     }
   } catch (err) {
-    console.error('Error creating comments schema', err)
+    logger.error('Error creating comments schema', err)
   }
 }
 

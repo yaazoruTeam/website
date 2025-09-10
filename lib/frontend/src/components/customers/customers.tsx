@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import CustomersList from './customersList'
 import { useFetchCustomers } from './useFetchCustomers'
-import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
 
 type FilterType = 
   | { type: 'city'; value: string }
@@ -36,7 +34,6 @@ const Customers: React.FC = () => {
         noResults={noResults}
         noResultsType={noResultsType}
       />
-      <ChatBot entityType={EntityType.Customer} entityId='1' />
     </>
   )
 }

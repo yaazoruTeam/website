@@ -3,6 +3,7 @@ import * as db from '@db/index'
 import { CreditDetails, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
+import logger from '../utils/logger'
 
 const limit = config.database.limit
 
@@ -12,13 +13,15 @@ const createCreditDetails = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+    logger.debug("createCreditDetails called with body:", req.body)
+
     CreditDetails.sanitizeBodyExisting(req)
     const creditDetailsrData = req.body
     const sanitized = CreditDetails.sanitize(creditDetailsrData, false)
-    console.log(sanitized)
 
     const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
     if (!existCustomer) {
+      logger.warn('Customer does not exist for ID:', sanitized.customer_id)
       const error: HttpError.Model = {
         status: 404,
         message: 'customer dose not exist',
@@ -26,9 +29,8 @@ const createCreditDetails = async (
       throw error
     }
     const existToken = await db.CreditDetails.doesTokenExist(sanitized.token)
-    console.log('token: ', existToken)
-
     if (existToken) {
+      logger.warn('Token already exists:', sanitized.token)
       const error: HttpError.Model = {
         status: 490,
         message: 'token already exist',
@@ -36,6 +38,7 @@ const createCreditDetails = async (
       throw error
     }
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized)
+    logger.info("CreditDetails created successfully:", creditDetails)
     res.status(201).json(creditDetails)
   } catch (error: unknown) {
     handleError(error, next)

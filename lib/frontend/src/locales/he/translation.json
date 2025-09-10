@@ -177,6 +177,7 @@
   "noCustomersFound": "לא נמצאו לקוחות.",
   "deviceManagement": "ניהול מכשירים",
   "addingNewDevice": "הוספת מכשיר חדש",
+  "addingDevice": "הוספת מכשיר",
   "deviceNumber": "מספר מכשיר",
   "simNumber": "מספר סים",
   "imei": "IMEI",
@@ -287,5 +288,11 @@
   "errorSettingPreferredNetwork": "שגיאה בהגדרת הרשת המועדפת",
   "softReset": "איפוס קל",
   "softResetSuccess": "איפוס קל הושלם בהצלחה",
-  "softResetError": "שגיאה בביצוע איפוס קל"
+  "softResetError": "שגיאה בביצוע איפוס קל",
+  "invalidAddress": "כתובת לא חוקית",
+  "invalidCity": "עיר לא חוקית",
+  "invalidName": "שם לא חוקי",
+  "deviceAddedSuccessfully": "המכשיר נוסף בהצלחה",
+  "deviceAddFailed": "הוספת המכשיר נכשלה",
+  "numbersOnlyError": "ניתן להזין רק מספרים"
 }
