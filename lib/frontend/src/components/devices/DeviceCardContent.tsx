@@ -14,7 +14,7 @@ interface DeviceCardContentProps {
 const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
 
-  // הבאת ההערה האחרונה של הלקוח
+  // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
     if (!device.device_id) return
 
