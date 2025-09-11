@@ -43,13 +43,13 @@ const CalendarHeaderComponent: React.FC<CalendarHeaderComponentProps> = ({
           text={currentMonth.getFullYear().toString()}
           variant='h5'
           weight='regular'
-          color={colors.c40}
+          color={colors.neutral900}
         />
         <CustomTypography
           text={getMonthName(currentMonth.getMonth())}
           variant='h5'
           weight='regular'
-          color={colors.c40}
+          color={colors.neutral900}
         />
       </FlexRow>
       <FlexRow>

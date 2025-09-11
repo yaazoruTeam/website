@@ -38,9 +38,9 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, editingContacts, onActive
 
   const getColor = (index: number) => {
     if (editingContacts) {
-      return activeTab === index ? colors.c2 : colors.c22
+      return activeTab === index ? colors.blue600 : colors.blueOverlay700
     }
-    return activeTab === index ? colors.c0 : colors.c22
+    return activeTab === index ? colors.neutral800 : colors.blueOverlay700
   }
 
   return (
@@ -51,7 +51,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, editingContacts, onActive
           onChange={handleChange}
           aria-label='custom styled tabs'
           TabIndicatorProps={{
-            style: { backgroundColor: colors.c2, height: '1px' },
+            style: { backgroundColor: colors.blue600, height: '1px' },
           }}
           sx={{ display: 'flex', overflowX: 'auto' }}
         >
@@ -77,13 +77,13 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, editingContacts, onActive
                 padding: 1,
                 borderTopLeftRadius: 0,
                 borderTopRightRadius: 0,
-                borderBottom: `1px ${colors.c22} solid`,
+                borderBottom: `1px ${colors.blueOverlay700} solid`,
                 display: 'inline-flex',
                 justifyContent: 'flex-end',
                 gap: 5,
                 backgroundColor: 'transparent',
                 '&:hover': {
-                  backgroundColor: colors.c14,
+                  backgroundColor: colors.neutral0_67,
                 },
                 transition: 'all 0.3s ease',
                 marginRight: '5px',

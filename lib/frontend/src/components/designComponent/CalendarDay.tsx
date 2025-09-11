@@ -39,25 +39,25 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
       sx={{
         // Only dynamic styles here - base styles are in CalendarDayBase
         borderRadius: isSelected ? '50%' : 0,
-        backgroundColor: isSelected ? colors.c3 : isInRange ? colors.c45 : 'transparent',
+        backgroundColor: isSelected ? colors.orange500 : isInRange ? colors.orange10 : 'transparent',
 
         color: isSelected
-          ? colors.c6
+          ? colors.neutral0
           : isToday
-            ? colors.c3
+            ? colors.orange500
             : isOtherMonth
-              ? colors.c42
+              ? colors.neutral500
               : isHoliday
-                ? colors.c2
-                : colors.c42,
+                ? colors.blue600
+                : colors.neutral500,
 
-        border: isToday && !isSelected ? `1px solid ${colors.c3}` : 'none',
+        border: isToday && !isSelected ? `1px solid ${colors.orange500}` : 'none',
 
         opacity: isOtherMonth ? 0.5 : 1,
 
         '&:hover': {
           opacity: 0.8,
-          backgroundColor: !isSelected ? colors.c45 : colors.c3,
+          backgroundColor: !isSelected ? colors.orange10 : colors.orange500,
         },
       }}
     >

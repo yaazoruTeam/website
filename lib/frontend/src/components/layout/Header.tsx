@@ -55,7 +55,7 @@ const Header: React.FunctionComponent = () => {
     <AppBar
       position='static'
       sx={{
-        backgroundColor: colors.c6,
+        backgroundColor: colors.neutral0,
         height: '108px',
         boxShadow: 'none',
         justifyContent: 'center',
@@ -91,7 +91,7 @@ const Header: React.FunctionComponent = () => {
                 width: '100%',
                 // height: '50px',
                 borderRadius: '43px',
-                backgroundColor: colors.c21,
+                backgroundColor: colors.blueOverlay100,
                 '& .MuiInput-underline:before': { borderBottom: 'none' },
                 '& .MuiInput-underline:after': { borderBottom: 'none' },
                 '& .MuiInputBase-input': {
@@ -102,10 +102,10 @@ const Header: React.FunctionComponent = () => {
                   fontSize: '18px',
                   fontFamily: 'Heebo',
                   fontWeight: 400,
-                  color: colors.c2,
+                  color: colors.blue600,
                 },
                 '& input::placeholder': {
-                  color: colors.c10,
+                  color: colors.blueOverlay650,
                   opacity: 1,
                 },
                 '@media (max-width: 600px)': {
@@ -124,7 +124,7 @@ const Header: React.FunctionComponent = () => {
                       style={{
                         width: '16px',
                         height: '16px',
-                        color: colors.c22,
+                        color: colors.blueOverlay700,
                       }}
                     />
                   </InputAdornment>
@@ -137,9 +137,9 @@ const Header: React.FunctionComponent = () => {
               <CustomButton
                 label={t('login')}
                 sx={{
-                  background: colors.c6,
-                  color: colors.c11,
-                  border: `1px ${colors.c22} solid`,
+                  background: colors.neutral0,
+                  color: colors.blue900,
+                  border: `1px ${colors.blueOverlay700} solid`,
                   '&:hover': {
                     background: '#f9fafc',
                   },
@@ -174,10 +174,10 @@ const Header: React.FunctionComponent = () => {
                     text={t('logout')}
                     variant='h4'
                     weight='regular'
-                    color={colors.c8}
+                    color={colors.blue500}
                   />
                   <ArrowRightStartOnRectangleIcon
-                    style={{ width: '24px', height: '24px', color: colors.c8 }}
+                    style={{ width: '24px', height: '24px', color: colors.blue500 }}
                   />
                 </Box>
                 <Box
@@ -186,7 +186,7 @@ const Header: React.FunctionComponent = () => {
                     width: '45.5px',
                     height: '45.5px',
                     position: 'relative',
-                    backgroundColor: colors.c16,
+                    backgroundColor: colors.blue50,
                     borderRadius: '100%',
                     display: 'flex',
                     justifyContent: 'center',
@@ -197,7 +197,7 @@ const Header: React.FunctionComponent = () => {
                     text={userName ? userName?.charAt(0) : ''}
                     variant='h1'
                     weight='medium'
-                    color={colors.c2}
+                    color={colors.blue600}
                   />
                 </Box>
               </Box>

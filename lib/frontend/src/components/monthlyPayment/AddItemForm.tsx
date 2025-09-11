@@ -105,7 +105,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, initialValues, setFormAdd
           onClick={handleSubmit(onFormSubmit)}
         />
         <TrashIcon
-          style={{ width: '24px', height: '24px', color: colors.c2, cursor: 'pointer' }}
+          style={{ width: '24px', height: '24px', color: colors.blue600, cursor: 'pointer' }}
           onClick={() => (setFormAddItem ? setFormAddItem(false) : '')}
         />
       </Box>

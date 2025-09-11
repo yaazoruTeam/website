@@ -16,13 +16,13 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
   const iconStyle = {
     width: '24px',
     height: '24px',
-    color: colors.c11
+    color: colors.blue900
   }
 
   return (
     <Box
       sx={{
-        border: `1px solid ${colors.c15}`,
+        border: `1px solid ${colors.neutral75}`,
         borderRadius: '8px',
         marginBottom: '16px',
         overflow: 'hidden'
@@ -33,13 +33,13 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
         onClick={onClick}
         sx={{
           padding: '16px',
-          backgroundColor: colors.c6,
+          backgroundColor: colors.neutral0,
           cursor: 'pointer',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           '&:hover': {
-            backgroundColor: colors.c15
+            backgroundColor: colors.neutral75
           }
         }}
       >
@@ -48,7 +48,7 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
             text={device.device_number}
             variant='h1'
             weight='medium'
-            color={colors.c8}
+            color={colors.blue500}
           />
         </Box>
         {isOpen ? (

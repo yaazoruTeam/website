@@ -32,7 +32,7 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, value, onChange }) =
                         width: 16,
                         height: 16,
                         borderRadius: '50%',
-                        border: `1px solid ${colors.c10}`,
+                        border: `1px solid ${colors.blueOverlay650}`,
                         background: 'transparent',
                       }}
                     />
@@ -43,7 +43,7 @@ const CustomRadioBox: React.FC<RadioBoxProps> = ({ options, value, onChange }) =
                         width: 16,
                         height: 16,
                         borderRadius: '50%',
-                        background: colors.c2,
+                        background: colors.blue600,
                       }}
                     />
                   }

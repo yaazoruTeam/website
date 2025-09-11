@@ -128,7 +128,7 @@ const AudioRecorderInput: React.FC<AudioRecorderInputProps> = ({
         style={{
           width: 18,
           height: 18,
-          color: isRecording ? colors.c37 : colors.c38,
+          color: isRecording ? colors.blue300 : colors.neutral350,
           cursor: "pointer",
         }}
       />
@@ -137,7 +137,7 @@ const AudioRecorderInput: React.FC<AudioRecorderInputProps> = ({
           text={formatDuration(currentRecordingDuration)}
           variant="h4"
           weight="regular"
-          color={colors.c37}
+          color={colors.blue300}
           sx={{ marginLeft: 0.5 }}
         />
       )}

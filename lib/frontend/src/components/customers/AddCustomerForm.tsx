@@ -14,6 +14,7 @@ import {
   ChatModalOverlay,
   ChatModalContainer
 } from '../designComponent/styles/chatCommentCardStyles'
+import { validatePhoneNumber } from '../../utils/phoneValidate'
 
 interface AddCustomerFormProps {
   onSubmit: (data: AddCustomerFormInputs) => void
@@ -174,10 +175,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               label={t('phone')}
               rules={{
                 required: t('requiredField'),
-                pattern: {
-                  value: /^[\d\s\-\+\(\)]{9,15}$/,
-                  message: t('errorPhone'),
-                },
+                validate: (value: string) => validatePhoneNumber(value, t),
               }}
             />
             <CustomTextField
@@ -185,9 +183,11 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
               name='additional_phone'
               label={t('additionalPhone')}
               rules={{
-                pattern: {
-                  value: /^[\d\s\-\+\(\)]{9,15}$/,
-                  message: t('errorPhone'),
+                validate: (value: string) => {
+                  if (value) {
+                    return validatePhoneNumber(value, t);
+                  }
+                  return true;
                 },
               }}
             />

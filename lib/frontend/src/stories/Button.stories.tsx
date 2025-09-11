@@ -43,7 +43,7 @@ ExampleWithImg.args = {
   label: 'מחיקת לקוח',
   sx: {
     background: 'white',
-    color: colors.c11,
+    color: colors.blue900,
     border: '1px rgba(11.47, 57.77, 81.74, 0.36) solid',
     '&:hover': {
       background: '#f9fafc',
@@ -56,7 +56,7 @@ export const ExampleGrayButton = Template.bind({})
 ExampleGrayButton.args = {
   label: 'אישור',
   sx: {
-    background: colors.c10,
-    color: colors.c6,
+    background: colors.blueOverlay650,
+    color: colors.neutral0,
   },
 }

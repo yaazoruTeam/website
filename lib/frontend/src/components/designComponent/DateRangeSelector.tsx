@@ -16,7 +16,7 @@
 //         sx={{
 //           width: "fit-content",
 //           padding: "10px",
-//           border: `1px solid ${colors.c22}`,
+//           border: `1px solid ${colors.blueOverlay700}`,
 //           borderRadius: "12px",
 //           //   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
 //           backgroundColor: "#fff",

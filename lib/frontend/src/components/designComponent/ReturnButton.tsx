@@ -13,7 +13,7 @@ const ReturnButton: React.FC = () => {
       onClick={() => navigate(-1)}
       sx={{
         alignSelf: 'flex-start',
-        color: colors.c11,
+        color: colors.blue900,
         fontSize: 18,
         fontFamily: 'Heebo',
         fontWeight: 400,

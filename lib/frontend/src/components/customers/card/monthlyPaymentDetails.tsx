@@ -31,7 +31,7 @@ const MonthlyPaymentDetails: React.FC<{ customer: Customer.Model }> = ({ custome
           text={t('standingOrders')}
           variant='h1'
           weight='bold'
-          color={colors.c11}
+          color={colors.blue900}
         />
       </Box>
       <MonthlyPaymentList

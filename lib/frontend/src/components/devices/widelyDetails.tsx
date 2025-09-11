@@ -112,7 +112,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // עיצוב החוצץ בין הפריטים
     const separatorStyle = {
-        backgroundColor: colors.c22,
+        backgroundColor: colors.blueOverlay700,
         width: '1px',
         height: '26px',
         mx: '40px'
@@ -444,13 +444,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     text={t('simData')}
                     variant="h3"
                     weight="medium"
-                    color={colors.c11}
+                    color={colors.blue900}
                 />
                 <CustomTypography
                     text={simNumber}
                     variant="h4"
                     weight="regular"
-                    color={colors.c11}
+                    color={colors.blue900}
                 />
             </Box>
 
@@ -536,7 +536,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     text={t('connection')}
                     variant="h4"
                     weight="medium"
-                    color={colors.c11}
+                    color={colors.blue900}
                 />
                 <Box>
                     <CustomRadioBox
@@ -559,13 +559,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                                 text={item.title}
                                 variant="h3"
                                 weight="regular"
-                                color={colors.c11}
+                                color={colors.blue900}
                             />
                             <CustomTypography
                                 text={item.value}
                                 variant="h3"
                                 weight="bold"
-                                color={colors.c11}
+                                color={colors.blue900}
                             />
                         </Box>
                         {index < infoItems.length - 1 && (
@@ -600,7 +600,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <WidelyContainer>
                 <HeaderSection />
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                    <CustomTypography text={error} variant="h4" weight="medium" color={colors.c28} />
+                    <CustomTypography text={error} variant="h4" weight="medium" color={colors.red500} />
                 </Box>
             </WidelyContainer>
         );
@@ -676,7 +676,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     text={t('cancelLine')}
                     variant="h1"
                     weight="medium"
-                    color={colors.c11}
+                    color={colors.blue900}
                     sx={{ marginBottom: 3 }}
                 />
 
@@ -684,7 +684,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     text={t('areYouSureYouWantToCancelTheLine')}
                     variant="h3"
                     weight="regular"
-                    color={colors.c11}
+                    color={colors.blue900}
                     sx={{ marginBottom: 4 }}
                 />
 

@@ -45,18 +45,28 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
       <DeviceForm
         key={lastComment?.comment_id || 'no-comment'}
         initialValues={{
-          SIM_number: device.SIM_number,
+          device_number: device.device_number,
+          // SIM_number: device.SIM_number,
           IMEI_1: device.IMEI_1,
-          mehalcha_number: device.mehalcha_number,
+          // mehalcha_number: device.mehalcha_number,
           model: device.model,
-          received_at: customerDevice?.receivedAt
+          serialNumber: device.serialNumber || '',
+          registrationDate: //device.registrationDate 
+           // ? formatDateToString(new Date(device.registrationDate))
+            // : 
+            '',
+          // purchaseDate: device.purchaseDate 
+          //   ? formatDateToString(new Date(device.purchaseDate))
+          //   : '',
+          received_at: customerDevice?.receivedAt 
             ? formatDateToString(new Date(customerDevice.receivedAt))
             : '',
           planEndDate: customerDevice?.planEndDate
             ? formatDateToString(new Date(customerDevice.planEndDate))
             : '',
-          filterVersion: customerDevice?.filterVersion || '',
-          deviceProgram: customerDevice?.deviceProgram || '',
+          // plan: device?.plan || '',
+          // filterVersion: customerDevice?.filterVersion || '',
+          // deviceProgram: customerDevice?.deviceProgram || '',
           notes: '',
         }}
         deviceId={device.device_id?.toString()}

@@ -21,7 +21,8 @@ interface DeviceFormData {
   device_number: string
   SIM_number: string
   IMEI_1: string
-  mehalcha_number: string
+  // mehalcha_number: string
+  serialNumber: string
   model: string
 }
 
@@ -51,7 +52,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       device_number: '',
       SIM_number: '',
       IMEI_1: '',
-      mehalcha_number: '',
+      serialNumber: '',
       model: '',
     }
   })
@@ -61,6 +62,9 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       const deviceData: Omit<Device.Model, 'device_id'> = {
         ...data,
         status: 'active',
+        purchaseDate: null,
+        releaseDate: new Date(),
+        plan: '', //?? מאיפה מקבלים את זה to do
       }
 
       await createDevice(deviceData)
@@ -72,18 +76,18 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       onSuccess() // Refresh the devices list
     } catch (error: unknown) {
       let errorMsg = t('deviceAddFailed')
-      
+
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as AxiosError
-        if (axiosError.response?.data && 
-            typeof axiosError.response.data === 'object' && 
-            axiosError.response.data !== null &&
-            'message' in axiosError.response.data) {
+        if (axiosError.response?.data &&
+          typeof axiosError.response.data === 'object' &&
+          axiosError.response.data !== null &&
+          'message' in axiosError.response.data) {
           const responseData = axiosError.response.data as { message: string }
           errorMsg = responseData.message
         }
       }
-      
+
       setErrorMessage(errorMsg)
     }
   }, [t, reset, onClose, onSuccess])
@@ -113,7 +117,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           text={t('addingDevice')}
           variant='h1'
           weight='bold'
-          color={colors.c11}
+          color={colors.blue900}
         />
       </Box>
 
@@ -128,10 +132,9 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       >
         <CustomTextField
           control={control}
-          name="mehalcha_number"
-          label={t('mehalchaNumber')}
-          inputProps={numericInputProps}
-          rules={getNumericFieldRules()}
+          name="serialNumber"
+          label={t('serialNumber')}
+        // to do : להוסיף ולידציות 
         />
         <CustomTextField
           control={control}
