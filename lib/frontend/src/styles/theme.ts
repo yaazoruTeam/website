@@ -16,7 +16,11 @@ const colors = {
   neutral100: '#E4E4E4',  // Brand color_13 - c12
   neutral75:  '#F5F6FA',  // Brand color_14 - c15
   neutral50:  '#F3F4F6',  // Very light gray - c27
+  neutral10:  '#85858514', // Gray hover state with transparency - c46
   neutral0:   '#FFFFFF',  // Pure white - c6
+  neutral0_67: '#f6f6f6ab', // Light gray overlay with transparency - c14
+  neutral0_50: '#ffffff80', // White with 50% transparency - c24
+  neutralShadow: '#0000001a', // Light shadow color - c47
 
   // ===== BLUES - DARK TO LIGHT =====
   blue900: '#032B40',     // Brand color_9 (darkest blue) - c11
@@ -29,6 +33,7 @@ const colors = {
   blue200: '#80E4FF',     // Brand color_3 (light blue) - c4
   blue100: '#D0E6FF',     // Brand color_17 - c13
   blue50:  '#E5F2FF',     // Brand color_18 - c16
+  blue10:  '#f6f8fc94',   // Light blue-gray field background - feild
 
   // ===== BLUE OVERLAYS & TRANSPARENCIES =====
   blueOverlay700: '#0b3a525c', // Dark blue with 36% transparency - c22
@@ -51,6 +56,7 @@ const colors = {
   orange500: '#FF7F07',    // Brand color_4 (bright orange) - c3
   orange400: '#F68C23',    // Status warning dark (darker orange) - c29
   orange100: '#ffe2b9c2',  // Light orange with transparency - c26
+  orange10:  '#ff7f071a',  // Orange selection background - c45
 
   // ===== YELLOWS =====
   yellow100: '#fffdb8bd',  // Light yellow with transparency - c19
@@ -59,14 +65,6 @@ const colors = {
   green500: '#47BA79',     // Status success dark (forest green) - c30
   green100: '#b6ffcb',     // Light green - c33
   green75:  '#b6ffcbb3',   // Light green with transparency - c25
-
-  // ===== UTILITY OVERLAYS =====
-  orangeSelection: '#ff7f071a', // Orange selected range background - c45
-  fieldBg:         '#f6f8fc94', // Light blue-gray with transparency - feild
-  grayOverlay:     '#f6f6f6ab', // Light gray with transparency - c14
-  whiteOverlay:    '#ffffff80', // White with 50% transparency - c24
-  hoverGray:       '#85858514', // Gray hover state - c46
-  shadowLight:     '#0000001a', // Light shadow color - c47
 }
 
 // הגדרת הצבעים של ה-theme
