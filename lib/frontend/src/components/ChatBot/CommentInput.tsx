@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { PaperAirplaneIcon, FaceSmileIcon } from "@heroicons/react/24/outline";
 import { Box, IconButton, TextField } from '@mui/material';
@@ -30,7 +30,31 @@ const CommentInput: React.FC<CommentInputProps> = ({
     left: number;
   } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+
+  // פונקציה פשוטה לטיפול בלחיצה מחוץ לאזור
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      emojiPickerRef.current &&
+      !emojiPickerRef.current.contains(event.target as Node)
+    ) {
+      setShowEmojiPicker(false);
+      setEmojiPickerPosition(null);
+    }
+  };
+
+  useEffect(() => {
+    // הוספת event listener רק כשה-picker פתוח
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    // cleanup תמיד מתבצע
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const handleEmojiClick = () => {
     setShowEmojiPicker((prev) => !prev);
@@ -97,6 +121,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
         emojiPickerPosition &&
         ReactDOM.createPortal(
           <Box
+            ref={emojiPickerRef}
             sx={{
               ...chatStyles.emojiPicker,
               top: emojiPickerPosition.top,
