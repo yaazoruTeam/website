@@ -32,12 +32,9 @@ const processExcelData = async (data: ExcelRowData[]): Promise<{
   let successCount = 0
 
   for (const item of data) {
-    const isCustomer: boolean =
-      !!(typeof item.first_name === 'string' && item.first_name.trim()) ||
-      !!(typeof item.last_name === 'string' && item.last_name.trim()) ||
-      (typeof item.phone_number === 'string' && item.phone_number.trim()) ||
-      (typeof item.email === 'string' && item.email.trim())
-
+    const isCustomer: boolean = [item.first_name, item.last_name, item.phone_number, item.email].some(
+      field => typeof field === 'string' && field.trim() !== ''
+    );
     let sanitized: CustomerDeviceExcel.Model | null = null
 
     try {
@@ -101,7 +98,7 @@ const processExcelData = async (data: ExcelRowData[]): Promise<{
       }
     }
   }
-  
+
   // כתיבת השגיאות לקובץ Excel
   const errorFilePath = await writeErrorsToExcel(errors)
   if (errorFilePath) {
@@ -112,7 +109,7 @@ const processExcelData = async (data: ExcelRowData[]): Promise<{
   return {
     totalRows: data.length,
     errorsCount: errors.length,
-    successCount, 
+    successCount,
     ...(errorFilePath && { errorFilePath })
   }
 }

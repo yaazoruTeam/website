@@ -23,15 +23,14 @@ const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExce
       device_number: (row.device_number as string) || '',
       SIM_number: (row.SIM_number as string) || '',
       IMEI_1: (row.IMEI_1 as string) || '',
-      mehalcha_number: (row.mehalcha_number as string) || '',
       model: (row.model as string) || '',
       status: 'active',
-      serialNumber: row.serialNumber || '',
-      purchaseDate: row.receivedAt || null,
-      releaseDate: row.releaseDate || new Date(),
-      plan: row.plan || '',
+      serialNumber: (row.serialNumber as string) || '',
+      purchaseDate: (row.receivedAt as Date | null) || null,
+      releaseDate: (row.releaseDate as Date) || new Date(),
+      plan: (row.plan as string) || '',
     },
-    receivedAt: row.receivedAt as Date | string | number,
+    receivedAt: (row.receivedAt as Date | string | number),
   }
 }
 
