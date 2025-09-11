@@ -30,6 +30,14 @@ const colors = {
   blue100: '#D0E6FF',     // Brand color_17 - c13
   blue50:  '#E5F2FF',     // Brand color_18 - c16
 
+  // ===== BLUE OVERLAYS & TRANSPARENCIES =====
+  blueOverlay700: '#0b3a525c', // Dark blue with 36% transparency - c22
+  blueOverlay650: '#1536465e', // Dark blue with 37% transparency - c10
+  blueOverlay600: '#172a3385', // Dark blue with 52% transparency - c23
+  blueOverlay200: '#cdf4ff70', // Light blue with transparency - c5
+  blueOverlay100: '#e5f2ffb3', // Very light blue with 70% transparency - c21
+  blueOverlay50:  '#0a425f0a', // Very transparent blue - c35
+
   // ===== PURPLES =====
   purple500: '#D55188',    // Brand color_5 (pink-purple) - c17
   purple100: '#e0dfff80',  // Light purple with transparency - c20
@@ -51,14 +59,6 @@ const colors = {
   green500: '#47BA79',     // Status success dark (forest green) - c30
   green100: '#b6ffcb',     // Light green - c33
   green75:  '#b6ffcbb3',   // Light green with transparency - c25
-
-  // ===== BLUE OVERLAYS & TRANSPARENCIES =====
-  blueOverlay700: '#0b3a525c', // Dark blue with 36% transparency - c22
-  blueOverlay650: '#1536465e', // Dark blue with 37% transparency - c10
-  blueOverlay600: '#172a3385', // Dark blue with 52% transparency - c23
-  blueOverlay200: '#cdf4ff70', // Light blue with transparency - c5
-  blueOverlay100: '#e5f2ffb3', // Very light blue with 70% transparency - c21
-  blueOverlay50:  '#0a425f0a', // Very transparent blue - c35
 
   // ===== UTILITY OVERLAYS =====
   orangeSelection: '#ff7f071a', // Orange selected range background - c45
