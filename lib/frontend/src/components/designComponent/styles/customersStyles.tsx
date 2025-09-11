@@ -57,8 +57,8 @@ export const CustomersListTable = styled(FlexColumn)({
 
 // מיכל הראשי של הסלקט
 export const SelectContainer = styled(Box)({
-  width: 100,
-  height: 100,
+  width: '100%',
+  height: '100%',
   display: 'grid',
   position: 'relative',
   zIndex: 1,
