@@ -41,7 +41,7 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClos
         border: `2px solid ${colors.orange500}`,
         padding: 6,
         position: 'relative',
-        boxShadow: `0 4px 20px ${colors.shadowLight}`,
+        boxShadow: `0 4px 20px ${colors.neutralShadow}`,
       }}
     >
       {/* Close button */}
@@ -81,7 +81,7 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClos
           width: 80,
           height: 80,
           borderRadius: '50%',
-          backgroundColor: colors.orangeSelection,
+          backgroundColor: colors.orange10,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',

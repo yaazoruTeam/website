@@ -39,7 +39,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
       sx={{
         // Only dynamic styles here - base styles are in CalendarDayBase
         borderRadius: isSelected ? '50%' : 0,
-        backgroundColor: isSelected ? colors.orange500 : isInRange ? colors.orangeSelection : 'transparent',
+        backgroundColor: isSelected ? colors.orange500 : isInRange ? colors.orange10 : 'transparent',
 
         color: isSelected
           ? colors.neutral0
@@ -57,7 +57,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
 
         '&:hover': {
           opacity: 0.8,
-          backgroundColor: !isSelected ? colors.orangeSelection : colors.orange500,
+          backgroundColor: !isSelected ? colors.orange10 : colors.orange500,
         },
       }}
     >

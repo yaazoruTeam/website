@@ -112,7 +112,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
               multiline={isLargeHeight}
               sx={{
                 borderRadius: '6px',
-                background: colors.fieldBg,
+                background: colors.blue10,
                 alignSelf: 'stretch',
                 height: height,
                 width: width || '100%',

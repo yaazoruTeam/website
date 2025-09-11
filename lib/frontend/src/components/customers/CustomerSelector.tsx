@@ -238,7 +238,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                                         fullWidth
                                         sx={{
                                             borderRadius: '6px',
-                                            background: colors.fieldBg,
+                                            background: colors.blue10,
                                             alignSelf: 'stretch',
                                             height: '44px',
                                             width: '100%',

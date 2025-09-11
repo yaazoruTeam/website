@@ -16,7 +16,7 @@ export const ChatCommentCardMainBox = styled(FlexBase)({
   paddingRight: '10px',
   paddingTop: '20px',
   paddingBottom: '20px',
-  background: colors.fieldBg,
+  background: colors.blue10,
   borderRadius: '6px',
   flexDirection: 'column',
   justifyContent: 'flex-start',

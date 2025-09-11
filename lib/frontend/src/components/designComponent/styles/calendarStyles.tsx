@@ -138,7 +138,7 @@ export const CalendarButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' 
           backgroundColor: 'transparent',
           color: colors.neutral500,
           border: `1px solid ${colors.neutral500}`,
-          '&:hover': { backgroundColor: colors.hoverGray },
+          '&:hover': { backgroundColor: colors.neutral10 },
         }),
   }),
 )

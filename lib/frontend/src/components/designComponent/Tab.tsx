@@ -83,7 +83,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, editingContacts, onActive
                 gap: 5,
                 backgroundColor: 'transparent',
                 '&:hover': {
-                  backgroundColor: colors.grayOverlay,
+                  backgroundColor: colors.neutral0_67,
                 },
                 transition: 'all 0.3s ease',
                 marginRight: '5px',

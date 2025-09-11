@@ -75,7 +75,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             }}
             sx={{
               textAlign: 'right',
-              backgroundColor: colors.fieldBg,
+              backgroundColor: colors.blue10,
               border: 'none',
               boxShadow: 'none',
               '.MuiOutlinedInput-notchedOutline': { border: 'none' },
