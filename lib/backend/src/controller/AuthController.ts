@@ -4,12 +4,13 @@ import * as db from '@db/index'
 import { generateToken, verifyToken } from '@utils/jwt'
 import { comparePasswords } from '@utils/password'
 import { createUser } from './user'
+import { handleError } from './err'
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await createUser(req, res, next)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -35,8 +36,8 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
     const accessToken = generateToken(user.user_id, user.role)
 
     res.status(200).json(accessToken)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -63,8 +64,8 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction): Pr
       }
       throw error
     }
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 

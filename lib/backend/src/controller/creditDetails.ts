@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { CreditDetails, HttpError } from '@model'
 import config from '@config/index'
+import { handleError } from './err'
 import logger from '../utils/logger'
 
 const limit = config.database.limit
@@ -39,8 +40,8 @@ const createCreditDetails = async (
     const creditDetails = await db.CreditDetails.createCreditDetails(sanitized)
     logger.info("CreditDetails created successfully:", creditDetails)
     res.status(201).json(creditDetails)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -57,8 +58,8 @@ const getCreditDetails = async (req: Request, res: Response, next: NextFunction)
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -79,8 +80,8 @@ const getCreditDetailsById = async (
     }
     const creditDetails = await db.CreditDetails.getCreditDetailsById(req.params.id)
     res.status(200).json(creditDetails)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -103,11 +104,12 @@ const updateCreditDetails = async (
     }
     const updateCreditDetails = await db.CreditDetails.updateCreditDetails(req.params.id, sanitized)
     res.status(200).json(updateCreditDetails)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
+//to do
 //לשים ❤️ שכאשר אני מוחקת כרטיס אשראי אני צריכה למחוק גם מהטבלת קשרים ולבדוק מה עם ההוראת קבע
 // const deleteCreditDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 //     try {
@@ -122,8 +124,8 @@ const updateCreditDetails = async (
 //         }
 //         const deleteCreditDetails = await db.CreditDetails.(req.params.id);
 //         res.status(200).json(deleteCustomer);
-//     } catch (error: any) {
-//         next(error);
+//     } catch (error: unknown) {
+//             handleError(error, next)
 //     }
 // };
 

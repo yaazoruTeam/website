@@ -4,7 +4,7 @@ import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { MonthlyPayment } from '@model'
 import { Link, useNavigate } from 'react-router-dom'
-import CustomTable from '../designComponent/CustomTable'
+import CustomTable, { TableRowData } from '../designComponent/CustomTable'
 import { getCustomerById } from '../../api/customerApi'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { PencilIcon } from '@heroicons/react/24/outline'
@@ -58,6 +58,16 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
     })
   }
 
+  // פונקציה מותאמת אישית שמחלצת את ה-ID מנתוני השורה ומעבירה לפונקציה המקורית
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
+    const paymentId = rowData.monthlyPayment_id as string
+    const payment = filteredPayments.find(p => p.monthlyPayment_id === paymentId)
+    if (payment) {
+      onClickMonthlyPayment(payment)
+    }
+  }
+
   const columns = [
     !isCustomerCard && { label: t('customerName'), key: 'customer_name' },
     { label: t('dates'), key: 'dates' },
@@ -99,7 +109,10 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
     updateMonthlyPayment: (
       <PencilIcon
         style={{ width: '24px', height: '24px', color: colors.blue600, cursor: 'pointer' }}
-        onClick={() => onClickMonthlyPayment(payment)}
+        onClick={(e) => {
+          e.stopPropagation()
+          onClickMonthlyPayment(payment)
+        }}
       />
     ),
   }))
@@ -132,7 +145,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
           {!isCustomerCard ? <CustomTable
             columns={columns}
             data={tableData}
-            onRowClick={onClickMonthlyPayment}
+            onRowClick={handleRowClick}
             showSummary={{
               page,
               limit,

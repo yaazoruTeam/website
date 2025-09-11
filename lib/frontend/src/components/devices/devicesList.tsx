@@ -5,7 +5,7 @@ import { colors } from '../../styles/theme'
 import CustomTypography from '../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { Device } from '@model'
-import CustomTable from '../designComponent/CustomTable'
+import CustomTable, { TableRowData } from '../designComponent/CustomTable'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
@@ -13,13 +13,18 @@ import FilterResetButton from '../designComponent/FilterResetButton'
 import AddDeviceForm from './AddDeviceForm'
 import { formatDateToString } from '../designComponent/FormatDate'
 
+type DeviceFilterType = 
+  | { type: 'status'; value: 'active' | 'inactive' }
+  | { type: 'date'; value: { start: Date; end: Date } }
+  | null
+
 interface DevicesListProps {
   devices: Device.Model[]
   total: number
   page: number
   limit: number
   onPageChange: (page: number) => void
-  onFilterChange: (filter: any) => void
+  onFilterChange: (filter: DeviceFilterType) => void
   onRefresh: () => void
 }
 
@@ -66,13 +71,23 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
       ),
   }))
 
-  const onClickDevice = (device: any) => {
+  const onClickDevice = (device: Device.Model) => {
     navigate(`/device/card/${device.device_id}`)
   }
 
   const handleAddDeviceSuccess = () => {
     setShowAddDevice(false)
     onRefresh() // Refresh the devices list
+  }
+
+  // פונקציה מותאמת אישית שמחלצת את ה-ID מנתוני השורה ומעבירה לפונקציה המקורית
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
+    const deviceId = rowData.device_id as string
+    const device = devices.find(d => d.device_id === deviceId)
+    if (device) {
+      onClickDevice(device)
+    }
   }
 
   return (
@@ -168,7 +183,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
         <CustomTable
           columns={columns}
           data={tableData}
-          onRowClick={onClickDevice}
+          onRowClick={handleRowClick}
           showSummary={{
             total,
             page,

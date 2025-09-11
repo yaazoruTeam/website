@@ -1,17 +1,17 @@
 import { CustomerDeviceExcel } from '@model'
 
-const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
+const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExcel.Model => {
   return {
     customer: {
       customer_id: '',
-      first_name: row.first_name || '',
-      last_name: row.last_name || '',
-      id_number: row.id_number || '',
-      phone_number: row.phone_number || '',
+      first_name: (row.first_name as string) || '',
+      last_name: (row.last_name as string) || '',
+      id_number: (row.id_number as string) || '',
+      phone_number: (row.phone_number as string) || '',
       additional_phone: '',
-      email: row.email || '',
-      city: row.city || '',
-      address1: row.address1 || '',
+      email: (row.email as string) || '',
+      city: (row.city as string) || '',
+      address1: (row.address1 as string) || '',
       address2: '',
       zipCode: '',
       status: 'active',
@@ -20,17 +20,17 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
     },
     device: {
       device_id: '',
-      device_number: row.device_number || '',
-      SIM_number: row.SIM_number || '',
-      IMEI_1: row.IMEI_1 || '',
-      model: row.model || '',
+      device_number: (row.device_number as string) || '',
+      SIM_number: (row.SIM_number as string) || '',
+      IMEI_1: (row.IMEI_1 as string) || '',
+      model: (row.model as string) || '',
       status: 'active',
-      serialNumber: row.serialNumber || '',
-      purchaseDate: row.receivedAt || null,
-      releaseDate: row.releaseDate || new Date(),
-      plan: row.plan || '',
+      serialNumber: (row.serialNumber as string) || '',
+      purchaseDate: (row.receivedAt as Date | null) || null,
+      releaseDate: (row.releaseDate as Date) || new Date(),
+      plan: (row.plan as string) || '',
     },
-    receivedAt: row.receivedAt,
+    receivedAt: (row.receivedAt as Date | string | number),
   }
 }
 

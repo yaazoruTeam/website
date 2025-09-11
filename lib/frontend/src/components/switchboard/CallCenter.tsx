@@ -17,16 +17,24 @@ import ChangeAccountModal from './ChangeAccountModal'
 import PurchasingNewNumber from './PurchasingNewNumber'
 import SwitchboardTabs from './SwitchboardTabs'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
+import { Switchboard } from '@model'
+
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type SwitchboardCall = Switchboard.SwitchboardCall
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type SwitchEventHandler = Switchboard.SwitchEventHandler
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type CallActionHandler = Switchboard.CallActionHandler
 
 const CallCenter: React.FC = () => {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [calls, setCalls] = useState<any[]>([
+  const [calls, setCalls] = useState<SwitchboardCall[]>([
     {
       organizationName: '1234',
       number: '125-324-6587',
-      country: 'Isral',
+      country: 'Israel',
       target: '125-324-6587',
       fromDate: new Date(Date.now()),
       definedAsAnIdentifier: true,
@@ -51,7 +59,7 @@ const CallCenter: React.FC = () => {
   const editCallCenter = () => {
     console.log('editCallCenter')
   }
-  const callLog = (call: any) => {
+  const callLog: CallActionHandler = (call) => {
     console.log('callLog', call)
     navigate(`./callLog/${call.target}`)
   }
@@ -168,7 +176,7 @@ const CallCenter: React.FC = () => {
     ),
   }))
 
-  const changeDefinedAsAnIdentifier = (e: any) => {
+  const changeDefinedAsAnIdentifier: SwitchEventHandler = (e) => {
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של מוגדר כמזהה
     console.log('changeDefinedAsAnIdentifier', e)
     //שינוי הסטטוס לבינתיים
@@ -177,7 +185,7 @@ const CallCenter: React.FC = () => {
     )
   }
 
-  const changeOutgoingCalls = (e: any) => {
+  const changeOutgoingCalls: SwitchEventHandler = (e) => {
     //to do : קריאת שרת לשינוי של כיבוי או הדלקה של שיחות יוצאות
     console.log('changeOutgoingCalls', e)
     //שינוי הסטטוס לבינתיים
@@ -267,7 +275,7 @@ const CallCenter: React.FC = () => {
       <CustomTable
         columns={columns}
         data={tableData}
-        onRowClick={(index) => handleRowClick(index)}
+        onRowClick={(_, index) => handleRowClick(index)}
         expandedRowIndex={expandedRowIndex}
         renderExpandedRow={() => <SwitchboardTabs />}
       />

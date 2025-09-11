@@ -9,6 +9,7 @@ import {
 import * as db from '@db/index'
 import getDbConnection from '@db/connection'
 import { updateItems } from './item'
+import { handleError } from './err'
 import logger from '../utils/logger'
 
 const createMonthlyPayment = async (req: Request, res: Response, next: NextFunction) => {
@@ -58,11 +59,11 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     await trx.commit()
     logger.info('create monthly payment!! success!!!')
     res.status(201).json(monthlyPaymentData)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
     await trx.rollback()
     logger.error('Transaction failed, all actions rolled back:', error)
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -108,19 +109,19 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       throw error
     }
 
-        await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx)
+    await db.CreditDetails.updateCreditDetails(creditDetails.credit_id, creditDetails, trx)
 
-        const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id)
-        await updateItems(existingItems, items, trx)
+    const existingItems = await db.Item.getAllItemsByMonthlyPaymentIdNoPagination(id)
+    await updateItems(existingItems, items, trx)
 
-        await trx.commit()
-        logger.info('Monthly payment updated successfully!')
-        res.status(200).json({ message: 'Monthly payment updated successfully!' })
-    } catch (error: any) {
-        await trx.rollback()
-        logger.error('Transaction failed, all actions rolled back:', error)
-        next(error)
-    }
+    await trx.commit()
+    logger.info('Monthly payment updated successfully!')
+    res.status(200).json({ message: 'Monthly payment updated successfully!' })
+  } catch (error: unknown) {
+    await trx.rollback()
+    logger.error('Transaction failed, all actions rolled back:', error)
+    handleError(error, next)
+  }
 }
 
 export { createMonthlyPayment, updateMonthlyPayment }

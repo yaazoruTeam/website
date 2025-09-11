@@ -1,6 +1,6 @@
+import { Knex } from 'knex'
 import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
-import { Knex } from 'knex'
 
 const createCustomerSchema = async () => {
   logger.debug('create customer schema')

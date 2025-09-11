@@ -1,3 +1,4 @@
+import { Knex } from 'knex'
 import { createYaazoruSchema } from './yaazoru'
 import { createCustomerSchema } from './customer'
 import { createDeviceSchema } from './device'

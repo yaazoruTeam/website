@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { charge } from '@tranzila/Authentication'
+import { handleError } from './err'
 import logger from '../utils/logger'
 import config from '../config'
 
@@ -29,9 +30,9 @@ const chargeTokenTranzila = async (
     const result = await charge(transaction)
     logger.info('result after charge', { result })
     res.status(200).json(result)
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('error in charge!!', { error })
-    next(error)
+    handleError(error, next)
   }
 }
 

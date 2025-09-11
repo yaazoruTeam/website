@@ -6,18 +6,22 @@ import { CustomTextField } from '../designComponent/Input'
 import { Cog8ToothIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useForm } from 'react-hook-form'
 import { colors } from '../../styles/theme'
-import CustomTable from '../designComponent/CustomTable'
+import CustomTable, { TableRowData } from '../designComponent/CustomTable'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Switchboard as  SwitchboardModel} from '@model'
+
+//to do: טיפוס זמני לשנות לטיפוס הנכון
+type SwitchboardAccount = SwitchboardModel.SwitchboardAccount
 
 const Switchboard: React.FC = () => {
   const { t } = useTranslation()
   const { control } = useForm<{ search: string }>()
   const navigate = useNavigate()
 
-  // @ts-ignore
+  //@ts-ignore
   //to do : לשנות את זה למערך מסוד המרכזיה וליצור useEffect ששולף את הנתונים הנכונים מהשרת
-  const [switchboardAccounts, setSwitchboardAccounts] = useState<any[]>([
+  const [switchboardAccounts, setSwitchboardAccounts] = useState<SwitchboardAccount[]>([
     {
       ID: 1111,
       customerName: 'יעזורו',
@@ -55,10 +59,11 @@ const Switchboard: React.FC = () => {
     ),
   }))
   //to do : לשנות את זה למודל
-  const onClickAccountSwitchboard = (row: any) => {
-    navigate(`/switchboard/callcenter/${row.ID}`, {
+  const onClickAccountSwitchboard = (_rowData: TableRowData, rowIndex: number) => {
+    const rowData = switchboardAccounts[rowIndex]
+    navigate(`/switchboard/callcenter/${rowData.ID}`, {
       state: {
-        ID: row.ID,
+        ID: rowData.ID,
       },
     })
   }
@@ -95,7 +100,7 @@ const Switchboard: React.FC = () => {
               icon={<MagnifyingGlassIcon />}
               control={control}
               name='search'
-              // sx={{ border: `1px solid ${colors.blueOverlay700}`, width: '250px' }}
+            // sx={{ border: `1px solid ${colors.blueOverlay700}`, width: '250px' }}
             />
           </Box>
           <CustomButton label={t('addAnAccount')} buttonType='first' state='default' />

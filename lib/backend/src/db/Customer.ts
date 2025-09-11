@@ -1,3 +1,4 @@
+import { Knex } from 'knex'
 import { Customer, HttpError } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
@@ -5,7 +6,7 @@ import logger from '../utils/logger'
 
 const limit = config.database.limit
 
-const createCustomer = async (customer: Customer.Model, trx?: any) => {
+const createCustomer = async (customer: Customer.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
     logger.debug('[DB] Creating customer in database', { email: customer.email })
@@ -282,9 +283,9 @@ const searchCustomersByName = async (
     const terms = trimmed.split(/\s+/)
     logger.debug('[DB] Searching customers by name', { searchTerms: terms })
 
-    const buildWhereClause = (query: any) => {
+    const buildWhereClause = (query: Knex.QueryBuilder) => {
       terms.forEach((term) => {
-        query.andWhere((qb: any) => {
+        query.andWhere((qb: Knex.QueryBuilder) => {
           qb.whereILike('first_name', `%${term}%`).orWhereILike('last_name', `%${term}%`)
         })
       })

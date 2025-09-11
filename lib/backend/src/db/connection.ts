@@ -1,8 +1,10 @@
 import knex, { Knex } from 'knex'
 import config from '@config/index'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let connection: Knex<any, unknown[]> | null = null
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getDbConnection(): Knex<any, unknown[]> {
   if (connection == null) {
     connection = knex({

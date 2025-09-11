@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { config } from '@config/index'
 import * as db from '@db/index'
 import { Customer, HttpError } from '@model'
+import { handleError } from './err'
 import logger from '../utils/logger'
 
 const limit = config.database.limit
@@ -13,17 +14,17 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
     Customer.sanitizeBodyExisting(req)
     const customerData = req.body
     const sanitized = Customer.sanitize(customerData, false)
-    
+
     logger.debug('Checking for existing customer', { email: sanitized.email, id_number: sanitized.id_number });
     await existingCustomer(sanitized, false)
-    
+
     const customer = await db.Customer.createCustomer(sanitized)
 
     logger.info('Customer created successfully', { customer_id: customer.customer_id });
     res.status(201).json(customer)
-  } catch (error: any) {
-    logger.error('Error in createCustomer', { error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in createCustomer', { error: error instanceof Error ? error.message : String(error) })
+    handleError(error, next)
   }
 }
 
@@ -43,9 +44,9 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    logger.error('Error in getCustomers', { error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in getCustomers', { error: error instanceof Error ? error.message : String(error) });
+    handleError(error, next)
   }
 }
 
@@ -66,9 +67,9 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     const customer = await db.Customer.getCustomerById(req.params.id)
     logger.info('getCustomerById success', { id: req.params.id });
     res.status(200).json(customer)
-  } catch (error: any) {
-    logger.error('Error in getCustomerById', { id: req.params.id, error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in getCustomerById', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
+    handleError(error, next)
   }
 }
 
@@ -113,7 +114,7 @@ const getCustomersByCity = async (
     })
   } catch (error: any) {
     logger.error('Error in getCustomersByCity', { city: req.params.city, error: error.message });
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -147,9 +148,9 @@ const getCustomersByStatus = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    logger.error('Error in getCustomersByStatus', { status: req.params.status, error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in getCustomersByStatus', { status: req.params.status, error: error instanceof Error ? error.message : String(error) });
+    handleError(error, next)
   }
 }
 
@@ -196,9 +197,9 @@ const getCustomersByDateRange = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    logger.error('Error in getCustomersByDateRange', { startDate: req.query.startDate, endDate: req.query.endDate, error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in getCustomersByDateRange', { startDate: req.query.startDate, endDate: req.query.endDate, error: error instanceof Error ? error.message : String(error) });
+    handleError(error, next)
   }
 }
 
@@ -214,9 +215,9 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
 
     logger.info('Customer updated successfully', { id: req.params.id });
     res.status(200).json(updateCustomer)
-  } catch (error: any) {
-    logger.error('Error in updateCustomer', { id: req.params.id, error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in updateCustomer', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
+    handleError(error, next)
   }
 }
 
@@ -238,16 +239,16 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 
     logger.info('Customer deleted successfully', { id: req.params.id });
     res.status(200).json(deleteCustomer)
-  } catch (error: any) {
-    logger.error('Error in deleteCustomer', { id: req.params.id, error: error.message });
-    next(error)
+  } catch (error: unknown) {
+    logger.error('Error in deleteCustomer', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
+    handleError(error, next)
   }
 }
 
 const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
-  logger.debug('Checking for existing customer', { 
-    hasId, 
-    email: customer.email, 
+  logger.debug('Checking for existing customer', {
+    hasId,
+    email: customer.email,
     id_number: customer.id_number,
     customer_id: hasId ? customer.customer_id : 'new'
   });
@@ -265,9 +266,9 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       id_number: customer.id_number,
     })
   }
-  
+
   if (customerEx) {
-    logger.warn('Found conflicting customer', { 
+    logger.warn('Found conflicting customer', {
       existing_id: customerEx.customer_id,
       conflict_field: customerEx.email === customer.email ? 'email' : 'id_number'
     });
@@ -287,7 +288,7 @@ const getCities = async (req: Request, res: Response, next: NextFunction): Promi
     res.status(200).json(cities)
   } catch (error: any) {
     logger.error('Error in getCities', { error: error.message });
-    next(error)
+    handleError(error, next)
   }
 }
 
@@ -316,7 +317,7 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
     })
   } catch (error: any) {
     logger.error('Error in searchCustomers', { searchTerm: req.query.q, error: error.message });
-    next(error)
+    handleError(error, next)
   }
 }
 

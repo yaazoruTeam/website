@@ -1,4 +1,4 @@
-import { HttpError } from '.'
+import { HttpError, Request } from '.'
 
 interface Model {
   user_id: string
@@ -19,7 +19,7 @@ interface Model {
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
-  const isString = (value: any) => typeof value === 'string'
+  const isString = (value: unknown) => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
 
@@ -176,8 +176,8 @@ const sanitizeExistingUser = (userExis: Model, user: Model) => {
   }
 }
 
-const sanitizeIdExisting = (id: any) => {
-  if (!id.params.id) {
+const sanitizeIdExisting = (req: Request.RequestWithParams) => {
+  if (!req.params.id) {
     const error: HttpError.Model = {
       status: 400,
       message: 'No ID provided',
@@ -186,7 +186,7 @@ const sanitizeIdExisting = (id: any) => {
   }
 }
 
-const sanitizeBodyExisting = (req: any) => {
+const sanitizeBodyExisting = (req: Request.RequestWithBody) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     const error: HttpError.Model = {
       status: 400,

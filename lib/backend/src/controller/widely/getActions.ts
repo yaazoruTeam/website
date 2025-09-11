@@ -3,6 +3,7 @@ import { HttpError, Widely, WidelyDeviceDetails } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
+import { handleError } from '../err'
 
 // Function for network identification
 const getNetworkConnection = (mccMnc: string): string => {
@@ -14,7 +15,7 @@ const getNetworkConnection = (mccMnc: string): string => {
   return networkMap[mccMnc] || `Not available (${mccMnc})`
 }
 
-const searchUsersData = async (simNumber: string): Promise<any> => {
+const searchUsersData = async (simNumber: string): Promise<Widely.WidelyUserData> => {
   const result: Widely.Model = await callingWidely(
     'search_users', {
     account_id: config.widely.accountId,
@@ -49,7 +50,7 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
   const userData = dataArray[0]
 
   // Validate that userData exists and has required fields
-  if (!userData || (!userData.domain_user_name && !userData.name)) {
+  if (!userData || (!userData.domain_user_name) && !userData.name) {
     const error: HttpError.Model = {
       status: 404,
       message: 'SIM number not found.',
@@ -57,10 +58,10 @@ const searchUsersData = async (simNumber: string): Promise<any> => {
     throw error
   }
 
-  return userData
+  return userData as Widely.WidelyUserData
 }
 
-const getMobilesData = async (domain_user_id: string): Promise<any> => {
+const getMobilesData = async (domain_user_id: number): Promise<Widely.WidelyMobileData> => {
   const result: Widely.Model = await callingWidely(
     'get_mobiles', {
     domain_user_id: domain_user_id,
@@ -77,10 +78,10 @@ const getMobilesData = async (domain_user_id: string): Promise<any> => {
     throw error
   }
 
-  return mobileData
+  return mobileData as Widely.WidelyMobileData
 }
 
-const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
+const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobileData> => {
   const result: Widely.Model = await callingWidely(
     'get_mobile_info', {
     endpoint_id: endpoint_id
@@ -101,7 +102,7 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
       throw error
     }
 
-    return mobileData
+    return mobileData as Widely.WidelyMobileData
   }
 
   // Handle direct object response (without data property)
@@ -113,7 +114,9 @@ const getMobileInfoData = async (endpoint_id: string): Promise<any> => {
     throw error
   }
 
-  return result
+  // In this case, result is the complete Widely.Model, but we need just the mobile data
+  // This should not happen if data property exists, but as fallback
+  return result as unknown as Widely.WidelyMobileData
 }
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -123,8 +126,8 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction): Pro
 
     const userData = await searchUsersData(simNumber)
     res.status(200).json(userData)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -135,8 +138,8 @@ const getMobiles = async (req: Request, res: Response, next: NextFunction): Prom
 
     const mobileData = await getMobilesData(domain_user_id)
     res.status(200).json(mobileData)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -147,8 +150,8 @@ const getMobileInfo = async (req: Request, res: Response, next: NextFunction): P
 
     const mobileInfoData = await getMobileInfoData(endpoint_id)
     res.status(200).json(mobileInfoData)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -193,8 +196,8 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     }
 
     // Extract and format response data
-    const dataUsage = mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage || mobileInfo?.data_used || 0
-    const maxDataAllowance = mobileInfo?.data_limit || 0
+    const dataUsage = (mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage as number) || (mobileInfo?.data_used as number) || 0
+    const maxDataAllowance = (mobileInfo?.data_limit as number) || 0
     const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
     const networkConnection = getNetworkConnection(mccMnc)
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
@@ -202,7 +205,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
-      endpoint_id: parseInt(endpoint_id) || 0,
+      endpoint_id: endpoint_id,
       domain_user_id: mobileInfo?.domain_user_id || 0,
       network_connection: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
@@ -218,13 +221,13 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
         name: mobileInfo?.device_info?.name || 'Not available',
       },
       package_id: mobileInfo?.package_id?.toString() || '',
-      active: mobileInfo?.active,
+      active: mobileInfo?.active ?? false,
     }
 
     res.status(200).json(responseData)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData }
+export { searchUsers, getMobiles, getMobileInfo, getAllUserData, getMobileInfoData }

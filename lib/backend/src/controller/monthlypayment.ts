@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { HttpError, MonthlyPayment } from '@model'
 import * as db from '@db/index'
 import config from '@config/index'
+import { handleError } from './err'
 
 
 const limit = config.database.limit
@@ -21,8 +22,8 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     }
     const monthlyPayment = await db.MonthlyPayment.createMonthlyPayment(sanitized)
     res.status(201).json(monthlyPayment)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -39,8 +40,8 @@ const getMonthlyPayments = async (req: Request, res: Response, next: NextFunctio
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -57,8 +58,8 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
     }
     const monthlyPayment = await db.MonthlyPayment.getMonthlyPaymentById(req.params.id)
     res.status(200).json(monthlyPayment)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -94,8 +95,8 @@ const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: 
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: NextFunction) => {
@@ -122,8 +123,8 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -158,8 +159,8 @@ const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -181,8 +182,8 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
       sanitized,
     )
     res.status(200).json(updateMonthlyPayment)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 
@@ -200,8 +201,8 @@ const deleteMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     }
     const deleteMonthlyPayment = await db.MonthlyPayment.deleteMonthlyPayment(req.params.id)
     res.status(200).json(deleteMonthlyPayment)
-  } catch (error: any) {
-    next(error)
+  } catch (error: unknown) {
+    handleError(error, next)
   }
 }
 export {
