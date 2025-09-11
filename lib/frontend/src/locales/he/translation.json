@@ -290,6 +290,7 @@
   "softReset": "איפוס קל",
   "softResetSuccess": "איפוס קל הושלם בהצלחה",
   "softResetError": "שגיאה בביצוע איפוס קל",
+  "deviceComments": "הערות מכשיר",
   "invalidAddress": "כתובת לא חוקית",
   "invalidCity": "עיר לא חוקית",
   "invalidName": "שם לא חוקי",

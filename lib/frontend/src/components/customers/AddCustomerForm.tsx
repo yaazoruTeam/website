@@ -244,7 +244,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
           <CustomerCommentsSection>
             <ChatCommentCard
               commentsType={t('customerComments')}
-              lastCommentDate={lastCommentDate || 'אין הערות'}
+              lastCommentDate={lastCommentDate || ''}
               lastComment={lastComment || 'אין הערות קודמות עבור הלקוח'}
               chatButton={
                 <ArrowToChatComments
@@ -295,6 +295,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
                   onCommentsRefresh()
                 }
               }}
+              commentType={t('customerComments')}
             />
           </ChatModalContainer>
         </ChatModalOverlay>
