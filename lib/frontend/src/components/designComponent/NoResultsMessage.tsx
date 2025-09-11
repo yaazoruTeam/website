@@ -37,11 +37,11 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClos
         alignItems: 'center',
         gap: 3,
         borderRadius: 3,
-        backgroundColor: colors.c6,
-        border: `2px solid ${colors.c3}`,
+        backgroundColor: colors.neutral0,
+        border: `2px solid ${colors.orange500}`,
         padding: 6,
         position: 'relative',
-        boxShadow: `0 4px 20px ${colors.c47}`,
+        boxShadow: `0 4px 20px ${colors.neutralShadow}`,
       }}
     >
       {/* Close button */}
@@ -54,14 +54,14 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClos
           width: 32,
           height: 32,
           borderRadius: '50%',
-          backgroundColor: colors.c42,
+          backgroundColor: colors.neutral500,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
           '&:hover': {
-            backgroundColor: colors.c2,
+            backgroundColor: colors.blue600,
             transform: 'scale(1.1)',
           },
         }}
@@ -70,7 +70,7 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClos
           style={{
             width: '18px',
             height: '18px',
-            color: colors.c6,
+            color: colors.neutral0,
           }}
         />
       </Box>
@@ -81,17 +81,17 @@ const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ messageType, onClos
           width: 80,
           height: 80,
           borderRadius: '50%',
-          backgroundColor: colors.c45,
+          backgroundColor: colors.orange10,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           marginBottom: 2,
         }}
       >
-        <CustomTypography text='🔍' variant='h1' weight='regular' color={colors.c3} />
+        <CustomTypography text='🔍' variant='h1' weight='regular' color={colors.orange500} />
       </Box>
 
-      <CustomTypography text={getMessage()} variant='h2' weight='bold' color={colors.c11} />
+      <CustomTypography text={getMessage()} variant='h2' weight='bold' color={colors.blue900} />
     </Box>
   )
 }

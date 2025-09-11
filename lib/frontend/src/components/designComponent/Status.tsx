@@ -12,14 +12,14 @@ const StatusTag: React.FC<StatusTagProps> = ({ status }) => {
   const { t } = useTranslation()
 
   const statusMap: Record<StatusTagProps['status'], { label: string; color: string }> = {
-    active: { label: t('active'), color: colors.c25 },
-    inactive: { label: t('inactive'), color: colors.c18 },
-    blocked: { label: t('blocked'), color: colors.c19 },
-    canceled: { label: t('canceled'), color: colors.c20 },
-    imei_locked: { label: t('imei_locked'), color: colors.c16 },
+    active: { label: t('active'), color: colors.green75 },
+    inactive: { label: t('inactive'), color: colors.red75 },
+    blocked: { label: t('blocked'), color: colors.yellow100 },
+    canceled: { label: t('canceled'), color: colors.purple100 },
+    imei_locked: { label: t('imei_locked'), color: colors.blue50 },
   }
 
-  const { label, color } = statusMap[status] ?? { label: t('unknown'), color: colors.c12 }
+  const { label, color } = statusMap[status] ?? { label: t('unknown'), color: colors.neutral100 }
 
   return (
     <Box

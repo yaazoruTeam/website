@@ -6,7 +6,7 @@ import { FlexBase } from './baseStyles'
 export const WidelyContainer = styled('div')({
   padding: '24px',
   direction: 'rtl',
-  background: colors.c6,
+  background: colors.neutral0,
 })
 
 export const WidelyHeaderSection = styled(FlexBase)({

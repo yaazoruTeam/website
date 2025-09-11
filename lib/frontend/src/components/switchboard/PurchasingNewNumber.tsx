@@ -172,7 +172,7 @@ const PurchasingNewNumber: React.FC<PurchasingNewNumberProps> = ({ open, onClose
             text={t('numberSelection')}
             variant='h1'
             weight='bold'
-            color={colors.c2}
+            color={colors.blue600}
           />
           <Box sx={{ my: '32px' }}>
             {numbers.map((item, index) => (
@@ -195,7 +195,7 @@ const PurchasingNewNumber: React.FC<PurchasingNewNumberProps> = ({ open, onClose
                             text={`${item.price}₪ ${t('perMonth')}`}
                             variant='h3'
                             weight='regular'
-                            color={colors.c8}
+                            color={colors.blue500}
                           />
                         </Box>
                       ),

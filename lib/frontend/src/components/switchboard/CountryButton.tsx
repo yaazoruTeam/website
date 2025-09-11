@@ -29,11 +29,11 @@ const CountryButton: React.FC<CountryButtonProps> = ({
         gap: 1,
         direction: 'rtl',
         justifyContent: 'flex-start',
-        background: selected ? colors.c21 : 'transparent',
-        outline: selected ? `1px solid ${colors.c13}` : 'none',
+        background: selected ? colors.blueOverlay100 : 'transparent',
+        outline: selected ? `1px solid ${colors.blue100}` : 'none',
         outlineOffset: selected ? '-1px' : undefined,
-        borderColor: selected ? colors.c13 : colors.c36,
-        color: colors.c11,
+        borderColor: selected ? colors.blue100 : colors.neutral150,
+        color: colors.blue900,
         fontWeight: 400,
         fontSize: '14px',
         fontFamily: 'Heebo',
@@ -49,7 +49,7 @@ const CountryButton: React.FC<CountryButtonProps> = ({
         text={countryName}
         weight='regular'
         variant='h5'
-        color={colors.c11}
+        color={colors.blue900}
         sx={{ fontSize: '14px' }}
       />
     </Button>

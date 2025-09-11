@@ -74,11 +74,11 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
   return (
     <Box>
       <Box sx={{ marginBottom: '28px' }}>
-        <CustomTypography text={t('devices')} variant='h1' weight='bold' color={colors.c11} />
+        <CustomTypography text={t('devices')} variant='h1' weight='bold' color={colors.blue900} />
       </Box>
-      {error && <CustomTypography text={error} variant='h4' weight='medium' color={colors.c28} />}
+      {error && <CustomTypography text={error} variant='h4' weight='medium' color={colors.red500} />}
       {isLoading ? (
-        <CustomTypography text={t('loading')} variant='h4' weight='medium' color={colors.c11} />
+        <CustomTypography text={t('loading')} variant='h4' weight='medium' color={colors.blue900} />
       ) : (
         <Box>
           {devices.map((device) => (
@@ -94,7 +94,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
 
       <Box sx={{ my: '80px' }}>
         <Box sx={{ marginBottom: '20px' }}>
-          <CustomTypography text={t('activeLoans')} variant='h1' weight='bold' color={colors.c11} />
+          <CustomTypography text={t('activeLoans')} variant='h1' weight='bold' color={colors.blue900} />
         </Box>
       </Box>
       <Box>
@@ -103,7 +103,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             text={t('deviceAssignment')}
             variant='h1'
             weight='bold'
-            color={colors.c11}
+            color={colors.blue900}
           />
         </Box>
       </Box>

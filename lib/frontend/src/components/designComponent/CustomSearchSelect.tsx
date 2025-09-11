@@ -116,8 +116,8 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
             onOpen={handleSelectClick}
             renderValue={(selected) => (selected ? selected : placeholder)}
             sx={{
-              backgroundColor: colors.c15,
-              border: `1px solid ${colors.c22}`,
+              backgroundColor: colors.neutral75,
+              border: `1px solid ${colors.blueOverlay700}`,
               borderRadius: SwitchboardSelect ? 1 : 4,
               width: '200px',
               height: '50px',
@@ -141,7 +141,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
                     style={{
                       width: '16px',
                       height: '16px',
-                      color: colors.c11,
+                      color: colors.blue900,
                       position: 'absolute',
                       top: 16,
                       left: '10px',
@@ -152,7 +152,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
                     style={{
                       width: '16px',
                       height: '16px',
-                      color: colors.c11,
+                      color: colors.blue900,
                       position: 'absolute',
                       top: 16,
                       left: '10px',
@@ -164,7 +164,7 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
                   style={{
                     width: '16px',
                     height: '16px',
-                    color: colors.c11,
+                    color: colors.blue900,
                     position: 'absolute',
                     top: 16,
                     left: '10px',

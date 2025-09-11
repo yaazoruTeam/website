@@ -28,7 +28,7 @@ export const CalendarDayBase = styled(FlexBase)(({ theme }) => ({
   }),
 
   '&:focus-visible': {
-    outline: `2px solid ${colors.c22}`,
+    outline: `2px solid ${colors.blueOverlay700}`,
     outlineOffset: 2,
   },
 
@@ -62,7 +62,7 @@ export const CalendarIconButton = styled(IconButton)({
   '& svg': {
     width: 14,
     height: 14,
-    color: colors.c40,
+    color: colors.neutral900,
   },
 })
 
@@ -72,9 +72,9 @@ export const CalendarContainer = styled(Box)({
   width: '100%',
   maxWidth: '100%',
   padding: '8px 12px',
-  background: colors.c6,
+  background: colors.neutral0,
   borderRadius: '16px',
-  outline: `1px solid ${colors.c22}`,
+  outline: `1px solid ${colors.blueOverlay700}`,
   outlineOffset: '-1px',
   justifyContent: 'flex-start',
   alignItems: 'stretch',
@@ -96,7 +96,7 @@ export const DayOfWeekCell = styled(Box)({
   padding: '2px 1px',
   fontSize: CALENDAR_FONT_SIZE,
   fontWeight: 400,
-  color: colors.c40,
+  color: colors.neutral900,
   fontFamily: CALENDAR_FONT_FAMILY,
   minWidth: '16px',
   maxWidth: '16px',
@@ -129,16 +129,16 @@ export const CalendarButton = styled(Button)<{ buttonvariant: 'apply' | 'clear' 
     textTransform: 'none',
     ...(buttonvariant === 'apply'
       ? {
-          backgroundColor: colors.c2,
-          color: colors.c6,
-          '&:hover': { backgroundColor: colors.c43 },
-          '&:disabled': { backgroundColor: colors.c44, color: colors.c41 },
+          backgroundColor: colors.blue600,
+          color: colors.neutral0,
+          '&:hover': { backgroundColor: colors.blue800 },
+          '&:disabled': { backgroundColor: colors.neutral300, color: colors.neutral600 },
         }
       : {
           backgroundColor: 'transparent',
-          color: colors.c42,
-          border: `1px solid ${colors.c42}`,
-          '&:hover': { backgroundColor: colors.c46 },
+          color: colors.neutral500,
+          border: `1px solid ${colors.neutral500}`,
+          '&:hover': { backgroundColor: colors.neutral10 },
         }),
   }),
 )

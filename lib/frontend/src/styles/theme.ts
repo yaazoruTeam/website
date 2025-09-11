@@ -2,56 +2,69 @@ import { createTheme } from '@mui/material/styles'
 import '@fontsource/heebo'
 
 const colors = {
-  c0: '#1F1F1F', //brand color_10
-  c1: '',
-  c2: '#0A425F', //brand color_8
-  c3: '#FF7F07', //brand color_4
-  c4: '#80E4FF', //brand color_3
-  c5: 'rgba(205, 244, 255, 0.44)',
-  c6: '#FFFFFF', //neutral white
-  c7: '#007AFF', //brand color_6
-  c8: '#0059BA', //brand color_7
-  c9: '',
-  c10: 'rgba(21, 54, 70, 0.37)', //'#153646 · 37%',//brand color_2
-  c11: '#032B40', //brand color_9
-  c12: '#E4E4E4', //brand color_13
-  c13: '#D0E6FF', //brand color_17
-  c14: 'rgba(246, 246, 246, 0.67)', //'#F6F6F6 · 67%',//brand color_15
-  c15: '#F5F6FA', //brand color_14
-  c16: '#E5F2FF', //brand color_18
-  c17: '#D55188', //brand.color_5
-  c18: 'rgba(253, 209, 220, 0.74)', //'#FDD1DC · 74%',//status error light
-  c19: 'rgba(255, 253, 184, 0.74)', //'#FFFDB8 · 74%',//status yellow light
-  c20: 'rgba(224, 223, 255, 0.5)', //'#E0DFFF · 50%',//brand color_20
-  c21: 'rgba(229, 242, 255, 0.7)', //'#E5F2FF · 70%',//brand color_19
-  c22: 'rgba(11, 58, 82, 0.36)', //'#0B3A52 · 36%',//brand color_12
-  c23: 'rgba(23, 42, 51, 0.52)', //'#172A33 · 52%',
-  c24: 'rgba(255, 255, 255, 0.5)', //'#FFFFFF · 50%',//brand color_16
-  c25: 'rgba(182, 255, 203, 0.7)', //'#B6FFCB · 70%',//status success light
-  c26: 'rgba(255, 226, 185, 0.76)', //'#FFE2B9 · 76%',//status warning light
-  c27: '#F3F4F6',
-  c28: '#D83232', //status error dark
-  c29: '#F68C23', //status warning dark
-  c30: '#47BA79', //status success dark
-  feild: 'rgba(246, 248, 252, 0.58)', //'#F6F8FC · 58%',//brand color_11
-  c32: 'rgba(253, 209, 220, 1)',
-  c33: 'rgba(182, 255, 203, 1)',
-  c34: '#0a3b55',
-  c35: 'rgba(10, 66, 95, 0.04)',
-  c36: '#E0E0E0',
-  c37: '#1D75DD',
-  c38: '#989BA1', //neutral gray
-  c39: '#DDDDDD', //neutral light gray
-  c40: '#121212', // Main text color
-  c41: '#666', // Disabled text
-  c42: '#858585', // Secondary text
-  c43: '#083647', // Button hover state
-  c44: '#ccc', // Disabled button background
-  c45: 'rgba(255, 127, 7, 0.1)', // Selected range background
-  c46: 'rgba(133, 133, 133, 0.08)', // Hover state for buttons
-  c47: 'rgba(0, 0, 0, 0.1)', // Light shadow color
-  n50: '#94A3B8',
-  c48: '#555758',
+  // ===== NEUTRALS - DARK TO LIGHT =====
+  neutral900: '#121212',  // Main text color (darkest black) - c40
+  neutral800: '#1F1F1F',  // Brand color_10 (very dark gray) - c0
+  neutral700: '#555758',  // Dark gray - c48
+  neutral600: '#666',     // Disabled text (medium dark gray) - c41
+  neutral500: '#858585',  // Secondary text - c42
+  neutral400: '#94A3B8',  // Medium gray - n50
+  neutral350: '#989BA1',  // Neutral gray - c38
+  neutral300: '#ccc',     // Disabled button background - c44
+  neutral200: '#DDDDDD',  // Neutral light gray - c39
+  neutral150: '#E0E0E0',  // Light gray - c36
+  neutral100: '#E4E4E4',  // Brand color_13 - c12
+  neutral75:  '#F5F6FA',  // Brand color_14 - c15
+  neutral50:  '#F3F4F6',  // Very light gray - c27
+  neutral10:  '#85858514', // Gray hover state with transparency - c46
+  neutral0:   '#FFFFFF',  // Pure white - c6
+  neutral0_67: '#f6f6f6ab', // Light gray overlay with transparency - c14
+  neutral0_50: '#ffffff80', // White with 50% transparency - c24
+  neutralShadow: '#0000001a', // Light shadow color - c47
+
+  // ===== BLUES - DARK TO LIGHT =====
+  blue900: '#032B40',     // Brand color_9 (darkest blue) - c11
+  blue800: '#083647',     // Button hover state - c43
+  blue700: '#0a3b55',     // Dark blue - c34
+  blue600: '#0A425F',     // Brand color_8 - c2
+  blue500: '#0059BA',     // Brand color_7 - c8
+  blue400: '#007AFF',     // Brand color_6 (iOS blue) - c7
+  blue300: '#1D75DD',     // Medium blue - c37
+  blue200: '#80E4FF',     // Brand color_3 (light blue) - c4
+  blue100: '#D0E6FF',     // Brand color_17 - c13
+  blue50:  '#E5F2FF',     // Brand color_18 - c16
+  blue10:  '#f6f8fc94',   // Light blue-gray field background - feild
+
+  // ===== BLUE OVERLAYS & TRANSPARENCIES =====
+  blueOverlay700: '#0b3a525c', // Dark blue with 36% transparency - c22
+  blueOverlay650: '#1536465e', // Dark blue with 37% transparency - c10
+  blueOverlay600: '#172a3385', // Dark blue with 52% transparency - c23
+  blueOverlay200: '#cdf4ff70', // Light blue with transparency - c5
+  blueOverlay100: '#e5f2ffb3', // Very light blue with 70% transparency - c21
+  blueOverlay50:  '#0a425f0a', // Very transparent blue - c35
+
+  // ===== PURPLES =====
+  purple500: '#D55188',    // Brand color_5 (pink-purple) - c17
+  purple100: '#e0dfff80',  // Light purple with transparency - c20
+
+  // ===== REDS =====
+  red500: '#D83232',       // Status error dark (dark red) - c28
+  red100: '#fdd1dc',       // Light pink - c32
+  red75:  '#fdd1dcbd',     // Light pink with transparency - c18
+
+  // ===== ORANGES =====
+  orange500: '#FF7F07',    // Brand color_4 (bright orange) - c3
+  orange400: '#F68C23',    // Status warning dark (darker orange) - c29
+  orange100: '#ffe2b9c2',  // Light orange with transparency - c26
+  orange10:  '#ff7f071a',  // Orange selection background - c45
+
+  // ===== YELLOWS =====
+  yellow100: '#fffdb8bd',  // Light yellow with transparency - c19
+
+  // ===== GREENS =====
+  green500: '#47BA79',     // Status success dark (forest green) - c30
+  green100: '#b6ffcb',     // Light green - c33
+  green75:  '#b6ffcbb3',   // Light green with transparency - c25
 }
 
 // הגדרת הצבעים של ה-theme

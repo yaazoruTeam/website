@@ -119,7 +119,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                     width: '100%',
                     height: '100%',
                     padding: 3.5,
-                    backgroundColor: colors.c6,
+                    backgroundColor: colors.neutral0,
                     borderRadius: 1,
                     display: 'inline-flex',
                     flexDirection: 'column',
@@ -137,7 +137,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                         text={t('customerDetails')}
                         variant='h2'
                         weight='medium'
-                        color={colors.c2}
+                        color={colors.blue600}
                     />
 
                     <Box
@@ -211,10 +211,10 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                                                 <>
                                                     {selectedCustomer
                                                         ? <InputAdornment position='end'>
-                                                            <PencilSquareIcon style={{ width: 24, height: 24, color: colors.c11 }} />
+                                                            <PencilSquareIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
                                                         </InputAdornment>
                                                         : <InputAdornment position='end'>
-                                                            <PlusCircleIcon style={{ width: 24, height: 24, color: colors.c11 }} />
+                                                            <PlusCircleIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
                                                         </InputAdornment>
                                                     }
                                                     {isLoading ? <CircularProgress color='inherit' size={20} /> : null}
@@ -223,7 +223,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                                             ),
                                             disableUnderline: true,
                                             sx: {
-                                                color: colors.c11,
+                                                color: colors.blue900,
                                                 fontSize: '16px',
                                                 fontFeatureSettings:  "'/liga/' off, 'clig' off'",
                                                 lineHeight: '120%',
@@ -238,7 +238,7 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({ onCustomerSelect, i
                                         fullWidth
                                         sx={{
                                             borderRadius: '6px',
-                                            background: colors.feild,
+                                            background: colors.blue10,
                                             alignSelf: 'stretch',
                                             height: '44px',
                                             width: '100%',

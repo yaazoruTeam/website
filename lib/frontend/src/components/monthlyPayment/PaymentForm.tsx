@@ -85,7 +85,7 @@ const PaymentForm = forwardRef(
           input: {
             height: '29px',
             width: '100%',
-            color: colors.c11,
+            color: colors.blue900,
           },
           select: {
             height: 'auto',
@@ -187,7 +187,7 @@ const PaymentForm = forwardRef(
           width: '100%',
           height: '100%',
           padding: 4,
-          backgroundColor: colors.c6,
+          backgroundColor: colors.neutral0,
           borderRadius: 2,
           display: 'flex',
           flexDirection: 'column',
@@ -206,7 +206,7 @@ const PaymentForm = forwardRef(
             text={t('paymentDetails')}
             variant='h2'
             weight='medium'
-            color={colors.c2}
+            color={colors.blue600}
           />
         </Box>
         <Box
@@ -234,7 +234,7 @@ const PaymentForm = forwardRef(
               text={t('creditcardNumber')}
               variant='h4'
               weight='regular'
-              color={colors.c11}
+              color={colors.blue900}
             />
             <Box
               sx={{
@@ -258,7 +258,7 @@ const PaymentForm = forwardRef(
               display: 'inline-flex',
             }}
           >
-            <CustomTypography text={t('expiry')} variant='h4' weight='regular' color={colors.c11} />
+            <CustomTypography text={t('expiry')} variant='h4' weight='regular' color={colors.blue900} />
             <Box
               sx={{
                 alignSelf: 'stretch',
@@ -281,7 +281,7 @@ const PaymentForm = forwardRef(
               display: 'inline-flex',
             }}
           >
-            <CustomTypography text='cvv' variant='h4' weight='regular' color={colors.c11} />
+            <CustomTypography text='cvv' variant='h4' weight='regular' color={colors.blue900} />
             <Box
               sx={{
                 alignSelf: 'stretch',
@@ -307,7 +307,7 @@ const PaymentForm = forwardRef(
               text={t('IdNumber')}
               variant='h4'
               weight='regular'
-              color={colors.c11}
+              color={colors.blue900}
             />
             <Box
               sx={{
@@ -337,7 +337,7 @@ const PaymentForm = forwardRef(
             text={t('billingDate')}
             variant='h2'
             weight='medium'
-            color={colors.c2}
+            color={colors.blue600}
           />
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>

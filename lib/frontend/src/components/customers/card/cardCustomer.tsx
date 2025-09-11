@@ -80,13 +80,13 @@ const CardCustomer: React.FC = () => {
             text={customer ? `${customer.first_name} ${customer.last_name}` : ''}
             variant='h1'
             weight='bold'
-            color={colors.c11}
+            color={colors.blue900}
           />
           <CustomTypography
             text={customer ? `${t('addedOn')} ${formatDateToString(customer.created_at)}` : ''}
             variant='h3'
             weight='regular'
-            color={colors.c11}
+            color={colors.blue900}
           />
         </Box>
         <Box
@@ -158,13 +158,13 @@ const CardCustomer: React.FC = () => {
             text={t('deletingCustomer')}
             variant='h1'
             weight='medium'
-            color={colors.c11}
+            color={colors.blue900}
           />
           <CustomTypography
             text={t('customerDeletionWarning')}
             variant='h3'
             weight='medium'
-            color={colors.c11}
+            color={colors.blue900}
           />
         </Box>
         <Box

@@ -43,7 +43,7 @@ const DeviceForm: React.FC<{ initialValues?: deviceFormInputs }> = ({ initialVal
   return (
     <Box
       sx={{
-        backgroundColor: colors.c6,
+        backgroundColor: colors.neutral0,
         direction: 'rtl',
         padding: '28px',
       }}

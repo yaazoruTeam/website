@@ -80,7 +80,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
       <Link
         to={`/customer/card/${payment.customer_id}`}
         style={{
-          color: colors.c8,
+          color: colors.blue500,
           cursor: 'pointer',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -98,7 +98,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
     update_at: `${formatDateToString(payment.update_at)}`,
     updateMonthlyPayment: (
       <PencilIcon
-        style={{ width: '24px', height: '24px', color: colors.c2, cursor: 'pointer' }}
+        style={{ width: '24px', height: '24px', color: colors.blue600, cursor: 'pointer' }}
         onClick={() => onClickMonthlyPayment(payment)}
       />
     ),

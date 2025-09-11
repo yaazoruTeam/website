@@ -110,7 +110,7 @@ const FormToAddItems: React.FC<{
         text={t('items')}
         variant='h2'
         weight='medium'
-        color={colors.c2}
+        color={colors.blue600}
         sx={{ textAlign: 'right', marginLeft: 'auto' }}
       />
       <TableContainer>
@@ -118,10 +118,10 @@ const FormToAddItems: React.FC<{
           sx={{
             direction: 'rtl',
             '& .MuiTableHead-root': {
-              borderBottom: `2px solid ${colors.c15}`,
+              borderBottom: `2px solid ${colors.neutral75}`,
             },
             '& .MuiTableFooter-root': {
-              borderTop: `2px solid ${colors.c15}`,
+              borderTop: `2px solid ${colors.neutral75}`,
             },
             '& .MuiTableCell-root': {
               border: 'none',
@@ -135,7 +135,7 @@ const FormToAddItems: React.FC<{
                   text={t('paymentType')}
                   variant='h4'
                   weight='regular'
-                  color={colors.c2}
+                  color={colors.blue600}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -143,7 +143,7 @@ const FormToAddItems: React.FC<{
                   text={t('description')}
                   variant='h4'
                   weight='regular'
-                  color={colors.c2}
+                  color={colors.blue600}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -151,7 +151,7 @@ const FormToAddItems: React.FC<{
                   text={t('amount')}
                   variant='h4'
                   weight='regular'
-                  color={colors.c2}
+                  color={colors.blue600}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -159,7 +159,7 @@ const FormToAddItems: React.FC<{
                   text={t('price')}
                   variant='h4'
                   weight='regular'
-                  color={colors.c2}
+                  color={colors.blue600}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}>
@@ -167,7 +167,7 @@ const FormToAddItems: React.FC<{
                   text={t('total')}
                   variant='h4'
                   weight='regular'
-                  color={colors.c2}
+                  color={colors.blue600}
                 />
               </TableCell>
               <TableCell style={{ direction: 'rtl', textAlign: 'right' }}></TableCell>
@@ -194,7 +194,7 @@ const FormToAddItems: React.FC<{
                         text={item.paymentType.toString()}
                         variant='h4'
                         weight='regular'
-                        color={colors.c0}
+                        color={colors.neutral800}
                       />
                     )}
                   </TableCell>
@@ -210,7 +210,7 @@ const FormToAddItems: React.FC<{
                         text={item.description.toString()}
                         variant='h4'
                         weight='regular'
-                        color={colors.c0}
+                        color={colors.neutral800}
                       />
                     )}
                   </TableCell>
@@ -226,7 +226,7 @@ const FormToAddItems: React.FC<{
                         text={item.quantity.toString()}
                         variant='h4'
                         weight='regular'
-                        color={colors.c0}
+                        color={colors.neutral800}
                       />
                     )}
                   </TableCell>
@@ -238,7 +238,7 @@ const FormToAddItems: React.FC<{
                         text={item.price.toString()}
                         variant='h4'
                         weight='regular'
-                        color={colors.c0}
+                        color={colors.neutral800}
                       />
                     )}
                   </TableCell>
@@ -250,7 +250,7 @@ const FormToAddItems: React.FC<{
                         text={item.total.toString()}
                         variant='h4'
                         weight='regular'
-                        color={colors.c0}
+                        color={colors.neutral800}
                       />
                     )}
                   </TableCell>
@@ -276,7 +276,7 @@ const FormToAddItems: React.FC<{
                         style={{
                           width: '24px',
                           height: '24px',
-                          color: colors.c2,
+                          color: colors.blue600,
                           cursor: 'pointer',
                         }}
                         onClick={() => editItem(index)}
@@ -293,7 +293,7 @@ const FormToAddItems: React.FC<{
                     }}
                   >
                     <TrashIcon
-                      style={{ width: '24px', height: '24px', color: colors.c2, cursor: 'pointer' }}
+                      style={{ width: '24px', height: '24px', color: colors.blue600, cursor: 'pointer' }}
                       onClick={() => deleteItem(item)}
                     />
                   </TableCell>
@@ -306,7 +306,7 @@ const FormToAddItems: React.FC<{
                     text={t('noItemToDisplay')}
                     variant='h4'
                     weight='regular'
-                    color={colors.c0}
+                    color={colors.neutral800}
                   />
                 </TableCell>
               </TableRow>

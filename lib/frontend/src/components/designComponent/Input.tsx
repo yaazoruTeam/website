@@ -49,7 +49,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
           text={label}
           variant='h4'
           weight='regular'
-          color={colors.c11}
+          color={colors.blue900}
           sx={{
             textAlign: 'right',
             direction: 'rtl',
@@ -81,7 +81,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                 input: {
                   disableUnderline: true,
                   sx: {
-                    color: colors.c11,
+                    color: colors.blue900,
                     fontSize: '16px',
                     fontFeatureSettings: "'liga' off, 'clig' off",
                     lineHeight: '120%',
@@ -99,7 +99,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
                           style: {
                             width: '24px',
                             height: '24px',
-                            color: colors.c11,
+                            color: colors.blue900,
                             position: 'relative',
                           },
                         },
@@ -112,7 +112,7 @@ export const CustomTextField: React.FC<CustomTextFieldProps> = ({
               multiline={isLargeHeight}
               sx={{
                 borderRadius: '6px',
-                background: colors.feild,
+                background: colors.blue10,
                 alignSelf: 'stretch',
                 height: height,
                 width: width || '100%',

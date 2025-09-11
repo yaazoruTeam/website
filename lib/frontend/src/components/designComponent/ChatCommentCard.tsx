@@ -31,7 +31,7 @@ const ChatCommentCard: React.FC<ChatCommentCardProps> = ({
         text={commentsType}
         variant='h3'
         weight='medium'
-        color={colors.c10}
+        color={colors.blueOverlay650}
         sx={{
           textAlign: 'right',
           wordWrap: 'break-word',
@@ -45,7 +45,7 @@ const ChatCommentCard: React.FC<ChatCommentCardProps> = ({
               text={lastCommentDate}
               variant='h3'
               weight='regular'
-              color={colors.c10}
+              color={colors.blueOverlay650}
               sx={{
                 textAlign: 'flex-start',
                 wordWrap: 'break-word',
@@ -58,7 +58,7 @@ const ChatCommentCard: React.FC<ChatCommentCardProps> = ({
                   text={lastComment}
                   variant='h3'
                   weight='regular'
-                  color={colors.c48}
+                  color={colors.neutral700}
                   sx={{
                     flex: '1 1 0',
                     textAlign: 'right',

@@ -98,11 +98,11 @@ const EditNumberForm: React.FC<{ value: any; onChange: (data: any) => void }> = 
             <Box sx={{ padding: '10px' }}>
               <Box
                 sx={{
-                  border: `1px solid ${colors.c0}`,
+                  border: `1px solid ${colors.neutral800}`,
                   borderRadius: '4px',
                   width: '10.67px',
                   height: '10.67px',
-                  backgroundColor: settingPersonalID ? colors.c3 : 'transparent',
+                  backgroundColor: settingPersonalID ? colors.orange500 : 'transparent',
                 }}
               />
             </Box>

@@ -26,14 +26,14 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset }) => {
           marginTop: 0,
           opacity: 0.5,
           borderRadius: 4,
-          outline: `1px solid ${colors.c22}`,
+          outline: `1px solid ${colors.blueOverlay700}`,
           flexDirection: 'column',
           justifyContent: 'flex-start',
           alignItems: 'center',
         }}
       >
         <Box sx={{ paddingTop: 1.2, alignItems: 'center' }}>
-          <CustomTypography text={t('reset')} variant='h4' weight='regular' color={colors.c11} />
+          <CustomTypography text={t('reset')} variant='h4' weight='regular' color={colors.blue900} />
         </Box>
       </Button>
     </Box>
