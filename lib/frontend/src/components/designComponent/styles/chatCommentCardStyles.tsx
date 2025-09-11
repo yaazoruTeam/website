@@ -79,7 +79,7 @@ export const CustomerFormContainer = styled(FlexColumn)({
 
 export const CustomerFormInnerContainer = styled(FlexColumn)({
   height: '100%',
-  boxShadow: `0 2px 4px ${colors.c47}`,
+  boxShadow: `0 2px 4px ${colors.neutralShadow}`,
   justifyContent: 'flex-end',
 })
 
@@ -108,7 +108,7 @@ export const ChatModalOverlay = styled(FlexBase)({
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: colors.c49,
+  backgroundColor: colors.neutralShadow,
   zIndex: 9999,
   justifyContent: 'flex-start',
 })
@@ -116,8 +116,8 @@ export const ChatModalOverlay = styled(FlexBase)({
 export const ChatModalContainer = styled(FlexColumn)({
   marginTop: '38px',
   marginRight: '-3px',
-  backgroundColor: colors.c6,
+  backgroundColor: colors.neutral0,
   borderTopLeftRadius: '6px',
   borderBottomLeftRadius: '6px',
-  boxShadow: `0 10px 25px ${colors.c50}`,
+  boxShadow: `0 10px 25px ${colors.neutralShadow}`,
 })
