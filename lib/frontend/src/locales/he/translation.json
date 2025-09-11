@@ -105,6 +105,7 @@
   "IMEI_1": "IMEI 1",
   "mehalcha_number": "מספר במהלכא",
   "model": "דגם",
+  "modelDevice": "דגם מכשיר",
   "dateReceiptDevice": "תאריך קבלת המכשיר",
   "programEndDate": "תאריך סיום התוכנית",
   "filterVersion": "גירסת סינון",
@@ -294,5 +295,10 @@
   "invalidName": "שם לא חוקי",
   "deviceAddedSuccessfully": "המכשיר נוסף בהצלחה",
   "deviceAddFailed": "הוספת המכשיר נכשלה",
-  "numbersOnlyError": "ניתן להזין רק מספרים"
+  "numbersOnlyError": "ניתן להזין רק מספרים",
+  "deviceData": "נתוני מכשיר",
+  "serialNumber": "מספר סידורי",
+  "plan": "מסלול",
+  "registrationDateDevice": "תאריך רישום מכשיר",
+  "releaseDate": "תאריך הקמה"
 }

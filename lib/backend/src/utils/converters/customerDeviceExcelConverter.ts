@@ -23,9 +23,12 @@ const convertFlatRowToModel = (row: any): CustomerDeviceExcel.Model => {
       device_number: row.device_number || '',
       SIM_number: row.SIM_number || '',
       IMEI_1: row.IMEI_1 || '',
-      mehalcha_number: row.mehalcha_number || '',
       model: row.model || '',
       status: 'active',
+      serialNumber: row.serialNumber || '',
+      purchaseDate: row.receivedAt || null,
+      releaseDate: row.releaseDate || new Date(),
+      plan: row.plan || '',
     },
     receivedAt: row.receivedAt,
   }
