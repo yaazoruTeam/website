@@ -109,6 +109,7 @@ const updateCreditDetails = async (
   }
 }
 
+//to do
 //לשים ❤️ שכאשר אני מוחקת כרטיס אשראי אני צריכה למחוק גם מהטבלת קשרים ולבדוק מה עם ההוראת קבע
 // const deleteCreditDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 //     try {

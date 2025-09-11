@@ -4,7 +4,10 @@ import { createAuth } from '@integration/widely/auth'
 import { config } from '@config/index'
 import { HttpError } from '@model'
 
-const callingWidely = async (func_name: string, data: Record<string, unknown>) => {
+const callingWidely = async (
+  func_name: string, 
+  data: Record<string, unknown> = {} // ברירת מחדל - אובייקט ריק
+) => {
   const requestBody = {
     auth: createAuth(),
     func_name,

@@ -166,9 +166,28 @@ const transcribeAudio = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    logger.debug("Transcribe audio request received", {
+      hasFile: !!req.file,
+      hasBody: !!req.body,
+      contentType: req.headers['content-type'],
+      bodyKeys: Object.keys(req.body || {}),
+      fileDetails: req.file ? {
+        fieldname: req.file.fieldname,
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      } : null
+    });
+
     const audioBuffer = req.file?.buffer
 
     if (!audioBuffer) {
+      logger.warn("No audio file provided in request", {
+        hasReqFile: !!req.file,
+        reqFileBuffer: req.file ? !!req.file.buffer : false,
+        contentType: req.headers['content-type']
+      });
+      
       const error: HttpError.Model = {
         status: 400,
         message: "No audio provided",
@@ -176,7 +195,8 @@ const transcribeAudio = async (
       next(error)
       return;
     }
-
+    
+    // v1 API configuration - יציב ופשוט
     const audioBytes = audioBuffer.toString("base64")
 
     const [response] = await client.recognize({
@@ -187,16 +207,53 @@ const transcribeAudio = async (
         encoding: "WEBM_OPUS",
         sampleRateHertz: 48000,
         languageCode: "he-IL",
+        enableAutomaticPunctuation: true,
+        maxAlternatives: 1,
       },
     })
 
+    logger.debug("Speech recognition response received", {
+      hasResults: !!response.results,
+      resultsCount: response.results?.length || 0
+    })
+
+    // בדיקות שגיאה מקיפות
+    if (!response.results || response.results.length === 0) {
+      logger.warn("No speech recognition results returned")
+      res.status(200).json({ transcription: "" })
+      return
+    }
+
     const transcription = response.results
-      ?.map((result: protos.google.cloud.speech.v1.ISpeechRecognitionResult) => result.alternatives?.[0].transcript)
+      .map((result: protos.google.cloud.speech.v1.ISpeechRecognitionResult) => {
+        // בדיקת תקינות - וודא שיש alternatives וכי הוא לא ריק
+        if (!result.alternatives || result.alternatives.length === 0) {
+          logger.warn("Speech recognition result has no alternatives")
+          return ""
+        }
+        
+        const alternative = result.alternatives[0]
+        if (!alternative?.transcript || alternative.transcript.trim().length === 0) {
+          logger.warn("Speech recognition alternative has empty transcript")
+          return ""
+        }
+        
+        // לוג רמת ביטחון נמוכה (אופציונלי)
+        if (alternative.confidence && alternative.confidence < 0.7) {
+          logger.info(`Low confidence transcription: ${alternative.confidence.toFixed(2)}`)
+        }
+        
+        return alternative.transcript.trim()
+      })
+      .filter(transcript => transcript.length > 0) // סנן תוצאות ריקות
       .join(" ")
       .trim()
 
+    logger.info(`Speech transcription completed successfully: ${transcription.length} characters`)
     res.status(200).json({ transcription })
+    
   } catch (error) {
+    logger.error("Speech transcription failed:", error)
     handleError(error, next)
   }
 }
