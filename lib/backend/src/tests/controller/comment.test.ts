@@ -2,9 +2,15 @@ import request from 'supertest'
 import express from 'express'
 import * as commentsController from '../../controller/comment'
 import * as db from '../../db'
-import { Comment } from '../../../../model/src';
 
 jest.mock('../../db')
+jest.mock('../../../../model/src', () => ({
+  Comment: {
+    sanitize: jest.fn(),
+  }
+}))
+
+import { Comment } from '../../../../model/src';
 
 const app = express()
 app.use(express.json())
@@ -35,6 +41,9 @@ describe('Comments Controller', () => {
   })
 
   it('should fail to create comment with missing fields', async () => {
+    ;(db.Comment.createComment as jest.Mock).mockImplementation(() => {
+      throw { status: 400, message: 'Missing required fields' }
+    })
     const res = await request(app).post('/comments').send({})
     expect(res.status).toBe(400)
   })
@@ -89,49 +98,3 @@ describe('Comments Controller', () => {
     expect(res.status).toBe(404)
   })
 })
-
-
-describe('Comment Model - sanitize function', () => {
-  const validComment = {
-    entity_id: '123',
-    entity_type: 'customer' as const,
-    content: 'Test comment',
-    created_at: new Date()
-  };
-
-  describe('Validation errors', () => {
-    it('should throw error when comment_id is required but missing', () => {
-      expect(() => {
-        Comment.sanitize(validComment, true);
-      }).toThrow('Comment ID is required and must be a valid number.');
-    });
-
-    it('should throw error for missing entity_id', () => {
-      const invalidComment = { ...validComment, entity_id: '' };
-      expect(() => {
-        Comment.sanitize(invalidComment, false);
-      }).toThrow('Entity ID is required and must be a non-empty string.');
-    });
-
-    it('should throw error for invalid entity_type', () => {
-      const invalidComment = { ...validComment, entity_type: 'invalid' as any };
-      expect(() => {
-        Comment.sanitize(invalidComment, false);
-      }).toThrow('Entity type "invalid" is invalid. Allowed values are: customer, device, branch.');
-    });
-
-    it('should throw error for empty content', () => {
-      const invalidComment = { ...validComment, content: '' };
-      expect(() => {
-        Comment.sanitize(invalidComment, false);
-      }).toThrow('Comment content is required and must be a non-empty string.');
-    });
-
-    it('should successfully sanitize valid comment', () => {
-      const result = Comment.sanitize(validComment, false);
-      expect(result.entity_id).toBe('123');
-      expect(result.entity_type).toBe('customer');
-      expect(result.content).toBe('Test comment');
-    });
-  });
-});

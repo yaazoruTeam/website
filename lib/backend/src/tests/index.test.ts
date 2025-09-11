@@ -25,8 +25,7 @@ describe('Express Server', () => {
 
     const response = await request(app).get('/error')
     expect(response.status).toBe(500)
-    expect(response.body).toHaveProperty('error')
-    expect(response.body.error).toHaveProperty('message', 'Test error')
-    expect(response.body.error).toHaveProperty('status', 500)
+    expect(response.body).toHaveProperty('message', 'Test error')
+    expect(response.body).toHaveProperty('status', 500)
   })
 })

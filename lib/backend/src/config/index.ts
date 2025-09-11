@@ -41,6 +41,11 @@ export const config = {
     tranzila: {
         publicKey: process.env.TRANZILA_PUBLIC_KEY || '',
         privateKey: process.env.TRANZILA_PRIVATE_KEY || '',
+        terminalName: process.env.TRANZILA_TERMINAL_NAME || 'yaazorutok',
+        expireMonth: parseInt(process.env.TRANZILA_EXPIRE_MONTH || '11'),
+        expireYear: parseInt(process.env.TRANZILA_EXPIRE_YEAR || '2000'),
+        cvv: process.env.TRANZILA_CVV || '',
+        cardNumber: process.env.TRANZILA_CARD_NUMBER || '',
     },
     widely: {
         brandToken: process.env.BRAND_TOKEN as string,
