@@ -196,7 +196,6 @@ describe('Excel Controller Tests', () => {
             expect(readExcelFile).toHaveBeenCalledWith('/temp/test.xlsx');
             expect(processExcelData).toHaveBeenCalledWith(mockExcelData);
             expect(fs.unlinkSync).toHaveBeenCalledWith('/temp/test.xlsx');
-            expect(console.warn).toHaveBeenCalledWith('Could not delete temporary file:', deleteError);
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
                 message: 'הקובץ עובד בהצלחה',
@@ -226,7 +225,6 @@ describe('Excel Controller Tests', () => {
 
             expect(readExcelFile).toHaveBeenCalledWith('/temp/test.xlsx');
             expect(fs.unlinkSync).toHaveBeenCalledWith('/temp/test.xlsx');
-            expect(console.warn).toHaveBeenCalledWith('Could not delete temporary file after error:', deleteError);
             expect(next).toHaveBeenCalledWith(processingError);
         });
 
@@ -342,8 +340,6 @@ describe('Excel Controller Tests', () => {
 
             await handleReadExcelFile(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('✅ Success: 2/3');
-            expect(console.log).toHaveBeenCalledWith('❌ Errors: 1');
             expect(res.json).toHaveBeenCalledWith({
                 message: 'הקובץ עובד עם 1 שגיאות. קובץ שגיאות נוצר.',
                 totalRows: 3,

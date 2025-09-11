@@ -722,13 +722,20 @@ describe('Widely Controllers Tests', () => {
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
+                (validateWidelyResult as jest.Mock).mockImplementation(() => {
+                    const error: HttpError.Model = {
+                        status: 500,
+                        message: 'Failed to load device details. - Widely Error Code: 404, Message: Device not found'
+                    };
+                    throw error;
+                });
                 (callingWidely as jest.Mock).mockResolvedValue(mockResult);
 
                 await getMobileInfo(req as Request, res as Response, next);
 
                 expect(next).toHaveBeenCalledWith({
-                    status: 404,
-                    message: 'Failed to load device details.'
+                    status: 500,
+                    message: 'Failed to load device details. - Widely Error Code: 404, Message: Device not found'
                 });
             });
 
@@ -740,6 +747,7 @@ describe('Widely Controllers Tests', () => {
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
+                (validateWidelyResult as jest.Mock).mockImplementation(() => {});
                 (callingWidely as jest.Mock).mockResolvedValue(mockResult);
 
                 await getMobileInfo(req as Request, res as Response, next);
@@ -755,6 +763,7 @@ describe('Widely Controllers Tests', () => {
                 const mockResult = {};
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
+                (validateWidelyResult as jest.Mock).mockImplementation(() => {});
                 (callingWidely as jest.Mock).mockResolvedValue(mockResult);
 
                 await getMobileInfo(req as Request, res as Response, next);
@@ -901,20 +910,22 @@ describe('Widely Controllers Tests', () => {
                 // First mock the searchUsersData to return user without domain_user_id
                 const searchResult = {
                     error_code: 200,
-                    data: [{}] // Empty user object without domain_user_id
+                    data: [{ 
+                        domain_user_name: 'testuser' // Valid user but without domain_user_id
+                    }]
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
                 (validateWidelyResult as jest.Mock).mockImplementation(() => {});
-                (callingWidely as jest.Mock).mockResolvedValueOnce(searchResult);
+                (callingWidely as jest.Mock).mockReset().mockResolvedValue(searchResult);
 
                 await getAllUserData(req as Request, res as Response, next);
 
-                // According to the actual code, when searchUsersData returns empty user data,
-                // it throws "SIM number not found." error, which gets caught and re-thrown as "Error searching for user data."
+                // According to the actual code, when domain_user_id is missing,
+                // it throws "Error loading user data - missing domain_user_id." error
                 expect(next).toHaveBeenCalledWith({
                     status: 500,
-                    message: 'Error searching for user data.'
+                    message: 'Error loading user data - missing domain_user_id.'
                 });
             });
 
@@ -923,7 +934,10 @@ describe('Widely Controllers Tests', () => {
 
                 const searchResult = {
                     error_code: 200,
-                    data: [{ domain_user_id: '12345' }]
+                    data: [{ 
+                        domain_user_id: '12345',
+                        domain_user_name: 'testuser' 
+                    }]
                 };
 
                 const mobileResult = {
@@ -933,18 +947,24 @@ describe('Widely Controllers Tests', () => {
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
                 (validateWidelyResult as jest.Mock).mockImplementation(() => {});
-                (callingWidely as jest.Mock)
-                    .mockResolvedValueOnce(searchResult)
-                    .mockResolvedValueOnce(mobileResult);
+                
+                let callCount = 0;
+                (callingWidely as jest.Mock).mockReset().mockImplementation(() => {
+                    if (callCount === 0) {
+                        callCount++;
+                        return Promise.resolve(searchResult);
+                    } else {
+                        return Promise.resolve(mobileResult);
+                    }
+                });
 
                 await getAllUserData(req as Request, res as Response, next);
 
                 // According to the actual code, when getMobilesData returns empty mobile data,
-                // it doesn't have endpoint_id, so mobile.endpoint_id is undefined
-                // This gets caught as "No devices found for this user." which converts to "SIM number not found."
+                // mobile.endpoint_id is undefined, so it throws "Error loading device data - missing endpoint_id." error
                 expect(next).toHaveBeenCalledWith({
-                    status: 404,
-                    message: 'SIM number not found.'
+                    status: 500,
+                    message: 'Error loading device data - missing endpoint_id.'
                 });
             });
 

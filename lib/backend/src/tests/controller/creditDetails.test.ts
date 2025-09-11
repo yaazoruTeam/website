@@ -80,7 +80,7 @@ describe('CreditDetails Controller Tests', () => {
 
             expect(next).toHaveBeenCalledWith({
                 status: 404,
-                message: 'customer dose not exist'
+                message: 'customer does not exist'
             });
         });
 
@@ -195,8 +195,9 @@ describe('CreditDetails Controller Tests', () => {
 
             await createCreditDetails(req as Request, res as Response, next);
 
-            expect(consoleSpy).toHaveBeenCalledWith(creditDetailsData);
-            expect(consoleSpy).toHaveBeenCalledWith('token: ', false);
+            // The code uses logger, not console.log, so we check for successful execution
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith(creditDetailsData);
         });
     });
 
@@ -391,7 +392,7 @@ describe('CreditDetails Controller Tests', () => {
 
             expect(next).toHaveBeenCalledWith({
                 status: 404,
-                message: 'customer dose not exist'
+                message: 'customer does not exist'
             });
         });
 

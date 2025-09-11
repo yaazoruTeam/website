@@ -118,7 +118,7 @@ describe('MonthlyPaymentManagement Controller Tests', () => {
 
             expect(next).toHaveBeenCalledWith({
                 status: 404,
-                message: 'customer dose not exist'
+                message: 'customer does not exist'
             });
             expect(mockTrx.rollback).toHaveBeenCalled();
         });

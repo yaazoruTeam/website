@@ -16,7 +16,7 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthly payment dose not exist',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -101,7 +101,7 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthly payment dose not exist',
+        message: 'monthly payment does not exist',
       }
       throw error
     }

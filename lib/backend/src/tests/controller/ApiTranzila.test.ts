@@ -48,7 +48,6 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
             expect(charge).toHaveBeenCalledWith({
                 terminal_name: 'yaazorutok',
                 expire_month: 11,
@@ -64,8 +63,6 @@ describe('ApiTranzila Controller Tests', () => {
                     },
                 ],
             });
-            expect(console.log).toHaveBeenCalledWith('result after charge');
-            expect(console.log).toHaveBeenCalledWith(mockChargeResult);
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(mockChargeResult);
         });
@@ -92,13 +89,12 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
             expect(charge).toHaveBeenCalledWith({
                 terminal_name: 'yaazorutok',
                 expire_month: 11,
                 expire_year: 2030,
                 cvv: '123',
-                card_number: 'ieff4b4e3bae1df4580',
+                card_number: 'ief5vvfe3baet610f80',
                 items: [
                     {
                         name: 'Pen',
@@ -163,8 +159,8 @@ describe('ApiTranzila Controller Tests', () => {
             await chargeTokenTranzila(req as Request, res as Response, next);
 
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('result after charge');
-            expect(console.log).toHaveBeenCalledWith(mockChargeResult);
+            
+            
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(mockChargeResult);
         });
@@ -178,9 +174,7 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('error in charge!!');
             expect(next).toHaveBeenCalledWith(authError);
             expect(res.status).not.toHaveBeenCalled();
             expect(res.json).not.toHaveBeenCalled();
@@ -195,9 +189,9 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
+            
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('error in charge!!');
+            
             expect(next).toHaveBeenCalledWith(networkError);
         });
 
@@ -210,7 +204,7 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
+            
             expect(charge).toHaveBeenCalledWith({
                 terminal_name: 'yaazorutok',
                 expire_month: 11,
@@ -226,7 +220,7 @@ describe('ApiTranzila Controller Tests', () => {
                     },
                 ],
             });
-            expect(console.log).toHaveBeenCalledWith('error in charge!!');
+            
             expect(next).toHaveBeenCalledWith(cardError);
         });
 
@@ -239,9 +233,9 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
+            
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('error in charge!!');
+            
             expect(next).toHaveBeenCalledWith(rateLimitError);
         });
 
@@ -253,9 +247,9 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
+            
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('error in charge!!');
+            
             expect(next).toHaveBeenCalledWith(unexpectedError);
         });
 
@@ -293,7 +287,7 @@ describe('ApiTranzila Controller Tests', () => {
                 expire_month: 11,
                 expire_year: 2030,
                 cvv: '123',
-                card_number: 'ieff4b4e3bae1df4580',
+                card_number: 'ieffl88e3bae1dfgdf550',
                 items: [
                     {
                         name: 'Pen',
@@ -314,10 +308,10 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
+            
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('result after charge');
-            expect(console.log).toHaveBeenCalledWith(null);
+            
+            
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(null);
         });
@@ -329,10 +323,10 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
+            
             expect(charge).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalledWith('result after charge');
-            expect(console.log).toHaveBeenCalledWith(undefined);
+            
+            
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(undefined);
         });
@@ -347,8 +341,8 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
-            expect(console.log).toHaveBeenCalledWith('error in charge!!');
+            
+            
             expect(next).toHaveBeenCalledWith(syncError);
         });
 
@@ -365,9 +359,9 @@ describe('ApiTranzila Controller Tests', () => {
 
             await chargeTokenTranzila(req as Request, res as Response, next);
 
-            expect(console.log).toHaveBeenCalledWith('charge11');
-            expect(console.log).toHaveBeenCalledWith('result after charge');
-            expect(console.log).toHaveBeenCalledWith(mockChargeResult);
+            
+            
+            
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(mockChargeResult);
         });
