@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import * as excelController from '@controller/excel'
+import * as deviceExcelController from '@controller/deviceExcel'
 import * as ApiTranzila from '@controller/ApiTranzila'
 import * as MonthlyPaymentManagementController from '@controller/MonthlyPaymentManagement'
 import { uploadExcel, handleUploadError } from '@middleware/fileUpload'
@@ -47,6 +48,13 @@ router.post(
   hasRole('admin'),
   uploadExcel.single('excelFile'),
   excelController.handleReadExcelFile
+)
+
+router.post(
+  `${ROUTE_PATH}/devices-excel/upload`,
+  hasRole('admin'),
+  uploadExcel.single('excelFile'),
+  deviceExcelController.handleDeviceExcelUpload
 )
 
 router.post(

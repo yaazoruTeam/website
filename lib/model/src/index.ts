@@ -10,6 +10,7 @@ import * as Branch from './Branch'
 import * as BranchCustomer from './BranchCustomer'
 import * as BranchUser from './BranchUser'
 import * as CustomerDeviceExcel from './CustomerDeviceExcel'
+import * as DeviceOnlyExcel from './DeviceOnlyExcel'
 import * as CreditDetails from './CreditDetails'
 import * as ItemForMonthlyPayment from './ItemForMonthlyPayment'
 import * as MonthlyPayment from './MonthlyPayment'
@@ -34,6 +35,7 @@ export {
   BranchCustomer,
   BranchUser,
   CustomerDeviceExcel,
+  DeviceOnlyExcel,
   CreditDetails,
   ItemForMonthlyPayment,
   MonthlyPayment,
