@@ -32,14 +32,14 @@ const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelP
                     text={t('choosePlan')}
                     variant="h1"
                     weight="bold"
-                    color={colors.c2}
+                    color={colors.blue600}
                 />
                 {error && (
                     <CustomTypography
                     text={error}
                     variant="h4"
                     weight="bold"
-                    color={colors.c28}
+                    color={colors.red500}
                 />
                 )}
                 <CustomRadioBox

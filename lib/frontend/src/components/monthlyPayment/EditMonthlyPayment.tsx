@@ -313,7 +313,7 @@ const EditMonthlyPayment: React.FC = () => {
             }}
             onClick={() => sendToEmail()}
           >
-            <EnvelopeIcon style={{ width: '24px', height: '24px', color: colors.c2 }} />
+            <EnvelopeIcon style={{ width: '24px', height: '24px', color: colors.blue600 }} />
             {t('sendToEmail')}
           </Box>
 
@@ -326,7 +326,7 @@ const EditMonthlyPayment: React.FC = () => {
             }}
             onClick={() => view()}
           >
-            <EyeIcon style={{ width: '24px', height: '24px', color: colors.c2 }} />
+            <EyeIcon style={{ width: '24px', height: '24px', color: colors.blue600 }} />
             {t('view')}
           </Box>
 
@@ -339,7 +339,7 @@ const EditMonthlyPayment: React.FC = () => {
             }}
             onClick={() => download()}
           >
-            <ArrowDownTrayIcon style={{ width: '24px', height: '24px', color: colors.c2 }} />
+            <ArrowDownTrayIcon style={{ width: '24px', height: '24px', color: colors.blue600 }} />
             {t('download')}
           </Box>
         </Box>
@@ -376,13 +376,13 @@ const EditMonthlyPayment: React.FC = () => {
             text={`${t('editingStandingOrder')} |`}
             variant='h1'
             weight='regular'
-            color={colors.c11}
+            color={colors.blue900}
           />
           <CustomTypography
             text={monthlyPayment?.customer_name || ''}
             variant='h1'
             weight='bold'
-            color={colors.c11}
+            color={colors.blue900}
           />
         </Box>
         <CustomTabs
@@ -429,7 +429,7 @@ const EditMonthlyPayment: React.FC = () => {
               content: (
                 <Box
                   sx={{
-                    backgroundColor: colors.c6,
+                    backgroundColor: colors.neutral0,
                     width: '100%',
                     padding: '28px',
                   }}
@@ -438,7 +438,7 @@ const EditMonthlyPayment: React.FC = () => {
                     text={t('recentPayments')}
                     variant='h2'
                     weight='medium'
-                    color={colors.c2}
+                    color={colors.blue600}
                   />
                   <CustomTable columns={paymentHistoryColumns} data={tableDataPayments} />
                 </Box>

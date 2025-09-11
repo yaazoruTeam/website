@@ -127,7 +127,7 @@ function App() {
                       flexGrow: 1,
                       padding: '20px',
                       overflow: 'auto',
-                      background: colors.c15,
+                      background: colors.neutral75,
                     }}
                   >
                     <AppLayout>

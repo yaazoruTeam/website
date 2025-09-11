@@ -58,7 +58,7 @@ const SwitchboardTabs = () => {
   return (
     <Box
       sx={{
-        backgroundColor: colors.c6,
+        backgroundColor: colors.neutral0,
         display: 'flex',
         justifyContent: 'flex-end',
         flexWrap: 'wrap',

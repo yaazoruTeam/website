@@ -282,7 +282,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
           text={t('customerComments')}
           variant='h2'
           weight='bold'
-          color={colors.c11}
+          color={colors.blue900}
         />
       </Box>
       
@@ -301,7 +301,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose }) => {
               text={t('loading')}
               variant='h4'
               weight='regular'
-              color={colors.c38}
+              color={colors.neutral350}
             />
           </Box>
         )}

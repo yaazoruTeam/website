@@ -14,7 +14,7 @@ const CustomTypography: React.FC<CustomTypographyProps> = ({
   weight,
   text,
   variant,
-  color = colors.c11,
+  color = colors.blue900,
   sx,
 }) => {
   const theme = useTheme()

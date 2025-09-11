@@ -12,8 +12,8 @@ type TooltipPropsMy = {
   position?: 'top' | 'bottom' | 'left' | 'right' | 'normal'
 }
 
-const primaryColor = colors.c10
-const secondaryColor = colors.c2
+const primaryColor = colors.blueOverlay650
+const secondaryColor = colors.blue600
 
 const CustomTooltip: React.FC<TooltipPropsMy> = ({
   text,
@@ -58,7 +58,7 @@ const CustomTooltip: React.FC<TooltipPropsMy> = ({
             padding: '4px 4px',
           }}
         >
-          <CustomTypography text={text} variant='h5' weight='regular' color={colors.c6} />
+          <CustomTypography text={text} variant='h5' weight='regular' color={colors.neutral0} />
         </Box>
       }
     >

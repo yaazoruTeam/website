@@ -21,28 +21,28 @@ const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern' }>(({ varia
     transitionDuration: '300ms',
     '&.Mui-checked': {
       transform: 'translateX(22px)',
-      color: colors.c6,
+      color: colors.neutral0,
       '& .MuiSwitch-thumb': {
-        backgroundColor: variant === 'modern' ? colors.c6 : colors.c30,
+        backgroundColor: variant === 'modern' ? colors.neutral0 : colors.green500,
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: variant === 'modern' ? colors.c3 : colors.c12,
+        backgroundColor: variant === 'modern' ? colors.orange500 : colors.neutral100,
         opacity: 1,
       },
     },
     '&:not(.Mui-checked)': {
       transform: 'translateX(0px)',
       '& .MuiSwitch-thumb': {
-        backgroundColor: variant === 'modern' ? colors.c6 : colors.c28,
+        backgroundColor: variant === 'modern' ? colors.neutral0 : colors.red500,
       },
     },
     '&.Mui-disabled': {
       opacity: 0.5,
       '& .MuiSwitch-thumb': {
-        backgroundColor: colors.c38, // neutral gray
+        backgroundColor: colors.neutral350, // neutral gray
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: colors.c39, // neutral light gray
+        backgroundColor: colors.neutral200, // neutral light gray
         opacity: 0.7,
       },
     },
@@ -59,7 +59,7 @@ const StyledSwitch = styled(Switch)<{ variant?: 'default' | 'modern' }>(({ varia
     outline: 'none',
   },
   '& .MuiSwitch-track': {
-    backgroundColor: variant === 'modern' ? colors.n50 : colors.c12,
+    backgroundColor: variant === 'modern' ? colors.neutral400 : colors.neutral100,
     borderRadius: 20,
     opacity: 1,
   },

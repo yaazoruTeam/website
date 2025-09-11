@@ -53,7 +53,7 @@ const AddCustomer: React.FC = () => {
             width: '100%',
           }}
         >
-          <CustomTypography text={t('addCustomer')} variant='h1' weight='bold' color={colors.c8} />
+          <CustomTypography text={t('addCustomer')} variant='h1' weight='bold' color={colors.blue500} />
         </Box>
       </Box>
       <AddCustomerForm onSubmit={handleAddCustomer} />

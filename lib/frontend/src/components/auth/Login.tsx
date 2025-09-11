@@ -50,7 +50,7 @@ const Login2222: React.FC = () => {
         flexDirection: 'row',
         height: '100vh',
         width: '100%',
-        backgroundColor: colors.c2,
+        backgroundColor: colors.blue600,
         overflow: 'hidden',
         margin: 0,
         padding: 0,
@@ -64,7 +64,7 @@ const Login2222: React.FC = () => {
           width: '70%',
           height: '100%',
           position: 'relative',
-          backgroundColor: colors.c15,
+          backgroundColor: colors.neutral75,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -75,7 +75,7 @@ const Login2222: React.FC = () => {
           text={t('loginSystem')}
           variant='h1'
           weight='bold'
-          color={colors.c11}
+          color={colors.blue900}
           sx={{
             position: 'absolute',
             top: '8%',

@@ -33,7 +33,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       sx={{
         width: '80%',
         padding: 6,
-        backgroundColor: colors.c6,
+        backgroundColor: colors.neutral0,
         borderRadius: 2,
         flexDirection: 'column',
         justifyContent: 'center',
@@ -91,7 +91,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           text={t('forgotPassword?')}
           variant='h3'
           weight='medium'
-          color={colors.c11}
+          color={colors.blue900}
           sx={{
             textAlign: 'right',
             textDecoration: 'underline',
@@ -110,7 +110,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             text="צריך להירשם? לחץ כאן"
             variant='h3'
             weight='medium'
-            color={colors.c11}
+            color={colors.blue900}
             sx={{
               textDecoration: 'underline',
             }}

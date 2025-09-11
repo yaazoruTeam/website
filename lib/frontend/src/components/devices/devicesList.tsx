@@ -122,7 +122,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           text={t('deviceManagement')}
           variant='h1'
           weight='bold'
-          color={colors.c11}
+          color={colors.blue900}
         />
         <CustomButton
           label={t('addingNewDevice')}

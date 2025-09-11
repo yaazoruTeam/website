@@ -20,11 +20,11 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
   return (
     <Box
       sx={{
-        background: colors.c6,
+        background: colors.neutral0,
         width: '100%',
         height: '100%',
         borderRadius: 4,
-        outline: `1px solid ${colors.c22}`,
+        outline: `1px solid ${colors.blueOverlay700}`,
         outlineOffset: '-1px',
         display: 'flex',
         flexDirection: 'column',
@@ -51,7 +51,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ onStatusSelect }) => {
           weight='regular'
           variant='h1'
           sx={{
-            color: colors.c11,
+            color: colors.blue900,
             fontSize: 16,
             fontFamily: 'Heebo',
             fontWeight: 400,

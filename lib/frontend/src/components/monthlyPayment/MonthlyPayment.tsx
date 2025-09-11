@@ -60,7 +60,7 @@ const MonthlyPaymentComponent: React.FC = () => {
               text={t('standingOrders')}
               variant='h1'
               weight='bold'
-              color={colors.c11}
+              color={colors.blue900}
             />
             <CustomButton
               label={t('newStandingOrder')}

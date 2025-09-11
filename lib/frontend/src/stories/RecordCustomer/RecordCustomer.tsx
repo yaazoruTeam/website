@@ -19,7 +19,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({ name, phone, ema
         height: '100%',
         paddingTop: 2,
         paddingBottom: 2,
-        backgroundColor: colors.c6,
+        backgroundColor: colors.neutral0,
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -43,7 +43,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({ name, phone, ema
           text={name}
           variant='h3'
           weight='regular'
-          color={colors.c0}
+          color={colors.neutral800}
           sx={{
             alignSelf: 'stretch',
             textAlign: 'right',
@@ -62,7 +62,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({ name, phone, ema
             text={email}
             variant='h3'
             weight='regular'
-            color={colors.c0}
+            color={colors.neutral800}
             sx={{
               wordWrap: 'break-word',
               width: 211.2,
@@ -72,7 +72,7 @@ export const RecordCustomer: React.FC<RecordCustomerProps> = ({ name, phone, ema
             text={phone}
             variant='h3'
             weight='regular'
-            color={colors.c0}
+            color={colors.neutral800}
             sx={{
               wordWrap: 'break-word',
               textAlign: 'right',

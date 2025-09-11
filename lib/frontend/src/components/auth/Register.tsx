@@ -56,7 +56,7 @@ const Register: React.FC = () => {
         flexDirection: 'column',
         minHeight: '100vh',
         width: '100%',
-        backgroundColor: colors.c15,
+        backgroundColor: colors.neutral75,
         overflow: 'auto',
         padding: 4,
         alignItems: 'center',

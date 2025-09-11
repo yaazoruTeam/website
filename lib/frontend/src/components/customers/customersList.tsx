@@ -125,7 +125,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
             text={t('customerManagement')}
             variant='h1'
             weight='bold'
-            color={colors.c11}
+            color={colors.blue900}
           />
           <CustomButton
             label={t('addingNewCustomer')}
