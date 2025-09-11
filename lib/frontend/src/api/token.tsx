@@ -1,4 +1,4 @@
-import { refresh } from '../authApi'
+import { refresh } from './authApi'
 
 const isTokenExpiringSoon = (token: string): boolean => {
   try {

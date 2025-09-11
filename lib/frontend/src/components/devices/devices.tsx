@@ -11,7 +11,7 @@ const Devices: React.FC = () => {
     | { type: "status"; value: "active" | "inactive" }
     | null
   >(null);
-  const limit = import.meta.env.VITE_LIMIT ? parseInt(import.meta.env.VITE_LIMIT) : 10
+  const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10;
 
   const { devices, total, isLoading, error } = useFetchDevices({ page, filterType: filterType ?? undefined })
 

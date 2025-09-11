@@ -1,26 +1,65 @@
+import axios, { AxiosResponse } from 'axios'
+import { handleTokenRefresh } from './token'
 import { CustomerDevice } from '@model'
-import { 
-  apiGet,
-  safeGetPaginated,
-  // safeApiGet,
-  PaginatedResponse 
-} from './core/apiHelpers'
 
-const ENDPOINT = '/customerDevice'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/customerDevice`
 
-export const getAllCustomerDevicesByCustomerId = async (
-  customer_id: string, 
-  page: number
-): Promise<PaginatedResponse<CustomerDevice.Model>> => {
-  return safeGetPaginated<CustomerDevice.Model>(`${ENDPOINT}/allDevices/${customer_id}`, page)
+export interface PaginatedCustomerDeviceResponse {
+  data: CustomerDevice.Model[]
+  total: number
+  page?: number
+  totalPages: number
 }
 
+// GET
+export const getAllCustomerDevicesByCustomerId = async (customer_id: string, page: number): Promise<PaginatedCustomerDeviceResponse> => {
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return { data: [], total: 0, totalPages: 0 }
+    }
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<PaginatedCustomerDeviceResponse> = await axios.get(
+      `${baseUrl}/allDevices/${customer_id}?page=${page}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    return response.data
+  } catch (error) {
+    console.error('Error fetching device by customer id', error)
+    throw error
+  }
+}
+
+// GET customer device by device_id - שליפה לפי מספר מכשיר
 export const getCustomerDeviceByDeviceId = async (device_id: string): Promise<CustomerDevice.Model | null> => {
   try {
-    const response = await apiGet<PaginatedResponse<CustomerDevice.Model>>(`${ENDPOINT}/device/${device_id}`)
-    return response.data.length > 0 ? response.data[0] : null
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return null
+    }
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<PaginatedCustomerDeviceResponse> = await axios.get(
+      `${baseUrl}/device/${device_id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    // מחזיר את הרשומה הראשונה אם קיימת
+    return response.data.data.length > 0 ? response.data.data[0] : null
   } catch (error) {
     console.error('Error fetching customer device by device id', error)
-    return null
+    return null // במקרה של שגיאה, מחזיר null במקום לזרוק שגיאה
   }
 }

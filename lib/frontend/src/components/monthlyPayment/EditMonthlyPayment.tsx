@@ -249,15 +249,18 @@ const EditMonthlyPayment: React.FC = () => {
       items: updatedItems,
     }
     try {
-      await updateMonthlyPayment(
+      const response = await updateMonthlyPayment(
         monthlyPaymentManagement,
         monthlyPayment?.monthlyPayment_id || '',
       )
-      // אם הגענו לכאן, העדכון הצליח
-      if (fromCustomerCard && customerId) {
-        navigate(`/customer/${customerId}`)
+      if (response.status === 200) {
+        if (fromCustomerCard && customerId) {
+          navigate(`/customer/${customerId}`)
+        } else {
+          navigate('/monthlyPayment')
+        }
       } else {
-        navigate('/monthlyPayment')
+        setError('Error updating monthly payment')
       }
     } catch (error) {
       console.error('Error updating monthly payment:', error)

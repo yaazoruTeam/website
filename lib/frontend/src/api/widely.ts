@@ -1,101 +1,283 @@
+import axios, { AxiosResponse } from 'axios'
+import { handleTokenRefresh } from './token'
 import { Widely, WidelyDeviceDetails } from '@model'
-import {
-  apiPost,
-} from './core/apiHelpers'
 
-const ENDPOINT = '/widely'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/widely`
 
+const getValidToken = async (): Promise<string> => {
+  const newToken = await handleTokenRefresh()
+  if (!newToken) {
+    throw new Error('Token refresh failed!')
+  }
+  return newToken
+}
 export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceDetails.Model> => {
-  return apiPost<WidelyDeviceDetails.Model>(
-    `${ENDPOINT}/get_all_user_data`,
-    { simNumber }
+  const newToken = await handleTokenRefresh()
+  if (!newToken) {
+    return {} as WidelyDeviceDetails.Model
+  }
+  const token = localStorage.getItem('token')
+  if (!token) {
+    throw new Error('No token found!')
+  }
+
+  const response: AxiosResponse<WidelyDeviceDetails.Model> = await axios.post(
+    `${baseUrl}/get_all_user_data`,
+    {
+      simNumber: simNumber,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
   )
+
+  return response.data
 }
 
+
 export const terminateMobile = async (endpoint_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/terminate_mobile`, { endpoint_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
+      endpoint_id: endpoint_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error terminating mobile', error)
+    throw error
+  }
 }
 
 export const terminateLine = async (endpoint_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/terminate_mobile`, { endpoint_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/terminate_mobile`, {
+      endpoint_id: endpoint_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error terminating line', error)
+    throw error
+  }
 }
 
-export const getPackagesWithInfo = async (package_types:'base' | 'extra'): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/get_packages_with_info`, { package_types })
+export const getPackagesWithInfo = async (package_types: 'base' | 'extra'): Promise<Widely.Model> => {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_packages_with_info`, {
+      package_types
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error fetching packages with info', error)
+    throw error
+  }
 }
 
 export const changePackages = async (endpoint_id: number, package_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/update_mobile_subscription`, { endpoint_id, package_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/update_mobile_subscription`, {
+      endpoint_id,
+      package_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error changing packages', error)
+    throw error
+  }
 }
 
 export const addOneTimePackage = async (endpoint_id: number, domain_user_id: number, package_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/add_one_time_package`, { endpoint_id, domain_user_id, package_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/add_one_time_package`, {
+      endpoint_id,
+      domain_user_id,
+      package_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error adding one-time packages', error)
+    throw error
+  }
 }
 
 export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/prov_reset_vm_pincode`, { endpoint_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/prov_reset_vm_pincode`, {
+      endpoint_id: endpoint_id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error resetting voicemail pincode', error)
+    throw error
+  }
 }
 
 // איפוס מקיף של מכשיר כטרנזקציה
-export const ComprehensiveResetDevice = async (endpoint_id: number | string, name: string): Promise<
-  {
-    success: boolean
-    message: string
-    data: {
-      originalInfo: any
-      terminationSuccess: boolean
-      creationSuccess: boolean
-      newEndpointId: string | null
-      terminationResult: Widely.Model
-      creationResult: Widely.Model
-    }
+export const ComprehensiveResetDevice = async (endpoint_id: number | string, name: string): Promise<{
+  success: boolean
+  message: string
+  data: {
+    originalInfo: any
+    terminationSuccess: boolean
+    creationSuccess: boolean
+    newEndpointId: string | null
+    terminationResult: Widely.Model
+    creationResult: Widely.Model
   }
-> => {
-  return apiPost<{
-    success: boolean
-    message: string
-    data: {
-      originalInfo: any
-      terminationSuccess: boolean
-      creationSuccess: boolean
-      newEndpointId: string | null
-      terminationResult: Widely.Model
-      creationResult: Widely.Model
-    }
-  }>(`${ENDPOINT}/reset_device`, {
-    endpoint_id,
-    name
-  })
+}> => {
+  try {
+    const token = await getValidToken()
+    const response = await axios.post(`${baseUrl}/reset_device`, {
+      endpoint_id,
+      name
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    
+    return response.data
+  } catch (error) {
+    console.error('Error resetting device', error)
+    throw error
+  }
 }
 
 // קבלת מידע על מכשיר נייד
 export const getMobileInfo = async (endpoint_id: string): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/get_mobile_info`, { endpoint_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/get_mobile_info`, {
+      endpoint_id,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error('Error getting mobile info', error)
+    throw error
+  }
 }
 
 export const sendApn = async (endpoint_id: number): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/send_apn`, { endpoint_id })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(
+      `${baseUrl}/send_apn`,
+      { endpoint_id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error sending APN', error)
+    throw error
+  }
 }
 
 export const setPreferredNetwork = async (endpoint_id: number, network: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone'): Promise<Widely.Model> => {
-    return apiPost<Widely.Model>(`${ENDPOINT}/changeNetwork`, {
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/changeNetwork`, {
       endpoint_id: endpoint_id,
       network_name: network
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     })
+    return response.data
+  } catch (error) {
+    console.error('Error changing preferred network', error)
+    throw error
+  }
 }
 
 export const freezeUnfreezeMobile = async (endpoint_id: number, action: 'freeze' | 'unfreeze'): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/freeze_unfreeze_mobile`, {
-    endpoint_id: endpoint_id,
-    action: action
-  })
+  try {    
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/freeze_unfreeze_mobile`, {
+      endpoint_id: endpoint_id,
+      action: action
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error freezing/unfreezing mobile', error)
+    throw error
+  }
 }
 
 export const lockUnlockImei = async (endpoint_id: number, iccid: string, action: boolean): Promise<Widely.Model> => {
-  return apiPost<Widely.Model>(`${ENDPOINT}/lock_unlock_imei`, {
-    endpoint_id: endpoint_id,
-    iccid: iccid,
-    action: action
-  })
+  try {
+    const token = await getValidToken()
+    const response: AxiosResponse<Widely.Model> = await axios.post(`${baseUrl}/lock_unlock_imei`, {
+      endpoint_id: endpoint_id,
+      iccid: iccid,
+      action: action
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error locking/unlocking IMEI', error)
+    throw error
+  }
 }
-

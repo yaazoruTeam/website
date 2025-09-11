@@ -9,7 +9,7 @@
         "build-schema": "ts-node -r tsconfig-paths/register ./src/db/buildSchema",
         "dev": "ts-node-dev --respawn --transpile-only --prefer-ts-exts -r tsconfig-paths/register src/index.ts",
         "dev:nodemon": "npx nodemon --legacy-watch --exec \"ts-node -r tsconfig-paths/register -r dotenv/config\" src/index.ts",
-        "start": "node dist/src/index.js"
+        "start": "node src/index.ts"
     },
     "dependencies": {
         "@google-cloud/speech": "^7.2.0",

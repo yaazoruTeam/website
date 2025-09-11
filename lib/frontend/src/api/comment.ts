@@ -1,67 +1,114 @@
-import { Comment, EntityType, CreateCommentDto } from '@model'
-import { 
-  apiGet,
-  apiPost,
-  // safeGetPaginated,
-  PaginatedResponse 
-} from './core/apiHelpers'
-import axios from 'axios'
-import { getAuthHeaders } from './core/tokenManager'
+import axios, { AxiosResponse } from "axios";
+import { Comment } from "@model";
+import { handleTokenRefresh } from "./token";
+import { EntityType } from "@model";
+import { CreateCommentDto } from "@model";
 
-const ENDPOINT = '/comment'
-const baseURL = import.meta.env.VITE_BASE_URL
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/comment`
 
+export interface PaginatedCommentsResponse {
+  data: Comment.Model[];
+  total: number;
+  page?: number;
+  totalPages: number;
+}
+
+// GET
 export const getCommentsByEntityTypeAndEntityId = async (
   entity_type: EntityType,
   entity_id: string,
   page: number
-): Promise<PaginatedResponse<Comment.Model>> => {
+): Promise<PaginatedCommentsResponse> => {
   try {
-    const response = await apiGet<PaginatedResponse<Comment.Model>>(
-      `${ENDPOINT}/${entity_type}/${entity_id}?page=${page}`
-    )
-    
-    const formattedData = response.data.map((commentItem) => ({
+    const newToken = await handleTokenRefresh();
+    if (!newToken) {
+      return { data: [], total: 0, totalPages: 0 };
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found!");
+    }
+    const response: AxiosResponse<PaginatedCommentsResponse> = await axios.get(
+      `${baseUrl}/${entity_type}/${entity_id}?page=${page}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const formattedData = response.data.data.map((commentItem) => ({
       ...commentItem,
       created_at: new Date(commentItem.created_at as unknown as string),
-    }))
+    }));
 
-    return { ...response, data: formattedData }
+    return { ...response.data, data: formattedData };
   } catch (error) {
-    console.error('Error fetching comments', error)
-    return { data: [], total: 0, page, totalPages: 0 }
+    console.error("Error fetching comments", error);
+    throw error;
   }
-}
+};
 
 export const createComment = async (
   commentData: CreateCommentDto.Model
 ): Promise<Comment.Model> => {
-  const response = await apiPost<Comment.Model>(ENDPOINT, commentData)
-  return {
-    ...response,
-    created_at: new Date(response.created_at as unknown as string),
+  try {
+    const newToken = await handleTokenRefresh();
+    if (!newToken) {
+      throw new Error("Failed to refresh token");
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found!");
+    }
+    const response: AxiosResponse<Comment.Model> = await axios.post(
+      baseUrl,
+      commentData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return {
+      ...response.data,
+      created_at: new Date(response.data.created_at as unknown as string),
+    };
+  } catch (error) {
+    console.error("Error creating comment", error);
+    throw error;
   }
-}
+};
 
 export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
   try {
-    const headers = await getAuthHeaders()
-    const formData = new FormData()
-    formData.append('audio', audioBlob)
+    const newToken = await handleTokenRefresh();
+    if (!newToken) {
+      throw new Error("Failed to refresh token");
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found!");
+    }
+
+    const formData = new FormData();
+    formData.append("audio", audioBlob);
 
     const response = await axios.post<{ transcription: string }>(
-      `${baseURL}${ENDPOINT}/transcribe`,
+      `${baseUrl}/transcribe`,
       formData,
       {
         headers: {
-          ...headers,
+          Authorization: `Bearer ${token}`,
         },
       }
-    )
+    );
 
-    return response.data.transcription
+    return response.data.transcription;
   } catch (error) {
-    console.error('Error transcribing audio:', error)
-    throw error
+    console.error("Error transcribing audio:", error);
+    throw error;
   }
-}
+};

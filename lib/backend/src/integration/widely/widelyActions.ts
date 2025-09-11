@@ -25,8 +25,13 @@ const sendMobileAction = async (endpoint_id: string | number, action: string): P
 const getMobileInfo = async (endpoint_id: string): Promise<any> => {
     const result: Widely.Model = await callingWidely('get_mobile_info', { endpoint_id })
 
-    // Use the updated validateWidelyResult function instead of manual checks
-    validateWidelyResult(result, 'Failed to load device details', false)
+    if (result.error_code !== undefined && result.error_code !== 200) {
+        const error: HttpError.Model = {
+            status: result.error_code || 500,
+            message: 'Failed to load device details.',
+        }
+        throw error
+    }
 
     if (result.data !== undefined) {
         const mobileData = Array.isArray(result.data) ? result.data[0] : result.data

@@ -1,23 +1,60 @@
+import axios, { AxiosResponse } from 'axios'
 import { CreditDetails } from '@model'
-import { 
-  apiPost,
-  // apiGet,
-  safeApiGet 
-} from './core/apiHelpers'
+import { handleTokenRefresh } from './token'
 
-const ENDPOINT = '/creditDetails'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/creditDetails`
 
+// POST
 export const createCreditDetails = async (
   creditDetails: CreditDetails.Model,
 ): Promise<CreditDetails.Model> => {
-  return apiPost<CreditDetails.Model>(ENDPOINT, creditDetails)
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as CreditDetails.Model
+    }
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<CreditDetails.Model> = await axios.post(baseUrl, creditDetails, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error creating customer', error)
+    throw error
+  }
 }
 
+// GET id
 export const getCreditDetailsById = async (
   creditDetails_id: string,
 ): Promise<CreditDetails.Model> => {
-  return safeApiGet<CreditDetails.Model>(
-    `${ENDPOINT}/${creditDetails_id}`,
-    {} as CreditDetails.Model
-  )
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as CreditDetails.Model
+    }
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<CreditDetails.Model> = await axios.get(
+      `${baseUrl}/${creditDetails_id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error get cedit deatails by id.', error)
+    throw error
+  }
 }

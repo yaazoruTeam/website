@@ -1,16 +1,34 @@
+import axios, { AxiosResponse } from 'axios'
 import { PaymentCreditLink } from '@model'
-import { 
-  // apiGet,
-  safeApiGet 
-} from './core/apiHelpers'
+import { handleTokenRefresh } from './token'
 
-const ENDPOINT = '/paymentCreditLink'
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/paymentCreditLink`
 
+// GET monthlyPayment_id
 export const getPaymentCreditLinkByMonthlyPaymentId = async (
   monthlyPayment_id: string,
 ): Promise<PaymentCreditLink.Model> => {
-  return safeApiGet<PaymentCreditLink.Model>(
-    `${ENDPOINT}/monthlyPayment/${monthlyPayment_id}`,
-    {} as PaymentCreditLink.Model
-  )
+  try {
+    const newToken = await handleTokenRefresh()
+    if (!newToken) {
+      return {} as PaymentCreditLink.Model
+    }
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('No token found!')
+    }
+    const response: AxiosResponse<PaymentCreditLink.Model> = await axios.get(
+      `${baseUrl}/monthlyPayment/${monthlyPayment_id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error get payment credit link by monthly payment', error)
+    throw error
+  }
 }

@@ -28,7 +28,7 @@ const MonthlyPaymentList: React.FC<MonthlyPaymentListProps> = ({
 }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const limit = import.meta.env.VITE_LIMIT ? parseInt(import.meta.env.VITE_LIMIT) : 10
+  const limit = Number(import.meta.env.REACT_APP_LIMIT) || 10
 
   // תיקון: הגדרת סטייט לנתוני לקוחות
   const [customerData, setCustomerData] = useState<{ [key: string]: { name: string, id: string } }>({})
