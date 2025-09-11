@@ -37,13 +37,6 @@ function sanitize(device: Model, hasId: boolean): Model {
     }
     throw error
   }
-  // if (!device.mehalcha_number) {
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "mehalcha_number".',
-  //   }
-  //   throw error
-  // }
   if (!device.model) {
     const error: HttpError.Model = {
       status: 400,
@@ -65,34 +58,12 @@ function sanitize(device: Model, hasId: boolean): Model {
     }
     throw error
   }
-  // if (!device.purchaseDate) {
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "purchaseDate".',
-  //   }
-  //   throw error
-  // }
-  //  if (!device.plan) {
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "plan".',
-  //   }
-  //   throw error
-  // }
-  // if (!device.releaseDate) {
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "releaseDate".',
-  //   }
-  //   throw error
-  // }
 
   const newDevice: Model = {
     device_id: device.device_id,
     device_number: device.device_number,
     SIM_number: device.SIM_number,
     IMEI_1: device.IMEI_1,
-    // mehalcha_number: device.mehalcha_number,
     model: device.model,
     status: device.status || 'active',
     serialNumber: device.serialNumber,
@@ -119,13 +90,6 @@ const sanitizeExistingDevice = (deviceExis: Model, device: Model) => {
     }
     throw error
   }
-  // if (deviceExis.mehalcha_number === device.mehalcha_number) {
-  //   const error: HttpError.Model = {
-  //     status: 409,
-  //     message: 'mehalcha_number already exists',
-  //   }
-  //   throw error
-  // }
   if (deviceExis.serialNumber === device.serialNumber) {
     const error: HttpError.Model = {
       status: 409,

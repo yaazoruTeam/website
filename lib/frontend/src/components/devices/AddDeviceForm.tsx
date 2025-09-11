@@ -52,7 +52,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       device_number: '',
       SIM_number: '',
       IMEI_1: '',
-      // mehalcha_number: '',
       serialNumber: '',
       model: '',
     }
@@ -131,13 +130,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           flexWrap: isMobile ? 'wrap' : 'nowrap',
         }}
       >
-        {/* <CustomTextField
-          control={control}
-          name="mehalcha_number"
-          label={t('mehalchaNumber')}
-          inputProps={numericInputProps}
-          rules={getNumericFieldRules()}
-        /> */}
         <CustomTextField
           control={control}
           name="serialNumber"
