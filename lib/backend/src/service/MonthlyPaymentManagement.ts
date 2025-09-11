@@ -11,7 +11,7 @@ const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentMana
     if (!existCustomer) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'customer dose not exist',
+        message: 'customer does not exist',
       }
       throw error
     }

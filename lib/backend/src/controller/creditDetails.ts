@@ -24,7 +24,7 @@ const createCreditDetails = async (
       logger.warn('Customer does not exist for ID:', sanitized.customer_id)
       const error: HttpError.Model = {
         status: 404,
-        message: 'customer dose not exist',
+        message: 'customer does not exist',
       }
       throw error
     }
@@ -98,7 +98,7 @@ const updateCreditDetails = async (
     if (!existCustomer) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'customer dose not exist',
+        message: 'customer does not exist',
       }
       throw error
     }

@@ -26,6 +26,10 @@ const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExce
       mehalcha_number: (row.mehalcha_number as string) || '',
       model: (row.model as string) || '',
       status: 'active',
+      serialNumber: row.serialNumber || '',
+      purchaseDate: row.receivedAt || null,
+      releaseDate: row.releaseDate || new Date(),
+      plan: row.plan || '',
     },
     receivedAt: row.receivedAt as Date | string | number,
   }

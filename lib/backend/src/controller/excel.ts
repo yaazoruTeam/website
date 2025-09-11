@@ -65,7 +65,7 @@ const handleReadExcelFile = async (
       try {
         fs.unlinkSync(req.file.path)
       } catch (deleteError) {
-        console.warn('Could not delete temporary file after error:', deleteError)
+        logger.warn('Could not delete temporary file after error:', deleteError)
       }
     }
 handleError(error, next)

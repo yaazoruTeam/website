@@ -17,7 +17,7 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthlyPayment dose not exist',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -27,7 +27,7 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
     if (!existCreditDetails) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'creditDetails dose not exist',
+        message: 'credit details does not exist',
       }
       throw error
     }
@@ -35,10 +35,10 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
       await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(
         sanitized.monthlyPayment_id,
       )
-    if (!existCreditDetails) {
+    if (existMonthlyPaymentInPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 409,
-        message: 'monthly paymemnt already exists',
+        message: 'monthly payment already exists',
       }
       throw error
     }
@@ -100,7 +100,7 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthlyPayment does not exist.',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -132,7 +132,7 @@ const getPaymentCreditLinksByCreditDetailsId = async (
     if (!existCreditDetails) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'creditDetails does not exist.',
+        message: 'credit details does not exist',
       }
       throw error
     }
@@ -160,7 +160,7 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
     if (!existMonthlyPayment) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'monthlyPayment dose not exist',
+        message: 'monthly payment does not exist',
       }
       throw error
     }
@@ -170,7 +170,7 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
     if (!existCreditDetails) {
       const error: HttpError.Model = {
         status: 404,
-        message: 'creditDetails dose not exist',
+        message: 'credit details does not exist',
       }
       throw error
     }
@@ -178,10 +178,10 @@ const updatePaymentCreditLink = async (req: Request, res: Response, next: NextFu
       await db.PaymentCreditLink.doesMonthlyPaimentExistInPaymentCreditLink(
         sanitized.monthlyPayment_id,
       )
-    if (!existCreditDetails) {
+    if (existMonthlyPaymentInPaymentCreditLink) {
       const error: HttpError.Model = {
         status: 409,
-        message: 'monthly paymemnt already exists',
+        message: 'monthly payment already exists',
       }
       throw error
     }
