@@ -11,7 +11,7 @@ import {
   CustomSearchSelectChevronLeftIcon,
   CustomSearchSelectCalendarIcon,
 } from '../designComponent/styles/customersStyles'
-import { colors } from 'src/styles/theme'
+import { colors } from '../../styles/theme'
 
 interface CustomSearchSelectProps {
   placeholder?: string
