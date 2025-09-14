@@ -3,7 +3,6 @@ import { Box, useMediaQuery } from '@mui/material'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import CustomTypography from '../designComponent/Typography'
-import NoResultsMessage from '../designComponent/NoResultsMessage'
 import { useTranslation } from 'react-i18next'
 import { Customer } from '@model'
 import CustomTable, { TableRowData } from '../designComponent/CustomTable'
@@ -45,22 +44,12 @@ const CustomersList: React.FC<CustomersListProps> = ({
   limit,
   onPageChange,
   onFilterChange,
-  noResults = false,
-  noResultsType = 'general',
 }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
-
-  const handleCloseNoResults = () => {
-    // Clear filters and refresh the list
-    onFilterChange(null)
-    onPageChange(1)
-    setResetTrigger(true)
-    setTimeout(() => setResetTrigger(false), 0)
-  }
 
   const handleResetFilters = () => {
     onFilterChange(null)
@@ -194,12 +183,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
             gap: 3,
           }}
         >
-          {noResults ? (
-            <NoResultsMessage
-              messageType={noResultsType as 'date' | 'status' | 'general'}
-              onClose={handleCloseNoResults}
-            />
-          ) : (
             <CustomTable
               columns={columns}
               data={tableData}
@@ -212,8 +195,8 @@ const CustomersList: React.FC<CustomersListProps> = ({
                 onPageChange,
               }}
               alignLastColumnLeft={true}
+              dataType="customers"
             />
-          )}
         </Box>
       </>
     </Box>
