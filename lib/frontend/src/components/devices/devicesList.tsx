@@ -192,6 +192,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
             onPageChange,
           }}
           alignLastColumnLeft={true}
+          dataType="devices"
         />
       </Box>
     </Box>
