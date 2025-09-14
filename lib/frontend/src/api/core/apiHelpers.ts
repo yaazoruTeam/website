@@ -115,7 +115,8 @@ export const safePaginated = async <T>(
   config: Omit<ApiConfig<PaginatedResponse<T>>, 'safe' | 'fallback'> = {}
 ): Promise<PaginatedResponse<T>> => {
   const fallback: PaginatedResponse<T> = { data: [], total: 0, page, totalPages: 0 }
-  return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`, { 
+  const separator = endpoint.includes('?') ? '&' : '?'
+  return apiGet<PaginatedResponse<T>>(`${endpoint}${separator}page=${page}`, { 
     ...config, 
     safe: true, 
     fallback 
@@ -126,5 +127,6 @@ export const safePaginated = async <T>(
 export const safeGetPaginated = safePaginated
 export const safeGet = safeApiGet
 export const getPaginatedData = <T>(endpoint: string, page: number = 1): Promise<PaginatedResponse<T>> => {
-  return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`)
+  const separator = endpoint.includes('?') ? '&' : '?'
+  return apiGet<PaginatedResponse<T>>(`${endpoint}${separator}page=${page}`)
 }
