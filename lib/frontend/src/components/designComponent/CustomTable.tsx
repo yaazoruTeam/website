@@ -5,7 +5,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../styles/theme'
 import CustomTypography from './Typography'
-import NoDataMessage, { DataType } from './NoDataMessage'
+import NoDataMessage, { DataType, MessageType } from './NoDataMessage'
 
 export type TableRowData = Record<string, React.ReactNode>
 
@@ -18,6 +18,8 @@ interface CustomTableProps {
   expandedRowIndex?: number | null
   renderExpandedRow?: (rowData: TableRowData, rowIndex: number) => React.ReactNode
   dataType?: DataType
+  noResults?: boolean
+  noResultsType?: MessageType
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({ 
@@ -29,6 +31,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
   expandedRowIndex, 
   renderExpandedRow,
   dataType = 'general',
+  noResults = false,
+  noResultsType = 'general',
 }) => {
   const { t } = useTranslation()
 
@@ -136,7 +140,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
               <TableCell colSpan={columns.length} sx={{ padding: 0, border: 'none' }}>
                   <NoDataMessage 
                     dataType={dataType}
-                    messageType="general"
+                    messageType={noResults ? noResultsType : 'general'}
                     showCloseButton={false}
                     minHeight="180px"
                     compact={true}

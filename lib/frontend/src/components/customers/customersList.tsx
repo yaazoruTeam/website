@@ -6,6 +6,7 @@ import CustomTypography from '../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { Customer } from '@model'
 import CustomTable, { TableRowData } from '../designComponent/CustomTable'
+import { MessageType } from '../designComponent/NoDataMessage'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
 import { formatDateToString } from '../designComponent/FormatDate'
@@ -34,7 +35,7 @@ interface CustomersListProps {
   onPageChange: (page: number) => void
   onFilterChange: (filter: FilterType | null) => void
   noResults?: boolean
-  noResultsType?: string
+  noResultsType?: MessageType
 }
 
 const CustomersList: React.FC<CustomersListProps> = ({
@@ -44,6 +45,8 @@ const CustomersList: React.FC<CustomersListProps> = ({
   limit,
   onPageChange,
   onFilterChange,
+  noResults = false,
+  noResultsType = 'general',
 }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
@@ -196,6 +199,8 @@ const CustomersList: React.FC<CustomersListProps> = ({
               }}
               alignLastColumnLeft={true}
               dataType="customers"
+              noResults={noResults}
+              noResultsType={noResultsType}
             />
         </Box>
       </>
