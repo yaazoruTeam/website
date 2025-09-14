@@ -134,7 +134,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
           <FieldsRow isMobile={isMobile}>
             <CustomTextField
               control={control}
-              name='first_name'
+              name='phone_number'
               label={t('phone')}
               rules={{
                 required: t('requiredField'),
