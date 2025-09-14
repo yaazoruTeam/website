@@ -22,6 +22,7 @@ export type MessageType =
   | 'date'           // לא נמצא בטווח תאריכים
   | 'status'         // לא נמצא עם סטטוס מסוים
   | 'search'         // לא נמצא בחיפוש
+  | 'city'           // לא נמצא בעיר מסויימת
   | 'filter'         // לא נמצא עם פילטר
   | 'general'        // הודעה כללית
 
@@ -91,6 +92,8 @@ const NoDataMessage: React.FC<NoDataMessageProps> = ({
         return `${baseKey}Status`
       case 'search':
         return `${baseKey}Search`
+      case 'city':
+        return `${baseKey}City`
       case 'filter':
         return `${baseKey}Filter`
       default:
