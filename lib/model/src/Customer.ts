@@ -18,16 +18,32 @@ interface Model {
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
+  console.log('Sanitizing Customer:', customer.email, 'hasId:', hasId);
+  
   const isString = (value: unknown) => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const isValidPhoneNumber = (phone: string | number) => {
+  
+  // פונקציה לניקוי וחיזור מספר טלפון
+  const cleanAndNormalizePhone = (phone: string | number): string => {
     const phoneStr = String(phone) // המרה למחרוזת
-    const cleaned = phoneStr.replace(/[\s-]/g, '') // מסיר מקפים ורווחים
-    const normalized = cleaned.startsWith('0') ? cleaned.slice(1) : cleaned
-
-    return /^\d{9,10}$/.test(normalized)
+    const cleaned = phoneStr.replace(/[\s\-()]/g, '') // מסיר רווחים, מקפים וסוגריים
+    
+    // אם המספר לא מתחיל ב-0 ו-הוא נראה כמו מספר ישראלי (9 ספרות), מוסיף 0 בהתחלה
+    if (!cleaned.startsWith('0') && cleaned.length === 9 && /^\d{9}$/.test(cleaned)) {
+      return '0' + cleaned
+    }
+    
+    return cleaned
+  }
+  
+  const isValidPhoneNumber = (phone: string | number) => {
+    const normalizedPhone = cleanAndNormalizePhone(phone)
+    // תמיכה במספרי טלפון בינלאומיים - בין 7 ל-15 ספרות
+    return /^\d{7,15}$/.test(normalizedPhone)
   }
   if (hasId && !customer.customer_id) {
+    console.log('Customer missing customer_id');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
@@ -35,6 +51,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.first_name) || customer.first_name.trim() === '') {
+    console.log('Customer missing or invalid first_name');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "first_name".',
@@ -42,6 +60,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.last_name) || customer.last_name.trim() === '') {
+    console.log('Customer missing or invalid last_name');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "last_name".',
@@ -49,6 +69,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!customer.id_number) {
+    console.log('Customer missing id_number');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "id_number".',
@@ -56,9 +78,11 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!customer.phone_number || !isValidPhoneNumber(customer.phone_number)) {
+    console.log('Customer missing or invalid phone_number');
+    
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "phone_number". It must be a number between 9 and 15 digits.',
+      message: 'Invalid or missing "phone_number". It must be a valid phone number with 7-15 digits.',
     }
     throw error
   }
@@ -69,11 +93,13 @@ function sanitize(customer: Model, hasId: boolean): Model {
     const error: HttpError.Model = {
       status: 400,
       message:
-        'Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.',
+        'Invalid "additional_phone". It must be a valid phone number with 7-15 digits.',
     }
     throw error
   }
   if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
+    console.log('Customer missing or invalid email');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "email".',
@@ -81,6 +107,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.city) || customer.city.trim() === '') {
+    console.log('Customer missing or invalid city');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "city".',
@@ -88,6 +116,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (!isString(customer.address1) || customer.address1.trim() === '') {
+    console.log('Customer missing or invalid address1');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address1".',
@@ -95,6 +125,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     throw error
   }
   if (customer.address2 && !isString(customer.address2)) {
+    console.log('Customer invalid address2');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address2".',
@@ -107,8 +139,8 @@ function sanitize(customer: Model, hasId: boolean): Model {
     first_name: customer.first_name.trim(),
     last_name: customer.last_name.trim(),
     id_number: customer.id_number,
-    phone_number: customer.phone_number,
-    additional_phone: customer.additional_phone,
+    phone_number: cleanAndNormalizePhone(customer.phone_number),
+    additional_phone: customer.additional_phone ? cleanAndNormalizePhone(customer.additional_phone) : customer.additional_phone,
     email: customer.email.trim().toLowerCase(),
     city: customer.city.trim(),
     address1: customer.address1.trim(),
