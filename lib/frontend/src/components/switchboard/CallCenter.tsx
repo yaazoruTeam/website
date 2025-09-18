@@ -201,12 +201,7 @@ const CallCenter: React.FC = () => {
     setOpenBuyNew(true)
   }
   return (
-    <Box
-      sx={{
-        paddingLeft: '10%',
-        paddingRight: '15%',
-      }}
-    >
+    <Box>
       <ChangeAccountModal open={openSwitchAccount} onClose={() => setOpenSwitchAccount(false)} />
       <PurchasingNewNumber open={openBuyNew} onClose={() => setOpenBuyNew(false)} />
       <Box

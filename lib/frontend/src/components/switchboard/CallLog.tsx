@@ -76,12 +76,7 @@ const CallLog: React.FC = () => {
   }
 
   return (
-    <Box
-      sx={{
-        paddingLeft: '10%',
-        paddingRight: '15%',
-      }}
-    >
+    <Box>
       <Box
         sx={{
           display: 'flex',
