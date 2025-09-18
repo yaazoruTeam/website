@@ -85,6 +85,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
         successCount++
         logger.debug(`Row ${rowIndex}: Customer-Device processed successfully`)
       } catch (err: unknown) {
+        await trx.rollback()
         logger.error(`Row ${rowIndex}: Transaction failed:`, err)
         
         const errorMessage = formatErrorMessage(err)
@@ -94,7 +95,6 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
           error: `Transaction failed: ${errorMessage}`,
           data: item,
         })
-        await trx.rollback()
       }
     } else {
       // עיבוד מכשיר בלבד
@@ -128,27 +128,33 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 }
 
 /**
- * עיבוד נתוני לקוח
+ * עיבוד נתוני לקוח - מטפל בכל השגיאות האפשריות
  */
 const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Transaction) => {
-  if (!sanitized.customer) {
-    throw new Error('Customer is undefined in sanitized object.')
+  try {
+    if (!sanitized.customer) {
+      throw new Error('Customer is undefined in sanitized object.')
+    }
+
+    let existCustomer = await db.Customer.findCustomer({
+      email: sanitized.customer.email,
+      id_number: sanitized.customer.id_number,
+    })
+
+    if (!existCustomer) {
+      logger.debug('Creating new customer...')
+      existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
+      logger.debug('Customer created successfully')
+    } else {
+      logger.debug('Customer already exists, using existing record')
+    }
+
+    return existCustomer
+  } catch (error) {
+    logger.error('Error in processCustomer:', error)
+    // זורק השגיאה כדי שהיא תטופל ברמה הגבוהה יותר
+    throw error
   }
-
-  let existCustomer = await db.Customer.findCustomer({
-    email: sanitized.customer.email,
-    id_number: sanitized.customer.id_number,
-  })
-
-  if (!existCustomer) {
-    logger.debug('Creating new customer...')
-    existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
-    logger.debug('Customer created successfully')
-  } else {
-    logger.debug('Customer already exists, using existing record')
-  }
-
-  return existCustomer
 }
 
 /**
