@@ -6,8 +6,16 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   return (
     <Box
       sx={{
-        paddingLeft: '10%',
-        paddingRight: '15%',
+        paddingLeft: {
+          xs: '80px', // Mobile & Tablet
+          md: '80px', // Tablet 
+          lg: '120px', // Desktop
+        },
+        paddingRight: {
+          xs: '80px', // Mobile & Tablet
+          md: '80px', // Tablet
+          lg: '120px', // Desktop
+        },
         paddingTop: '2rem',
         minHeight: '100vh',
         display: 'flex',
