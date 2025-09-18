@@ -94,8 +94,8 @@ const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({
     <Box
       ref={selectRef}
       sx={{
-        width: 100,
-        height: 100,
+        width: '100%',
+        height: '100%',
         display: 'grid',
         position: 'relative',
         zIndex: 1,
