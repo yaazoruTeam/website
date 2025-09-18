@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { useGoogleRedirect } from "../../hooks/useGoogleRedirect";
 import { GoogleSignInResult } from "../../services/googleAuthService";
@@ -40,7 +40,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   });
 
   // Show error if there is one (always call useEffect)
-  React.useEffect(() => {
+  useEffect(() => {
     if (error && !onError) {
       // Only auto-alert if no error handler provided
       alert(error);
