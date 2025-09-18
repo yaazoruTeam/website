@@ -8,6 +8,7 @@ import * as db from '@db/index'
 import { CustomerDeviceExcel } from '@model'
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
+import { formatErrorMessage } from '@utils/errorHelpers'
 import { Knex } from 'knex'
 import logger from '../../utils/logger'
 import { 
@@ -41,16 +42,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
     try {
       sanitized = await CustomerDeviceExcel.sanitize(convertFlatRowToModel(item), isCustomer)
     } catch (err: unknown) {
-      let errorMessage = 'Unknown error'
-      if (err instanceof Error) {
-        errorMessage = err.message
-      } else if (typeof err === 'string') {
-        errorMessage = err
-      } else if (err && typeof err === 'object') {
-        errorMessage = JSON.stringify(err)
-      } else {
-        errorMessage = String(err)
-      }
+      const errorMessage = formatErrorMessage(err)
       
       errors.push({
         row: rowIndex,
@@ -94,16 +86,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
       } catch (err: unknown) {
         logger.error(`Row ${rowIndex}: Transaction failed:`, err)
         
-        let errorMessage = 'Unknown error'
-        if (err instanceof Error) {
-          errorMessage = err.message
-        } else if (typeof err === 'string') {
-          errorMessage = err
-        } else if (err && typeof err === 'object') {
-          errorMessage = JSON.stringify(err)
-        } else {
-          errorMessage = String(err)
-        }
+        const errorMessage = formatErrorMessage(err)
         
         errors.push({
           row: rowIndex,
@@ -115,22 +98,13 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
     } else {
       // עיבוד מכשיר בלבד
       try {
-        await processDevice(sanitized, undefined)
+        await processDevice(sanitized)
         successCount++
         logger.debug(`Row ${rowIndex}: Device-only processed successfully`)
       } catch (err: unknown) {
         logger.error(`Row ${rowIndex}: Error creating device (no customer):`, err)
         
-        let errorMessage = 'Unknown error'
-        if (err instanceof Error) {
-          errorMessage = err.message
-        } else if (typeof err === 'string') {
-          errorMessage = err
-        } else if (err && typeof err === 'object') {
-          errorMessage = JSON.stringify(err)
-        } else {
-          errorMessage = String(err)
-        }
+        const errorMessage = formatErrorMessage(err)
         
         errors.push({
           row: rowIndex,
@@ -178,8 +152,10 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.T
 
 /**
  * עיבוד נתוני מכשיר
+ * @param sanitized - אובייקט המכיל נתוני מכשיר מסונכרנים
+ * @param trx - טרנזקציה אופציונלית. אם מועברת, הפעולה תתבצע במסגרת הטרנזקציה הקיימת
  */
-const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Transaction | null | undefined) => {
+const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx?: Knex.Transaction) => {
   let existDevice = await db.Device.findDevice({
     SIM_number: sanitized.device.SIM_number,
     IMEI_1: sanitized.device.IMEI_1,
@@ -189,7 +165,7 @@ const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Tra
 
   if (!existDevice) {
     logger.debug('Creating new device...')
-    existDevice = await db.Device.createDevice(sanitized.device, trx || undefined)
+    existDevice = await db.Device.createDevice(sanitized.device, trx)
     logger.debug('Device created successfully')
   } else {
     logger.debug('Device already exists, using existing record')
