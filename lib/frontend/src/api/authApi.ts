@@ -48,6 +48,10 @@ export const refresh = async (): Promise<string> => {
     return response.data
   } catch (error: unknown) {
     console.error('Error refresh token', error)
+    // מחיקת הטוקן הלא תקין מ-localStorage
+    localStorage.removeItem('token')
+    // הפניה לדף ההתחברות
+    window.location.href = '/login'
     throw error
   }
 }
