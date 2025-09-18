@@ -11,12 +11,12 @@ import { writeErrorsToExcel } from '@utils/excel'
 import { formatErrorMessage } from '@utils/errorHelpers'
 import { Knex } from 'knex'
 import logger from '../../utils/logger'
-import { 
-  ExcelRowData, 
-  ProcessError, 
+import {
+  ExcelRowData,
+  ProcessError,
   ProcessingResult,
   buildProcessingResult,
-  processDeviceCommon 
+  createDeviceIfNotExists
 } from './BaseExcelService'
 
 /**
@@ -32,19 +32,19 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 
   for (const item of data) {
     const rowIndex = data.indexOf(item) + 1
-    
+
     // בדיקה אם השורה מכילה נתוני לקוח
     const isCustomer: boolean = [item.first_name, item.last_name, item.phone_number, item.email].some(
       field => typeof field === 'string' && field.trim() !== ''
     )
-    
+
     let sanitized: CustomerDeviceExcel.Model | null = null
 
     try {
       sanitized = await CustomerDeviceExcel.sanitize(convertFlatRowToModel(item), isCustomer)
     } catch (err: unknown) {
       const errorMessage = formatErrorMessage(err)
-      
+
       errors.push({
         row: rowIndex,
         error: `Sanitize failed: ${errorMessage}`,
@@ -58,7 +58,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
       const trx = await knex.transaction()
       try {
         const existCustomer = await processCustomer(sanitized, trx)
-        const existDevice = await processDeviceCommon(sanitized.device, trx)
+        const existDevice = await createDeviceIfNotExists(sanitized.device, trx)
 
         let existingRelation = await db.CustomerDevice.findCustomerDevice({
           device_id: existDevice.device_id,
@@ -68,7 +68,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
           const date: Date = new Date(sanitized.receivedAt)
           const planEndDate = new Date(date)
           planEndDate.setFullYear(planEndDate.getFullYear() + 5)
-          
+
           await db.CustomerDevice.createCustomerDevice(
             {
               customerDevice_id: '',
@@ -80,16 +80,19 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
             trx,
           )
         }
-        
+
         await trx.commit()
         successCount++
         logger.debug(`Row ${rowIndex}: Customer-Device processed successfully`)
       } catch (err: unknown) {
-        await trx.rollback()
-        logger.error(`Row ${rowIndex}: Transaction failed:`, err)
-        
+        try {
+          await trx.rollback()
+        } catch (rollbackErr) {
+          logger.error(`Row ${rowIndex}: Transaction rollback failed:`, rollbackErr)
+        }
+
         const errorMessage = formatErrorMessage(err)
-        
+
         errors.push({
           row: rowIndex,
           error: `Transaction failed: ${errorMessage}`,
@@ -99,14 +102,14 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
     } else {
       // עיבוד מכשיר בלבד
       try {
-        await processDeviceCommon(sanitized.device)
+        await createDeviceIfNotExists(sanitized.device)
         successCount++
         logger.debug(`Row ${rowIndex}: Device-only processed successfully`)
       } catch (err: unknown) {
         logger.error(`Row ${rowIndex}: Error creating device (no customer):`, err)
-        
+
         const errorMessage = formatErrorMessage(err)
-        
+
         errors.push({
           row: rowIndex,
           error: `Device-only insert failed: ${errorMessage}`,
@@ -155,16 +158,6 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.T
     // זורק השגיאה כדי שהיא תטופל ברמה הגבוהה יותר
     throw error
   }
-}
-
-/**
- * עיבוד נתוני מכשיר
- * @param sanitized - אובייקט המכיל נתוני מכשיר מסונכרנים
- * @param trx - טרנזקציה אופציונלית. אם מועברת, הפעולה תתבצע במסגרת הטרנזקציה הקיימת
- * @deprecated - משתמש כעת בפונקציה המשותפת processDeviceCommon מ-BaseExcelService
- */
-const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx?: Knex.Transaction) => {
-  return await processDeviceCommon(sanitized.device, trx)
 }
 
 export { processCustomerDeviceExcelData, ExcelRowData, ProcessError }

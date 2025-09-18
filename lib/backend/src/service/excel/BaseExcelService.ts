@@ -83,11 +83,14 @@ export const createErrorFileName = (routeName: string): string => {
 }
 
 /**
- * פונקציה משותפת לעיבוד מכשיר - להימנעות מכפילות קוד
- * @param deviceModel - מודל המכשיר להוספה/בדיקה
+ * יוצר מכשיר חדש במסד הנתונים אם הוא לא קיים
+ * זורק שגיאה אם המכשיר כבר קיים - להימנעות מכפילויות
+ * @param deviceModel - מודל המכשיר ליצירה
  * @param trx - טרנזקציה אופציונלית
+ * @returns המכשיר החדש שנוצר
+ * @throws Error אם המכשיר כבר קיים (עם פרטי השדות הכפולים)
  */
-export const processDeviceCommon = async (deviceModel: Device.Model, trx?: Knex.Transaction): Promise<Device.Model> => {
+export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: Knex.Transaction): Promise<Device.Model> => {
   logger.info(`🔍 Checking if device exists:`, {
     SIM_number: deviceModel.SIM_number,
     IMEI_1: deviceModel.IMEI_1,
