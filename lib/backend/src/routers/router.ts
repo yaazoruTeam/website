@@ -43,14 +43,6 @@ router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 router.use(`${ROUTE_PATH}/excel`, excelRouter)
 
-
-// router.post(
-//   `${ROUTE_PATH}/excel/upload`,
-//   hasRole('admin'),
-//   uploadExcel.single('excelFile'),
-//   excelController.handleReadExcelFile
-// )
-
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,
   MonthlyPaymentManagementController.createMonthlyPayment,
