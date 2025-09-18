@@ -36,7 +36,7 @@ const Login2222: React.FC = () => {
       console.log('response after login:', response)
       const token = response
       localStorage.setItem('token', token)
-      navigate('/')
+      navigate('/dashboard')
     } catch (error) {
       console.error('Login failed', error)
       alert('Login failed. Please try again.')
