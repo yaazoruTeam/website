@@ -51,3 +51,31 @@ export const refresh = async (): Promise<string> => {
     throw error
   }
 }
+
+// POST - Google Authentication
+export const googleAuth = async (googleUserData: {
+  uid: string
+  email: string
+  displayName: string | null
+  photoURL: string | null
+  emailVerified: boolean
+  idToken: string
+}): Promise<{
+  success: boolean
+  user: {
+    user_id: string
+    email: string
+    user_name: string
+    photo_url?: string
+    role: string
+  }
+  token: string
+}> => {
+  try {
+    const response = await axios.post(`${baseUrl}/google`, googleUserData)
+    return response.data
+  } catch (error) {
+    console.error('Error with Google authentication', error)
+    throw error
+  }
+}
