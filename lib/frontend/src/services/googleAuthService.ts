@@ -129,7 +129,6 @@ export class GoogleAuthService {
    * Store authentication tokens in localStorage
    */
   private static storeAuthToken(token: string): void {
-    localStorage.setItem('authToken', token);
     localStorage.setItem('token', token);
   }
 
