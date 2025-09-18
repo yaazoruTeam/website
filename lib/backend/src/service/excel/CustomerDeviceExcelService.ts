@@ -15,7 +15,8 @@ import {
   ExcelRowData, 
   ProcessError, 
   ProcessingResult,
-  buildProcessingResult 
+  buildProcessingResult,
+  processDeviceCommon 
 } from './BaseExcelService'
 
 /**
@@ -57,7 +58,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
       const trx = await knex.transaction()
       try {
         const existCustomer = await processCustomer(sanitized, trx)
-        const existDevice = await processDevice(sanitized, trx)
+        const existDevice = await processDeviceCommon(sanitized.device, trx)
 
         let existingRelation = await db.CustomerDevice.findCustomerDevice({
           device_id: existDevice.device_id,
@@ -98,7 +99,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
     } else {
       // עיבוד מכשיר בלבד
       try {
-        await processDevice(sanitized)
+        await processDeviceCommon(sanitized.device)
         successCount++
         logger.debug(`Row ${rowIndex}: Device-only processed successfully`)
       } catch (err: unknown) {
@@ -154,24 +155,10 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.T
  * עיבוד נתוני מכשיר
  * @param sanitized - אובייקט המכיל נתוני מכשיר מסונכרנים
  * @param trx - טרנזקציה אופציונלית. אם מועברת, הפעולה תתבצע במסגרת הטרנזקציה הקיימת
+ * @deprecated - משתמש כעת בפונקציה המשותפת processDeviceCommon מ-BaseExcelService
  */
 const processDevice = async (sanitized: CustomerDeviceExcel.Model, trx?: Knex.Transaction) => {
-  let existDevice = await db.Device.findDevice({
-    SIM_number: sanitized.device.SIM_number,
-    IMEI_1: sanitized.device.IMEI_1,
-    device_number: sanitized.device.device_number,
-    serialNumber: sanitized.device.serialNumber,
-  })
-
-  if (!existDevice) {
-    logger.debug('Creating new device...')
-    existDevice = await db.Device.createDevice(sanitized.device, trx)
-    logger.debug('Device created successfully')
-  } else {
-    logger.debug('Device already exists, using existing record')
-  }
-
-  return existDevice
+  return await processDeviceCommon(sanitized.device, trx)
 }
 
 export { processCustomerDeviceExcelData, ExcelRowData, ProcessError }

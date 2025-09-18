@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { readExcelFile } from '@utils/excel'
 import { processCustomerDeviceExcelData, ExcelRowData } from '@service/excel/CustomerDeviceExcelService'
+import { processDeviceExcelData } from '@service/excel/DeviceExcelService'
 import * as fs from 'fs'
 import * as path from 'path'
 import { handleError } from './err'
@@ -104,4 +105,68 @@ const processCustomerDeviceExcel = async (
   }
 }
 
-export { processCustomerDeviceExcel }
+/**
+ * קונטרולר אחראי על עיבוד קבצי Excel של מכשירים בלבד
+ * מטפל בכל הלוגיקה הספציפית לעיבוד נתוני מכשירים
+ */
+const processDeviceExcel = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  let filePath: string | null = null
+
+  try {
+    // בדיקת העלאת קובץ
+    filePath = handleFileUpload(req, res)
+    if (!filePath) return // השגיאה כבר נשלחה בפונקציה
+
+    // קריאת הקובץ
+    const data = await readExcelFile(filePath)
+    logger.info('Device Excel file read successfully, rows:', data.length)
+
+    // עיבוד הנתונים הספציפיים למכשירים
+    const processingResults = await processDeviceExcelData(data as ExcelRowData[])
+    logger.info('Device data processed and saved to DB')
+    logger.info(`✅ Success: ${processingResults.successCount}/${processingResults.totalRows}`)
+    
+    if (processingResults.errorsCount > 0) {
+      logger.error(`❌ Errors: ${processingResults.errorsCount}`)
+    }
+
+    // מחיקת הקובץ הזמני אחרי העיבוד
+    cleanupTempFile(filePath)
+
+    // הכנת הודעת התגובה
+    const isSuccessful = processingResults.errorsCount === 0
+    const successMessage = isSuccessful 
+      ? 'עיבוד קובץ מכשירים הושלם בהצלחה! 🎉'
+      : `עיבוד קובץ מכשירים הושלם עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
+
+    res.status(200).json({
+      success: isSuccessful,
+      message: successMessage,
+      results: {
+        totalRows: processingResults.totalRows,
+        successCount: processingResults.successCount,
+        errorsCount: processingResults.errorsCount,
+        successRate: `${Math.round((processingResults.successCount / processingResults.totalRows) * 100)}%`
+      },
+      ...(processingResults.errorFilePath && {
+        errorFile: {
+          generated: true,
+          message: 'קובץ שגיאות נוצר לבדיקה מפורטת'
+        }
+      }),
+      sampleData: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
+    })
+  } catch (error: unknown) {
+    // מחיקת הקובץ הזמני במקרה של שגיאה
+    if (filePath) {
+      cleanupTempFile(filePath)
+    }
+    handleError(error, next)
+  }
+}
+
+export { processCustomerDeviceExcel, processDeviceExcel }
