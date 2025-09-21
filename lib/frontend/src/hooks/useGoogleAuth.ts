@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { GoogleAuthService, GoogleSignInResult } from '../services/googleAuthService';
 import { isRedirectInProgressError, isGoogleAuthError } from '../utils/googleAuthErrors';
 
@@ -22,7 +22,7 @@ export const useGoogleAuth = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const signIn = useCallback(async () => {
+  const signIn = async () => {
     if (isLoading) return;
     
     setIsLoading(true);
@@ -72,16 +72,12 @@ export const useGoogleAuth = ({
       };
       
       setError(userMessage);
-      
-      // Call error callback if provided
-      if (onError) {
-        onError(errorWithMessage);
-      }
+      if (onError) {onError(errorWithMessage);}
       
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, useRedirect, onSuccess, onError]);
+  };
 
   return {
     isLoading,
