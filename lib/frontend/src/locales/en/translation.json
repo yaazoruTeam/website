@@ -310,6 +310,7 @@
     "popupBlocked": "The popup window was blocked by the browser. Please allow popups for this site.",
     "networkRequestFailed": "Network error. Please check your internet connection.",
     "tooManyRequests": "Too many failed attempts. Please try again later.",
-    "generalError": "An error occurred during login"
+    "generalError": "An error occurred during login",
+    "or": "Or"
   }
 }
