@@ -101,7 +101,7 @@ export class GoogleAuthService {
   }> {
     try {
       if (!user.email) {
-        throw new UserNotFoundError(user.email || 'unknown');
+        throw new FirebaseAuthError(new Error('User email is required but not provided by Google'));
       }
 
       // Get Firebase ID Token for secure authentication
