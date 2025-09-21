@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { useGoogleRedirect } from "../../hooks/useGoogleRedirect";
 import { GoogleSignInResult } from "../../services/googleAuthService";
@@ -39,23 +38,26 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
     onError
   });
 
-  // Show error if there is one (always call useEffect)
-  useEffect(() => {
-    if (error && !onError) {
-      // Only auto-alert if no error handler provided
-      alert(error);
-    }
-  }, [error, onError]);
-
   return (
-    <StyledGoogleLoginButton
-      onClick={signIn}
-      disabled={disabled || isLoading}
-      isLoading={isLoading}
-      isDisabled={disabled}
-    >
-      {isLoading ? <LoadingContent /> : <GoogleContent />}
-    </StyledGoogleLoginButton>
+    <>
+      <StyledGoogleLoginButton
+        onClick={signIn}
+        disabled={disabled || isLoading}
+        isLoading={isLoading}
+        isDisabled={disabled}
+      >
+        {isLoading ? <LoadingContent /> : <GoogleContent />}
+      </StyledGoogleLoginButton>
+      {/* Inline error display if no custom error handler */}
+      {error && !onError && (
+        <CustomTypography
+          text={error}
+          variant="h4"
+          weight="regular"
+          sx={{ color: "red", marginTop: "8px" }}
+        />
+      )}
+    </>
   );
 };
 
