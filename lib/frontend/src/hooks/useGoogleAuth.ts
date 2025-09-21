@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { GoogleAuthService, GoogleSignInResult } from '../services/googleAuthService';
+import { isRedirectInProgressError, isGoogleAuthError } from '../utils/googleAuthErrors';
 
 interface UseGoogleAuthOptions {
   useRedirect?: boolean;
@@ -36,15 +37,34 @@ export const useGoogleAuth = ({
       }
       
     } catch (err: unknown) {
-      const authError = err as Error & { code?: string };
-      
       // Skip error handling for redirect (it's not really an error)
-      if (authError.message === 'REDIRECT_IN_PROGRESS') {
+      if (isRedirectInProgressError(err)) {
         return;
       }
       
-      console.error("❌ Error during Google sign-in:", authError);
+      console.error("❌ Error during Google sign-in:", err);
       
+      // Handle our custom Google Auth errors with proper typing
+      if (isGoogleAuthError(err)) {
+        const userMessage = GoogleAuthService.getErrorMessage({ 
+          code: err.code, 
+          message: err.message 
+        });
+        const errorWithMessage = { 
+          ...err, 
+          userMessage 
+        };
+        
+        setError(userMessage);
+        
+        if (onError) {
+          onError(errorWithMessage);
+        }
+        return;
+      }
+      
+      // Handle other errors
+      const authError = err as Error & { code?: string };
       const userMessage = GoogleAuthService.getErrorMessage(authError);
       const errorWithMessage = { 
         ...authError, 

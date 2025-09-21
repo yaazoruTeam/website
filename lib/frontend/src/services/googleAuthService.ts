@@ -7,6 +7,12 @@ import {
   BackendUser, 
   BackendAuthResult 
 } from "@model/GoogleAuth";
+import {
+  RedirectInProgressError,
+  UserNotFoundError,
+  FirebaseAuthError,
+  BackendAuthError
+} from "../utils/googleAuthErrors";
 
 // Re-export types for convenience with proper Firebase User typing
 export type { BackendUser, BackendAuthResult, GoogleAuthParams };
@@ -24,36 +30,46 @@ export class GoogleAuthService {
   static async signInWithGoogle(useRedirect = false): Promise<GoogleSignInResult> {
     let result;
     
-    if (useRedirect) {
-      // Better for mobile devices
-      await signInWithRedirect(auth, provider);
-      throw new Error('REDIRECT_IN_PROGRESS'); // Special case - redirect will handle the rest
-    } else {
-      // Better for desktop
-      result = await signInWithPopup(auth, provider);
+    try {
+      if (useRedirect) {
+        // Better for mobile devices
+        await signInWithRedirect(auth, provider);
+        throw new RedirectInProgressError(); // Special case - redirect will handle the rest
+      } else {
+        // Better for desktop
+        result = await signInWithPopup(auth, provider);
+      }
+
+      const firebaseUser = result.user;
+      
+      if (!firebaseUser) {
+        throw new FirebaseAuthError(new Error('No user returned from Google sign-in'));
+      }
+
+      console.log("✅ Google sign-in successful:", {
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        photoURL: firebaseUser.photoURL,
+        uid: firebaseUser.uid
+      });
+
+      // Authenticate with backend
+      const { backendResult, backendError } = await this.authenticateWithBackend(firebaseUser);
+
+      return {
+        firebaseUser,
+        backendResult,
+        backendError
+      };
+    } catch (error: unknown) {
+      // Re-throw our custom errors as-is
+      if (error instanceof RedirectInProgressError || error instanceof FirebaseAuthError) {
+        throw error;
+      }
+      
+      // Wrap Firebase auth errors in our custom error
+      throw new FirebaseAuthError(error as Error);
     }
-
-    const firebaseUser = result.user;
-    
-    if (!firebaseUser) {
-      throw new Error('No user returned from Google sign-in');
-    }
-
-    console.log("✅ Google sign-in successful:", {
-      name: firebaseUser.displayName,
-      email: firebaseUser.email,
-      photoURL: firebaseUser.photoURL,
-      uid: firebaseUser.uid
-    });
-
-    // Authenticate with backend
-    const { backendResult, backendError } = await this.authenticateWithBackend(firebaseUser);
-
-    return {
-      firebaseUser,
-      backendResult,
-      backendError
-    };
   }
 
   /**
@@ -85,7 +101,7 @@ export class GoogleAuthService {
   }> {
     try {
       if (!user.email) {
-        throw new Error('User email is required but not provided by Google');
+        throw new UserNotFoundError(user.email || 'unknown');
       }
 
       // Get Firebase ID Token for secure authentication
@@ -93,7 +109,7 @@ export class GoogleAuthService {
       const idToken = await user.getIdToken();
       
       if (!idToken) {
-        throw new Error('Failed to get Firebase ID Token');
+        throw new FirebaseAuthError(new Error('Failed to get Firebase ID Token'));
       }
 
       const backendResult = await googleAuth({
@@ -118,10 +134,17 @@ export class GoogleAuthService {
 
       return { backendResult };
       
-    } catch (backendError) {
-      console.error("❌ Backend authentication failed:", backendError);
+    } catch (error) {
+      console.error("❌ Backend authentication failed:", error);
       console.warn("⚠️ User authenticated with Google but backend sync failed");
-      return { backendError: backendError as Error };
+      
+      // Wrap backend errors appropriately
+      if (error instanceof UserNotFoundError || error instanceof FirebaseAuthError) {
+        return { backendError: error };
+      }
+      
+      const backendError = new BackendAuthError(error as Error & { status?: number });
+      return { backendError };
     }
   }
 
@@ -136,6 +159,17 @@ export class GoogleAuthService {
    * Get user-friendly error message for Firebase Auth errors
    */
   static getErrorMessage(error: { code?: string; message?: string; status?: number }): string {
+    // Handle our custom error codes first
+    switch (error.code) {
+      case 'REDIRECT_IN_PROGRESS':
+        return ''; // Not really an error
+      case 'USER_NOT_FOUND':
+        return t('googleAuthErrors.accessDenied');
+      case 'FIREBASE_AUTH_ERROR':
+      case 'BACKEND_AUTH_ERROR':
+        return error.message || t('googleAuthErrors.generalError');
+    }
+    
     // Handle backend authentication errors
     if (error.status === 403) {
       return t('googleAuthErrors.accessDenied');
