@@ -8,11 +8,16 @@ import {
   BackendAuthResult 
 } from "@model/GoogleAuth";
 import {
-  RedirectInProgressError,
   UserNotFoundError,
   FirebaseAuthError,
   BackendAuthError
 } from "../utils/googleAuthErrors";
+
+// Auth result types - clean Result pattern instead of throwing
+export type AuthFlowResult = 
+  | { type: 'SUCCESS'; data: GoogleSignInResult }
+  | { type: 'REDIRECT_IN_PROGRESS'; message: string }
+  | { type: 'ERROR'; error: Error };
 
 // Re-export types for convenience with proper Firebase User typing
 export type { BackendUser, BackendAuthResult, GoogleAuthParams };
@@ -27,23 +32,42 @@ export class GoogleAuthService {
   /**
    * Sign in with Google using popup (desktop) or redirect (mobile)
    */
-  static async signInWithGoogle(useRedirect = false): Promise<GoogleSignInResult> {
+  static async signInWithGoogle(useRedirect = false): Promise<AuthFlowResult> {
     let result;
     
     try {
       if (useRedirect) {
         // Better for mobile devices
         await signInWithRedirect(auth, provider);
-        throw new RedirectInProgressError(); // Special case - redirect will handle the rest
+        return { type: 'REDIRECT_IN_PROGRESS', message: 'Redirecting to Google sign-in...' };
       } else {
-        // Better for desktop
-        result = await signInWithPopup(auth, provider);
+        // Try popup first, fallback to redirect if blocked
+        try {
+          result = await signInWithPopup(auth, provider);
+        } catch (popupError: unknown) {
+          const error = popupError as Error & { code?: string };
+          console.log("🚫 Popup blocked or COOP policy error, falling back to redirect:", error.message);
+          
+          // Check if it's a popup blocker or COOP policy issue
+          if (error.code === 'auth/popup-blocked' || 
+              error.code === 'auth/cancelled-popup-request' ||
+              error.message?.includes('Cross-Origin-Opener-Policy') ||
+              error.message?.includes('window.closed')) {
+            
+            console.log("🔄 Redirecting to Google sign-in...");
+            await signInWithRedirect(auth, provider);
+            return { type: 'REDIRECT_IN_PROGRESS', message: 'Redirecting to Google sign-in...' };
+          }
+          
+          // Re-throw other errors
+          throw error;
+        }
       }
 
       const firebaseUser = result.user;
       
       if (!firebaseUser) {
-        throw new FirebaseAuthError(new Error('No user returned from Google sign-in'));
+        return { type: 'ERROR', error: new FirebaseAuthError(new Error('No user returned from Google sign-in')) };
       }
 
       console.log("✅ Google sign-in successful:", {
@@ -57,18 +81,21 @@ export class GoogleAuthService {
       const { backendResult, backendError } = await this.authenticateWithBackend(firebaseUser);
 
       return {
-        firebaseUser,
-        backendResult,
-        backendError
+        type: 'SUCCESS',
+        data: {
+          firebaseUser,
+          backendResult,
+          backendError
+        }
       };
     } catch (error: unknown) {
-      // Re-throw our custom errors as-is
-      if (error instanceof RedirectInProgressError || error instanceof FirebaseAuthError) {
-        throw error;
+      // Handle Firebase auth errors
+      if (error instanceof FirebaseAuthError) {
+        return { type: 'ERROR', error };
       }
       
       // Wrap Firebase auth errors in our custom error
-      throw new FirebaseAuthError(error as Error);
+      return { type: 'ERROR', error: new FirebaseAuthError(error as Error) };
     }
   }
 
@@ -161,8 +188,6 @@ export class GoogleAuthService {
   static getErrorMessage(error: { code?: string; message?: string; status?: number }): string {
     // Handle our custom error codes first
     switch (error.code) {
-      case 'REDIRECT_IN_PROGRESS':
-        return ''; // Not really an error
       case 'USER_NOT_FOUND':
         return t('googleAuthErrors.accessDenied');
       case 'FIREBASE_AUTH_ERROR':

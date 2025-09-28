@@ -14,17 +14,6 @@ export abstract class GoogleAuthError extends Error {
 }
 
 /**
- * Error thrown when redirect is in progress (not really an error)
- */
-export class RedirectInProgressError extends GoogleAuthError {
-  readonly code = 'REDIRECT_IN_PROGRESS';
-  
-  constructor() {
-    super('Redirect authentication is in progress');
-  }
-}
-
-/**
  * Error thrown when user is not found in our database
  */
 export class UserNotFoundError extends GoogleAuthError {
@@ -68,13 +57,6 @@ export class BackendAuthError extends GoogleAuthError {
  */
 export function isGoogleAuthError(error: unknown): error is GoogleAuthError {
   return error instanceof GoogleAuthError;
-}
-
-/**
- * Type guard to check if error is RedirectInProgressError
- */
-export function isRedirectInProgressError(error: unknown): error is RedirectInProgressError {
-  return error instanceof RedirectInProgressError;
 }
 
 /**
