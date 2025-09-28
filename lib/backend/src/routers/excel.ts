@@ -5,7 +5,6 @@ import * as excelController from '@controller/excel'
 
 const excelRouter = Router()
 
-// נתיב עם authentication
 excelRouter.post(
   '/customerDevice', 
   hasRole('admin'), 
@@ -13,11 +12,11 @@ excelRouter.post(
   excelController.processCustomerDeviceExcel
 )
 
-// נתיב זמני לבדיקה ללא authentication
 excelRouter.post(
-  '/test-customerDevice', 
+  '/device', 
+  hasRole('admin'), 
   uploadExcel.single('file'), 
-  excelController.processCustomerDeviceExcel
+  excelController.processDeviceExcel
 )
 
 export default excelRouter
