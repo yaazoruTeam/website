@@ -49,7 +49,7 @@ export const getCustomersByDateRange = async (
   const endDateStr = endDate.toISOString().split('T')[0]
   
   return safeGetPaginated<Customer.Model>(
-    `${ENDPOINT}/dates?startDate=${startDateStr}&endDate=${endDateStr}`,
+    `${ENDPOINT}/dates/${startDateStr}/${endDateStr}`,
     page
   )
 }

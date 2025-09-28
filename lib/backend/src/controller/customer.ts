@@ -160,7 +160,7 @@ const getCustomersByDateRange = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { startDate, endDate } = req.query
+    const { startDate, endDate } = req.params
     const page = parseInt(req.query.page as string, 10) || 1
     const offset = (page - 1) * limit
 
@@ -198,7 +198,7 @@ const getCustomersByDateRange = async (
       total,
     })
   } catch (error: unknown) {
-    logger.error('Error in getCustomersByDateRange', { startDate: req.query.startDate, endDate: req.query.endDate, error: error instanceof Error ? error.message : String(error) });
+    logger.error('Error in getCustomersByDateRange', { startDate: req.params.startDate, endDate: req.params.endDate, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
