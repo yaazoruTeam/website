@@ -24,6 +24,10 @@ const handleTokenRefresh = async (): Promise<string> => {
     return newToken
   } catch (error) {
     console.error('Error refreshing token', error)
+    // מחיקת הטוקן הלא תקין מ-localStorage
+    localStorage.removeItem('token')
+    // הפניה לדף ההתחברות
+    window.location.href = '/login'
     throw error
   }
 }

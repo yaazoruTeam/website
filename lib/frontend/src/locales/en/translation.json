@@ -214,7 +214,11 @@
   "clear": "Clear",
   "noCustomersFoundDate": "No customers found in the desired date range...",
   "noCustomersFoundStatus": "No customers found with the selected status...",
+  "noCustomersFoundCity": "No customers found in the selected city...",
   "noCustomersFoundGeneral": "No customers found...",
+  "noDevicesFoundDate": "No devices found in the desired date range...",
+  "noDevicesFoundStatus": "No devices found with the selected status...",
+  "noDevicesFoundGeneral": "No devices found...",
   "months": {
     "january": "January",
     "february": "February",

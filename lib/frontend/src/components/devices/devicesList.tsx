@@ -48,7 +48,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     // { label: t('mehalchaNumber'), key: 'mehalcha_number' },
     { label: t('serialNumber'), key: 'serialNumber' },
     // { label: t('openingDate'), key: 'opening_date' },
-    { label: t('releaseDate'), key: 'releaseDate' },
+    // { label: t('releaseDate'), key: 'releaseDate' },
     { label: t('purchaseDate'), key: 'purchaseDate' },
     { label: t('plan'), key: 'plan' },
     { label: '', key: 'status' },
@@ -59,7 +59,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     device_number: device.device_number,
     // mehalcha_number: device.mehalcha_number,
     serialNumber: device.serialNumber || '-',
-    releaseDate: `${formatDateToString(new Date(device.releaseDate))}`,
+    // releaseDate: `${formatDateToString(new Date(device.releaseDate))}`,
     purchaseDate: device.purchaseDate != null ? `${formatDateToString(new Date(device.purchaseDate))}` : '--',
     plan: device.plan,
     //במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר לבדוק את זה to do
@@ -192,6 +192,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
             onPageChange,
           }}
           alignLastColumnLeft={true}
+          dataType="devices"
         />
       </Box>
     </Box>

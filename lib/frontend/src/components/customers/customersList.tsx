@@ -4,10 +4,10 @@ import AddCustomer from './AddCustomer'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import CustomTypography from '../designComponent/Typography'
-import NoResultsMessage from '../designComponent/NoResultsMessage'
 import { useTranslation } from 'react-i18next'
 import { Customer } from '@model'
 import CustomTable, { TableRowData } from '../designComponent/CustomTable'
+import { MessageType } from '../designComponent/NoDataMessage'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
 import { formatDateToString } from '../designComponent/FormatDate'
@@ -20,6 +20,7 @@ import {
   CustomersListFilterBox,
   CustomersListTable,
 } from '../designComponent/styles/customersStyles'
+import NoResultsMessage from '../designComponent/NoResultsMessage'
 
 type FilterType = 
   | { type: 'city'; value: string }
@@ -43,7 +44,7 @@ interface CustomersListProps {
   onPageChange: (page: number) => void
   onFilterChange: (filter: FilterType | null) => void
   noResults?: boolean
-  noResultsType?: string
+  noResultsType?: MessageType
 }
 
 const CustomersList: React.FC<CustomersListProps> = ({
@@ -62,14 +63,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
-
-  const handleCloseNoResults = () => {
-    // Clear filters and refresh the list
-    onFilterChange(null)
-    onPageChange(1)
-    setResetTrigger(true)
-    setTimeout(() => setResetTrigger(false), 0)
-  }
 
   const handleResetFilters = () => {
     onFilterChange(null)
@@ -169,7 +162,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
             {noResults ? (
               <NoResultsMessage
                 messageType={noResultsType as 'date' | 'status' | 'general'}
-                onClose={handleCloseNoResults}
               />
             ) : (
               <CustomTable

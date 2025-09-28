@@ -63,7 +63,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
         ...data,
         status: 'active',
         purchaseDate: null,
-        releaseDate: new Date(),
+        registrationDate: new Date(),
         plan: '', //?? מאיפה מקבלים את זה to do
       }
 

@@ -204,7 +204,11 @@
   "clear": "נקה",
   "noCustomersFoundDate": "לא נמצאו לקוחות בטווח תאריכים הרצוי...",
   "noCustomersFoundStatus": "לא נמצאו לקוחות עם הסטטוס הנבחר...",
+  "noCustomersFoundCity": "לא נמצאו לקוחות בעיר הנבחרת...",
   "noCustomersFoundGeneral": "לא נמצאו לקוחות...",
+  "noDevicesFoundDate": "לא נמצאו מכשירים בטווח תאריכים הרצוי...",
+  "noDevicesFoundStatus": "לא נמצאו מכשירים עם הסטטוס הנבחר...",
+  "noDevicesFoundGeneral": "לא נמצאו מכשירים...",
   "months": {
     "january": "ינואר",
     "february": "פברואר",
