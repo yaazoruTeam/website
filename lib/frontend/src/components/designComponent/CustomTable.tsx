@@ -5,6 +5,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../styles/theme'
 import CustomTypography from './Typography'
+import NoDataMessage, { DataType, MessageType } from './NoDataMessage'
 
 export type TableRowData = Record<string, React.ReactNode>
 
@@ -16,9 +17,23 @@ interface CustomTableProps {
   alignLastColumnLeft?: boolean
   expandedRowIndex?: number | null
   renderExpandedRow?: (rowData: TableRowData, rowIndex: number) => React.ReactNode
+  dataType?: DataType
+  noResults?: boolean
+  noResultsType?: MessageType
 }
 
-const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, showSummary, alignLastColumnLeft, expandedRowIndex, renderExpandedRow }) => {
+const CustomTable: React.FC<CustomTableProps> = ({ 
+  columns, 
+  data, 
+  onRowClick, 
+  showSummary, 
+  alignLastColumnLeft, 
+  expandedRowIndex, 
+  renderExpandedRow,
+  dataType = 'general',
+  noResults = false,
+  noResultsType = 'general',
+}) => {
   const { t } = useTranslation()
 
   return (
@@ -122,11 +137,14 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onRowClick, sh
             })
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                sx={{ textAlign: 'center', padding: '10px 20px' }}
-              >
-                {t('noDataToDisplay')}
+              <TableCell colSpan={columns.length} sx={{ padding: 0, border: 'none' }}>
+                  <NoDataMessage 
+                    dataType={dataType}
+                    messageType={noResults ? noResultsType : 'general'}
+                    showCloseButton={false}
+                    minHeight="180px"
+                    compact={true}
+                  />
               </TableCell>
             </TableRow>
           )}

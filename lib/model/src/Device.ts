@@ -9,14 +9,18 @@ interface Model {
   model: string
   status: string // active, inactive, blocked, lock in imei
   serialNumber: string //במסונג?
-  releaseDate: Date  //תאריך הקמה
+  registrationDate: Date  //תאריך רישום
   purchaseDate: Date | null //תאריך רכישה
   plan: string //מסלול
   //תאריך רישום המכשיר?? כאן או בטבלה של customerDevice
 }
 
 function sanitize(device: Model, hasId: boolean): Model {
+  console.log('Sanitizing Device:', device.IMEI_1, 'hasId:', hasId);
+  
   if (hasId && !device.device_id) {
+    console.log('Device missing device_id');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "device_id".',
@@ -24,6 +28,8 @@ function sanitize(device: Model, hasId: boolean): Model {
     throw error
   }
   if (!device.SIM_number) {
+    console.log('Device missing SIM_number');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "SIM_number".',
@@ -31,6 +37,8 @@ function sanitize(device: Model, hasId: boolean): Model {
     throw error
   }
   if (!device.IMEI_1) {
+    console.log('Device missing IMEI_1');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "IMEI_1".',
@@ -38,6 +46,8 @@ function sanitize(device: Model, hasId: boolean): Model {
     throw error
   }
   if (!device.model) {
+    console.log('Device missing model');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "model".',
@@ -45,6 +55,8 @@ function sanitize(device: Model, hasId: boolean): Model {
     throw error
   }
   if (!device.device_number) {
+    console.log('Device missing device_number');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "device_number".',
@@ -52,6 +64,8 @@ function sanitize(device: Model, hasId: boolean): Model {
     throw error
   }
   if (!device.serialNumber) {
+    console.log('Device missing serialNumber');
+    
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "serialNumber".',
@@ -68,7 +82,7 @@ function sanitize(device: Model, hasId: boolean): Model {
     status: device.status || 'active',
     serialNumber: device.serialNumber,
     purchaseDate: device.purchaseDate || null,
-    releaseDate: device.releaseDate || new Date(Date.now()),
+    registrationDate: device.registrationDate || new Date(Date.now()),
     plan: device.plan,
   }
 

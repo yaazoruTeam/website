@@ -1,8 +1,27 @@
 import * as dotenv from 'dotenv'
 import path from 'path'
+import fs from 'fs'
 
-// Load environment variables from the correct path
-dotenv.config({ path: path.join(__dirname, '../../../.env') })
+// Function to find project root by looking for .env file
+const findProjectRoot = (startPath: string = __dirname): string => {
+    let currentPath = startPath
+    
+    while (currentPath !== path.dirname(currentPath)) { // Until we reach filesystem root
+        const envPath = path.join(currentPath, '.env')
+        if (fs.existsSync(envPath)) {
+            return currentPath
+        }
+        currentPath = path.dirname(currentPath)
+    }
+    
+    // Fallback to process.cwd() if .env not found
+    return process.cwd()
+}
+
+// Load environment variables from project root
+const projectRoot = findProjectRoot()
+const envPath = path.join(projectRoot, '.env')
+dotenv.config({ path: envPath })
 
 // Validate required environment variables
 const requiredEnvVars = {

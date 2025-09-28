@@ -13,10 +13,31 @@ const Customers: React.FC = () => {
   const [filterType, setFilterType] = useState<FilterType | null>(null)
   const limit = import.meta.env.VITE_LIMIT ? parseInt(import.meta.env.VITE_LIMIT) : 10
 
-  const { customers, total, isLoading, error, noResults, noResultsType } = useFetchCustomers({
+  const { customers, total, isLoading, error } = useFetchCustomers({
     page,
     filterType: filterType ?? undefined,
   })
+
+  // קביעת סוג ההודעה בהתבסס על הפילטר הפעיל
+  const getNoResultsType = (): 'date' | 'status' | 'search' | 'city' | 'filter' | 'general' => {
+    if (!filterType) return 'general'
+    
+    switch (filterType.type) {
+      case 'date':
+        return 'date'
+      case 'status':
+        return 'status'
+      case 'search':
+        return 'search'
+      case 'city':
+        return 'city'
+      default:
+        return 'general'
+    }
+  }
+
+  // בדיקה האם יש פילטר פעיל אבל אין תוצאות
+  const hasNoResults = filterType !== null && customers.length === 0 && !isLoading
 
   if (isLoading) return <div>Loading customers...</div>
 
@@ -31,8 +52,8 @@ const Customers: React.FC = () => {
         limit={limit}
         onPageChange={setPage}
         onFilterChange={setFilterType}
-        noResults={noResults}
-        noResultsType={noResultsType}
+        noResults={hasNoResults}
+        noResultsType={getNoResultsType()}
       />
     </>
   )

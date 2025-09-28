@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
-import { ProcessError } from '@service/ReadExcelDevicesForDonors'
+import { ProcessError } from '@service/excel/BaseExcelService'
 import logger from './logger'
 
 const readExcelFile = (filePath: string) => {
@@ -44,7 +44,10 @@ const readExcelFile = (filePath: string) => {
   }
 }
 
-const writeErrorsToExcel = async (errors: ProcessError[]): Promise<string | null> => {
+const writeErrorsToExcel = async (
+  errors: ProcessError[], 
+  routeName: string = 'general'
+): Promise<string | null> => {
   try {
     // אם אין שגיאות, לא צריך ליצור קובץ
     if (!errors || errors.length === 0) {
@@ -52,11 +55,7 @@ const writeErrorsToExcel = async (errors: ProcessError[]): Promise<string | null
       return null
     }
 
-    const ws = XLSX.utils.json_to_sheet(errors)
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Errors')
-
-    // יצירת נתיב בטוח לשמירת קובץ השגיאות
+    // יצירת נתיב לתיקיית uploads
     const uploadsDir = path.resolve(__dirname, '../../uploads')
 
     // יצירת התיקייה אם היא לא קיימת
@@ -65,9 +64,46 @@ const writeErrorsToExcel = async (errors: ProcessError[]): Promise<string | null
       logger.debug(`📁 Created uploads directory: ${uploadsDir}`)
     }
 
-    // יצירת שם קובץ ייחודי עם timestamp
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-    const errorFilePath = path.join(uploadsDir, `errors_${timestamp}.xlsx`)
+    // מחיקת קבצי שגיאות ישנים עבור אותו route
+    const existingErrorFiles = fs.readdirSync(uploadsDir)
+      .filter(file => file.startsWith(`errors_${routeName}_`))
+    
+    existingErrorFiles.forEach(file => {
+      try {
+        fs.unlinkSync(path.join(uploadsDir, file))
+        logger.info(`🗑️ Deleted old error file: ${file}`)
+      } catch (err) {
+        logger.warn(`Could not delete old error file: ${file}`)
+      }
+    })
+
+    // יצירת מערך נתונים גמיש לקובץ השגיאות
+    const errorRows = errors.map(error => {
+      const flatData: any = {
+        'מספר שורה': error.row,
+        'סוג שגיאה': error.error,
+      }
+
+      // הוספת כל השדות מ-data באופן דינמי
+      if (error.data && typeof error.data === 'object') {
+        Object.keys(error.data).forEach(key => {
+          const value = error.data[key]
+          // המרה לטקסט כדי שיוצג נכון באקסל
+          flatData[key] = value !== null && value !== undefined ? String(value) : ''
+        })
+      }
+      
+      return flatData
+    })
+
+    const ws = XLSX.utils.json_to_sheet(errorRows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Errors')
+
+    // יצירת שם קובץ עם שם ה-route ותאריך
+    const timestamp = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    const timeStamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const errorFilePath = path.join(uploadsDir, `errors_${routeName}_${timestamp}_${timeStamp}.xlsx`)
 
     XLSX.writeFile(wb, errorFilePath)
     logger.error(`❌ ${errors.length} errors written to: ${errorFilePath}`)
