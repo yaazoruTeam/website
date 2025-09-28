@@ -128,6 +128,7 @@ function App() {
                       padding: '20px',
                       overflow: 'auto',
                       background: colors.neutral75,
+                      marginRight: '130px', // רוחב ה-SideNav
                     }}
                   >
                     <AppLayout>
