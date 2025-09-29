@@ -305,5 +305,21 @@
   "plan": "Plan",
   "registrationDateDevice": "Registration Date Device",
   "releaseDate": "Release Date",
-  "noPreviousComments": "No previous comments"
+  "noPreviousComments": "No previous comments",
+  "simReset": "SIM Reset",
+  "simResetDescription": "This page allows you to perform a comprehensive SIM reset using only the SIM number. This operation will delete the existing device and recreate it.",
+  "enterSimNumber": "Enter SIM number",
+  "enterDeviceName": "Enter new device name",
+  "newDeviceName": "New Device Name",
+  "resetSim": "Reset SIM",
+  "processing": "Processing...",
+  "areYouSureSimReset": "Are you sure you want to reset SIM for",
+  "warningSimReset": "Warning: This action will delete the existing device and recreate it. This operation is irreversible!",
+  "simResetSuccess": "SIM reset completed successfully!",
+  "simResetFailed": "SIM reset failed",
+  "simResetError": "Error resetting SIM",
+  "allFieldsRequired": "All fields are required",
+  "simNumberRequired": "SIM number is required",
+  "simNumberOnlyNumbers": "SIM number must contain only numbers",
+  "deviceNameMinLength": "Device name must contain at least 2 characters"
 }
