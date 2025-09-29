@@ -8,6 +8,7 @@ import SideNav from './components/layout/SideNav'
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
 import Devices from './components/devices/devices'
+import ResetSim from './components/devices/ResetSim'
 import Header from './components/layout/Header'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
@@ -34,6 +35,8 @@ import permissionsIconWhite from '../src/assets/permissions-white.svg'
 import permissionsIconBlue from '../src/assets/permissions-blue.svg'
 import switchboardIconWhite from '../src/assets/switchboard-white.svg'
 import switchboardIconBlue from '../src/assets/switchboard-blue.svg'
+import resetSimIconWhite from '../src/assets/resetSim-white.svg'
+import resetSimIconBlue from '../src/assets/resetSim-blue.svg'
 
 import { setupAxiosInterceptors } from './api/axiosInterceptor'
 import { colors, theme } from './styles/theme'
@@ -91,6 +94,12 @@ function App() {
                         text: t('devices'),
                       },
                       {
+                        iconWhite: resetSimIconWhite,
+                        iconBlue: resetSimIconBlue,
+                        link: '../reset-sim',
+                        text: t('resetSim'),
+                      },
+                      {
                         iconWhite: ordersIconWhite,
                         iconBlue: ordersIconBlue,
                         link: '../orders',
@@ -138,6 +147,7 @@ function App() {
                         <Route path='/customer/add' element={<AddCustomer />} />
                         <Route path='/customer/card/:id' element={<CardCustomer />} />
                         <Route path='/devices' element={<Devices />} />
+                        <Route path='/reset-sim' element={<ResetSim />} />
                         <Route path='/device/card/:id' element={<DeviceCard />} />
                         <Route path='/orders' element={<Orders />} />
                         <Route path='/branches' element={<Branches />} />
