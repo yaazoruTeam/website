@@ -3,16 +3,20 @@ import * as db from '@db/index'
 import { Device, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
+import logger from '@/src/utils/logger'
 
 const limit = config.database.limit
 
 const createDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    logger.info('Creating a new device')
     Device.sanitizeBodyExisting(req)
     const deviceData = req.body
     const sanitized = Device.sanitize(deviceData, false)
     await existingDevice(sanitized, false)
+    logger.debug(`Sanitized device data: ${JSON.stringify(sanitized)}`)
     const device = await db.Device.createDevice(sanitized)
+    logger.info(`Device created with ID: ${device.device_id}`)
     res.status(201).json(device)
   } catch (error: unknown) {
     handleError(error, next)
