@@ -204,7 +204,11 @@
   "clear": "נקה",
   "noCustomersFoundDate": "לא נמצאו לקוחות בטווח תאריכים הרצוי...",
   "noCustomersFoundStatus": "לא נמצאו לקוחות עם הסטטוס הנבחר...",
+  "noCustomersFoundCity": "לא נמצאו לקוחות בעיר הנבחרת...",
   "noCustomersFoundGeneral": "לא נמצאו לקוחות...",
+  "noDevicesFoundDate": "לא נמצאו מכשירים בטווח תאריכים הרצוי...",
+  "noDevicesFoundStatus": "לא נמצאו מכשירים עם הסטטוס הנבחר...",
+  "noDevicesFoundGeneral": "לא נמצאו מכשירים...",
   "months": {
     "january": "ינואר",
     "february": "פברואר",
@@ -313,5 +317,6 @@
     "tooManyRequests": "יותר מדי ניסיונות כושלים. אנא נסה שוב מאוחר יותר.",
     "generalError": "אירעה שגיאה במהלך ההתחברות",
     "or": "או"
-  }
+  },
+  "No previous comments": "אין הערות קודמות"
 }

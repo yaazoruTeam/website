@@ -1,17 +1,26 @@
 import React, { useState } from 'react'
-import { Box, useMediaQuery } from '@mui/material'
+import { useMediaQuery } from '@mui/material'
+import AddCustomer from './AddCustomer'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import CustomTypography from '../designComponent/Typography'
-import NoResultsMessage from '../designComponent/NoResultsMessage'
 import { useTranslation } from 'react-i18next'
 import { Customer } from '@model'
 import CustomTable, { TableRowData } from '../designComponent/CustomTable'
+import { MessageType } from '../designComponent/NoDataMessage'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
 import { formatDateToString } from '../designComponent/FormatDate'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
+import {
+  CustomersListContainer,
+  CustomersListHeader,
+  CustomersListFilters,
+  CustomersListFilterBox,
+  CustomersListTable,
+} from '../designComponent/styles/customersStyles'
+import NoResultsMessage from '../designComponent/NoResultsMessage'
 
 type FilterType = 
   | { type: 'city'; value: string }
@@ -35,7 +44,7 @@ interface CustomersListProps {
   onPageChange: (page: number) => void
   onFilterChange: (filter: FilterType | null) => void
   noResults?: boolean
-  noResultsType?: string
+  noResultsType?: MessageType
 }
 
 const CustomersList: React.FC<CustomersListProps> = ({
@@ -50,17 +59,10 @@ const CustomersList: React.FC<CustomersListProps> = ({
 }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
+  const [showAddCustomer, setShowAddCustomer] = useState(false)
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
-
-  const handleCloseNoResults = () => {
-    // Clear filters and refresh the list
-    onFilterChange(null)
-    onPageChange(1)
-    setResetTrigger(true)
-    setTimeout(() => setResetTrigger(false), 0)
-  }
 
   const handleResetFilters = () => {
     onFilterChange(null)
@@ -69,9 +71,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
     setTimeout(() => setResetTrigger(false), 0)
   }
 
-  const handleAddCustomer = () => {
-    navigate('/customer/add')
-  }
   const columns = [
     { label: t('customerName'), key: 'customer_name' },
     { label: t('registrationDate'), key: 'registration_date' },
@@ -99,124 +98,90 @@ const CustomersList: React.FC<CustomersListProps> = ({
   }
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '50%',
-        borderRadius: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        gap: 4,
-      }}
-    >
-      <>
-        <Box
-          sx={{
-            direction: 'rtl',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <CustomTypography
-            text={t('customerManagement')}
-            variant='h1'
-            weight='bold'
-            color={colors.blue900}
-          />
-          <CustomButton
-            label={t('addingNewCustomer')}
-            size={isMobile ? 'small' : 'large'}
-            state='default'
-            buttonType='first'
-            onClick={() => handleAddCustomer()}
-          />
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            direction: 'rtl',
-            marginTop: 2,
-            display: 'flex',
-            gap: 2,
-            justifyContent: 'flex-start',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}
-        >
-          <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-            <CustomSearchSelect
-              searchType='city'
-              placeholder={t('CustomerCity')}
-              onCitySelect={(city: string) => {
-                onFilterChange(city ? { type: 'city', value: city } : null)
-                onPageChange(1)
-              }}
-              resetTrigger={resetTrigger}
+    <CustomersListContainer>
+      {showAddCustomer ? (
+        <AddCustomer />
+      ) : (
+        <>
+          <CustomersListHeader>
+            <CustomTypography
+              text={t('customerManagement')}
+              variant='h1'
+              weight='bold'
+              color={colors.blue900}
             />
-          </Box>
-          <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-            <CustomSearchSelect
-              searchType='date'
-              placeholder={t('DateInRange')}
-              onDateRangeSelect={(start: Date, end: Date) => {
-                onFilterChange({ type: 'date', value: { start, end } })
-                onPageChange(1)
-              }}
-              resetTrigger={resetTrigger}
+            <CustomButton
+              label={t('addingNewCustomer')}
+              size={isMobile ? 'small' : 'large'}
+              state='default'
+              buttonType='first'
+              onClick={() => setShowAddCustomer(true)}
             />
-          </Box>
-          <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-            <CustomSearchSelect
-              searchType='status'
-              placeholder={t('customerStatus')}
-              onStatusSelect={(status: 'active' | 'inactive') => {
-                onFilterChange(status ? { type: 'status', value: status } : null)
-                onPageChange(1)
-              }}
-              resetTrigger={resetTrigger}
-            />
-          </Box>
-          <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-            <FilterResetButton onReset={handleResetFilters} />
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            gap: 3,
-          }}
-        >
-          {noResults ? (
-            <NoResultsMessage
-              messageType={noResultsType as 'date' | 'status' | 'general'}
-              onClose={handleCloseNoResults}
-            />
-          ) : (
-            <CustomTable
-              columns={columns}
-              data={tableData}
-              onRowClick={onClickCustomer}
-              showSummary={{
-                total,
-                page,
-                totalPages,
-                limit,
-                onPageChange,
-              }}
-              alignLastColumnLeft={true}
-            />
-          )}
-        </Box>
-      </>
-    </Box>
+          </CustomersListHeader>
+
+          <CustomersListFilters>
+            <CustomersListFilterBox>
+              <CustomSearchSelect
+                searchType='city'
+                placeholder={t('CustomerCity')}
+                onCitySelect={(city: string) => {
+                  onFilterChange(city ? { type: 'city', value: city } : null)
+                  onPageChange(1)
+                }}
+                resetTrigger={resetTrigger}
+              />
+            </CustomersListFilterBox>
+            <CustomersListFilterBox>
+              <CustomSearchSelect
+                searchType='date'
+                placeholder={t('DateInRange')}
+                onDateRangeSelect={(start: Date, end: Date) => {
+                  onFilterChange({ type: 'date', value: { start, end } })
+                  onPageChange(1)
+                }}
+                resetTrigger={resetTrigger}
+              />
+            </CustomersListFilterBox>
+            <CustomersListFilterBox>
+              <CustomSearchSelect
+                searchType='status'
+                placeholder={t('customerStatus')}
+                onStatusSelect={(status: 'active' | 'inactive') => {
+                  onFilterChange(status ? { type: 'status', value: status } : null)
+                  onPageChange(1)
+                }}
+                resetTrigger={resetTrigger}
+              />
+            </CustomersListFilterBox>
+            <CustomersListFilterBox>
+              <FilterResetButton onReset={handleResetFilters} />
+            </CustomersListFilterBox>
+          </CustomersListFilters>
+
+          <CustomersListTable>
+            {noResults ? (
+              <NoResultsMessage
+                messageType={noResultsType as 'date' | 'status' | 'general'}
+              />
+            ) : (
+              <CustomTable
+                columns={columns}
+                data={tableData}
+                onRowClick={onClickCustomer}
+                showSummary={{
+                  total,
+                  page,
+                  totalPages,
+                  limit,
+                  onPageChange,
+                }}
+                alignLastColumnLeft={true}
+              />
+            )}
+          </CustomersListTable>
+        </>
+      )}
+    </CustomersListContainer>
   )
 }
 

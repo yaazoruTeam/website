@@ -7,7 +7,11 @@ interface Model {
 }
 
 const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
+  console.log('Sanitizing CustomerDeviceExcel:', customerDeviceExcel, 'isCustomer:', isCustomer);
+  
   const parseDate = (date: number | string): Date => {
+    console.log('Parsing date:', date);
+    
     if (typeof date === 'number') {
       const excelEpoch = new Date(1900, 0, 1)
       return new Date(excelEpoch.getTime() + (date - 2) * 24 * 60 * 60 * 1000)
@@ -35,9 +39,7 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
           ? customerDeviceExcel.receivedAt
           : parseDate(customerDeviceExcel.receivedAt)
       customerDeviceExcel.device.purchaseDate =
-        customerDeviceExcel.device.purchaseDate instanceof Date
-          ? customerDeviceExcel.device.purchaseDate
-          : parseDate(String(customerDeviceExcel.device.purchaseDate))
+        customerDeviceExcel.receivedAt
       if (!customerDeviceExcel.customer) {
         const error: HttpError.Model = {
           status: 400,
@@ -59,7 +61,7 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
       }
     }
   } catch (error: unknown) {
-    console.error('Sanitize failed:', error instanceof Error ? error.message : 'Unknown error')
+    console.error('Sanitize failed:', error instanceof Error ? JSON.stringify(error, null, 2) : 'Unknown error')
     throw error
   }
 }
