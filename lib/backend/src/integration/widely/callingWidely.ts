@@ -26,7 +26,7 @@ const callingWidely = async (
         rejectUnauthorized: config.env === 'development' ? false : true, // Disable SSL validation only in development
       }),
     })
-    logger.debug(`Response Data: ${JSON.stringify(response.data)}`)
+    logger.debug(`Response Data received. Keys: ${Object.keys(response.data).join(', ')}`)
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
