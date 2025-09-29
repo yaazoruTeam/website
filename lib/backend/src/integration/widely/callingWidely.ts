@@ -17,7 +17,7 @@ const callingWidely = async (
   }
 
   try {
-    logger.debug(`Request Body: ${JSON.stringify(requestBody)}`)
+    logger.debug(`Request Body: ${JSON.stringify({ func_name, data, auth: '[REDACTED]' })}`)
     const response = await axios.post(config.widely.urlAccountAction, requestBody, {
       headers: {
         'Content-Type': 'application/json',
