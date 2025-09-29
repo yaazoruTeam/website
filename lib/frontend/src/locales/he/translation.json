@@ -306,5 +306,16 @@
   "plan": "מסלול",
   "registrationDateDevice": "תאריך רישום מכשיר",
   "releaseDate": "תאריך הקמה",
-  "No previous comments": "אין הערות קודמות"
+  "No previous comments": "אין הערות קודמות",
+  "resetSimPage": "עמוד איפוס סים",
+  "resetSimPageDescription": "בצעו איפוס מקיף או איפוס חלקי של מכשיר סים",
+  "deviceInformation": "מידע מכשיר",
+  "simNumber": "מספר סים",
+  "enterSimNumber": "הזן מספר סים",
+  "endpointId": "מזהה נקודת קצה",
+  "enterEndpointId": "הזן מזהה נקודת קצה",
+  "newDeviceName": "שם מכשיר חדש",
+  "enterNewDeviceNamePlaceholder": "הזן שם למכשיר החדש",
+  "resetActions": "פעולות איפוס",
+  "resetSim": "איפוס סים"
 }

@@ -305,5 +305,16 @@
   "plan": "Plan",
   "registrationDateDevice": "Registration Date Device",
   "releaseDate": "Release Date",
-  "noPreviousComments": "No previous comments"
+  "noPreviousComments": "No previous comments",
+  "resetSimPage": "Reset SIM Page",
+  "resetSimPageDescription": "Perform comprehensive or partial reset of a SIM device",
+  "deviceInformation": "Device Information",
+  "simNumber": "SIM Number",
+  "enterSimNumber": "Enter SIM number",
+  "endpointId": "Endpoint ID",
+  "enterEndpointId": "Enter endpoint ID",
+  "newDeviceName": "New Device Name",
+  "enterNewDeviceNamePlaceholder": "Enter name for the new device",
+  "resetActions": "Reset Actions",
+  "resetSim": "Reset SIM"
 }
