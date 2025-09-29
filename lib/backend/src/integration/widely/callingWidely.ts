@@ -17,7 +17,7 @@ const callingWidely = async (
   }
 
   try {
-    logger.debug(`Request Body: ${JSON.stringify(requestBody)}`)
+    logger.debug(`Request Body: ${JSON.stringify({ func_name, data, auth: '[REDACTED]' })}`)
     const response = await axios.post(config.widely.urlAccountAction, requestBody, {
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ const callingWidely = async (
         rejectUnauthorized: config.env === 'development' ? false : true, // Disable SSL validation only in development
       }),
     })
-    logger.debug(`Response Data: ${JSON.stringify(response.data)}`)
+    logger.debug(`Response Data received. Keys: ${Object.keys(response.data).join(', ')}`)
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
