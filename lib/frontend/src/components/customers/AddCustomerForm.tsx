@@ -11,7 +11,7 @@ import {
   FieldsRow,
   AddressRow,
 } from '../designComponent/styles/customersStyles'
-import { validatePhoneNumber } from 'src/utils/phoneValidate'
+import { validatePhoneNumber } from '../../utils/phoneValidate'
 import {
   ChatModalContainer,
   ChatModalOverlay,

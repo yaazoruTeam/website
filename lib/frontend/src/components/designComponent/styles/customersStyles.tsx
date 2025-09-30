@@ -73,8 +73,8 @@ export const SelectWrapper = styled(Box)({
 
 // סלקט מותאם עם רקע, גבול ו-radius
 export const StyledSelect = styled('div')({
-  backgroundColor: colors.c15,
-  border: `1px solid ${colors.c22}`,
+  backgroundColor: colors.neutral75,
+  border: `1px solid ${colors.blueOverlay700}`,
   width: '200px',
   height: '50px',
   padding: '0 10px',
@@ -90,7 +90,7 @@ export const StyledSelect = styled('div')({
 const IconBase = styled('div')({
   width: '16px',
   height: '16px',
-  color: colors.c11,
+  color: colors.blue900,
   position: 'absolute',
   top: 16,
   left: '10px',
@@ -188,7 +188,7 @@ export const CustomerSelectorSelectorContainer = styled(FlexColumn)(({ theme }) 
   width: '100%',
   height: '100%',
   padding: theme.spacing(3.5),
-  backgroundColor: colors.c6,
+  backgroundColor: colors.neutral0,
   borderRadius: theme.shape.borderRadius,
   justifyContent: 'flex-start',
   alignItems: 'flex-end',
@@ -212,7 +212,7 @@ export const NoOptionsContainer = styled(Box)(() => ({
 // TextField מותאם ל-autocomplete
 export const CustomerAutocompleteInput = styled(TextField)(() => ({
   borderRadius: '6px',
-  background: colors.feild,
+  background: colors.blue10,
   alignSelf: 'stretch',
   height: '44px',
   width: '100%',
