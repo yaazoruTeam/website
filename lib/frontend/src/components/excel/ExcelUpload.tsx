@@ -243,11 +243,17 @@ const ExcelUpload: React.FC = () => {
             }}
           />
 
-          {uploadState.result?.errorFile?.generated && uploadState.result.errorFile.fileName && (
+          {uploadState.result?.errorFile?.generated && 
+           uploadState.result?.errorFile?.fileName && (
             <CustomButton
               label={t('downloadErrorFile')}
               icon={<ArrowDownTrayIcon className="h-5 w-5" />}
-              onClick={() => handleDownloadErrorFile(uploadState.result!.errorFile!.fileName!)}
+              onClick={() => {
+                const fileName = uploadState.result?.errorFile?.fileName
+                if (fileName) {
+                  handleDownloadErrorFile(fileName)
+                }
+              }}
               buttonType="third"
               size="large"
               sx={{ width: '100%' }}

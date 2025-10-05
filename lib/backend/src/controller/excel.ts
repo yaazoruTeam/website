@@ -6,6 +6,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { handleError } from './err'
 import logger from '../utils/logger'
+import { config } from '../config'
 
 /**
  * פונקציה כללית לטיפול בהעלאת קבצי Excel
@@ -39,6 +40,13 @@ const cleanupTempFile = (filePath: string): void => {
   } catch (deleteError) {
     logger.warn('Could not delete temporary file:', deleteError)
   }
+}
+
+/**
+ * פונקציית helper לחילוץ שם קובץ השגיאות מהנתיב המלא
+ */
+const extractErrorFileName = (errorFilePath?: string): string | undefined => {
+  return errorFilePath ? path.basename(errorFilePath) : undefined
 }
 
 /**
@@ -80,9 +88,7 @@ const processCustomerDeviceExcel = async (
       : `עיבוד קובץ לקוחות-מכשירים הושלם עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
 
     // חילוץ שם הקובץ מהנתיב המלא
-    const errorFileName = processingResults.errorFilePath 
-      ? path.basename(processingResults.errorFilePath)
-      : undefined
+    const errorFileName = extractErrorFileName(processingResults.errorFilePath)
 
     res.status(200).json({
       success: isSuccessful,
@@ -150,9 +156,7 @@ const processDeviceExcel = async (
       : `עיבוד קובץ מכשירים הושלם עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
 
     // חילוץ שם הקובץ מהנתיב המלא
-    const errorFileName = processingResults.errorFilePath 
-      ? path.basename(processingResults.errorFilePath)
-      : undefined
+    const errorFileName = extractErrorFileName(processingResults.errorFilePath)
 
     res.status(200).json({
       success: isSuccessful,
@@ -193,7 +197,7 @@ const downloadErrorFile = async (
     const { fileName } = req.params
     logger.info(`Request to download error file: ${fileName}`)
     // וידוא שהקובץ קיים בתיקיית uploads
-    const uploadsDir = '/app/uploads'  // נתיב אבסולוטי בתוך הcontainer
+    const uploadsDir = config.upload.directory
     const filePath = path.join(uploadsDir, fileName)
     logger.debug(`Constructed file path: ${filePath}`)
 

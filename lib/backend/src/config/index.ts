@@ -54,6 +54,9 @@ export const config = {
     server: {
         port: Number(process.env.PORT) || 3006,
     },
+    upload: {
+        directory: process.env.UPLOAD_DIR || '/app/uploads',
+    },
     jwt: {
         secret: process.env.JWT_SECRET || 'your_jwt_secret_key',
     },
