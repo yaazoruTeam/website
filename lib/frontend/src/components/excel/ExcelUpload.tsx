@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import {
   Box,
   Paper,
-  Typography,
-  Button,
   Alert,
   Card,
   CardContent,
@@ -23,6 +21,8 @@ import {
 import { uploadCustomerDeviceExcel, uploadDeviceExcel, downloadErrorFile } from '../../api/excel'
 import { ExcelUploadResponse } from '../../api/excel'
 import { useTranslation } from 'react-i18next'
+import CustomTypography from '../designComponent/Typography'
+import { CustomButton } from '../designComponent/Button'
 
 interface UploadState {
   isUploading: boolean
@@ -130,12 +130,20 @@ const ExcelUpload: React.FC = () => {
   ) => (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" gutterBottom color="primary">
-          {title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
-          {description}
-        </Typography>
+        <CustomTypography
+          text={title}
+          variant="h3"
+          weight="medium"
+          color="primary"
+          sx={{ mb: 1 }}
+        />
+        <CustomTypography
+          text={description}
+          variant="h5"
+          weight="regular"
+          color="text.secondary"
+          sx={{ mb: 2 }}
+        />
 
         {uploadState.isUploading && (
           <Box sx={{ my: 2 }}>
@@ -146,9 +154,11 @@ const ExcelUpload: React.FC = () => {
                 size={24}
                 sx={{ mr: 1 }}
               />
-              <Typography variant="body2">
-                {uploadState.progress}% {t('completed')}
-              </Typography>
+              <CustomTypography
+                text={`${uploadState.progress}% ${t('completed')}`}
+                variant="h5"
+                weight="regular"
+              />
             </Box>
             <LinearProgress
               variant="determinate"
@@ -164,7 +174,11 @@ const ExcelUpload: React.FC = () => {
             sx={{ my: 2 }}
             icon={uploadState.result.success ? <CheckCircleIcon className="h-5 w-5" /> : <ExclamationCircleIcon className="h-5 w-5" />}
           >
-            <Typography variant="body2">{uploadState.result.message}</Typography>
+            <CustomTypography
+              text={uploadState.result.message}
+              variant="h5"
+              weight="regular"
+            />
             <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               <Chip
                 label={`${t('totalRows')}: ${uploadState.result.results.totalRows}`}
@@ -197,43 +211,47 @@ const ExcelUpload: React.FC = () => {
 
         {uploadState.error && (
           <Alert severity="error" sx={{ my: 2 }}>
-            <Typography variant="body2">{uploadState.error}</Typography>
+            <CustomTypography
+              text={uploadState.error}
+              variant="h5"
+              weight="regular"
+            />
           </Alert>
         )}
       </CardContent>
 
       <CardActions sx={{ p: 2, pt: 0 }}>
         <Box sx={{ display: 'flex', gap: 1, width: '100%', flexDirection: 'column' }}>
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<CloudArrowUpIcon className="h-5 w-5" />}
+          <CustomButton
+            label={t('selectExcelFile')}
+            icon={<CloudArrowUpIcon className="h-5 w-5" />}
             disabled={uploadState.isUploading}
-            fullWidth
-          >
-            {t('selectExcelFile')}
-            <input
-              type="file"
-              hidden
-              accept={acceptedFiles}
-              onChange={(e) => {
+            buttonType="first"
+            size="large"
+            sx={{ width: '100%' }}
+            onClick={() => {
+              const fileInput = document.createElement('input')
+              fileInput.type = 'file'
+              fileInput.accept = acceptedFiles
+              fileInput.onchange = (e: any) => {
                 const file = e.target.files?.[0]
                 if (file) {
                   onFileSelect(file)
                 }
-              }}
-            />
-          </Button>
+              }
+              fileInput.click()
+            }}
+          />
 
           {uploadState.result?.errorFile?.generated && uploadState.result.errorFile.fileName && (
-            <Button
-              variant="outlined"
-              startIcon={<ArrowDownTrayIcon className="h-5 w-5" />}
+            <CustomButton
+              label={t('downloadErrorFile')}
+              icon={<ArrowDownTrayIcon className="h-5 w-5" />}
               onClick={() => handleDownloadErrorFile(uploadState.result!.errorFile!.fileName!)}
-              fullWidth
-            >
-              {t('downloadErrorFile')}
-            </Button>
+              buttonType="third"
+              size="large"
+              sx={{ width: '100%' }}
+            />
           )}
         </Box>
       </CardActions>
@@ -244,15 +262,27 @@ const ExcelUpload: React.FC = () => {
     <Box sx={{ p: 3 }}>
       <Paper sx={{ p: 3 }}>
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" gutterBottom color="primary">
-            <Box component="span" sx={{ mr: 1, verticalAlign: 'middle', display: 'inline-flex' }}>
-              <DocumentTextIcon className="h-6 w-6" />
-            </Box>
-            {t('excelUpload')}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {t('uploadExcelFiles')}
-          </Typography>
+          <CustomTypography
+            text={t('excelUpload')}
+            variant="h1"
+            weight="bold"
+            color="primary"
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              gap: 1,
+              mb: 1
+            }}
+          />
+          <Box component="span" sx={{ mr: 1, verticalAlign: 'middle', display: 'inline-flex' }}>
+            <DocumentTextIcon className="h-6 w-6" />
+          </Box>
+          <CustomTypography
+            text={t('uploadExcelFiles')}
+            variant="h4"
+            weight="regular"
+            color="text.secondary"
+          />
         </Box>
 
         <Divider sx={{ my: 3 }} />
@@ -279,17 +309,36 @@ const ExcelUpload: React.FC = () => {
 
         <Box sx={{ mt: 3 }}>
           <Alert severity="info">
-            <Typography variant="body2">
-              <strong>{t('importantNotes')}:</strong>
-              <br />
-              • {t('ensureExcelFormat')}
-              <br />
-              • {t('checkColumnsMatch')}
-              <br />
-              • {t('errorFileGenerated')}
-              <br />
-              • {t('uploadMayTakeTime')}
-            </Typography>
+            <CustomTypography
+              text={`${t('importantNotes')}:`}
+              variant="h5"
+              weight="bold"
+              sx={{ mb: 1 }}
+            />
+            <CustomTypography
+              text={`• ${t('ensureExcelFormat')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('checkColumnsMatch')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('errorFileGenerated')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('uploadMayTakeTime')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block' }}
+            />
           </Alert>
         </Box>
 
@@ -298,31 +347,49 @@ const ExcelUpload: React.FC = () => {
         {/* Success/Error Messages */}
         {successMessage && (
           <Alert severity="success" sx={{ mb: 2 }}>
-            <Typography variant="body2">{successMessage}</Typography>
+            <CustomTypography
+              text={successMessage}
+              variant="h5"
+              weight="regular"
+            />
           </Alert>
         )}
 
         {errorMessage && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            <Typography variant="body2">{errorMessage}</Typography>
+            <CustomTypography
+              text={errorMessage}
+              variant="h5"
+              weight="regular"
+            />
           </Alert>
         )}
 
         <Box sx={{ mt: 3 }}>
-          <Typography variant="h6" gutterBottom color="primary">
-            📋 {t('requiredFileStructure')}
-          </Typography>
+          <CustomTypography
+            text={`📋 ${t('requiredFileStructure')}`}
+            variant="h3"
+            weight="medium"
+            color="primary"
+            sx={{ mb: 2 }}
+          />
           
           <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
             {/* לקוחות ומכשירים */}
             <Box sx={{ flex: '1 1 400px', minWidth: '400px' }}>
               <Alert severity="success" sx={{ mb: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                  📊 {t('customerDeviceFile')}
-                </Typography>
-                <Typography variant="body2" paragraph>
-                  <strong>{t('requiredFields')}:</strong>
-                </Typography>
+                <CustomTypography
+                  text={`📊 ${t('customerDeviceFile')}`}
+                  variant="h3"
+                  weight="medium"
+                  sx={{ mb: 1 }}
+                />
+                <CustomTypography
+                  text={`${t('requiredFields')}:`}
+                  variant="h5"
+                  weight="bold"
+                  sx={{ mb: 1 }}
+                />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>device_number</code> - {t('deviceNumber')}</li>
                   <li><code>SIM_number</code> - {t('SIM_number')}</li>
@@ -338,9 +405,12 @@ const ExcelUpload: React.FC = () => {
                   <li><code>email</code> - {t('email')}</li>
                   <li><code>id_number</code> - {t('idNumber')}</li>
                 </Box>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>{t('optionalFields')}:</strong>
-                </Typography>
+                <CustomTypography
+                  text={`${t('optionalFields')}:`}
+                  variant="h5"
+                  weight="bold"
+                  sx={{ mt: 1, mb: 1 }}
+                />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>additional_phone</code> - {t('additionalPhone')}</li>
                 </Box>
@@ -350,21 +420,30 @@ const ExcelUpload: React.FC = () => {
             {/* מכשירים בלבד */}
             <Box sx={{ flex: '1 1 400px', minWidth: '400px' }}>
               <Alert severity="warning" sx={{ mb: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                  📱 {t('deviceOnlyFile')}
-                </Typography>
-                <Typography variant="body2" paragraph>
-                  <strong>{t('requiredFields')}:</strong>
-                </Typography>
+                <CustomTypography
+                  text={`📱 ${t('deviceOnlyFile')}`}
+                  variant="h3"
+                  weight="medium"
+                  sx={{ mb: 1 }}
+                />
+                <CustomTypography
+                  text={`${t('requiredFields')}:`}
+                  variant="h5"
+                  weight="bold"
+                  sx={{ mb: 1 }}
+                />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>device_number</code> - {t('deviceNumber')}</li>
                   <li><code>SIM_number</code> - {t('SIM_number')}</li>
                   <li><code>IMEI_1</code> - {t('imeiNumber')}</li>
                   <li><code>serialNumber</code> - {t('serialNumber')}</li>
                 </Box>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>{t('optionalFields')}:</strong>
-                </Typography>
+                <CustomTypography
+                  text={`${t('optionalFields')}:`}
+                  variant="h5"
+                  weight="bold"
+                  sx={{ mt: 1, mb: 1 }}
+                />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>model</code> - {t('model')} ({t('recommended')})</li>
                 </Box>
@@ -374,19 +453,42 @@ const ExcelUpload: React.FC = () => {
 
           {/* הנחיות נוספות */}
           <Alert severity="info" sx={{ mt: 2 }}>
-            <Typography variant="body2">
-              <strong>💡 {t('importantTips')}:</strong>
-              <br />
-              • {t('columnNamesCaseSensitive')}
-              <br />
-              • {t('firstRowHeaders')}
-              <br />
-              • {t('noEmptyRowsAtStart')}
-              <br />
-              • {t('phoneImeiCanBeNumbers')}
-              <br />
-              • {t('dateFormats')}
-            </Typography>
+            <CustomTypography
+              text={`💡 ${t('importantTips')}:`}
+              variant="h5"
+              weight="bold"
+              sx={{ mb: 1 }}
+            />
+            <CustomTypography
+              text={`• ${t('columnNamesCaseSensitive')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('firstRowHeaders')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('noEmptyRowsAtStart')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('phoneImeiCanBeNumbers')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('dateFormats')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block' }}
+            />
           </Alert>
         </Box>
       </Paper>
