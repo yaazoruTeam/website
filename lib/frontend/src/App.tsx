@@ -46,6 +46,7 @@ import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
 import ExcelUpload from './components/excel/ExcelUpload'
+import SimReset from './components/devices/SimReset'
 
 function App() {
   const { t } = useTranslation()
@@ -90,6 +91,12 @@ function App() {
                         iconBlue: devicesIconBlue,
                         link: '../devices',
                         text: t('devices'),
+                      },
+                      {
+                        iconWhite: devicesIconWhite,
+                        iconBlue: devicesIconBlue,
+                        link: '../sim-reset',
+                        text: t('simReset'),
                       },
                       {
                         iconWhite: ordersIconWhite,
@@ -140,6 +147,7 @@ function App() {
                         <Route path='/customer/card/:id' element={<CardCustomer />} />
                         <Route path='/devices' element={<Devices />} />
                         <Route path='/device/card/:id' element={<DeviceCard />} />
+                        <Route path='/sim-reset' element={<SimReset />} />
                         <Route path='/orders' element={<Orders />} />
                         <Route path='/branches' element={<Branches />} />
                         <Route path='/monthlyPayment' element={<MonthlyPaymentComponen />} />

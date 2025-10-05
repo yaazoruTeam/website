@@ -341,7 +341,17 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
     const networkConnection = getNetworkConnection(mccMnc)
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
-    const status = mobileInfo?.registration_info?.status || 'Unknown'
+    // ניסיון לקבל סטטוס מכמה מקורות אפשריים
+    let status = 'Unknown'
+    
+    // בדיקה במקורות שונים לסטטוס
+    if (mobileInfo?.registration_info?.status) {
+      status = mobileInfo.registration_info.status
+    } else if (mobileInfo?.status) {
+      status = mobileInfo.status
+    } else if (mobileInfo?.active !== undefined) {
+      status = mobileInfo.active ? 'active' : 'inactive'
+    }
 
     logger.debug('getAllUserData extracted data fields', {
       dataUsage,
