@@ -17,6 +17,8 @@ export interface ApiConfig<TFallback = unknown> extends AxiosRequestConfig {
   fallback?: TFallback
   /** האם הבקשה צריכה authentication */
   requireAuth?: boolean
+  /** פונקציה למעקב אחר התקדמות העלאה */
+  onUploadProgress?: (progressEvent: any) => void
 }
 
 // פונקציה מרכזית לכל הבקשות
@@ -26,7 +28,7 @@ const makeRequest = async <T>(
   data?: unknown,
   config: ApiConfig<T> = {}
 ): Promise<T> => {
-  const { safe = false, fallback, requireAuth = true, ...axiosConfig } = config
+  const { safe = false, fallback, requireAuth = true, onUploadProgress, ...axiosConfig } = config
   
   try {
     // וידוא טוקן אם נדרש
@@ -42,6 +44,7 @@ const makeRequest = async <T>(
     const requestConfig = {
       ...axiosConfig,
       headers: { ...headers, ...axiosConfig?.headers },
+      onUploadProgress,
     }
     
     let response: AxiosResponse<T>

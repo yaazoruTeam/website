@@ -19,4 +19,10 @@ excelRouter.post(
   excelController.processDeviceExcel
 )
 
+excelRouter.get(
+  '/errors/:fileName',
+  hasRole('admin'),
+  excelController.downloadErrorFile
+)
+
 export default excelRouter
