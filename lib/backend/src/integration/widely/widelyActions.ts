@@ -45,13 +45,14 @@ const provCreateMobile = async (
 ): Promise<Widely.Model> => {
     validateRequiredParams({ domain_user_id, sim_iccid, service_id, name })
 
-    const result: Widely.Model = await callingWidely('prov_create_mobile', {
+    const requestData = {
         domain_user_id,
         iccid: sim_iccid,
         service_id,
         name,
         ...(dids && dids.length > 0 && { dids })
-    })
+    }
+    const result: Widely.Model = await callingWidely('prov_create_mobile', requestData)
     validateWidelyResult(result, 'Failed to create mobile', false)
     return result
 }
@@ -76,6 +77,12 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
 
         originalInfo = mobileInfoResult
 
+        // בדיקה שהמכשיר פעיל לפני ביצוע איפוס
+        if (!originalInfo.endpoint_id || originalInfo.endpoint_id === 0) {
+            console.error(`[ComprehensiveResetDevice] ERROR: Cannot reset inactive device - endpoint_id is ${originalInfo.endpoint_id}`)
+            throw new Error(`Cannot reset device: Device is not active (endpoint_id: ${originalInfo.endpoint_id})`)
+        }
+        
         // השתמש בשדה service_id אם קיים, או package_id כחלופה
         const serviceId = originalInfo.service_id || originalInfo.package_id
         if (!originalInfo.domain_user_id || !originalInfo.iccid || !serviceId) {
@@ -86,15 +93,35 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
             originalInfo.service_id = serviceId
         }
 
-        // שלב 2: מחיקת המכשיר הקיים
-        terminationResult = await terminateMobile(endpoint_id)
+        // שלב 2: מחיקת המכשיר הקיים (עם טיפול בשגיאות)
+        try {
+            terminationResult = await terminateMobile(endpoint_id)
+        } catch (terminationError) {            
+            // אם המחיקה נכשלה כי המכשיר לא קיים, זה בסדר - נמשיך ליצור אותו מחדש
+            if (terminationError && typeof terminationError === 'object' && 
+                'message' in terminationError && 
+                typeof terminationError.message === 'string' &&
+                (terminationError.message.includes('undefined method `endpoint`') || 
+                 terminationError.message.includes('nil:NilClass'))) {
+                terminationResult = {
+                    status: 'SKIPPED',
+                    error_code: 0,
+                    message: 'Device not found in Widely, skipping termination',
+                    data: {}
+                } as Widely.Model
+            } else {
+                // אם זה שגיאה אחרת, נזרוק אותה
+                throw terminationError
+            }
+        }
 
         // שלב 3: יצירת הקו מחדש עם הנתונים המקוריים
+        const deviceName = name && name !== 'Not available' ? name : originalInfo.iccid || `Device_${Date.now()}`
         creationResult = await provCreateMobile(
             originalInfo.domain_user_id,
             originalInfo.iccid as string,
             Number(originalInfo.service_id),
-            name,
+            deviceName,
             originalInfo.dids || undefined
         )
 

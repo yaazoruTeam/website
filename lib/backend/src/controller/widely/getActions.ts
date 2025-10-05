@@ -201,8 +201,13 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
     const networkConnection = getNetworkConnection(mccMnc)
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
-    const status = mobileInfo?.registration_info?.status || 'Unknown'
-
+    
+    // Try multiple potential status fields
+    const status = mobileInfo?.registration_info?.status || 
+                   (mobileInfo as any)?.status || 
+                   (mobileInfo as any)?.state || 
+                   ((mobileInfo as any)?.active ? 'Active' : 'Inactive') ||
+                   'Unknown'
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: endpoint_id,
