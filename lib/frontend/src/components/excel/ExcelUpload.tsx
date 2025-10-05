@@ -114,10 +114,14 @@ const ExcelUpload: React.FC = () => {
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
-      setSuccessMessage(t('downloadErrorFile'))
+      setSuccessMessage(t('errorFileDownloadedSuccessfully'))
     } catch (error) {
       console.error('Error downloading file:', error)
-      setErrorMessage(t('errorDownloadingFile'))
+      // Handle specific error types with proper translation
+      const errorMessage = error instanceof Error && error.message === 'DOWNLOAD_ERROR_FILE_FAILED'
+        ? t('downloadErrorFileFailed')
+        : t('errorDownloadingFile')
+      setErrorMessage(errorMessage)
     }
   }
 
@@ -233,8 +237,9 @@ const ExcelUpload: React.FC = () => {
               const fileInput = document.createElement('input')
               fileInput.type = 'file'
               fileInput.accept = acceptedFiles
-              fileInput.onchange = (e: any) => {
-                const file = e.target.files?.[0]
+              fileInput.onchange = (e: Event) => {
+                const target = e.target as HTMLInputElement
+                const file = target.files?.[0]
                 if (file) {
                   onFileSelect(file)
                 }

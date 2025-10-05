@@ -324,6 +324,8 @@
   "devicesOnly": "Devices Only",
   "selectExcelFile": "Select Excel File",
   "downloadErrorFile": "Download Error File",
+  "errorFileDownloadedSuccessfully": "Error file downloaded successfully",
+  "downloadErrorFileFailed": "Failed to download error file",
   "uploadCompletedWithErrors": "Upload completed with errors",
   "deviceOnlyDescription": "Upload an Excel file containing only device data (4-5 fields: device_number, SIM_number, IMEI_1, serialNumber, model). The file will be processed and update device details in the system.",
   "completed": "completed",

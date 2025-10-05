@@ -76,7 +76,10 @@ export const downloadErrorFile = async (fileName: string): Promise<Blob> => {
   })
 
   if (!response.ok) {
-    throw new Error('שגיאה בהורדת קובץ השגיאות')
+    // Return a structured error that can be handled with proper translations
+    const error = new Error('DOWNLOAD_ERROR_FILE_FAILED')
+    error.name = 'DownloadError'
+    throw error
   }
 
   return response.blob()

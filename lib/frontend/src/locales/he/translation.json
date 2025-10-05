@@ -325,6 +325,8 @@
   "devicesOnly": "מכשירים בלבד",
   "selectExcelFile": "בחר קובץ Excel",
   "downloadErrorFile": "הורד קובץ שגיאות",
+  "errorFileDownloadedSuccessfully": "קובץ השגיאות הורד בהצלחה",
+  "downloadErrorFileFailed": "שגיאה בהורדת קובץ השגיאות",
   "uploadCompletedWithErrors": "העלאה הושלמה עם שגיאות",
   "completed": "הושלמו",
   "totalRows": "סה\"כ שורות",
