@@ -45,6 +45,7 @@ import CallLog from './components/switchboard/CallLog'
 import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
+import SimReset from './components/devices/SimReset'
 
 function App() {
   const { t } = useTranslation()
@@ -61,6 +62,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/sim-reset' element={<SimReset />} />
         
         {/* עמודים מוגנים עם Header ו-SideNav */}
         <Route

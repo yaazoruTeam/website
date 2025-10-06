@@ -1,6 +1,7 @@
 import { Widely, WidelyDeviceDetails, ComprehensiveResetResponse } from '@model'
 import {
   apiPost,
+  apiPostPublic,
 } from './core/apiHelpers'
 
 const ENDPOINT = '/widely'
@@ -8,6 +9,13 @@ const ENDPOINT = '/widely'
 export const getWidelyDetails = async (simNumber: string): Promise<WidelyDeviceDetails.Model> => {
   return apiPost<WidelyDeviceDetails.Model>(
     `${ENDPOINT}/get_all_user_data`,
+    { simNumber }
+  )
+}
+
+export const getWidelyDetailsPublic = async (simNumber: string): Promise<WidelyDeviceDetails.Model> => {
+  return apiPostPublic<WidelyDeviceDetails.Model>(
+    `${ENDPOINT}/get_all_user_data_public`,
     { simNumber }
   )
 }
@@ -38,7 +46,7 @@ export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely
 
 // איפוס מקיף של מכשיר כטרנזקציה
 export const ComprehensiveResetDevice = async (endpoint_id: number | string, name: string): Promise<ComprehensiveResetResponse.Model> => {
-  return apiPost<ComprehensiveResetResponse.Model>(`${ENDPOINT}/reset_device`, {
+  return apiPostPublic<ComprehensiveResetResponse.Model>(`${ENDPOINT}/reset_device`, {
     endpoint_id,
     name
   })
