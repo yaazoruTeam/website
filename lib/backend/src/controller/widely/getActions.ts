@@ -102,7 +102,13 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
       throw error
     }
 
-    return mobileData as Widely.WidelyMobileData
+    // Add the endpoint_id to the mobile data since it's not returned by the API
+    const mobileDataWithEndpoint = {
+      ...mobileData,
+      endpoint_id: endpoint_id
+    }
+    
+    return mobileDataWithEndpoint as Widely.WidelyMobileData
   }
 
   // Handle direct object response (without data property)
@@ -116,7 +122,13 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
 
   // In this case, result is the complete Widely.Model, but we need just the mobile data
   // This should not happen if data property exists, but as fallback
-  return result as unknown as Widely.WidelyMobileData
+  // Add the endpoint_id to the result
+  const resultWithEndpoint = {
+    ...(result as unknown as Widely.WidelyMobileData),
+    endpoint_id: endpoint_id
+  }
+  
+  return resultWithEndpoint as Widely.WidelyMobileData
 }
 
 const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -202,12 +214,8 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const networkConnection = getNetworkConnection(mccMnc)
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
     
-    // Try multiple potential status fields
-    const status = mobileInfo?.registration_info?.status || 
-                   (mobileInfo as any)?.status || 
-                   (mobileInfo as any)?.state || 
-                   ((mobileInfo as any)?.active ? 'Active' : 'Inactive') ||
-                   'Unknown'
+    // Determine status based on active field
+    const status = (mobileInfo as any)?.active ? 'Active' : 'Inactive'
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: endpoint_id,
