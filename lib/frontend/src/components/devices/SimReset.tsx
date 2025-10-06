@@ -1,14 +1,25 @@
 import React, { useState } from 'react'
-import { Box, Snackbar, Alert } from '@mui/material'
+import { Snackbar, Alert } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { ComprehensiveResetDevice, getWidelyDetails } from '../../api/widely'
+import { ComprehensiveResetDevice, getWidelyDetailsPublic } from '../../api/widely'
 import { WidelyDeviceDetails } from '@model'
 import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import CustomTypography from '../designComponent/Typography'
-import { WidelyContainer, WidelyHeaderSection, WidelyFormSection, WidelyButtonSection } from '../designComponent/styles/widelyStyles'
 import { colors } from '../../styles/theme'
+import {
+  SimResetContainer,
+  SimResetCard,
+  SimResetCardContent,
+  SimResetHeader,
+  SimResetFormSection,
+  SimResetDeviceInfoBox,
+  SimResetDeviceInfoContent,
+  SimResetErrorBox,
+  SimResetSuccessBox,
+  SimResetButtonContainer
+} from '../designComponent/styles/simResetStyles'
 
 interface SimResetFormData {
   simLastSixDigits: string
@@ -40,7 +51,7 @@ const SimReset: React.FC = () => {
     setDeviceInfo(null)
 
     try {
-      const deviceDetails = await getWidelyDetails(fullSimNumber)
+      const deviceDetails = await getWidelyDetailsPublic(fullSimNumber)
       setDeviceInfo(deviceDetails)
       setSuccessMessage(t('deviceStatusChecked'))
     } catch (error: unknown) {
@@ -80,7 +91,7 @@ const SimReset: React.FC = () => {
 
     try {
       // תחילה נחפש את המכשיר על פי מספר הסים
-      const deviceDetails = await getWidelyDetails(fullSimNumber)
+      const deviceDetails = await getWidelyDetailsPublic(fullSimNumber)
       
       if (!deviceDetails.endpoint_id) {
         setErrorMessage(t('deviceNotFound'))
@@ -167,43 +178,24 @@ const SimReset: React.FC = () => {
   }
 
   return (
-    <WidelyContainer>
-      <WidelyHeaderSection>
-        <CustomTypography 
-          text={t('simReset')} 
-          variant="h1" 
-          weight="medium" 
-          color={colors.blue600} 
-        />
-      </WidelyHeaderSection>
+    <>
+      <SimResetContainer maxWidth="md">
+        <SimResetCard>
+          <SimResetCardContent>
+            <SimResetHeader>
+              <CustomTypography 
+                text={t('simReset')} 
+                variant="h1" 
+                weight="medium" 
+                color={colors.blue600} 
+              />
+            </SimResetHeader>
 
-      <WidelyFormSection flexDirection="column" gap={3} alignItems="stretch">
-        <CustomTypography 
-          text={t('simResetDescription')} 
-          variant="h5" 
-          weight="regular"
-          color={colors.neutral700}
-        />
-
-        <Box sx={{ 
-          background: colors.blue100, 
-          border: `1px solid ${colors.blue300}`, 
-          borderRadius: '8px', 
-          padding: '12px',
-          marginBottom: '8px'
-        }}>
-          <CustomTypography 
-            text={t('simPrefixInfo')} 
-            variant="h5" 
-            color={colors.blue700}
-            weight="medium"
-          />
-        </Box>
+            <SimResetFormSection>
 
         <CustomTextField
           control={control}
           name="simLastSixDigits"
-          label={t('simLastSixDigits')}
           placeholder={t('enterSimLastSixDigits')}
           rules={{ 
             required: t('simNumberRequired'),
@@ -225,65 +217,45 @@ const SimReset: React.FC = () => {
         />
 
         {deviceInfo && (
-          <Box sx={{ 
-            background: colors.blue50, 
-            border: `1px solid ${colors.blue300}`, 
-            borderRadius: '8px', 
-            padding: '16px',
-            marginTop: '16px'
-          }}>
+              <SimResetDeviceInfoBox>
             <CustomTypography 
               text={t('deviceInformation')} 
               variant="h4" 
               color={colors.blue700}
               weight="medium"
             />
-            <Box sx={{ marginTop: '8px' }}>
+                <SimResetDeviceInfoContent>
               <CustomTypography text={`${t('deviceName')}: ${deviceInfo.device_info.name}`} variant="h5" weight="regular" />
               <CustomTypography text={`${t('deviceModel')}: ${deviceInfo.device_info.brand} ${deviceInfo.device_info.model}`} variant="h5" weight="regular" />
               <CustomTypography text={`${t('deviceStatus')}: ${deviceInfo.status}`} variant="h5" weight="regular" />
               <CustomTypography text={`Endpoint ID: ${deviceInfo.endpoint_id}`} variant="h5" weight="regular" />
               <CustomTypography text={`${t('activeStatus')}: ${deviceInfo.active ? t('active') : t('inactive')}`} variant="h5" weight="regular" />
-            </Box>
-          </Box>
+                </SimResetDeviceInfoContent>
+              </SimResetDeviceInfoBox>
         )}
 
         {errorMessage && (
-          <Box sx={{ 
-            background: colors.red100, 
-            border: `1px solid ${colors.red500}`, 
-            borderRadius: '8px', 
-            padding: '12px',
-            marginTop: '16px'
-          }}>
+              <SimResetErrorBox>
             <CustomTypography 
               text={errorMessage} 
               variant="h5" 
               color={colors.red500}
               weight="medium"
             />
-          </Box>
+              </SimResetErrorBox>
         )}
 
         {successMessage && (
-          <Box sx={{ 
-            background: colors.green100, 
-            border: `1px solid ${colors.green500}`, 
-            borderRadius: '8px', 
-            padding: '12px',
-            marginTop: '16px'
-          }}>
+              <SimResetSuccessBox>
             <CustomTypography 
               text={successMessage} 
               variant="h5" 
               color={colors.green500}
               weight="medium"
             />
-          </Box>
+              </SimResetSuccessBox>
         )}
-      </WidelyFormSection>
-
-      <WidelyButtonSection>
+              <SimResetButtonContainer>
         <CustomButton
           label={isLoading ? t('processing') : t('resetSim')}
           onClick={handleSubmit(handleResetSim)}
@@ -291,7 +263,11 @@ const SimReset: React.FC = () => {
           size="large"
           disabled={isLoading}
         />
-      </WidelyButtonSection>
+              </SimResetButtonContainer>
+            </SimResetFormSection>
+          </SimResetCardContent>
+        </SimResetCard>
+      </SimResetContainer>
 
       {/* Snackbar for notifications */}
       <Snackbar
@@ -315,7 +291,7 @@ const SimReset: React.FC = () => {
           {errorMessage}
         </Alert>
       </Snackbar>
-    </WidelyContainer>
+    </>
   )
 }
 
