@@ -62,6 +62,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/sim-reset' element={<SimReset />} />
         
         {/* עמודים מוגנים עם Header ו-SideNav */}
         <Route
@@ -90,12 +91,6 @@ function App() {
                         iconBlue: devicesIconBlue,
                         link: '../devices',
                         text: t('devices'),
-                      },
-                      {
-                        iconWhite: devicesIconWhite,
-                        iconBlue: devicesIconBlue,
-                        link: '../sim-reset',
-                        text: t('simReset'),
                       },
                       {
                         iconWhite: ordersIconWhite,
@@ -145,7 +140,6 @@ function App() {
                         <Route path='/customer/card/:id' element={<CardCustomer />} />
                         <Route path='/devices' element={<Devices />} />
                         <Route path='/device/card/:id' element={<DeviceCard />} />
-                        <Route path='/sim-reset' element={<SimReset />} />
                         <Route path='/orders' element={<Orders />} />
                         <Route path='/branches' element={<Branches />} />
                         <Route path='/monthlyPayment' element={<MonthlyPaymentComponen />} />
