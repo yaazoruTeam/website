@@ -21,6 +21,7 @@ import { errorHandler } from '@middleware/errorHandler'
 import { hasRole } from '@middleware/auth'
 import commentRouter from './comments'
 import widelyRouter from './widely'
+import excelRouter from './excel'
 
 const router = Router()
 const ROUTE_PATH = '/controller'
@@ -40,14 +41,7 @@ router.use(`${ROUTE_PATH}/paymentCreditLink`, paymentCreditLinkRouter)
 router.use(`${ROUTE_PATH}/auth`, authRouter)
 router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
-
-
-router.post(
-  `${ROUTE_PATH}/excel/upload`,
-  hasRole('admin'),
-  uploadExcel.single('excelFile'),
-  excelController.handleReadExcelFile
-)
+router.use(`${ROUTE_PATH}/excel`, excelRouter)
 
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,

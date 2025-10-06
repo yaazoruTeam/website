@@ -214,7 +214,11 @@
   "clear": "Clear",
   "noCustomersFoundDate": "No customers found in the desired date range...",
   "noCustomersFoundStatus": "No customers found with the selected status...",
+  "noCustomersFoundCity": "No customers found in the selected city...",
   "noCustomersFoundGeneral": "No customers found...",
+  "noDevicesFoundDate": "No devices found in the desired date range...",
+  "noDevicesFoundStatus": "No devices found with the selected status...",
+  "noDevicesFoundGeneral": "No devices found...",
   "months": {
     "january": "January",
     "february": "February",
@@ -325,5 +329,18 @@
   "deviceStatusChecked": "Device status checked successfully",
   "deviceCheckError": "Error checking device status",
   "deviceInformation": "Device Information",
-  "activeStatus": "Active Status"
+  "activeStatus": "Active Status",
+  "continueWithGoogle": "Continue with Google",
+  "SigningIn": "Signing in...",
+  "googleAuthErrors": {
+    "accessDenied": "Access denied - your account is not authorized to use this system. Please contact the system administrator.",
+    "authenticationError": "An authentication error occurred. Please try to login again.",
+    "popupClosedByUser": "Login was cancelled by the user",
+    "popupBlocked": "The popup window was blocked by the browser. Please allow popups for this site.",
+    "networkRequestFailed": "Network error. Please check your internet connection.",
+    "tooManyRequests": "Too many failed attempts. Please try again later.",
+    "generalError": "An error occurred during login",
+    "or": "Or"
+  },
+  "noPreviousComments": "No previous comments"
 }

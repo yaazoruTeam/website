@@ -18,7 +18,7 @@ const createDeviceSchema = async () => {
         table.string('model').notNullable()
         table.string("serialNumber").notNullable().unique()
         table.date('purchaseDate').nullable()
-        table.date('releaseDate').notNullable()
+        table.date('registrationDate').notNullable()
         table.string('plan').notNullable()
         table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
       })

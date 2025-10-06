@@ -16,7 +16,7 @@ const createDevice = async (device: Device.Model, trx?: Knex.Transaction) => {
         device_number: device.device_number,
         serialNumber: device.serialNumber,
         purchaseDate: device.purchaseDate,
-        releaseDate: device.releaseDate,
+        registrationDate: device.registrationDate,
         plan: device.plan,
         status: device.status,
       })

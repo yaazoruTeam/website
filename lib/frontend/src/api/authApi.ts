@@ -48,6 +48,38 @@ export const refresh = async (): Promise<string> => {
     return response.data
   } catch (error: unknown) {
     console.error('Error refresh token', error)
+    // מחיקת הטוקן הלא תקין מ-localStorage
+    localStorage.removeItem('token')
+    // הפניה לדף ההתחברות
+    window.location.href = '/login'
+    throw error
+  }
+}
+
+// POST - Google Authentication
+export const googleAuth = async (googleUserData: {
+  uid: string
+  email: string
+  displayName: string | null
+  photoURL: string | null
+  emailVerified: boolean
+  idToken: string
+}): Promise<{
+  success: boolean
+  user: {
+    user_id: string
+    email: string
+    user_name: string
+    photo_url?: string
+    role: string
+  }
+  token: string
+}> => {
+  try {
+    const response = await axios.post(`${baseUrl}/google`, googleUserData)
+    return response.data
+  } catch (error) {
+    console.error('Error with Google authentication', error)
     throw error
   }
 }

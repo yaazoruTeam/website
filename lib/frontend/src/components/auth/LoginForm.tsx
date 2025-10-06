@@ -8,6 +8,8 @@ import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import GoogleLoginButton from '../google/GoogleLoginButton'
+import { GoogleSignInResult } from '../../services/googleAuthService'
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormInputs) => void
@@ -26,6 +28,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
   const handleRegisterClick = () => {
     navigate('/register')
+  }
+
+  const handleGoogleSuccess = (result: GoogleSignInResult) => {
+    const { firebaseUser, backendResult, backendError } = result
+    
+    console.log('🎉 Google Login successful!', firebaseUser.displayName)
+    console.log('Backend result:', backendResult)
+    
+    if (backendResult?.token) {
+      // Store the JWT token from backend - using single 'token' key for consistency
+      localStorage.setItem('token', backendResult.token)
+      
+      // Navigate to dashboard
+      navigate('/dashboard')
+    } else if (firebaseUser) {
+      // Fallback: use Firebase user info even if backend failed
+      console.warn('Google auth succeeded but backend sync failed:', backendError)
+      // You could create a temporary token or handle this case differently
+      navigate('/dashboard')
+    }
+  }
+
+  const handleGoogleError = (error: Error & { code?: string; userMessage?: string }) => {
+    console.error('❌ Google Login failed:', error)
+    alert(`Google login failed: ${error.userMessage || error.message}`)
   }
 
   return (
@@ -124,6 +151,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         state='default'
         buttonType='first'
         onClick={handleSubmit(onSubmit)}
+      />
+      
+      {/* Divider between regular login and Google login */}
+      <Box sx={{ width: '100%', my: 2, display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ flex: 1, height: '1px', backgroundColor: colors.neutral300 }} />
+        <CustomTypography
+          text={t('or')}
+          variant='h3'
+          weight='medium'
+          color={colors.neutral500}
+          sx={{ mx: 2 }}
+        />
+        <Box sx={{ flex: 1, height: '1px', backgroundColor: colors.neutral300 }} />
+      </Box>
+
+      {/* Google Login Button */}
+      <GoogleLoginButton
+        onSuccess={handleGoogleSuccess}
+        onError={handleGoogleError}
+        useRedirect={isMobile} // Use redirect on mobile for better UX
       />
     </Box>
   )

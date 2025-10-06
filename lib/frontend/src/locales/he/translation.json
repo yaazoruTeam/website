@@ -204,7 +204,11 @@
   "clear": "נקה",
   "noCustomersFoundDate": "לא נמצאו לקוחות בטווח תאריכים הרצוי...",
   "noCustomersFoundStatus": "לא נמצאו לקוחות עם הסטטוס הנבחר...",
+  "noCustomersFoundCity": "לא נמצאו לקוחות בעיר הנבחרת...",
   "noCustomersFoundGeneral": "לא נמצאו לקוחות...",
+  "noDevicesFoundDate": "לא נמצאו מכשירים בטווח תאריכים הרצוי...",
+  "noDevicesFoundStatus": "לא נמצאו מכשירים עם הסטטוס הנבחר...",
+  "noDevicesFoundGeneral": "לא נמצאו מכשירים...",
   "months": {
     "january": "ינואר",
     "february": "פברואר",
@@ -326,5 +330,18 @@
   "deviceStatusChecked": "סטטוס המכשיר נבדק בהצלחה",
   "deviceCheckError": "שגיאה בבדיקת סטטוס המכשיר",
   "deviceInformation": "מידע על המכשיר",
-  "activeStatus": "מצב פעילות"
+  "activeStatus": "מצב פעילות",
+  "continueWithGoogle": "המשך עם גוגל",
+  "SigningIn": "מתחבר...",
+  "googleAuthErrors": {
+    "accessDenied": "גישה נדחתה - החשבון שלך אינו מורשה להשתמש במערכת. אנא פנה למנהל המערכת.",
+    "authenticationError": "אירעה שגיאת אימות. אנא נסה להתחבר מחדש.",
+    "popupClosedByUser": "התחברות בוטלה על ידי המשתמש",
+    "popupBlocked": "החלון הקופץ נחסם על ידי הדפדפן. אנא אפשר חלונות קופצים עבור אתר זה.",
+    "networkRequestFailed": "שגיאת רשת. אנא בדוק את החיבור שלך לאינטרנט.",
+    "tooManyRequests": "יותר מדי ניסיונות כושלים. אנא נסה שוב מאוחר יותר.",
+    "generalError": "אירעה שגיאה במהלך ההתחברות",
+    "or": "או"
+  },
+  "No previous comments": "אין הערות קודמות"
 }
