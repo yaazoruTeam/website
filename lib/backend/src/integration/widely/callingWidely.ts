@@ -17,7 +17,7 @@ const callingWidely = async (
   }
 
   try {
-    logger.debug(`Request Body: ${JSON.stringify({ func_name, data, auth: '[REDACTED]' })}`)
+    logger.debug(`callingWidely Request Body: ${JSON.stringify({ func_name, data, auth: '[REDACTED]' })}`)
     const response = await axios.post(config.widely.urlAccountAction, requestBody, {
       headers: {
         'Content-Type': 'application/json',
@@ -26,10 +26,12 @@ const callingWidely = async (
         rejectUnauthorized: config.env === 'development' ? false : true, // Disable SSL validation only in development
       }),
     })
-    logger.debug(`Response Data received. Keys: ${Object.keys(response.data).join(', ')}`)
+    logger.debug(`callingWidely Response Data received. Keys: ${Object.keys(response.data).join(', ')}`)
     return response.data
   } catch (error: unknown) {
+    logger.debug('Error calling Widely API', { error })
     if (axios.isAxiosError(error)) {
+      logger.debug('Axios error calling Widely API', { error })
       const axiosError = error as AxiosError
       // Always return 500 for Widely API errors, include original status in message
       const originalStatus = axiosError.response?.status
@@ -37,11 +39,14 @@ const callingWidely = async (
         ? `Widely API Error - HTTP ${originalStatus}: ${axiosError.message}`
         : `Widely API Error: ${axiosError.message}`
 
+      logger.debug('Throwing HttpError for Widely API error', { errorMessage })
+
       throw <HttpError.Model>{
-        message: errorMessage,
+        message: JSON.stringify(errorMessage),
         status: 500, // Always return 500 for external API errors
       }
     } else {
+      logger.debug('Unexpected error calling Widely API', { error })
       throw error
     }
   }

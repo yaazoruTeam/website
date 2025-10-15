@@ -26,9 +26,11 @@ const validateRequiredParams = (params: Record<string, unknown>): void => {
 }
 
 const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkLength: boolean = true): void => {
+    logger.debug('Validating Widely API result', { result })
     // Check for API error response - both error_code and status
-    const hasError = (result.error_code !== undefined && result.error_code !== 200) || 
-                     (result.status && result.status === "ERROR")
+    const hasError = (result.error_code !== undefined && result.error_code !== 200) ||
+        (result.status && result.status === "ERROR")
+    logger.debug(`Widely API result hasError: ${hasError}`)
     if (hasError) {
         // Log the Widely error in a structured format for debugging
         logger.error('Widely API Error:', {
@@ -41,19 +43,21 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
 
         // Use Widely's message if available, otherwise use our custom message
         const widelyMessage = result.message || errorMessage
-        const finalMessage = result.error_code 
+        const finalMessage = result.error_code
             ? `${errorMessage} - Widely Error Code: ${result.error_code}, Message: ${widelyMessage}`
             : `${errorMessage} - Message: ${widelyMessage}`
 
+        logger.debug(`Final error message to throw: ${finalMessage}`)
         const error: HttpError.Model = {
             status: 500, // Always return 500 for Widely API errors
-            message: finalMessage,
+            message: JSON.stringify(finalMessage),
         }
         throw error
     }
 
     // Skip data validation if checkLength is false
     if (!checkLength) {
+        logger.debug('Skipping data presence validation as checkLength is false')
         return
     }
 
@@ -61,8 +65,9 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
     const hasData = Array.isArray(result.data)
         ? result.data.length > 0
         : (result.data != null && typeof result.data === 'object')
-
+    logger.debug(`Widely API result hasData: ${hasData}`)
     if (!hasData) {
+        logger.error('Widely API returned no data', { result })
         const error: HttpError.Model = {
             status: 404,
             message: errorMessage,

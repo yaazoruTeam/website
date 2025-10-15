@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { config } from '@config/index'
+import logger from '@/src/utils/logger'
 
 // שימוש במשתנים מה-config המרכזי
 const { brandToken: BRAND_TOKEN, brandId, accountToken: ACCOUNT_TOKEN, authId } = config.widely
@@ -16,9 +17,13 @@ const createAuth = (): {
   hash: string
   auth: string
 } => {
+  logger.debug('Creating Widely auth object')
   const hash = generateHash()
+  logger.debug(`Generated hash: ${hash}`)
   const innerAuth = calculateMD5(BRAND_TOKEN + hash)
+  logger.debug(`Calculated inner auth: ${innerAuth}`)
   const finalAuth = calculateMD5(ACCOUNT_TOKEN + innerAuth)
+  logger.debug(`Calculated final auth: ${finalAuth}`)
 
   return {
     auth_id: authId,
