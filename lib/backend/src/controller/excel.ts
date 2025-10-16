@@ -6,6 +6,17 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { handleError } from './err'
 import logger from '../utils/logger'
+import { config } from '../config'
+
+/**
+ * Interface לתוצאות עיבוד Excel
+ */
+interface ExcelProcessingResults {
+  totalRows: number
+  successCount: number
+  errorsCount: number
+  errorFilePath?: string
+}
 
 /**
  * פונקציה כללית לטיפול בהעלאת קבצי Excel
@@ -42,6 +53,49 @@ const cleanupTempFile = (filePath: string): void => {
 }
 
 /**
+ * פונקציית helper לחילוץ שם קובץ השגיאות מהנתיב המלא
+ */
+const extractErrorFileName = (errorFilePath?: string): string | undefined => {
+  return errorFilePath ? path.basename(errorFilePath) : undefined
+}
+
+/**
+ * פונקציית helper לבניית תגובת JSON לעיבוד Excel
+ */
+const buildExcelProcessingResponse = (
+  processingResults: ExcelProcessingResults,
+  data: ExcelRowData[],
+  successMessageText: string,
+  errorMessageText: string
+) => {
+  const isSuccessful = processingResults.errorsCount === 0
+  const successMessage = isSuccessful 
+    ? successMessageText
+    : `${errorMessageText} ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
+
+  const errorFileName = extractErrorFileName(processingResults.errorFilePath)
+
+  return {
+    success: isSuccessful,
+    message: successMessage,
+    results: {
+      totalRows: processingResults.totalRows,
+      successCount: processingResults.successCount,
+      errorsCount: processingResults.errorsCount,
+      successRate: `${Math.round((processingResults.successCount / processingResults.totalRows) * 100)}%`
+    },
+    ...(processingResults.errorFilePath && {
+      errorFile: {
+        generated: true,
+        message: 'קובץ שגיאות נוצר לבדיקה מפורטת',
+        fileName: errorFileName
+      }
+    }),
+    sampleData: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
+  }
+}
+
+/**
  * קונטרולר אחראי על עיבוד קבצי Excel של לקוחות ומכשירים
  * מטפל בכל הלוגיקה הספציפית לעיבוד נתוני לקוחות ומכשירים
  */
@@ -73,29 +127,15 @@ const processCustomerDeviceExcel = async (
     // מחיקת הקובץ הזמני אחרי העיבוד
     cleanupTempFile(filePath)
 
-    // הכנת הודעת התגובה
-    const isSuccessful = processingResults.errorsCount === 0
-    const successMessage = isSuccessful 
-      ? 'עיבוד קובץ לקוחות-מכשירים הושלם בהצלחה! 🎉'
-      : `עיבוד קובץ לקוחות-מכשירים הושלם עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
+    // בניית תגובת JSON
+    const responseData = buildExcelProcessingResponse(
+      processingResults,
+      data as ExcelRowData[],
+      'עיבוד קובץ לקוחות-מכשירים הושלם בהצלחה! 🎉',
+      'עיבוד קובץ לקוחות-מכשירים הושלם עם'
+    )
 
-    res.status(200).json({
-      success: isSuccessful,
-      message: successMessage,
-      results: {
-        totalRows: processingResults.totalRows,
-        successCount: processingResults.successCount,
-        errorsCount: processingResults.errorsCount,
-        successRate: `${Math.round((processingResults.successCount / processingResults.totalRows) * 100)}%`
-      },
-      ...(processingResults.errorFilePath && {
-        errorFile: {
-          generated: true,
-          message: 'קובץ שגיאות נוצר לבדיקה מפורטת'
-        }
-      }),
-      sampleData: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
-    })
+    res.status(200).json(responseData)
   } catch (error: unknown) {
     // מחיקת הקובץ הזמני במקרה של שגיאה
     if (filePath) {
@@ -137,29 +177,15 @@ const processDeviceExcel = async (
     // מחיקת הקובץ הזמני אחרי העיבוד
     cleanupTempFile(filePath)
 
-    // הכנת הודעת התגובה
-    const isSuccessful = processingResults.errorsCount === 0
-    const successMessage = isSuccessful 
-      ? 'עיבוד קובץ מכשירים הושלם בהצלחה! 🎉'
-      : `עיבוד קובץ מכשירים הושלם עם ${processingResults.errorsCount} שגיאות. קובץ שגיאות נוצר.`
+    // בניית תגובת JSON
+    const responseData = buildExcelProcessingResponse(
+      processingResults,
+      data as ExcelRowData[],
+      'עיבוד קובץ מכשירים הושלם בהצלחה! 🎉',
+      'עיבוד קובץ מכשירים הושלם עם'
+    )
 
-    res.status(200).json({
-      success: isSuccessful,
-      message: successMessage,
-      results: {
-        totalRows: processingResults.totalRows,
-        successCount: processingResults.successCount,
-        errorsCount: processingResults.errorsCount,
-        successRate: `${Math.round((processingResults.successCount / processingResults.totalRows) * 100)}%`
-      },
-      ...(processingResults.errorFilePath && {
-        errorFile: {
-          generated: true,
-          message: 'קובץ שגיאות נוצר לבדיקה מפורטת'
-        }
-      }),
-      sampleData: data.slice(0, 3) // מחזיר רק 3 שורות ראשונות כדוגמה
-    })
+    res.status(200).json(responseData)
   } catch (error: unknown) {
     // מחיקת הקובץ הזמני במקרה של שגיאה
     if (filePath) {
@@ -169,4 +195,66 @@ const processDeviceExcel = async (
   }
 }
 
-export { processCustomerDeviceExcel, processDeviceExcel }
+/**
+ * הורדת קובץ שגיאות
+ */
+const downloadErrorFile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { fileName } = req.params
+    logger.info(`Request to download error file: ${fileName}`)
+    // וידוא שהקובץ קיים בתיקיית uploads
+    const uploadsDir = config.upload.directory
+    const filePath = path.join(uploadsDir, fileName)
+    logger.debug(`Constructed file path: ${filePath}`)
+
+    // בדיקה שהקובץ קיים ושהוא קובץ שגיאות תקין
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({
+        status: 404,
+        message: 'קובץ השגיאות לא נמצא'
+      })
+      return
+    }
+    
+    // בדיקת אבטחה - וידוא שזה קובץ שגיאות
+    if (!fileName.includes('errors_') || !fileName.endsWith('.xlsx')) {
+      res.status(403).json({
+        status: 403,
+        message: 'גישה לא מורשית לקובץ זה'
+      })
+      return
+    }
+    
+    logger.info('Downloading error file:', fileName)
+    
+    // שליחת הקובץ
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`)
+    
+    const fileStream = fs.createReadStream(filePath)
+    fileStream.pipe(res)
+    
+    fileStream.on('end', () => {
+      logger.info('Error file downloaded successfully:', fileName)
+    })
+    
+    fileStream.on('error', (error) => {
+      logger.error('Error streaming file:', error)
+      if (!res.headersSent) {
+        res.status(500).json({
+          status: 500,
+          message: 'שגיאה בהורדת הקובץ'
+        })
+      }
+    })
+    
+  } catch (error: unknown) {
+    handleError(error, next)
+  }
+}
+
+export { processCustomerDeviceExcel, processDeviceExcel, downloadErrorFile }

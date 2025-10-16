@@ -46,6 +46,7 @@ import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
 import SimReset from './components/devices/SimReset'
+import ExcelUpload from './components/excel/ExcelUpload'
 
 function App() {
   const { t } = useTranslation()
@@ -145,6 +146,7 @@ function App() {
                         <Route path='/branches' element={<Branches />} />
                         <Route path='/monthlyPayment' element={<MonthlyPaymentComponen />} />
                         <Route path='/monthlyPayment/edit/:id' element={<EditMonthlyPayment />} />
+                        <Route path='/excel' element={<ExcelUpload />} />
                         <Route path='/permissions' element={<Permissions />} />
                         <Route path='/switchboard' element={<Switchboard />} />
                         <Route path='/switchboard/callCenter/:id' element={<CallCenter />} />
