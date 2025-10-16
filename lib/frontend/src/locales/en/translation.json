@@ -358,5 +358,7 @@
   "uploadFailed": "Error uploading file",
   "errors": "Errors",
   "successRate": "Success rate",
-  "noPreviousComments": "No previous comments"
+  "noPreviousComments": "No previous comments",
+  "loadingPaymentFields": "Loading payment fields...",
+  "processingPayment": "Processing payment..."
 }
