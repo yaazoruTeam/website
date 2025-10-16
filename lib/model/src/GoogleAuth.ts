@@ -1,5 +1,6 @@
 /**
  * to do:
+ * 
  * TEMPORARY SOLUTION - Google Authentication Types
  * 
  * ⚠️ WARNING: This is a temporary implementation ⚠️
