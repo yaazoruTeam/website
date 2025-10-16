@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles'
 
 import './App.css'
 import SideNav from './components/layout/SideNav'
+import { GoogleAuthService } from './services/googleAuthService'
 
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
@@ -53,6 +54,17 @@ function App() {
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
+    
+    // Handle Google Auth redirect result when app loads
+    const handleAuthRedirect = async () => {
+      try {
+        await GoogleAuthService.handleRedirectResult()
+      } catch (error) {
+        console.log('No redirect result or error handling redirect:', error)
+      }
+    }
+    
+    handleAuthRedirect()
   }, [navigate])
 
   return (

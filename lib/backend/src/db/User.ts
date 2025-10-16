@@ -12,12 +12,7 @@ const createUser = async (user: User.Model) => {
         last_name: user.last_name,
         id_number: user.id_number,
         phone_number: user.phone_number,
-        additional_phone: user.additional_phone,
         email: user.email,
-        city: user.city,
-        address1: user.address1,
-        address2: user.address2,
-        zipCode: user.zipCode,
         password: user.password,
         user_name: user.user_name,
         role: user.role,
@@ -90,12 +85,36 @@ const deleteUser = async (user_id: string) => {
   }
 }
 
+// Partial update function for Google Auth fields
+const updateUserPartial = async (user_id: string, partialUser: Partial<User.Model>) => {
+  const knex = getDbConnection()
+  try {
+    const updatedUser = await knex('yaazoru.users')
+      .where({ user_id })
+      .update(partialUser)
+      .returning('*')
+    
+    if (updatedUser.length === 0) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'User not found',
+      }
+      throw error
+    }
+    
+    return updatedUser[0]
+  } catch (err) {
+    throw err
+  }
+}
+
 const findUser = async (criteria: {
   user_id?: string
   email?: string
   id_number?: string
   password?: string
   user_name?: string
+  google_uid?: string
 }) => {
   const knex = getDbConnection()
   try {
@@ -106,6 +125,9 @@ const findUser = async (criteria: {
         }
         if (criteria.id_number) {
           this.orWhere({ id_number: criteria.id_number })
+        }
+        if (criteria.google_uid) {
+          this.orWhere({ google_uid: criteria.google_uid })
         }
         if (criteria.password) {
           this.orWhere({ password: criteria.password })
@@ -135,4 +157,4 @@ const doesUserExist = async (user_id: string): Promise<boolean> => {
   }
 }
 
-export { createUser, getUsers, getUserById, updateUser, deleteUser, findUser, doesUserExist }
+export { createUser, getUsers, getUserById, updateUser, updateUserPartial, deleteUser, findUser, doesUserExist }

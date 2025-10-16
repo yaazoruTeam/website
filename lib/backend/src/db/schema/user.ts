@@ -16,25 +16,24 @@ const createUserSchema = async () => {
         table.increments('user_id').primary()
         table.string('first_name', 20).notNullable()
         table.string('last_name', 20).notNullable()
-        table.string('id_number', 9).notNullable().unique()
-        table.string('phone_number', 20).notNullable()
-        table.string('additional_phone', 20).nullable()
+        table.string('id_number', 9).nullable() // Made nullable for Google users
+        table.string('phone_number', 20).nullable() // Made nullable for Google users
         table.string('email', 50).notNullable().unique()
-        table.string('city', 20).notNullable()
-        table.string('address1').notNullable()
-        table.string('address2').nullable()
-        table.string('zipCode').notNullable()
-        table.string('password').notNullable().unique()
+        table.string('password').nullable() // Made nullable for Google users (they don't need password)
         table.string('user_name').notNullable().unique()
         table.enu('role', roles).notNullable()
         table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
+        // Google OAuth fields
+        table.string('google_uid').nullable().unique()
+        table.text('photo_url').nullable()
+        table.boolean('email_verified').nullable().defaultTo(false)
       })
       logger.debug('User table created successfully.')
     } else {
       logger.debug('User table already exists. Skipping creation.')
     }
   } catch (err) {
-    logger.error('error creat schema user', err)
+    logger.error('error create schema user', err)
   }
 }
 

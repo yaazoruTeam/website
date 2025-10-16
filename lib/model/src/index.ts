@@ -22,6 +22,7 @@ import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ComprehensiveResetResponse from './ComprehensiveResetResponse'
 import * as Request from './Request'
 import * as Switchboard from './Switchboard'
+import * as GoogleAuth from './GoogleAuth'
 
 export {
   Customer,
@@ -48,4 +49,5 @@ export {
   ComprehensiveResetResponse,
   Request,
   Switchboard,
+  GoogleAuth,
 }
