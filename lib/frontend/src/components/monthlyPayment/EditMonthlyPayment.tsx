@@ -21,7 +21,7 @@ import { CustomButton } from '../designComponent/Button'
 import { getItemsByMonthlyPaymentId } from '../../api/itemsApi'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getMonthlyPaymentById } from '../../api/monhlyPaymentApi'
-import PaymentForm from './PaymentForm'
+import PaymentForm, { PaymentFormHandle } from './PaymentForm'
 import { updateMonthlyPayment } from '../../api/monthlyPaymentManagement'
 import { getCreditDetailsById } from '../../api/creditDetails'
 import { getPaymentCreditLinkByMonthlyPaymentId } from '../../api/paymentCreditLink'
@@ -56,8 +56,24 @@ const EditMonthlyPayment: React.FC = () => {
   const [paymentData, setPaymentData] = useState<any>(null)
   const [creditDetails, setCreditDetails] = useState<CreditDetails.Model>()
   const [error, setError] = useState<string | null>(null)
-  const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null)
+  const paymentFormRef = useRef<PaymentFormHandle | null>(null)
   const [payments, setPayments] = useState<Payments.Model[]>([])
+
+  // Adapter function to convert PaymentForm timeData to our timeData format
+  const handleTimeChange = (timeData: {
+    name: string
+    mustEvery: string
+    payments: string
+    startDate: Date
+    dayOfTheMonth: string
+  }) => {
+    setTimeData({
+      startDate: timeData.startDate,
+      payments: parseInt(timeData.payments) || 0,
+      mustEvery: timeData.mustEvery,
+      dayOfTheMonth: timeData.dayOfTheMonth,
+    })
+  }
 
   const fetchMonthlyPaymentData = useCallback(
     async (id: string) => {
@@ -406,7 +422,7 @@ const EditMonthlyPayment: React.FC = () => {
                   <PaymentForm
                     ref={paymentFormRef}
                     onPaymentChange={setPaymentData}
-                    OnTimeChange={setTimeData}
+                    OnTimeChange={handleTimeChange}
                     defaultValues={{
                       name: '', //customer?.first_name + ' ' + customer?.last_name,
                       mustEvery: monthlyPayment?.frequency || '', // פרטי תדירות החיוב
