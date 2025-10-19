@@ -23,7 +23,7 @@ import {
  */
 const convertFlatRowToCustomerModel = (item: ExcelRowData): Customer.Model => {
   return {
-    customer_id: '', // יתמלא אוטומטית במסד הנתונים
+    customer_id: '', 
     first_name: String(item.first_name || '').trim(),
     last_name: String(item.last_name || '').trim(),
     id_number: String(item.id_number || '').trim(),
@@ -109,7 +109,7 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
       let existingCustomer = await db.Customer.findCustomer({
         email: sanitizedCustomer.email,
         id_number: sanitizedCustomer.id_number,
-      })
+      }, trx)
 
       if (existingCustomer) {
         // הלקוח כבר קיים - זו שגיאה או עדכון?
