@@ -47,7 +47,8 @@ const callingWidely = async (
           // Check for various message fields that Widely might use
           if (typeof responseData === 'object' && responseData !== null) {
             const data = responseData as Record<string, unknown>
-            widelyMessage = (data.message || data.error || data.error_message || data.description || '') as string
+            const possibleMessage = data.message || data.error || data.error_message || data.description
+            widelyMessage = typeof possibleMessage === 'string' ? possibleMessage : ''
           } else if (typeof responseData === 'string') {
             widelyMessage = responseData
           }

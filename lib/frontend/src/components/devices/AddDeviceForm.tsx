@@ -9,7 +9,7 @@ import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import { createDevice } from '../../api/device'
 import { Device } from '@model'
-import { AxiosError } from 'axios'
+import { extractErrorMessage } from '../../utils/errorHelpers'
 
 interface AddDeviceFormProps {
   open: boolean
@@ -75,21 +75,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       onClose()
       onSuccess() // Refresh the devices list
     } catch (error: unknown) {
-      let errorMsg = t('deviceAddFailed')
-
-      if (error instanceof AxiosError) {
-        const serverMessage = error.response?.data?.message;
-        if (typeof serverMessage === 'string') {
-          errorMsg = serverMessage;
-        } else if (serverMessage && typeof serverMessage === 'object') {
-          errorMsg = JSON.stringify(serverMessage);
-        } else {
-          errorMsg = error.message;
-        }
-      } else if (error instanceof Error) {
-        errorMsg = error.message;
-      }
-
+      const errorMsg = extractErrorMessage(error, t('deviceAddFailed'))
       setErrorMessage(errorMsg)
     }
   }, [t, reset, onClose, onSuccess])

@@ -229,19 +229,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             console.error('Error in comprehensive reset:', err);
-            let errorMsg = t('comprehensiveResetError');
-            if (err instanceof AxiosError) {
-                const serverMessage = err.response?.data?.message;
-                if (typeof serverMessage === 'string') {
-                    errorMsg = serverMessage;
-                } else if (serverMessage && typeof serverMessage === 'object') {
-                    errorMsg = JSON.stringify(serverMessage);
-                } else {
-                    errorMsg = err.message;
-                }
-            } else if (err instanceof Error) {
-                errorMsg = err.message;
-            }
+            const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
             alert(`Error in comprehensive reset: ${errorMsg}`);
         } finally {
@@ -273,20 +261,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setLineSuspension(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            let errorMessage = t('errorUpdatingLineSuspension');
-            
-            if (error instanceof AxiosError) {
-                const serverMessage = error.response?.data?.message;
-                if (typeof serverMessage === 'string') {
-                    errorMessage = serverMessage;
-                } else if (serverMessage && typeof serverMessage === 'object') {
-                    errorMessage = JSON.stringify(serverMessage);
-                } else {
-                    errorMessage = error.message;
-                }
-            } else if (error instanceof Error) {
-                errorMessage = error.message;
-            }
+            const errorMessage = handleErrorUtil('freezeUnfreezeMobile', error, t('errorUpdatingLineSuspension'));
             
             setLineSuspensionError(errorMessage);
 
@@ -322,20 +297,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setImeiLocked(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            let errorMessage = t('errorUpdatingImeiLock');
-            
-            if (error instanceof AxiosError) {
-                const serverMessage = error.response?.data?.message;
-                if (typeof serverMessage === 'string') {
-                    errorMessage = serverMessage;
-                } else if (serverMessage && typeof serverMessage === 'object') {
-                    errorMessage = JSON.stringify(serverMessage);
-                } else {
-                    errorMessage = error.message;
-                }
-            } else if (error instanceof Error) {
-                errorMessage = error.message;
-            }
+            const errorMessage = handleErrorUtil('lockUnlockImei', error, t('errorUpdatingImeiLock'));
             
             setImeiLockError(errorMessage);
 
