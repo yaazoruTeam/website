@@ -77,15 +77,17 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
     } catch (error: unknown) {
       let errorMsg = t('deviceAddFailed')
 
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as AxiosError
-        if (axiosError.response?.data &&
-          typeof axiosError.response.data === 'object' &&
-          axiosError.response.data !== null &&
-          'message' in axiosError.response.data) {
-          const responseData = axiosError.response.data as { message: string }
-          errorMsg = responseData.message
+      if (error instanceof AxiosError) {
+        const serverMessage = error.response?.data?.message;
+        if (typeof serverMessage === 'string') {
+          errorMsg = serverMessage;
+        } else if (serverMessage && typeof serverMessage === 'object') {
+          errorMsg = JSON.stringify(serverMessage);
+        } else {
+          errorMsg = error.message;
         }
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
       }
 
       setErrorMessage(errorMsg)

@@ -53,6 +53,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import ModelPackages from './modelPackage'
 import SwitchWithLoader from '../designComponent/SwitchWithLoader'
 import { AxiosError } from 'axios'
+import { handleError as handleErrorUtil } from '../../utils/errorHelpers'
 
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -228,7 +229,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             console.error('Error in comprehensive reset:', err);
-            const errorMsg = err instanceof AxiosError ? err.response?.data?.message || err.message : t('comprehensiveResetError');
+            let errorMsg = t('comprehensiveResetError');
+            if (err instanceof AxiosError) {
+                const serverMessage = err.response?.data?.message;
+                if (typeof serverMessage === 'string') {
+                    errorMsg = serverMessage;
+                } else if (serverMessage && typeof serverMessage === 'object') {
+                    errorMsg = JSON.stringify(serverMessage);
+                } else {
+                    errorMsg = err.message;
+                }
+            } else if (err instanceof Error) {
+                errorMsg = err.message;
+            }
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
             alert(`Error in comprehensive reset: ${errorMsg}`);
         } finally {
@@ -262,11 +275,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // הצגת הודעת שגיאה מותאמת למשתמש
             let errorMessage = t('errorUpdatingLineSuspension');
             
-            if (error instanceof Error) {
+            if (error instanceof AxiosError) {
+                const serverMessage = error.response?.data?.message;
+                if (typeof serverMessage === 'string') {
+                    errorMessage = serverMessage;
+                } else if (serverMessage && typeof serverMessage === 'object') {
+                    errorMessage = JSON.stringify(serverMessage);
+                } else {
+                    errorMessage = error.message;
+                }
+            } else if (error instanceof Error) {
                 errorMessage = error.message;
-            } else if (error && typeof error === 'object' && 'response' in error) {
-                const axiosError = error as { response?: { data?: { message?: string } } };
-                errorMessage = axiosError?.response?.data?.message || errorMessage;
             }
             
             setLineSuspensionError(errorMessage);
@@ -305,11 +324,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             // הצגת הודעת שגיאה מותאמת למשתמש
             let errorMessage = t('errorUpdatingImeiLock');
             
-            if (error instanceof Error) {
+            if (error instanceof AxiosError) {
+                const serverMessage = error.response?.data?.message;
+                if (typeof serverMessage === 'string') {
+                    errorMessage = serverMessage;
+                } else if (serverMessage && typeof serverMessage === 'object') {
+                    errorMessage = JSON.stringify(serverMessage);
+                } else {
+                    errorMessage = error.message;
+                }
+            } else if (error instanceof Error) {
                 errorMessage = error.message;
-            } else if (error && typeof error === 'object' && 'response' in error) {
-                const axiosError = error as { response?: { data?: { message?: string } } };
-                errorMessage = axiosError?.response?.data?.message || errorMessage;
             }
             
             setImeiLockError(errorMessage);
@@ -418,7 +443,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             // Parse error response to determine appropriate user message
-            const errorMessage = err instanceof AxiosError ? err.response?.data?.message || err.message : '';
+            const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingDeviceDetails'));
+            
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
                 'SIM number not found.': 'simNumberNotFound',

@@ -68,8 +68,21 @@ const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelP
                                         //to do:Adding a system message for success
                                     }
                                 } catch (err: AxiosError | unknown) {
-                                    setError(err instanceof AxiosError && err?.response?.data?.error || err instanceof AxiosError && err?.message || t('failedToChangePackage'));
-                                    alert(`Error changing package: ${err instanceof AxiosError ? err?.response?.data?.error || err?.message : err}`);
+                                    let errorMessage = t('failedToChangePackage');
+                                    if (err instanceof AxiosError) {
+                                        const serverMessage = err.response?.data?.error || err.response?.data?.message;
+                                        if (typeof serverMessage === 'string') {
+                                            errorMessage = serverMessage;
+                                        } else if (serverMessage && typeof serverMessage === 'object') {
+                                            errorMessage = JSON.stringify(serverMessage);
+                                        } else {
+                                            errorMessage = err.message;
+                                        }
+                                    } else if (err instanceof Error) {
+                                        errorMessage = err.message;
+                                    }
+                                    setError(errorMessage);
+                                    alert(`Error changing package: ${errorMessage}`);
                                 }
                             }
                         }}

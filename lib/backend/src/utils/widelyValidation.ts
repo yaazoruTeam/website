@@ -1,4 +1,4 @@
-import { HttpError, Widely } from '@model'
+import { HttpError, HttpErrorWithStatus, Widely } from '@model'
 import logger from './logger'
 
 const validateRequiredParams = (params: Record<string, unknown>): void => {
@@ -17,10 +17,8 @@ const validateRequiredParams = (params: Record<string, unknown>): void => {
             ? `Parameter '${missingParams[0]}' is required.`
             : `The following parameters are required: ${missingParams.map(param => `'${param}'`).join(', ')}.`
 
-        const error: HttpError.Model = {
-            status: 400,
-            message,
-        }
+        const error = new Error(message) as HttpErrorWithStatus.Model;
+        error.status = 400;
         throw error
     }
 }
@@ -48,10 +46,8 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
             : `${errorMessage} - Message: ${widelyMessage}`
 
         logger.debug(`Final error message to throw: ${finalMessage}`)
-        const error: HttpError.Model = {
-            status: 500, // Always return 500 for Widely API errors
-            message: JSON.stringify(finalMessage),
-        }
+        const error = new Error(finalMessage) as HttpErrorWithStatus.Model;
+        error.status = 500; // Always return 500 for Widely API errors
         throw error
     }
 
@@ -68,10 +64,8 @@ const validateWidelyResult = (result: Widely.Model, errorMessage: string, checkL
     logger.debug(`Widely API result hasData: ${hasData}`)
     if (!hasData) {
         logger.error('Widely API returned no data', { result })
-        const error: HttpError.Model = {
-            status: 404,
-            message: errorMessage,
-        }
+        const error = new Error(errorMessage) as HttpErrorWithStatus.Model;
+        error.status = 404;
         throw error
     }
 }
