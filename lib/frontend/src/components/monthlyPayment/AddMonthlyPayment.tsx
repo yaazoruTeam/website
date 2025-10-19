@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomerSelector from '../customers/CustomerSelector'
-import PaymentForm from './PaymentForm'
+import PaymentForm, { PaymentFormHandle } from './PaymentForm'
 import FormToAddItems from './FormToAddItems'
 import { CustomButton } from '../designComponent/Button'
 import { Customer, ItemForMonthlyPayment, MonthlyPaymentManagement } from '@model'
@@ -20,7 +20,7 @@ const AddMonthlyPayment: React.FC = () => {
   const [itemsData, setItemsData] = useState<ItemForMonthlyPayment.Model[]>([]) // נתוני פריטים
   const [paymentData, setPaymentData] = useState<any>(null) // נתוני תשלום//to do:Change to an accurate type 
   const [timeData, setTimeData] = useState<any>(null) // נתוני זמן ההוראת קבע //to do:Change to an accurate type
-  const paymentFormRef = useRef<{ chargeCcData: () => void } | null>(null)
+  const paymentFormRef = useRef<PaymentFormHandle | null>(null)
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
 
@@ -143,7 +143,13 @@ const AddMonthlyPayment: React.FC = () => {
       timeData,
     })
     try {
-      const responsePayment: any = await paymentFormRef.current?.chargeCcData() //to do:Change to an accurate type
+      // Calculate total amount to charge
+      let totalAmount = 0
+      itemsData.forEach((item) => {
+        totalAmount += parseFloat(item.total.toString())
+      })
+      
+      const responsePayment: any = await paymentFormRef.current?.chargeCcData(totalAmount) //to do:Change to an accurate type
       console.log('Payment completed')
       console.log(responsePayment)
       console.log('paymentData:', paymentData)
