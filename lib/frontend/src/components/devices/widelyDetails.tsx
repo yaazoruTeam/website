@@ -53,6 +53,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import ModelPackages from './modelPackage'
 import SwitchWithLoader from '../designComponent/SwitchWithLoader'
 import { AxiosError } from 'axios'
+import { handleError as handleErrorUtil } from '../../utils/errorHelpers'
 
 
 const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
@@ -228,7 +229,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             console.error('Error in comprehensive reset:', err);
-            const errorMsg = err instanceof AxiosError ? err.response?.data?.message || err.message : t('comprehensiveResetError');
+            const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
             alert(`Error in comprehensive reset: ${errorMsg}`);
         } finally {
@@ -260,14 +261,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setLineSuspension(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            let errorMessage = t('errorUpdatingLineSuspension');
-            
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else if (error && typeof error === 'object' && 'response' in error) {
-                const axiosError = error as { response?: { data?: { message?: string } } };
-                errorMessage = axiosError?.response?.data?.message || errorMessage;
-            }
+            const errorMessage = handleErrorUtil('freezeUnfreezeMobile', error, t('errorUpdatingLineSuspension'));
             
             setLineSuspensionError(errorMessage);
 
@@ -303,14 +297,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setImeiLocked(previousState);
 
             // הצגת הודעת שגיאה מותאמת למשתמש
-            let errorMessage = t('errorUpdatingImeiLock');
-            
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else if (error && typeof error === 'object' && 'response' in error) {
-                const axiosError = error as { response?: { data?: { message?: string } } };
-                errorMessage = axiosError?.response?.data?.message || errorMessage;
-            }
+            const errorMessage = handleErrorUtil('lockUnlockImei', error, t('errorUpdatingImeiLock'));
             
             setImeiLockError(errorMessage);
 
@@ -418,7 +405,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             // Parse error response to determine appropriate user message
-            const errorMessage = err instanceof AxiosError ? err.response?.data?.message || err.message : '';
+            const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingDeviceDetails'));
+            
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
                 'SIM number not found.': 'simNumberNotFound',

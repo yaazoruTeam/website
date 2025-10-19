@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { CustomButton } from "../designComponent/Button";
 import { Widely } from "@model";
 import { AxiosError } from "axios";
+import { extractErrorMessage } from "../../utils/errorHelpers";
 
 interface ModelPackagesProps {
     packages: { value: string; label: string }[];
@@ -68,8 +69,20 @@ const ModelPackages = ({ packages, open, close, defaultValue, approval }: ModelP
                                         //to do:Adding a system message for success
                                     }
                                 } catch (err: AxiosError | unknown) {
-                                    setError(err instanceof AxiosError && err?.response?.data?.error || err instanceof AxiosError && err?.message || t('failedToChangePackage'));
-                                    alert(`Error changing package: ${err instanceof AxiosError ? err?.response?.data?.error || err?.message : err}`);
+                                    // Use the error helper utility, but first check for the specific 'error' field
+                                    let errorMessage = t('failedToChangePackage');
+                                    
+                                    if (err instanceof AxiosError && err.response?.data?.error) {
+                                        // Handle the specific case where the server returns an 'error' field
+                                        const errorField = err.response.data.error;
+                                        errorMessage = typeof errorField === 'string' ? errorField : JSON.stringify(errorField);
+                                    } else {
+                                        // Use the standard error extraction utility for all other cases
+                                        errorMessage = extractErrorMessage(err, t('failedToChangePackage'));
+                                    }
+                                    
+                                    setError(errorMessage);
+                                    alert(`Error changing package: ${errorMessage}`);
                                 }
                             }
                         }}
