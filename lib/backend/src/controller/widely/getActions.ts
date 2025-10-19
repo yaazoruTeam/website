@@ -196,7 +196,18 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
       throw error
     }
 
-    return mobileData as Widely.WidelyMobileData
+    // Add the endpoint_id to the mobile data since it's not returned by the API
+    const mobileDataWithEndpoint = {
+      ...mobileData,
+      endpoint_id: endpoint_id
+    }
+    
+    logger.debug('getMobileInfoData returning mobile data with endpoint_id', { 
+      mobileDataWithEndpoint,
+      addedEndpointId: endpoint_id
+    })
+    
+    return mobileDataWithEndpoint as Widely.WidelyMobileData
   }
 
   logger.debug('getMobileInfoData handling direct object response (without data property)')
@@ -339,7 +350,11 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
     const networkConnection = getNetworkConnection(mccMnc)
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
-    const status = mobileInfo?.registration_info?.status || 'Unknown'
+    
+    // Try multiple potential status fields with fallback logic
+    const status = mobileInfo?.registration_info?.status ||
+                   ((mobileInfo as any)?.active ? 'Active' : 'Inactive') ||
+                   'Unknown'
 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
