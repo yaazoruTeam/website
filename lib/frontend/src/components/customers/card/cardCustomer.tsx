@@ -52,7 +52,6 @@ const CardCustomer: React.FC = () => {
       const updatedData = {
         ...customer,
         ...customerData,
-        customer_id: customer.customer_id
       }
       
       await updateCustomer(Number(customer.customer_id), updatedData as Customer.Model)
@@ -62,7 +61,7 @@ const CardCustomer: React.FC = () => {
       setCustomer(updatedData as Customer.Model)
     } catch (error) {
       console.error('Error updating customer:', error)
-      // כאן אפשר להוסיף הודעת שגיאה למשתמש
+      // כאן אפשר להוסיף הודעת שגיאה למשתמשt to do:
     }
   }
 
