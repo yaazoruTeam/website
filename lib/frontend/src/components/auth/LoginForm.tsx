@@ -20,6 +20,11 @@ interface LoginFormInputs {
   password: string
 }
 
+// Example usage of LoginForm component
+// const handleLoginSubmit = (data: LoginFormInputs) => {
+//   console.log('Login data submitted:', data)
+//  // Perform login logic here
+//
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation()
   const { control, handleSubmit } = useForm<LoginFormInputs>()
