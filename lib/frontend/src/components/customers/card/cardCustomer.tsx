@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Customer } from '@model'
-import { deleteCustomer, getCustomerById } from '../../../api/customerApi'
+import { deleteCustomer, getCustomerById, updateCustomer } from '../../../api/customerApi'
 import CustomTypography from '../../designComponent/Typography'
 import { colors } from '../../../styles/theme'
 import { Box, useMediaQuery } from '@mui/system'
@@ -38,11 +38,31 @@ const CardCustomer: React.FC = () => {
   const savingChanges = () => {
     if (formRef.current) {
       formRef.current.submitForm()
-      setTimeout(() => {
-        const updatedCustomer = formRef.current?.getCustomerData()
-        console.log(updatedCustomer) //הוספתי לוג כדי שלא תהייה שגיאה
-        //כאן ניתן לשלוח את הנתונים לשרת
-      }, 200)
+    }
+  }
+
+  const handleCustomerUpdate = async (customerData: Partial<Customer.Model>) => {
+    if (!customerData || !customer?.customer_id) {
+      console.warn('No customer data available to save')
+      return
+    }
+    
+    try {
+      // מעדכנים את הלקוח עם הנתונים החדשים
+      const updatedData = {
+        ...customer,
+        ...customerData,
+        customer_id: customer.customer_id
+      }
+      
+      await updateCustomer(Number(customer.customer_id), updatedData as Customer.Model)
+      console.log('Customer updated successfully')
+      
+      // מעדכן את ה-state המקומי עם הנתונים החדשים
+      setCustomer(updatedData as Customer.Model)
+    } catch (error) {
+      console.error('Error updating customer:', error)
+      // כאן אפשר להוסיף הודעת שגיאה למשתמש
     }
   }
 
@@ -121,7 +141,7 @@ const CardCustomer: React.FC = () => {
           tabs={[
             {
               label: t('customerDetails'),
-              content: customer ? <CustomerDetails ref={formRef} customer={customer} /> : '',
+              content: customer ? <CustomerDetails ref={formRef} customer={customer} onCustomerUpdate={handleCustomerUpdate} /> : '',
             },
             {
               label: t('devicesAndQuestions'),
