@@ -23,14 +23,14 @@ interface PackagesData {
 
 // Type guard לבדיקת מבנה החבילות
 const isPackagesData = (obj: unknown): obj is PackagesData => {
-    return obj !== null && 
-           obj !== undefined &&
-           typeof obj === 'object' && 
-           'data' in obj &&
-           obj.data !== null &&
-           typeof obj.data === 'object' && 
-           'items' in obj.data &&
-           Array.isArray(obj.data.items);
+    return obj !== null &&
+        obj !== undefined &&
+        typeof obj === 'object' &&
+        'data' in obj &&
+        obj.data !== null &&
+        typeof obj.data === 'object' &&
+        'items' in obj.data &&
+        Array.isArray(obj.data.items);
 }
 
 import { colors } from '../../styles/theme'
@@ -168,9 +168,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
-     //פונקציה להוספת חבילת גיגה חד פעמית
+    //פונקציה להוספת חבילת גיגה חד פעמית
     const handleAddOneTimeGigabyte = async (selectedPackage: number): Promise<Widely.Model> => {
-        return await addOneTimePackage(widelyDetails?.endpoint_id || 0,widelyDetails?.domain_user_id || 0, selectedPackage)
+        return await addOneTimePackage(widelyDetails?.endpoint_id || 0, widelyDetails?.domain_user_id || 0, selectedPackage)
     }
 
     // פונקציה לטיפול בביטול קו
@@ -299,7 +299,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הצגת הודעת שגיאה מותאמת למשתמש
             const errorMessage = handleErrorUtil('freezeUnfreezeMobile', error, t('errorUpdatingLineSuspension'));
-            
+
             setLineSuspensionError(errorMessage);
 
             console.error('Error updating line suspension:', error);
@@ -313,7 +313,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // איפוס שגיאות קודמות
         setImeiLockError(null);
         console.log(`IMEI Lock: Setting to ${lock}, endpoint_id: ${widelyDetails?.endpoint_id}, iccid: ${widelyDetails?.iccid}`);
-        
+
         // עדכון אופטימיסטי - מעדכנים את ה-state מיידית
         const previousState = imeiLocked;
         setImeiLocked(lock);
@@ -335,7 +335,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הצגת הודעת שגיאה מותאמת למשתמש
             const errorMessage = handleErrorUtil('lockUnlockImei', error, t('errorUpdatingImeiLock'));
-            
+
             setImeiLockError(errorMessage);
 
             console.error('Error updating IMEI lock:', error);
@@ -443,7 +443,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         } catch (err: AxiosError | unknown) {
             // Parse error response to determine appropriate user message
             const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingDeviceDetails'));
-            
+
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
                 'SIM number not found.': 'simNumberNotFound',
@@ -657,14 +657,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             {/* כפתור איפוס סיסמת תא קולי */}
             <WidelyButtonSection>
                 <CustomButton
-                    label={t('resetVoicemailPincode')}
-                    onClick={handleResetVoicemailPincode}
-                    buttonType="fourth"
-                    size="large"
-                />
-                <CustomButton
-                    label={t('sendApn')}
-                    onClick={handleSendApn}
+                    label={t('softReset')}
+                    onClick={handleSoftReset}
                     buttonType="fourth"
                     size="large"
                 />
@@ -675,11 +669,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     size="large"
                 />
                 <CustomButton
-                    label={t('softReset')}
-                    onClick={handleSoftReset}
+                    label={t('sendApn')}
+                    onClick={handleSendApn}
                     buttonType="fourth"
                     size="large"
                 />
+                <CustomButton
+                    label={t('resetVoicemailPincode')}
+                    onClick={handleResetVoicemailPincode}
+                    buttonType="fourth"
+                    size="large"
+                />
+
+
+
 
                 {/* מתגים להקפאה ונעילת IMEI */}
                 <WidelySwitchSection>
