@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 
@@ -232,6 +232,43 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
             alert(`Error in comprehensive reset: ${errorMsg}`);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // פונקציה לאיפוס קל של מכשיר
+    const handleSoftReset = async () => {
+        if (!widelyDetails?.endpoint_id) {
+            setErrorMessage(t('errorNoEndpointId'));
+            return;
+        }
+
+        // בקשת אישור מהמשתמש
+        const confirmed = window.confirm(
+            `${t('areYouSureSoftReset')} ${widelyDetails.endpoint_id}?\n\n${t('softResetDescription')}`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            setLoading(true);
+            setErrorMessage(null);
+            setSuccessMessage(null);
+
+            const result = await softResetDevice(widelyDetails.endpoint_id);
+
+            if (result.error_code === 200 || result.error_code === undefined) {
+                setSuccessMessage(t('softResetSuccessful'));
+                // רענון הנתונים לאחר האיפוס הקל
+                await fetchWidelyDetails();
+            } else {
+                setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
+            }
+        } catch (err: AxiosError | unknown) {
+            console.error('Error in soft reset:', err);
+            const errorMsg = handleErrorUtil('softReset', err, t('softResetError'));
+            setErrorMessage(`${t('softResetFailed')}: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -634,6 +671,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 <CustomButton
                     label={t('comprehensiveReset')}
                     onClick={handleComprehensiveReset}
+                    buttonType="fourth"
+                    size="large"
+                />
+                <CustomButton
+                    label={t('softReset')}
+                    onClick={handleSoftReset}
                     buttonType="fourth"
                     size="large"
                 />
