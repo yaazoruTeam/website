@@ -2,9 +2,6 @@
 FROM node:20-alpine AS builder
 WORKDIR /app 
 
-# התקנת CA certificates לתמיכה ב-SSL
-RUN apk add --no-cache ca-certificates && update-ca-certificates
-
 # העתקת קבצי package.json והתקנת תלויות (מנצל cache)
 COPY lib/backend/package*.json ./ 
 
@@ -25,9 +22,6 @@ RUN npm run build
 # שלב Production - מכיל רק את מה שנדרש להרצת האפליקציה (קטן ויעיל יותר)
 FROM node:20-alpine AS production 
 WORKDIR /app 
-
-# התקנת CA certificates לתמיכה ב-SSL
-RUN apk add --no-cache ca-certificates && update-ca-certificates
 
 # העתקת קבצי ה-package מה-builder stage כדי לאפשר התקנת תלויות production
 COPY --from=builder /app/package*.json ./ 
