@@ -91,7 +91,7 @@ function sanitize(user: Model, hasId: boolean): Model {
     first_name: user.first_name.trim(),
     last_name: user.last_name.trim(),
     id_number: user.id_number,
-    phone_number: user.phone_number.trim(),
+    phone_number: user.phone_number?.trim(),
     email: user.email.trim().toLowerCase(),
     password: user.password,
     user_name: user.user_name,
