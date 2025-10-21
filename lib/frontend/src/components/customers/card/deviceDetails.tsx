@@ -95,10 +95,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         </Box>
       )}
 
-      <Box sx={{ my: '80px' }}>
-        <Box sx={{ marginBottom: '20px' }}>
-        </Box>
-      </Box>
+      
       <Box>
         <Box sx={{ marginBottom: '28px' }}>
           <CustomTypography
