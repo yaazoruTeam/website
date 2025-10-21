@@ -99,7 +99,9 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
 
       <Box sx={{ my: '80px' }}>
         <Box sx={{ marginBottom: '20px' }}>
-          <CustomTypography text={t('activeLoans')} variant='h1' weight='bold' color={colors.blue900} />
+          <CustomTypography text={t('activeLoans')} variant='h1' weight='bold' color={colors.blue900}
+            sx={{ display: 'none' }}
+            />
         </Box>
       </Box>
       <Box>
