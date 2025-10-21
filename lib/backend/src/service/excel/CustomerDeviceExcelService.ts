@@ -16,7 +16,8 @@ import {
   ProcessError,
   ProcessingResult,
   buildProcessingResult,
-  createDeviceIfNotExists
+  createDeviceIfNotExists,
+  createCommentForEntity
 } from './BaseExcelService'
 
 /**
@@ -80,6 +81,14 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
             trx,
           )
         }
+
+        // יצירת הערה ללקוח בלבד (לא למכשיר) בטבלת לקוחות-מכשירים
+        await createCommentForEntity(
+          existCustomer.customer_id,
+          'customer',
+          item.comment as string,
+          trx
+        )
 
         await trx.commit()
         successCount++

@@ -15,7 +15,8 @@ import {
   ProcessError,
   ProcessingResult,
   buildProcessingResult,
-  validateRowData
+  validateRowData,
+  createCommentForEntity
 } from './BaseExcelService'
 
 /**
@@ -33,7 +34,7 @@ const convertFlatRowToCustomerModel = (item: ExcelRowData): Customer.Model => {
     city: String(item.city || '').trim(),
     address1: String(item.address1 || '').trim(),
     address2: '', // לא נדרש בקובץ הזה
-    zipCode: '', // לא נדרש בקובץ הזה
+    zipCode: '', // שדה ריק - לא נדרש בקובץ הזה
     status: 'active', // סטטוס ברירת מחדל
     created_at: new Date(),
     updated_at: new Date()
@@ -126,6 +127,14 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
 
       // יצירת לקוח חדש
       existingCustomer = await db.Customer.createCustomer(sanitizedCustomer, trx)
+      
+      // יצירת הערה ללקוח אם יש תוכן הערה
+      await createCommentForEntity(
+        existingCustomer.customer_id,
+        'customer',
+        item.comment as string,
+        trx
+      )
       
       await trx.commit()
       successCount++
