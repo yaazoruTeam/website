@@ -237,8 +237,8 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
         // Link Google account to existing user
         user = await db.User.updateUserPartial(user.user_id, { 
           google_uid: verifiedUid,
-          photo_url: verifiedPhotoURL || '',
-          email_verified: verifiedEmailVerified || false
+          photo_url: verifiedPhotoURL ?? user.photo_url,
+          email_verified: verifiedEmailVerified ?? false
         })
       } else {
         // User not found in database - deny access
