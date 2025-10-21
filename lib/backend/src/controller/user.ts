@@ -22,7 +22,10 @@ const checkUserPermissions = (req: Request, targetUserId: string) => {
   const decoded = jwt.verify(token, config.jwt.secret) as any
   
   // Allow if: admin, branch, or accessing own data
-  if (decoded.role === 'admin' || decoded.role === 'branch' || targetUserId === decoded.user_id.toString()) {
+  const sameUser = String(targetUserId) === String(decoded.user_id)
+  const isPrivileged = ['admin', 'branch'].includes(decoded.role)
+
+  if (isPrivileged || sameUser) {
     return decoded
   }
 
