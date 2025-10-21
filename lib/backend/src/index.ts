@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express'
 import { router } from '@routers/router'
 import { errorHandler } from '@middleware/errorHandler'
 import config from '@config/index'
-import { createSchema } from '@db/schema'
 import logger from '@utils/logger'
 
 // Import express type extensions globally
@@ -38,8 +37,9 @@ app.use(errorHandler)
 // פונקציה להפעלת השרת
 const startServer = async () => {
   try {
-    logger.debug("Creating database schema...");
-    await createSchema();
+    // No more migrations here - they run in separate Docker service
+    logger.info("🚀 Starting server...");
+    
     app.listen(PORT, () => {
       logger.info(`Server is running on http://localhost:${PORT}`);
       logger.info(`Health check available at http://localhost:${PORT}/health`);

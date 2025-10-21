@@ -1,4 +1,30 @@
 services:
+  # Database Migration Service - runs once before backend starts
+  migration:
+    build:
+      context: .
+      dockerfile: lib/backend/Dockerfile
+    container_name: yaazoru-migration
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      NODE_ENV: development
+    volumes:
+      - ./lib/backend:/app
+      - ./lib/model:/app/model
+      - /app/node_modules
+    command: sh -c "npm install && npm run migrate:latest"
+    depends_on:
+      - db
+    networks:
+      - yaazoru-network
+    restart: "no"  # Run once only
+
   backend:
     build:
       context: .
@@ -21,7 +47,7 @@ services:
       - /app/node_modules
     command: sh -c "npm install && npm run dev:nodemon"
     depends_on:
-      - db
+      - migration  # Wait for migrations to complete
     networks:
       - yaazoru-network
     restart: unless-stopped
