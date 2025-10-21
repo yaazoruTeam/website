@@ -16,7 +16,7 @@ const createUserSchema = async () => {
         table.increments('user_id').primary()
         table.string('first_name', 20).notNullable()
         table.string('last_name', 20).notNullable()
-        table.string('id_number', 9).nullable() // Made nullable for Google users
+        table.string('id_number', 9).nullable().unique() // Made nullable for Google users
         table.string('phone_number', 20).nullable() // Made nullable for Google users
         table.string('email', 50).notNullable().unique()
         table.string('password').nullable() // Made nullable for Google users (they don't need password)
