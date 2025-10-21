@@ -28,7 +28,7 @@ export const getCustomersByCity = async (
   city: string,
   page: number = 1,
 ): Promise<PaginatedCustomersResponse> => {
-  return safeGetPaginated<Customer.Model>(`${ENDPOINT}/city/${city}`, page)
+  return apiGet<PaginatedCustomersResponse>(`${ENDPOINT}/city/${city}/page/${page}`)
 }
 
 // GET(status)
@@ -36,7 +36,7 @@ export const getCustomersByStatus = async (
   status: 'active' | 'inactive',
   page: number = 1,
 ): Promise<PaginatedCustomersResponse> => {
-  return safeGetPaginated<Customer.Model>(`${ENDPOINT}/status/${status}`, page)
+  return apiGet<PaginatedCustomersResponse>(`${ENDPOINT}/status/${status}/page/${page}`)
 }
 
 // GET(dates)
@@ -49,7 +49,7 @@ export const getCustomersByDateRange = async (
   const endDateStr = endDate.toISOString().split('T')[0]
   
   return safeGetPaginated<Customer.Model>(
-    `${ENDPOINT}/dates/${startDateStr}/${endDateStr}`,
+    `${ENDPOINT}/dates/page/${page}?startDate=${startDateStr}&endDate=${endDateStr}`,
     page
   )
 }
@@ -64,7 +64,7 @@ export const getCustomersByName = async (
   name: string,
   page: number = 1,
 ): Promise<PaginatedCustomersResponse> => {
-  return safeGetPaginated<Customer.Model>(`${ENDPOINT}/search?q=${name}`, page)
+  return apiGet<PaginatedCustomersResponse>(`${ENDPOINT}/search/page/${page}?q=${name}`)
 }
 
 // POST
