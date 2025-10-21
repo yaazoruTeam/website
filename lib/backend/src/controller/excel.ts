@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { readExcelFile } from '@utils/excel'
 import { processCustomerDeviceExcelData, ExcelRowData } from '@service/excel/CustomerDeviceExcelService'
 import { processDeviceExcelData } from '@service/excel/DeviceExcelService'
+import { processCustomerExcelData } from '@service/excel/CustomerExcelService'
 import * as fs from 'fs'
 import * as path from 'path'
 import { handleError } from './err'
@@ -196,6 +197,56 @@ const processDeviceExcel = async (
 }
 
 /**
+ * קונטרולר אחראי על עיבוד קבצי Excel של לקוחות בלבד
+ * מטפל בכל הלוגיקה הספציפית לעיבוד נתוני לקוחות
+ */
+const processCustomerExcel = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  let filePath: string | null = null
+
+  try {
+    // בדיקת העלאת קובץ
+    filePath = handleFileUpload(req, res)
+    if (!filePath) return // השגיאה כבר נשלחה בפונקציה
+
+    // קריאת הקובץ
+    const data = await readExcelFile(filePath)
+    logger.info('Customer Excel file read successfully, rows:', data.length)
+
+    // עיבוד הנתונים הספציפיים ללקוחות
+    const processingResults = await processCustomerExcelData(data as ExcelRowData[])
+    logger.info('Customer data processed and saved to DB')
+    logger.info(`✅ Success: ${processingResults.successCount}/${processingResults.totalRows}`)
+    
+    if (processingResults.errorsCount > 0) {
+      logger.error(`❌ Errors: ${processingResults.errorsCount}`)
+    }
+
+    // מחיקת הקובץ הזמני אחרי העיבוד
+    cleanupTempFile(filePath)
+
+    // בניית תגובת JSON
+    const responseData = buildExcelProcessingResponse(
+      processingResults,
+      data as ExcelRowData[],
+      'עיבוד קובץ לקוחות הושלם בהצלחה! 🎉',
+      'עיבוד קובץ לקוחות הושלם עם'
+    )
+
+    res.status(200).json(responseData)
+  } catch (error: unknown) {
+    // מחיקת הקובץ הזמני במקרה של שגיאה
+    if (filePath) {
+      cleanupTempFile(filePath)
+    }
+    handleError(error, next)
+  }
+}
+
+/**
  * הורדת קובץ שגיאות
  */
 const downloadErrorFile = async (
@@ -257,4 +308,4 @@ const downloadErrorFile = async (
   }
 }
 
-export { processCustomerDeviceExcel, processDeviceExcel, downloadErrorFile }
+export { processCustomerDeviceExcel, processDeviceExcel, processCustomerExcel, downloadErrorFile }
