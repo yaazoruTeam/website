@@ -1,15 +1,6 @@
 /**
  * DeviceExcelService - שירות עיבוד קבצי Excel למכשירים בלבד
- * אחראי על כל הלוגיקה הספציפ    // בדיקת כפילויות בקובץ
-    const deviceSignatures = new Map<string, number[]>()
-    data.forEach((item, index) => {
-      // שימוש בפונקציה בטוחה להמרת הערכים לפני יצירת החתימה
-      const signature = `${toSafeString(item.SIM_number)}-${toSafeString(item.IMEI_1)}-${toSafeString(item.device_number)}-${toSafeString(item.serialNumber)}`
-      if (!deviceSignatures.has(signature)) {
-        deviceSignatures.set(signature, [])
-      }
-      deviceSignatures.get(signature)!.push(index + 1)
-    }) נתוני מכשירים
+ * אחראי על כל הלוגיקה הספציפית לעיבוד נתוני מכשירים
  */
 
 import { Device } from '@model'
@@ -23,7 +14,8 @@ import {
   ProcessingResult,
   buildProcessingResult,
   validateRowData,
-  createDeviceIfNotExists 
+  createDeviceIfNotExists,
+  createCommentForEntity
 } from './BaseExcelService'
 
 /**
@@ -154,6 +146,14 @@ const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingR
       // עיבוד המכשיר באמצעות הפונקציה המשותפת
       logger.info(`💾 Row ${rowIndex} - Starting device processing...`)
       const processedDevice = await createDeviceIfNotExists(deviceModel)
+      
+      // יצירת הערה למכשיר אם יש תוכן הערה
+      await createCommentForEntity(
+        processedDevice.device_id,
+        'device',
+        item.comment as string
+      )
+      
       logger.info(`🎉 Row ${rowIndex} - Device processed successfully! Device ID: ${processedDevice.device_id}`)
       
       successCount++
