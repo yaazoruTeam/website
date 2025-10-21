@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, Drawer, List, ListItem } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom' // Link מיובא כבר
 
 import logoIcon from '../../assets/logoIcon.svg'
 import { colors } from '../../styles/theme'
@@ -45,22 +45,30 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
           alignItems: 'center',
           height: '100px',
           padding: '10px',
+          cursor: 'pointer', // הוספנו סמן כדי לציין שהוא לחיץ
         }}
       >
-        <img
-          src={logoIcon}
-          alt='Logo'
-          style={{
-            width: '67px',
-            height: '64px',
-          }}
-        />
+        {/* עוטפים את התמונה ברכיב Link */}
+        <Link 
+          to="/dashboard" // הנתיב שאליו התמונה תוביל
+          onClick={() => handleLinkClick('/dashboard')} // מעדכנים את ה-state כדי לסנכרן
+        >
+          <img
+            src={logoIcon}
+            alt='Logo'
+            style={{
+              width: '67px',
+              height: '64px',
+            }}
+          />
+        </Link>
       </Box>
 
       <List>
-        {props.listItems.map((li, index) => (
+        {props.listItems.map((li,index) => (
           <ListItem
             key={index}
+            
             component={Link}
             to={li.link}
             onClick={() => handleLinkClick(li.link)}
