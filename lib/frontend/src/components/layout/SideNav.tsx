@@ -48,7 +48,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
           cursor: 'pointer',
         }}
       >
-       
         <Link 
           to="/dashboard" 
           onClick={() => handleLinkClick('/dashboard')} 
@@ -68,7 +67,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
         {props.listItems.map((li,index) => (
           <ListItem
             key={index}
-            
             component={Link}
             to={li.link}
             onClick={() => handleLinkClick(li.link)}

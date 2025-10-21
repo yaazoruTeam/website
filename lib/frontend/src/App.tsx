@@ -73,12 +73,6 @@ function App() {
                 <div style={{ display: 'flex' }}>
                   <SideNav
                     listItems={[
-                      // {
-                      //   iconWhite: dashboardIconWhite,
-                      //   iconBlue: dashboardIconBlue,
-                      //   link: '../dashboard',
-                      //   text: t('dashboard'),
-                      // },
                       {
                         iconWhite: customerIconWhite,
                         iconBlue: customerIconBlue,
