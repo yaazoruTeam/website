@@ -257,9 +257,13 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
       })
     }
 
-    // At this point user is guaranteed to be non-null
+    // Runtime safety check – TypeScript should guarantee user is non-null here
     if (!user) {
-      throw new Error('User creation/update failed')
+      const error: HttpError.Model = {
+        status: 500,
+        message: 'User creation or update failed unexpectedly. Please contact support.',
+      }
+      throw error
     }
 
     // Generate JWT token
