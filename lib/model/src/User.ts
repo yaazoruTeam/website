@@ -65,10 +65,10 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(user.password)) {
+  if (user.password && !isString(user.password)) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "password".',
+      message: 'Invalid "password".',
     }
     throw error
   }
