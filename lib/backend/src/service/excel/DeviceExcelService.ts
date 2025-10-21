@@ -7,6 +7,7 @@ import { Device } from '@model'
 import { convertFlatRowToDeviceModel } from '@utils/converters/deviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
 import { formatErrorMessage } from '@utils/errorHelpers'
+import getDbConnection from '@db/connection'
 import logger from '../../utils/logger'
 import { 
   ExcelRowData, 
@@ -82,6 +83,7 @@ const validateDeviceFields = (rowData: ExcelRowData, rowIndex: number) => {
  * פונקציה זו אחראית על פילטור ועיבוד נתונים של מכשירים בלבד
  */
 const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingResult> => {
+  const knex = getDbConnection()
   const errors: ProcessError[] = []
   let successCount = 0
 
@@ -119,6 +121,9 @@ const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingR
   for (const item of data) {
     const rowIndex = data.indexOf(item) + 1
     
+    // יצירת טרנזקציה לכל מכשיר
+    const trx = await knex.transaction()
+    
     try {
       logger.info(`🔄 Processing row ${rowIndex}/${data.length}`)
       
@@ -143,16 +148,19 @@ const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingR
         serialNumber: deviceModel.serialNumber
       })
 
-      // עיבוד המכשיר באמצעות הפונקציה המשותפת
+      // עיבוד המכשיר באמצעות הפונקציה המשותפת עם טרנזקציה
       logger.info(`💾 Row ${rowIndex} - Starting device processing...`)
-      const processedDevice = await createDeviceIfNotExists(deviceModel)
+      const processedDevice = await createDeviceIfNotExists(deviceModel, trx)
       
-      // יצירת הערה למכשיר אם יש תוכן הערה
+      // יצירת הערה למכשיר אם יש תוכן הערה (עם טרנזקציה)
       await createCommentForEntity(
         processedDevice.device_id,
         'device',
-        item.comment as string
+        item.comment as string,
+        trx
       )
+      
+      await trx.commit()
       
       logger.info(`🎉 Row ${rowIndex} - Device processed successfully! Device ID: ${processedDevice.device_id}`)
       
@@ -160,6 +168,12 @@ const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingR
       logger.info(`📊 Row ${rowIndex}: SUCCESS! Total successful so far: ${successCount}`)
       
     } catch (err: unknown) {
+      try {
+        await trx.rollback()
+      } catch (rollbackErr) {
+        logger.error(`Row ${rowIndex}: Transaction rollback failed:`, rollbackErr)
+      }
+      
       logger.error(`❌ Row ${rowIndex}: Device processing failed:`, err)
       
       const errorMessage = formatErrorMessage(err)
