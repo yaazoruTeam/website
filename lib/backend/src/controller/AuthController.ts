@@ -6,6 +6,7 @@ import { comparePasswords } from '@utils/password'
 import { createUser } from './user'
 import { handleError } from './err'
 import * as admin from 'firebase-admin'
+import logger from '@utils/logger'
 
 // Initialize Firebase Admin if not already initialized
 let firebaseAdminInitialized = false;
@@ -19,7 +20,7 @@ if (!admin.apps.length) {
         credential: admin.credential.cert(serviceAccount),
         projectId: process.env.FIREBASE_PROJECT_ID,
       });
-      console.log('✅ Firebase Admin initialized with service account key');
+      logger.info('✅ Firebase Admin initialized with service account key');
       firebaseAdminInitialized = true;
     } else {
       // Fallback to Application Default Credentials (ADC)
@@ -27,12 +28,12 @@ if (!admin.apps.length) {
         credential: admin.credential.applicationDefault(),
         projectId: process.env.FIREBASE_PROJECT_ID,
       });
-      console.log('✅ Firebase Admin initialized with Application Default Credentials');
+      logger.info('✅ Firebase Admin initialized with Application Default Credentials');
       firebaseAdminInitialized = true;
     }
   } catch (error) {
-    console.error('❌ Failed to initialize Firebase Admin:', error);
-    console.warn('⚠️ Google Authentication will work in development mode only (not secure)');
+    logger.error('❌ Failed to initialize Firebase Admin:', error);
+    logger.warn('⚠️ Google Authentication will work in development mode only (not secure)');
     firebaseAdminInitialized = false;
   }
 } else {
@@ -134,8 +135,8 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
 
     // Check if Firebase Admin is properly initialized
     if (!firebaseAdminInitialized) {
-      console.warn('⚠️ Firebase Admin SDK not initialized - using development mode with unverified data');
-      console.warn('⚠️ THIS IS NOT SECURE - ONLY FOR DEVELOPMENT');
+      logger.warn('⚠️ Firebase Admin SDK not initialized - using development mode with unverified data');
+      logger.warn('⚠️ THIS IS NOT SECURE - ONLY FOR DEVELOPMENT');
       
       // Development fallback - use provided data (NOT SECURE)
       if (!uid || !email) {
@@ -167,12 +168,12 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
           email_verified: decodedToken.email_verified
         };
       } catch (firebaseError: any) {
-        console.error('Firebase ID Token verification failed:', firebaseError);
+        logger.error('Firebase ID Token verification failed:', firebaseError);
         
         // If Firebase verification fails but we have fallback data, use development mode
         if (uid && email) {
-          console.warn('⚠️ Firebase verification failed - falling back to development mode');
-          console.warn('⚠️ THIS IS NOT SECURE - ONLY FOR DEVELOPMENT');
+          logger.warn('⚠️ Firebase verification failed - falling back to development mode');
+          logger.warn('⚠️ THIS IS NOT SECURE - ONLY FOR DEVELOPMENT');
           
           verifiedUserData = {
             uid,
@@ -279,7 +280,7 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
     })
 
   } catch (error: unknown) {
-    console.error('Google Auth Error:', error)
+    logger.error('Google Auth Error:', error)
     handleError(error, next)
   }
 }
