@@ -1,6 +1,7 @@
 import { HttpError, User } from '@model'
 import getDbConnection from '@db/connection'
 import config from '@config/index'
+import logger from '@utils/logger'
 const limit = config.database.limit
 
 const createUser = async (user: User.Model) => {
@@ -88,10 +89,114 @@ const deleteUser = async (user_id: string) => {
 // Partial update function for Google Auth fields
 const updateUserPartial = async (user_id: string, partialUser: Partial<User.Model>) => {
   const knex = getDbConnection()
+  
+  // Define allowed fields for partial updates
+  const allowedFields = [
+    'user_name',
+    'google_uid',
+    'photo_url',
+    'email_verified',
+    'updated_at'
+  ];
+  
+  // Define critical fields that require additional validation
+  const criticalFields = ['role', 'status', 'email', 'password'];
+  
   try {
+    // Validate and sanitize the input
+    const sanitizedUpdate: Record<string, any> = {};
+    
+    for (const [key, value] of Object.entries(partialUser)) {
+      // Check if field is allowed for partial updates
+      if (!allowedFields.includes(key)) {
+        if (criticalFields.includes(key)) {
+          logger.warn(`Attempted to update critical field '${key}' via partial update for user ${user_id}`);
+          const error: HttpError.Model = {
+            status: 403,
+            message: `Field '${key}' cannot be updated via partial update for security reasons`,
+          }
+          throw error;
+        } else {
+          logger.warn(`Attempted to update unauthorized field '${key}' for user ${user_id}`);
+          continue; // Skip unauthorized fields
+        }
+      }
+      
+      // Validate specific field types and constraints
+      switch (key) {
+        case 'user_name':
+          if (typeof value !== 'string' || value.trim().length === 0) {
+            logger.warn(`Invalid user_name provided for user ${user_id}`);
+            continue;
+          }
+          sanitizedUpdate[key] = value.trim();
+          break;
+          
+        case 'google_uid':
+          if (typeof value !== 'string' || value.trim().length === 0) {
+            logger.warn(`Invalid google_uid provided for user ${user_id}`);
+            continue;
+          }
+          sanitizedUpdate[key] = value.trim();
+          break;
+          
+        case 'photo_url':
+          if (value !== null && value !== undefined) {
+            if (typeof value !== 'string') {
+              logger.warn(`Invalid photo_url type provided for user ${user_id}`);
+              continue;
+            }
+            // Basic URL validation
+            try {
+              new URL(value);
+              sanitizedUpdate[key] = value;
+            } catch {
+              logger.warn(`Invalid photo_url format provided for user ${user_id}`);
+              continue;
+            }
+          } else {
+            sanitizedUpdate[key] = value;
+          }
+          break;
+          
+        case 'email_verified':
+          if (typeof value !== 'boolean') {
+            logger.warn(`Invalid email_verified type provided for user ${user_id}`);
+            continue;
+          }
+          sanitizedUpdate[key] = value;
+          break;
+          
+        case 'updated_at':
+          // Auto-set updated_at to current timestamp
+          sanitizedUpdate[key] = new Date();
+          break;
+          
+        default:
+          sanitizedUpdate[key] = value;
+      }
+    }
+    
+    // If no valid fields to update, return the current user
+    if (Object.keys(sanitizedUpdate).length === 0) {
+      logger.info(`No valid fields to update for user ${user_id}`);
+      const currentUser = await knex('yaazoru.users').where({ user_id }).first();
+      if (!currentUser) {
+        const error: HttpError.Model = {
+          status: 404,
+          message: 'User not found',
+        }
+        throw error;
+      }
+      return currentUser;
+    }
+    
+    // Always update the updated_at timestamp
+    sanitizedUpdate.updated_at = new Date();
+    
     const updatedUser = await knex('yaazoru.users')
       .where({ user_id })
-      .update(partialUser)
+      .update(sanitizedUpdate)
       .returning('*')
     
     if (updatedUser.length === 0) {
