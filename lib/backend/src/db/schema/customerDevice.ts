@@ -3,28 +3,28 @@ import logger from '@/src/utils/logger'
 import getDbConnection from '@db/connection'
 
 const createCustomerDeviceSchema = async () => {
-  logger.debug('create customerDevice schema')
+  logger.debug('create customer_device schema')
 
   const knex = getDbConnection()
   try {
-    const tableExists = await knex.schema.withSchema('yaazoru').hasTable('customerDevice')
+    const tableExists = await knex.schema.withSchema('yaazoru').hasTable('customer_device')
     if (!tableExists) {
-      logger.debug('Creating customerDevice table...')
+      logger.debug('Creating customer_device table...')
       await knex.schema
         .withSchema('yaazoru')
-        .createTable('customerDevice', (table: Knex.TableBuilder) => {
-          table.increments('customerDevice_id').primary()
+        .createTable('customer_device', (table: Knex.TableBuilder) => {
+          table.increments('customer_device_id').primary()
           table.string('customer_id').notNullable()
           table.string('device_id').notNullable().unique()
-          table.date('receivedAt').nullable()
-          table.date('planEndDate').nullable()
+          table.date('received_at').nullable()
+          table.date('plan_end_date').nullable()
         })
-      logger.debug('CustomerDevice table created successfully.')
+      logger.debug('Customer_device table created successfully.')
     } else {
-      logger.debug('CustomerDevice table already exists. Skipping creation.')
+      logger.debug('Customer_device table already exists. Skipping creation.')
     }
   } catch (err) {
-    logger.error('error creat schema customerDevice', err)
+    logger.error('error creat schema customer_device', err)
   }
 }
 

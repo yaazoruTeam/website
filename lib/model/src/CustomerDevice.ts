@@ -1,7 +1,7 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  customerDevice_id: string
+  customer_device_id: string
   customer_id: string
   device_id: string
   receivedAt: Date
@@ -12,10 +12,10 @@ interface Model {
 function sanitize(customerDevice: Model, hasId: boolean): Model {
   const isString = (value: unknown) => typeof value === 'string'
 
-  if (hasId && !customerDevice.customerDevice_id) {
+  if (hasId && !customerDevice.customer_device_id) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "customerDevice_id".',
+      message: 'Invalid or missing "customer_device_id".',
     }
     throw error
   }
@@ -49,7 +49,7 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
   // }
 
   const newCustomerDevice: Model = {
-    customerDevice_id: customerDevice.customerDevice_id,
+    customer_device_id: customerDevice.customer_device_id,
     customer_id: customerDevice.customer_id,
     device_id: customerDevice.device_id,
     receivedAt: customerDevice.receivedAt,

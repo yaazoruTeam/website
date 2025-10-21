@@ -23,7 +23,7 @@ const createCustomerSchema = async () => {
           table.string('city', 20).notNullable()
           table.string('address1').notNullable()
           table.string('address2').nullable()
-          table.string('zipCode').notNullable()
+          table.string('zip_code').notNullable()
           table.enum('status', ['active', 'inactive']).notNullable().defaultTo('active')
           table.date('created_at').notNullable()
           table.date('updated_at').notNullable()

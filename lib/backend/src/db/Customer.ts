@@ -22,7 +22,7 @@ const createCustomer = async (customer: Customer.Model, trx?: Knex.Transaction) 
         city: customer.city,
         address1: customer.address1,
         address2: customer.address2,
-        zipCode: customer.zipCode,
+        zip_code: customer.zipCode,
         created_at: customer.created_at,
         updated_at: customer.updated_at,
       })

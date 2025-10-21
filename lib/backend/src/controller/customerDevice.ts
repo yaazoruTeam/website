@@ -205,7 +205,7 @@ const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasI
     let customerDeviceEx
     if (hasId) {
       customerDeviceEx = await db.CustomerDevice.findCustomerDevice({
-        customerDevice_id: customerDevice.customerDevice_id,
+        customer_device_id: customerDevice.customer_device_id,
         device_id: customerDevice.device_id,
       })
     } else {

@@ -71,7 +71,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 
           await db.CustomerDevice.createCustomerDevice(
             {
-              customerDevice_id: '',
+              customer_device_id: '',
               customer_id: existCustomer.customer_id,
               device_id: existDevice.device_id,
               receivedAt: date,

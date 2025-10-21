@@ -23,7 +23,7 @@ const createUserSchema = async () => {
         table.string('city', 20).notNullable()
         table.string('address1').notNullable()
         table.string('address2').nullable()
-        table.string('zipCode').notNullable()
+        table.string('zip_code').notNullable()
         table.string('password').notNullable().unique()
         table.string('user_name').notNullable().unique()
         table.enu('role', roles).notNullable()

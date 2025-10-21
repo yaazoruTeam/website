@@ -17,7 +17,7 @@ const createUser = async (user: User.Model) => {
         city: user.city,
         address1: user.address1,
         address2: user.address2,
-        zipCode: user.zipCode,
+        zip_code: user.zipCode,
         password: user.password,
         user_name: user.user_name,
         role: user.role,
