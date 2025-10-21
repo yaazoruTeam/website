@@ -8,37 +8,35 @@ import { handleError } from './err'
 import * as admin from 'firebase-admin'
 import logger from '@utils/logger'
 
-// Initialize Firebase Admin if not already initialized
-let firebaseAdminInitialized = false;
-if (!admin.apps.length) {
-  try {
-    // Try to initialize with service account key from environment variable
-    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-    if (serviceAccountKey) {
-      const serviceAccount = JSON.parse(serviceAccountKey);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        projectId: process.env.FIREBASE_PROJECT_ID,
-      });
-      logger.info('✅ Firebase Admin initialized with service account key');
-      firebaseAdminInitialized = true;
-    } else {
-      // Fallback to Application Default Credentials (ADC)
-      admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
-        projectId: process.env.FIREBASE_PROJECT_ID,
-      });
-      logger.info('✅ Firebase Admin initialized with Application Default Credentials');
-      firebaseAdminInitialized = true;
+// Encapsulate Firebase Admin initialization in a function to avoid module-level mutable state
+function ensureFirebaseAdminInitialized() {
+  if (!admin.apps.length) {
+    try {
+      // Try to initialize with service account key from environment variable
+      const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+      if (serviceAccountKey) {
+        const serviceAccount = JSON.parse(serviceAccountKey);
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          projectId: process.env.FIREBASE_PROJECT_ID,
+        });
+        console.log('✅ Firebase Admin initialized with service account key');
+      } else {
+        // Fallback to Application Default Credentials (ADC)
+        admin.initializeApp({
+          credential: admin.credential.applicationDefault(),
+          projectId: process.env.FIREBASE_PROJECT_ID,
+        });
+        console.log('✅ Firebase Admin initialized with Application Default Credentials');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize Firebase Admin:', error);
+      console.warn('⚠️ Google Authentication will work in development mode only (not secure)');
     }
-  } catch (error) {
-    logger.error('❌ Failed to initialize Firebase Admin:', error);
-    logger.warn('⚠️ Google Authentication will work in development mode only (not secure)');
-    firebaseAdminInitialized = false;
   }
-} else {
-  firebaseAdminInitialized = true;
 }
+// Ensure Firebase Admin is initialized at module load
+ensureFirebaseAdminInitialized();
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -134,7 +132,7 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
     let verifiedUserData;
 
     // Check if Firebase Admin is properly initialized
-    if (!firebaseAdminInitialized) {
+    if (!admin.apps.length) {
       logger.warn('⚠️ Firebase Admin SDK not initialized - using development mode with unverified data');
       logger.warn('⚠️ THIS IS NOT SECURE - ONLY FOR DEVELOPMENT');
       
