@@ -64,6 +64,29 @@ export const uploadDeviceExcel = async (
 }
 
 /**
+ * העלאת קובץ Excel של לקוחות בלבד
+ */
+export const uploadCustomerExcel = async (
+  file: File,
+  onProgress?: (progress: number) => void
+): Promise<ExcelUploadResponse> => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  return apiPost<ExcelUploadResponse>('/excel/customer', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        onProgress(progress)
+      }
+    },
+  })
+}
+
+/**
  * הורדת קובץ שגיאות Excel
  */
 export const downloadErrorFile = async (fileName: string): Promise<Blob> => {

@@ -16,7 +16,7 @@ export const WidelyHeaderSection = styled(FlexBase)({
 })
 
 export const WidelyFormSection = styled(FlexBase)({
-  gap: '16px', 
+  gap: '16px',
   marginBottom: '40px',
 })
 
@@ -34,12 +34,13 @@ export const WidelyInfoSection = styled(FlexBase)({
 export const WidelyButtonSection = styled(FlexBase)({
   marginTop: '24px',
   justifyContent: 'center',
+  gap: '16px',
 })
 
 export const WidelySwitchSection = styled('div')({
   marginTop: '24px',
   display: 'flex',
-  gap:1,
+  gap: 1,
   '& > *:not(:last-child)': {
     marginBottom: '16px',
   },
