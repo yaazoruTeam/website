@@ -45,6 +45,7 @@ interface CustomersListProps {
   onFilterChange: (filter: FilterType | null) => void
   noResults?: boolean
   noResultsType?: MessageType
+  isResetDisabled: boolean 
 }
 
 const CustomersList: React.FC<CustomersListProps> = ({
@@ -56,6 +57,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
   onFilterChange,
   noResults = false,
   noResultsType = 'general',
+  isResetDisabled,
 }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
@@ -154,7 +156,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
               />
             </CustomersListFilterBox>
             <CustomersListFilterBox>
-              <FilterResetButton onReset={handleResetFilters} />
+              <FilterResetButton onReset={handleResetFilters} isDisabled={isResetDisabled} />
             </CustomersListFilterBox>
           </CustomersListFilters>
 

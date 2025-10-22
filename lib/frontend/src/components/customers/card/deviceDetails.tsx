@@ -42,12 +42,10 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             }
           }),
         )
-
         const filteredDevices = devicesData.filter(
           (d: Device.Model | null | undefined): d is Device.Model & { customerDevice: CustomerDevice.Model } =>
             d !== null && d !== undefined,
         )
-
         setDevices(filteredDevices)
       } catch (error: unknown) {
         console.error('Error fetching devices:', error)
@@ -97,13 +95,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         </Box>
       )}
 
-      <Box sx={{ my: '80px' }}>
-        <Box sx={{ marginBottom: '20px' }}>
-          <CustomTypography text={t('activeLoans')} variant='h1' weight='bold' color={colors.blue900}
-            sx={{ display: 'none' }}
-            />
-        </Box>
-      </Box>
+      
       <Box>
         <Box sx={{ marginBottom: '28px' }}>
           <CustomTypography
@@ -117,5 +109,4 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
     </Box>
   )
 }
-
 export default DeviceDetails

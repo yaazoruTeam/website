@@ -4,7 +4,6 @@ import { ThemeProvider } from '@mui/material/styles'
 
 import './App.css'
 import SideNav from './components/layout/SideNav'
-
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
 import Devices from './components/devices/devices'
@@ -17,9 +16,6 @@ import Branches from './components/branches/Branches'
 import Permissions from './components/Permissions/Permissions'
 import ProtectedRoute from './components/ProtectedRoute'
 import Switchboard from './components/switchboard/Switchboard'
-
-import dashboardIconWhite from '../src/assets/dashboardIcon-white.svg'
-import dashboardIconBlue from '../src/assets/dashboardIcon-blue.svg'
 import customerIconWhite from '../src/assets/customerIcon-white.svg'
 import customerIconBlue from '../src/assets/customerIcon-blue.svg'
 import devicesIconWhite from '../src/assets/deviceIcon-white.svg'
@@ -73,12 +69,6 @@ function App() {
                 <div style={{ display: 'flex' }}>
                   <SideNav
                     listItems={[
-                      {
-                        iconWhite: dashboardIconWhite,
-                        iconBlue: dashboardIconBlue,
-                        link: '../dashboard',
-                        text: t('dashboard'),
-                      },
                       {
                         iconWhite: customerIconWhite,
                         iconBlue: customerIconBlue,
