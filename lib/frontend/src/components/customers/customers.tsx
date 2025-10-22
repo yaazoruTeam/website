@@ -17,7 +17,7 @@ const Customers: React.FC = () => {
     page,
     filterType: filterType ?? undefined,
   })
-
+  const isDisabled = filterType === null; // אם אין פילטר, הכפתור יהיה מושבת
   // קביעת סוג ההודעה בהתבסס על הפילטר הפעיל
   const getNoResultsType = (): 'date' | 'status' | 'search' | 'city' | 'filter' | 'general' => {
     if (!filterType) return 'general'
@@ -54,6 +54,7 @@ const Customers: React.FC = () => {
         onFilterChange={setFilterType}
         noResults={hasNoResults}
         noResultsType={getNoResultsType()}
+        isResetDisabled={isDisabled}
       />
     </>
   )
