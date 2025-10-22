@@ -20,7 +20,7 @@ const createBranch = async (req: Request, res: Response, next: NextFunction): Pr
 
 const getBranches = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { branches, total } = await db.Branch.getBranches(offset)
@@ -67,7 +67,7 @@ const getBranchesByCity = async (
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { branches, total } = await db.Branch.getBranchesByCity(city, offset)

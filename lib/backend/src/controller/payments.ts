@@ -31,7 +31,7 @@ const createPayments = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllPayments = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { payments, total } = await db.Payments.getPayments(offset)
@@ -76,7 +76,7 @@ const getPaymentsByMonthlyPaymentId = async (req: Request, res: Response, next: 
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { payments, total } = await db.Payments.getPaymentsByMonthlyPaymentId(

@@ -25,7 +25,7 @@ const createDevice = async (req: Request, res: Response, next: NextFunction): Pr
 
 const getDevices = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { devices, total } = await db.Device.getDevices(offset)
@@ -73,7 +73,7 @@ const getDevicesByStatus = async (
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { devices, total } = await db.Device.getDevicesByStatus(status, offset)

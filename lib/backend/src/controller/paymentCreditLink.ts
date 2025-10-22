@@ -51,7 +51,7 @@ const createPaymentCreditLink = async (req: Request, res: Response, next: NextFu
 
 const getPaymentCreditLinks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { paymentCreditLinks, total } = await db.PaymentCreditLink.getPaymentCreditLinks(offset)
@@ -92,7 +92,7 @@ const getPaymentCreditLinksByMonthlyPaymentId = async (
   next: NextFunction,
 ) => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const existMonthlyPayment =
@@ -123,7 +123,7 @@ const getPaymentCreditLinksByCreditDetailsId = async (
   next: NextFunction,
 ) => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const existCreditDetails = await db.PaymentCreditLink.doesCreditDetailsExistInPaymentCreditLink(
