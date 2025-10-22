@@ -42,7 +42,7 @@ Object.entries(requiredEnvVars).forEach(([key, value]) => {
 })
 
 export const config = {
-    env: process.env.NODE_ENV || 'development',
+    node_env: process.env.NODE_ENV || 'development',
     database: {
         limit: Number(process.env.LIMIT) || 10,
         host: process.env.DB_HOST,
