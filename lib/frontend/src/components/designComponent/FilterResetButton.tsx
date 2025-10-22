@@ -32,7 +32,6 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset, isDisabl
           flexDirection: 'column',
           justifyContent: 'flex-start',
           alignItems: 'center',
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
         }}
       >
         <Box sx={{ paddingTop: 1.2, alignItems: 'center' }}>
