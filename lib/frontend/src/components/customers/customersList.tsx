@@ -156,7 +156,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
               />
             </CustomersListFilterBox>
             <CustomersListFilterBox>
-              <FilterResetButton onReset={handleResetFilters} isDisabled={isResetDisabled} />
+              <FilterResetButton onReset={handleResetFilters} disabled={isResetDisabled} />
             </CustomersListFilterBox>
           </CustomersListFilters>
 
