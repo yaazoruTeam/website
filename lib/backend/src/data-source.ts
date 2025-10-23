@@ -1,18 +1,14 @@
 import 'reflect-metadata'
-import * as dotenv from 'dotenv'
 import { DataSource } from 'typeorm'
-
-// Load environment variables immediately
-dotenv.config({ path: '.env' })
-dotenv.config({ path: '.env.local' })
+import config from './config'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  username: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
-  database: process.env.DB_NAME || 'yaazoru',
+  host: config.database.host,
+  port: config.database.port,
+  username: config.database.user,
+  password: config.database.password,
+  database: config.database.name,
   // ה-migrations table יהיה בpublic schema
   // כל הטבלאות האחרות יהיו בyaazoru schema (מוגדר בEntity)
   synchronize: false, // כבוי - משתמשים רק במיגרציות
