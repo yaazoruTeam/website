@@ -45,7 +45,15 @@ const getCustomers = async (
       .select('*')
       .limit(limit)
       .offset(offset)
-      .orderBy('customer_id')
+      .orderByRaw(`
+        CASE 
+          WHEN status = 'active' THEN 0 
+          ELSE 1 
+        END,
+         last_name ASC,
+        first_name ASC
+       
+      `)
 
     const [{ count }] = await knex('yaazoru.customers').count('*')
 
@@ -82,7 +90,14 @@ const getCustomersByCity = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .where({ city })
-      .orderBy('customer_id')
+      .orderByRaw(`
+        CASE 
+          WHEN status = 'active' THEN 0 
+          ELSE 1 
+        END,
+        first_name ASC,
+        last_name ASC
+      `)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ city })

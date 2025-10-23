@@ -27,6 +27,22 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
   const [noResults, setNoResults] = useState<boolean>(false)
   const [noResultsType, setNoResultsType] = useState<string>('general')
 
+  const sortCustomers = (customersList: Customer.Model[]): Customer.Model[] => {
+    return [...customersList].sort((a, b) => {
+      const statusA = a.status === 'active' ? 0 : 1;
+      const statusB = b.status === 'active' ? 0 : 1;
+      
+      if (statusA !== statusB) {
+        return statusA - statusB;
+      }
+      
+      const fullNameA = `${a.last_name} ${a.first_name} `.trim().toLowerCase();
+      const fullNameB = `${b.last_name} ${b.first_name} `.trim().toLowerCase();
+      
+      return fullNameA.localeCompare(fullNameB, 'he');
+    });
+  };
+
   useEffect(() => {
     const fetchCustomers = async () => {
       setIsLoading(true)
@@ -57,7 +73,10 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           data = res.data
           total = res.total
         }
-        setCustomers(data ?? [])
+        
+        // מיון הלקוחות לפני הצגתם
+        const sortedCustomers = sortCustomers(data ?? []);
+        setCustomers(sortedCustomers);
         setTotal(total ?? 0)
         setError(null) // Clear any previous errors
         setNoResults(false) // Clear no results flag when we have data
