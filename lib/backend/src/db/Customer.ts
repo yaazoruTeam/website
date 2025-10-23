@@ -11,6 +11,7 @@ import { customerRepository } from '../repositories/CustomerRepository'
 import { CustomerStatus } from '../entities/Customer'
 import logger from '../utils/logger'
 
+//to do: לבדוק איך מבצעים טרנזקציות ב-typeOrm ולמחוק מפה את השדה trx
 const createCustomer = async (customer: Customer.Model, _trx?: unknown) => {
   try {
     const customerEntity = {
@@ -149,6 +150,7 @@ const deleteCustomer = async (customer_id: string) => {
   }
 }
 
+//to do: לבדוק איך מבצעים טרנזקציות ב-typeOrm ולמחוק מפה את השדה trx
 const findCustomer = async (
   criteria: {
     customer_id?: string
