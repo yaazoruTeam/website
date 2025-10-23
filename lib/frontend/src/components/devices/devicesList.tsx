@@ -168,7 +168,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           />
         </Box>
         <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-          <FilterResetButton onReset={handleResetFilters} isDisabled={isResetDisabled} />
+          <FilterResetButton onReset={handleResetFilters} disabled={isResetDisabled} />
         </Box>
       </Box>
       <Box
