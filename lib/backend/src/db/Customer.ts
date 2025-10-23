@@ -52,7 +52,6 @@ const getCustomers = async (
         END,
          last_name ASC,
         first_name ASC
-       
       `)
 
     const [{ count }] = await knex('yaazoru.customers').count('*')

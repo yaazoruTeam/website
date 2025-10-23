@@ -36,8 +36,8 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
         return statusA - statusB;
       }
       
-      const fullNameA = `${a.last_name} ${a.first_name} `.trim().toLowerCase();
-      const fullNameB = `${b.last_name} ${b.first_name} `.trim().toLowerCase();
+      const fullNameA = `${a.last_name} ${a.first_name}`.trim().toLowerCase();
+      const fullNameB = `${b.last_name} ${b.first_name}`.trim().toLowerCase();
       
       return fullNameA.localeCompare(fullNameB, 'he');
     });
