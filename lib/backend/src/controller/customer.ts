@@ -272,7 +272,15 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       existing_id: customerEx.customer_id,
       conflict_field: customerEx.email === customer.email ? 'email' : 'id_number'
     });
-    Customer.sanitizeExistingCustomer(customerEx, customer)
+    // Convert TypeORM entity to Customer.Model interface
+    const customerExModel: Customer.Model = {
+      ...customerEx,
+      customer_id: String(customerEx.customer_id),
+      zipCode: customerEx.zip_code,
+      additional_phone: customerEx.additional_phone || '',
+      address2: customerEx.address2 || '',
+    }
+    Customer.sanitizeExistingCustomer(customerExModel, customer)
   } else {
     logger.debug('No existing customer conflicts found');
   }
