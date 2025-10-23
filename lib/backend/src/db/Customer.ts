@@ -6,6 +6,23 @@ import logger from '../utils/logger'
 
 const limit = config.database.limit
 
+// Constant for consistent customer ordering across all queries
+// Orders by: 1) active status first, 2) last name alphabetically, 3) first name alphabetically
+const CUSTOMER_ORDER_BY = `
+  CASE 
+    WHEN status = 'active' THEN 0 
+    ELSE 1 
+  END,
+  last_name ASC,
+  first_name ASC
+`
+
+// Alphabetical ordering only (without status check) - used when filtering by specific status
+const CUSTOMER_ORDER_BY_ALPHA = `
+  last_name ASC,
+  first_name ASC
+`
+
 const createCustomer = async (customer: Customer.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
@@ -45,7 +62,7 @@ const getCustomers = async (
       .select('*')
       .limit(limit)
       .offset(offset)
-      .orderBy('customer_id')
+      .orderByRaw(CUSTOMER_ORDER_BY)
 
     const [{ count }] = await knex('yaazoru.customers').count('*')
 
@@ -82,7 +99,7 @@ const getCustomersByCity = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .where({ city })
-      .orderBy('customer_id')
+      .orderByRaw(CUSTOMER_ORDER_BY)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ city })
@@ -109,7 +126,7 @@ const getCustomersByStatus = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .where({ status })
-      .orderBy('customer_id')
+      .orderByRaw(CUSTOMER_ORDER_BY_ALPHA)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ status })
@@ -137,7 +154,7 @@ const getCustomersByDateRange = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .whereBetween('created_at', [startDate, endDate])
-      .orderBy('customer_id')
+      .orderByRaw(CUSTOMER_ORDER_BY)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers')
@@ -297,7 +314,7 @@ const searchCustomersByName = async (
       .where(function () {
         buildWhereClause(this)
       })
-      .orderBy('customer_id')
+      .orderByRaw(CUSTOMER_ORDER_BY)
       .limit(limit)
       .offset(offset)
 
