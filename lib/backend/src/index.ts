@@ -68,15 +68,4 @@ process.on('SIGINT', async () => {
   process.exit(0)
 })
 
-// טיפול בסגירה נכונה
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  logger.info('SIGINT received, shutting down gracefully');
-  process.exit(0);
-});
-
 startServer();
