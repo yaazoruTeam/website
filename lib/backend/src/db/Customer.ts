@@ -17,6 +17,12 @@ const CUSTOMER_ORDER_BY = `
   first_name ASC
 `
 
+// Alphabetical ordering only (without status check) - used when filtering by specific status
+const CUSTOMER_ORDER_BY_ALPHA = `
+  last_name ASC,
+  first_name ASC
+`
+
 const createCustomer = async (customer: Customer.Model, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
@@ -120,8 +126,7 @@ const getCustomersByStatus = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .where({ status })
-      .orderBy('last_name', 'asc')
-      .orderBy('first_name', 'asc')
+      .orderByRaw(CUSTOMER_ORDER_BY_ALPHA)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ status })
