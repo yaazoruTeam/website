@@ -7,26 +7,6 @@ import config from '../config/index'
 const limit = config.database.limit
 
 /**
- * Pagination Response Type
- */
-export interface PaginatedResult<T> {
-  data: T[]
-  total: number
-  hasMore: boolean
-  nextCursor: string | null
-  prevCursor: string | null
-}
-
-/**
- * Pagination Query Options
- */
-export interface PaginationOptions {
-  limit?: number
-  cursor?: string | null
-  direction?: 'forward' | 'backward'
-}
-
-/**
  * CustomerRepository - Handles all database operations for customers
  * Replaces the old knex-based db/Customer.ts
  */
@@ -55,67 +35,8 @@ export class CustomerRepository {
     }
   }
 
-  /**
-   * Get paginated list of all customers using cursor-based pagination
-   * More efficient than offset-based for large datasets
-   */
-  async getCustomers(
-    options: PaginationOptions = {},
-  ): Promise<PaginatedResult<Customer>> {
-    try {
-      const pageLimit = options.limit || limit
-      const cursor = options.cursor ? parseInt(options.cursor, 10) : null
-      const direction = options.direction || 'forward'
 
-      logger.debug('[DB] Fetching customers', { cursor, limit: pageLimit, direction })
-
-      let query = this.repository.createQueryBuilder('customer')
-
-      // Apply cursor filtering
-      if (cursor) {
-        const operator = direction === 'forward' ? '>' : '<'
-        query = query.where(`customer.customer_id ${operator} :cursor`, { cursor })
-      }
-
-      // Get one extra record to check if there are more results
-      query = query
-        .orderBy('customer.customer_id', direction === 'forward' ? 'ASC' : 'DESC')
-        .take(pageLimit + 1)
-
-      const [results, total] = await query.getManyAndCount()
-
-      // Check if there are more results
-      const hasMore = results.length > pageLimit
-      const customers = hasMore ? results.slice(0, pageLimit) : results
-
-      // Determine next and prev cursors
-      const nextCursor = hasMore && customers.length > 0 ? customers[customers.length - 1].customer_id.toString() : null
-      const prevCursor = cursor !== null ? customers[0]?.customer_id.toString() || null : null
-
-      logger.debug('[DB] Fetched customers successfully', {
-        returned: customers.length,
-        total,
-        hasMore,
-      })
-
-      return {
-        data: customers,
-        total,
-        hasMore,
-        nextCursor,
-        prevCursor,
-      }
-    } catch (err) {
-      logger.error('[DB] Database error fetching customers:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Get paginated list using offset (legacy, kept for backward compatibility)
-   * @deprecated Use getCustomers() with cursor-based pagination instead
-   */
-  async getCustomersPaginated(offset: number): Promise<{ customers: Customer[]; total: number }> {
+  async getCustomers(offset: number): Promise<{ customers: Customer[]; total: number }> {
     try {
       logger.debug('[DB] Fetching customers from database (LEGACY OFFSET)', { offset, limit })
 
@@ -383,54 +304,42 @@ export class CustomerRepository {
 
   /**
    * Search customers by name (first_name or last_name)
-   * Uses cursor-based pagination
+   * Supports multiple search terms - all terms must match
+   * Uses offset-based pagination
+   * Example: "John Doe" searches for customers with "John" AND "Doe"
    */
   async searchCustomersByName(
     searchTerm: string,
-    options: PaginationOptions = {},
-  ): Promise<PaginatedResult<Customer>> {
+    offset: number,
+  ): Promise<{ customers: Customer[]; total: number }> {
     try {
       const trimmed = searchTerm.trim()
 
       if (!trimmed) {
         logger.debug('[DB] Empty search term provided')
-        return {
-          data: [],
-          total: 0,
-          hasMore: false,
-          nextCursor: null,
-          prevCursor: null,
-        }
+        return { customers: [], total: 0 }
       }
 
-      const pageLimit = options.limit || limit
-      const cursor = options.cursor ? parseInt(options.cursor, 10) : null
-      const direction = options.direction || 'forward'
+      const terms = trimmed.split(/\s+/)
+      logger.debug('[DB] Searching customers by name', { searchTerms: terms })
 
-      logger.debug('[DB] Searching customers by name', { searchTerm: trimmed })
+      let query = this.repository.createQueryBuilder('customer')
 
-      let query = this.repository.createQueryBuilder('customer').where(
-        '(customer.first_name ILIKE :term OR customer.last_name ILIKE :term)',
-        { term: `%${trimmed}%` },
-      )
+      // Add search filters - all terms must match
+      terms.forEach((term, index) => {
+        query = query.andWhere(
+          `(customer.first_name ILIKE :term${index} OR customer.last_name ILIKE :term${index})`,
+          { [`term${index}`]: `%${term}%` },
+        )
+      })
 
-      // Apply cursor filtering
-      if (cursor) {
-        const operator = direction === 'forward' ? '>' : '<'
-        query = query.andWhere(`customer.customer_id ${operator} :cursor`, { cursor })
-      }
+      // Get total count
+      const total = await query.getCount()
 
-      query = query
-        .orderBy('customer.customer_id', direction === 'forward' ? 'ASC' : 'DESC')
-        .take(pageLimit + 1)
+      // Apply pagination
+      query = query.orderBy('customer.customer_id', 'ASC').skip(offset).take(limit)
 
-      const [results, total] = await query.getManyAndCount()
-
-      const hasMore = results.length > pageLimit
-      const customers = hasMore ? results.slice(0, pageLimit) : results
-
-      const nextCursor = hasMore && customers.length > 0 ? customers[customers.length - 1].customer_id.toString() : null
-      const prevCursor = cursor !== null ? customers[0]?.customer_id.toString() || null : null
+      const customers = await query.getMany()
 
       logger.debug('[DB] Search completed', {
         searchTerm: trimmed,
@@ -439,91 +348,11 @@ export class CustomerRepository {
       })
 
       return {
-        data: customers,
+        customers,
         total,
-        hasMore,
-        nextCursor,
-        prevCursor,
       }
     } catch (err) {
       logger.error('[DB] Database error searching customers by name:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Search customers by multiple name terms (all must match)
-   * Uses cursor-based pagination
-   * Example: "John Doe" searches for customers with "John" AND "Doe"
-   */
-  async searchCustomersByMultipleTerms(
-    searchTerm: string,
-    options: PaginationOptions = {},
-  ): Promise<PaginatedResult<Customer>> {
-    try {
-      const trimmed = searchTerm.trim()
-
-      if (!trimmed) {
-        logger.debug('[DB] Empty search term provided')
-        return {
-          data: [],
-          total: 0,
-          hasMore: false,
-          nextCursor: null,
-          prevCursor: null,
-        }
-      }
-
-      const pageLimit = options.limit || limit
-      const cursor = options.cursor ? parseInt(options.cursor, 10) : null
-      const direction = options.direction || 'forward'
-
-      const terms = trimmed.split(/\s+/)
-      logger.debug('[DB] Searching customers by multiple terms', { searchTerms: terms })
-
-      let query = this.repository.createQueryBuilder('customer')
-
-      // Add search filters
-      terms.forEach((term, index) => {
-        query = query.andWhere(
-          `(customer.first_name ILIKE :term${index} OR customer.last_name ILIKE :term${index})`,
-          { [`term${index}`]: `%${term}%` },
-        )
-      })
-
-      // Apply cursor filtering
-      if (cursor) {
-        const operator = direction === 'forward' ? '>' : '<'
-        query = query.andWhere(`customer.customer_id ${operator} :cursor`, { cursor })
-      }
-
-      query = query
-        .orderBy('customer.customer_id', direction === 'forward' ? 'ASC' : 'DESC')
-        .take(pageLimit + 1)
-
-      const [results, total] = await query.getManyAndCount()
-
-      const hasMore = results.length > pageLimit
-      const customers = hasMore ? results.slice(0, pageLimit) : results
-
-      const nextCursor = hasMore && customers.length > 0 ? customers[customers.length - 1].customer_id.toString() : null
-      const prevCursor = cursor !== null ? customers[0]?.customer_id.toString() || null : null
-
-      logger.debug('[DB] Multi-term search completed', {
-        searchTerm: trimmed,
-        found: customers.length,
-        total,
-      })
-
-      return {
-        data: customers,
-        total,
-        hasMore,
-        nextCursor,
-        prevCursor,
-      }
-    } catch (err) {
-      logger.error('[DB] Database error searching customers by multiple terms:', err)
       throw err
     }
   }
