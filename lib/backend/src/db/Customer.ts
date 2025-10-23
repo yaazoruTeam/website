@@ -126,7 +126,7 @@ const getCustomersByStatus = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .where({ status })
-      .orderByRaw(CUSTOMER_ORDER_BY_ALPHA)
+      .orderByRaw(CUSTOMER_ORDER_BY)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers').count('*').where({ status })
