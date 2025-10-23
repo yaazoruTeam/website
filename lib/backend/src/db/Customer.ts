@@ -51,7 +51,7 @@ const getCustomers = async (
           ELSE 1 
         END,
          last_name ASC,
-        first_name ASC
+         first_name ASC
       `)
 
     const [{ count }] = await knex('yaazoru.customers').count('*')
@@ -94,8 +94,8 @@ const getCustomersByCity = async (
           WHEN status = 'active' THEN 0 
           ELSE 1 
         END,
-        first_name ASC,
-        last_name ASC
+        last_name ASC,
+        first_name ASC
       `)
       .limit(limit)
       .offset(offset)
@@ -151,7 +151,14 @@ const getCustomersByDateRange = async (
     const customers = await knex('yaazoru.customers')
       .select('*')
       .whereBetween('created_at', [startDate, endDate])
-      .orderBy('customer_id')
+      .orderByRaw(`
+        CASE 
+          WHEN status = 'active' THEN 0 
+          ELSE 1 
+        END,
+        last_name ASC,
+        first_name ASC
+      `)
       .limit(limit)
       .offset(offset)
     const [{ count }] = await knex('yaazoru.customers')
@@ -311,7 +318,14 @@ const searchCustomersByName = async (
       .where(function () {
         buildWhereClause(this)
       })
-      .orderBy('customer_id')
+      .orderByRaw(`
+        CASE 
+          WHEN status = 'active' THEN 0 
+          ELSE 1 
+        END,
+        last_name ASC,
+        first_name ASC
+      `)
       .limit(limit)
       .offset(offset)
 
