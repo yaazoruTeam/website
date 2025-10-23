@@ -41,6 +41,7 @@ import CallLog from './components/switchboard/CallLog'
 import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
+import SimReset from './components/devices/SimReset'
 import ExcelUpload from './components/excel/ExcelUpload'
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/sim-reset' element={<SimReset />} />
         
         {/* עמודים מוגנים עם Header ו-SideNav */}
         <Route
