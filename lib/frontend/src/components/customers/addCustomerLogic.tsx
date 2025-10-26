@@ -47,6 +47,9 @@ export const addCustomer = async (data: AddCustomerFormInputs, tempEntityId?: st
         // נמשיך גם אם נכשלנו ביצירת הערה אחת
       }
     }
+    
+    // ננקה את ההערות הזמניות אחרי הוספה מוצלחת
+    tempCommentsManager.clearComments(tempEntityId)
   }
 
     return newCustomer
