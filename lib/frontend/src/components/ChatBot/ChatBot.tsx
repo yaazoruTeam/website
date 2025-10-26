@@ -321,10 +321,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
-  useEffect(() => {
-    fetchComments(1);
-  }, [fetchComments]);
-
   // useEffect לטעינת הערות כשה-entityId משתנה (למשל מlקוח זמני ללקוח אמיתי)
   useEffect(() => {
     // איפוס המצב
@@ -334,7 +330,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     
     // טעינת הערות מהשרת
     fetchComments(1);
-  }, [entityId, entityType, fetchComments]);
+  }, [entityId, entityType]);
 
   // useEffect לגלילה חכמה
   useEffect(() => {
