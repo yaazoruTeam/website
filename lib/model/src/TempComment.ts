@@ -1,5 +1,5 @@
 // מודל להערות זמניות לפני יצירת לקוח
-export interface TempComment {
+export interface Model {
   content: string
   created_at: Date
   file_url?: string

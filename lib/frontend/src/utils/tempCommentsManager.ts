@@ -3,7 +3,7 @@ import { TempComment } from '@model'
 
 class TempCommentsManager {
   private static instance: TempCommentsManager
-  private tempComments: Map<string, TempComment[]> = new Map()
+  private tempComments: Map<string, TempComment.Model[]> = new Map()
 
   static getInstance(): TempCommentsManager {
     if (!TempCommentsManager.instance) {
@@ -12,17 +12,17 @@ class TempCommentsManager {
     return TempCommentsManager.instance
   }
 
-  addComment(tempEntityId: string, comment: TempComment): void {
+  addComment(tempEntityId: string, comment: TempComment.Model): void {
     const existing = this.tempComments.get(tempEntityId) || []
     this.tempComments.set(tempEntityId, [...existing, comment])
   }
 
-  getComments(tempEntityId: string): TempComment[] {
+  getComments(tempEntityId: string): TempComment.Model[] {
     const comments = this.tempComments.get(tempEntityId) || []
     return comments
   }
 
-  clearComments(tempEntityId: string): TempComment[] {
+  clearComments(tempEntityId: string): TempComment.Model[] {
     const comments = this.tempComments.get(tempEntityId) || []
     this.tempComments.delete(tempEntityId)
     return comments
