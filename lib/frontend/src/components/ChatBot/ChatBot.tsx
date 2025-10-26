@@ -321,7 +321,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
-  // useEffect לטעינת הערות כשה-entityId משתנה (למשל מlקוח זמני ללקוח אמיתי)
+  // useEffect לטעינת הערות כשה-entityId משתנה (למשל מלקוח זמני ללקוח אמיתי)
   useEffect(() => {
     // איפוס המצב
     setComments([]);
