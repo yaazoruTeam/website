@@ -87,11 +87,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // Load last refresh time from localStorage on component mount
     useEffect(() => {
-        const savedTime = localStorage.getItem(`sim_last_refresh_${simNumber}`);
+        const savedTime = localStorage.getItem('sim_last_refresh');
         if (savedTime) {
             setLastRefreshTime(savedTime);
         }
-    }, [simNumber]);
+    }, []);
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = (packages: PackagesData | null) => {
@@ -502,7 +502,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 });
                 const fullDateTime = `${dateString} ${timeString}`;
                 setLastRefreshTime(fullDateTime);
-                localStorage.setItem(`sim_last_refresh_${simNumber}`, fullDateTime);
+                localStorage.setItem('sim_last_refresh', fullDateTime);
             } catch (error) {
                 console.error('Error refreshing data:', error);
             } finally {
