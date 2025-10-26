@@ -17,15 +17,16 @@ import CommentInput from "./CommentInput";
 import DateSeparator from "./DateSeparator";
 
 // Models and types
-import { Comment } from "@model";
-import { EntityType } from "@model";
-import { CreateCommentDto } from "@model";
+import { Comment, EntityType, CreateCommentDto } from "@model";
 
 // API
 import {
   getCommentsByEntityTypeAndEntityId,
   createComment,
 } from "../../api/comment";
+
+// Utils
+import { tempCommentsManager } from "../../utils/tempCommentsManager";
 
 // Styles and assets
 import { colors } from "../../styles/theme";
@@ -114,9 +115,44 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     try {
       if (loadMore) setIsLoadingMore(true);
       
+      // אם זה ישות זמנית, לא נטען הערות מהשרת
+      if (entityId === 'temp-new-customer') {
+        setComments([]);
+        setHasMore(false);
+        return;
+      }
+      
       const response = await getCommentsByEntityTypeAndEntityId(entityType, entityId, page);
       
-      addCommentsToList(response.data, loadMore);
+      // אם זה הטעינה הראשונה, נבדוק אם יש הערות זמניות להציג
+      if (page === 1 && !loadMore) {
+        const tempComments = tempCommentsManager.getComments('temp-new-customer');
+        if (tempComments.length > 0) {
+          // נמיר הערות זמניות לפורמט של הצ'אט
+          const tempClientComments: ClientComment[] = tempComments.map((tempComment, index) => ({
+            comment_id: `temp-display-${index}`,
+            entity_id: entityId,
+            entity_type: entityType,
+            content: tempComment.content,
+            created_at: tempComment.created_at,
+            file_url: tempComment.file_url,
+            file_name: tempComment.file_name,
+            file_type: tempComment.file_type,
+          }));
+          
+          // נציג הערות זמניות + הערות מהשרת
+          const allComments = [...tempClientComments, ...response.data];
+          addCommentsToList(allComments, false);
+          
+          // ננקה הערות זמניות אחרי הצגה
+          tempCommentsManager.clearComments('temp-new-customer');
+        } else {
+          addCommentsToList(response.data, loadMore);
+        }
+      } else {
+        addCommentsToList(response.data, loadMore);
+      }
+      
       setHasMore(page < response.totalPages);
     } catch (err) {
       console.error("Failed to fetch comments:", err);
@@ -160,15 +196,31 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     setInputText("");
 
     try {
-      const commentData: CreateCommentDto.Model = {
-        entity_type: entityType,
-        entity_id: entityId,
-        content: tempComment.content,
-        created_at: tempComment.created_at.toISOString(),
-      };
+      // בדיקה אם זה לקוח זמני
+      if (entityId === 'temp-new-customer') {
+        // שמירת ההערה במנהל הזמני
+        tempCommentsManager.addComment(entityId, {
+          content: tempComment.content,
+          created_at: tempComment.created_at,
+        });
+        
+        // עדכון ההערה כנשלחה בהצלחה
+        updateComment(tempCommentId, {
+          ...tempComment,
+          comment_id: tempCommentId,
+        });
+      } else {
+        // שליחה רגילה לשרת
+        const commentData: CreateCommentDto.Model = {
+          entity_type: entityType,
+          entity_id: entityId,
+          content: tempComment.content,
+          created_at: tempComment.created_at.toISOString(),
+        };
 
-      const sentComment = await createComment(commentData);
-      updateComment(tempCommentId, sentComment);
+        const sentComment = await createComment(commentData);
+        updateComment(tempCommentId, sentComment);
+      }
     } catch (err) {
       console.error("Error sending comment:", err);
       setError(t("FailedToSendComment.PleaseTryAgain."));
@@ -195,21 +247,44 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     addTempComment(tempAudioComment);
 
     try {
-      const commentData: CreateCommentDto.Model = {
-        entity_type: entityType,
-        entity_id: entityId,
-        content: transcription,
-        created_at: new Date().toISOString(),
-      };
+      // בדיקה אם זה לקוח זמני
+      if (entityId === 'temp-new-customer') {
+        // שמירת ההערה במנהל הזמני
+        tempCommentsManager.addComment(entityId, {
+          content: transcription,
+          created_at: new Date(),
+        });
+        
+        // עדכון ההערה כנשלחה בהצלחה
+        updateComment(tempId, {
+          comment_id: tempId,
+          entity_type: entityType,
+          entity_id: entityId,
+          content: transcription,
+          created_at: new Date(),
+          isAudio: true,
+          audioUrl: tempAudioComment.audioUrl,
+          audioDuration: duration,
+          isPending: false,
+        });
+      } else {
+        // שליחה רגילה לשרת
+        const commentData: CreateCommentDto.Model = {
+          entity_type: entityType,
+          entity_id: entityId,
+          content: transcription,
+          created_at: new Date().toISOString(),
+        };
 
-      const sentComment = await createComment(commentData);
-      updateComment(tempId, {
-        ...sentComment,
-        isAudio: true,
-        audioUrl: tempAudioComment.audioUrl,
-        audioDuration: duration,
-        isPending: false,
-      });
+        const sentComment = await createComment(commentData);
+        updateComment(tempId, {
+          ...sentComment,
+          isAudio: true,
+          audioUrl: tempAudioComment.audioUrl,
+          audioDuration: duration,
+          isPending: false,
+        });
+      }
     } catch (err) {
       console.error("Error sending audio comment:", err);
       setError(t("FailedToSendAudioComment.PleaseTryAgain."));
@@ -249,6 +324,17 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
   useEffect(() => {
     fetchComments(1);
   }, [fetchComments]);
+
+  // useEffect לטעינת הערות כשה-entityId משתנה (למשל מlקוח זמני ללקוח אמיתי)
+  useEffect(() => {
+    // איפוס המצב
+    setComments([]);
+    setCurrentPage(1);
+    setHasMore(true);
+    
+    // טעינת הערות מהשרת
+    fetchComments(1);
+  }, [entityId, entityType, fetchComments]);
 
   // useEffect לגלילה חכמה
   useEffect(() => {

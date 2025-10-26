@@ -109,7 +109,8 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({
 
   const handleAddCustomer = async (data: AddCustomerFormInputs) => {
     try {
-      const newCustomer = await addCustomer(data)
+      const tempEntityId = 'temp-new-customer'
+      const newCustomer = await addCustomer(data, tempEntityId)
       setSelectedCustomer(newCustomer)
       onCustomerSelect(newCustomer)
       setOpenModal(false)

@@ -24,6 +24,7 @@ import * as ComprehensiveResetResponse from './ComprehensiveResetResponse'
 import * as Request from './Request'
 import * as Switchboard from './Switchboard'
 import * as GoogleAuth from './GoogleAuth' //to do:TEMPORARY SOLUTION - Google Authentication Types
+import { TempComment } from './TempComment'
 
 export {
   Customer,
@@ -52,4 +53,5 @@ export {
   Request,
   Switchboard,
   GoogleAuth, //tp do:TEMPORARY SOLUTION - Google Authentication Types
+  TempComment,
 }

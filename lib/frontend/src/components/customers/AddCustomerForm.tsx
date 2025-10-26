@@ -22,6 +22,7 @@ import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import ChatBot from '../ChatBot/ChatBot'
 import { EntityType } from '@model'
+import { tempCommentsManager } from '../../utils/tempCommentsManager'
 
 interface AddCustomerFormProps {
   onSubmit: (data: AddCustomerFormInputs) => void
@@ -56,6 +57,24 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
 
+  // פונקציה לקביעת ההערה האחרונה שתוצג
+  const getDisplayLastComment = () => {
+    // אם יש lastComment (לקוח קיים), נחזיר אותו
+    if (lastComment) return lastComment
+    
+    // אם זה לקוח חדש, נבדוק אם יש הערות זמניות
+    if (!customerId || customerId === 'temp-new-customer') {
+      const tempComments = tempCommentsManager.getComments('temp-new-customer')
+      if (tempComments.length > 0) {
+        // נחזיר את ההערה האחרונה מההערות הזמניות
+        return tempComments[tempComments.length - 1].content
+      }
+    }
+    
+    // במקרה שאין הערות כלל
+    return t('noPreviousComments')
+  }
+
   const { control, handleSubmit } = useForm<AddCustomerFormInputs>({
     defaultValues: initialValues || {
       first_name: '',
@@ -74,6 +93,8 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
       setSubmitHandler(handleSubmit(onSubmit))
     }
   }, [handleSubmit, onSubmit, setSubmitHandler])
+
+
 
   const isMobile = useMediaQuery('(max-width:600px)')
   const hasInitialValues = !!initialValues
@@ -198,7 +219,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
             <ChatCommentCard
               commentsType={t('customerComments')}
               lastCommentDate={lastCommentDate || ''}
-              lastComment={lastComment || t('noPreviousComments')}
+              lastComment={getDisplayLastComment()}
               chatButton={<ArrowToChatComments onClick={() => setIsChatOpen(true)} />}
             />
           </CustomerCommentsSection>
@@ -219,7 +240,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
       </OuterCard>
 
       {/* --- Chat Modal --- */}
-      {isChatOpen && customerId && (
+      {isChatOpen && (
         <ChatModalOverlay
           onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             if (e.target === e.currentTarget) {
@@ -231,7 +252,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
           <ChatModalContainer>
             <ChatBot
               entityType={EntityType.Customer}
-              entityId={customerId}
+              entityId={customerId || 'temp-new-customer'}
               onClose={() => {
                 setIsChatOpen(false)
                 if (onCommentsRefresh) onCommentsRefresh()

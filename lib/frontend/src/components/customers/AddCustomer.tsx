@@ -16,7 +16,8 @@ const AddCustomer: React.FC = () => {
 
   const handleAddCustomer = async (data: AddCustomerFormInputs) => {
     try {
-      const newCustomer = await addCustomer(data)
+      const tempEntityId = 'temp-new-customer'
+      const newCustomer = await addCustomer(data, tempEntityId)
       alert('הלקוח נוסף בהצלחה')
       console.log(newCustomer)
       window.location.reload()
