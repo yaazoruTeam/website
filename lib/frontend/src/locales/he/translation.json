@@ -257,6 +257,7 @@
   "IMEI_lock": "נעילת IMEI",
   "addOneTimeGigabyte": "הוספת ג'יגה חד פעמי",
   "errorLoadingDeviceDetails": "שגיאה בטעינת פרטי המכשיר",
+  "errorLoadingsimDetails": "שגיאה בטעינת פרטי הסים",
   "simNumberNotFound": "מספר סים לא קיים",
   "noDeviceDetailsFound": "לא נמצאו פרטי מכשיר",
   "errorLoadingUserData": "שגיאה בטעינת נתוני המשתמש",
