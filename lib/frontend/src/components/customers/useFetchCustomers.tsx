@@ -57,7 +57,6 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           data = res.data
           total = res.total
         }
-       
         setCustomers(data ?? [])
         setTotal(total ?? 0)
         setError(null) // Clear any previous errors
