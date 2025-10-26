@@ -125,8 +125,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
       const response = await getCommentsByEntityTypeAndEntityId(entityType, entityId, page);
       
       // אם זה הטעינה הראשונה, נבדוק אם יש הערות זמניות להציג
-      if (page === 1 && !loadMore) {
-        const tempComments = tempCommentsManager.getComments('temp-new-customer');
+      if (page === 1 && !loadMore && entityId === 'temp-new-customer') {
+        const tempComments = tempCommentsManager.getComments(entityId);
         if (tempComments.length > 0) {
           // נמיר הערות זמניות לפורמט של הצ'אט
           const tempClientComments: ClientComment[] = tempComments.map((tempComment, index) => ({
@@ -145,7 +145,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
           addCommentsToList(allComments, false);
           
           // ננקה הערות זמניות אחרי הצגה
-          tempCommentsManager.clearComments('temp-new-customer');
+          tempCommentsManager.clearComments(entityId);
         } else {
           addCommentsToList(response.data, loadMore);
         }
