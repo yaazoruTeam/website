@@ -276,9 +276,7 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
     const customerExModel: Customer.Model = {
       ...customerEx,
       customer_id: String(customerEx.customer_id),
-      zipCode: customerEx.zip_code,
       additional_phone: customerEx.additional_phone || '',
-      address2: customerEx.address2 || '',
     }
     Customer.sanitizeExistingCustomer(customerExModel, customer)
   } else {

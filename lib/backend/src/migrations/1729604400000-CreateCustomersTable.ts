@@ -35,9 +35,7 @@ export class CreateCustomersTable1729604400000 implements MigrationInterface {
         additional_phone VARCHAR(20),
         email VARCHAR(100) NOT NULL UNIQUE,
         city VARCHAR(100) NOT NULL,
-        address1 VARCHAR(255) NOT NULL,
-        address2 VARCHAR(255),
-        zip_code VARCHAR(10) NOT NULL,
+        address VARCHAR(255) NOT NULL,
         status yaazoru.customer_status NOT NULL DEFAULT 'active',
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

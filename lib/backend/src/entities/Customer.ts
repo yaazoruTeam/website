@@ -41,13 +41,7 @@ export class Customer {
   city!: string
 
   @Column({ type: 'varchar', length: 255 })
-  address1!: string
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  address2: string | null = null
-
-  @Column({ type: 'varchar', length: 10 })
-  zip_code!: string
+  address!: string
 
   @Column({
     type: 'enum',

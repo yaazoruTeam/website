@@ -31,9 +31,7 @@ const convertFlatRowToCustomerModel = (item: ExcelRowData): Customer.Model => {
     additional_phone: item.additional_phone ? String(item.additional_phone).trim() : '',
     email: String(item.email || '').trim().toLowerCase(),
     city: String(item.city || '').trim(),
-    address1: String(item.address1 || '').trim(),
-    address2: '', // לא נדרש בקובץ הזה
-    zipCode: '', // לא נדרש בקובץ הזה
+    address: String(item.address || '').trim(),
     status: 'active', // סטטוס ברירת מחדל
     created_at: new Date(),
     updated_at: new Date()
@@ -54,7 +52,7 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
     'first_name',
     'last_name', 
     'city',
-    'address1',
+    'address',
     'phone_number',
     'email',
     'id_number'

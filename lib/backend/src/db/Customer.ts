@@ -22,9 +22,7 @@ const createCustomer = async (customer: Customer.Model, _trx?: unknown) => {
       additional_phone: customer.additional_phone || null,
       email: customer.email,
       city: customer.city,
-      address1: customer.address1,
-      address2: customer.address2 || null,
-      zip_code: customer.zipCode,
+      address: customer.address,
       status: (customer.status as CustomerStatus) || CustomerStatus.ACTIVE,
     }
 
@@ -127,9 +125,7 @@ const updateCustomer = async (customer_id: string, customer: Customer.Model) => 
       additional_phone: customer.additional_phone || null,
       email: customer.email,
       city: customer.city,
-      address1: customer.address1,
-      address2: customer.address2 || null,
-      zip_code: customer.zipCode,
+      address: customer.address,
       status: (customer.status as CustomerStatus) || CustomerStatus.ACTIVE,
     }
 
