@@ -6,10 +6,10 @@ import CustomTypography from './Typography'
 
 interface FilterResetButtonProps {
   onReset: () => void
-  isDisabled: boolean 
+  disabled: boolean 
 }
 
-const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset, isDisabled }) => {
+const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset, disabled }) => {
   const { t } = useTranslation()
 
   return (
@@ -21,12 +21,12 @@ const FilterResetButton: React.FC<FilterResetButtonProps> = ({ onReset, isDisabl
     >
       <Button
         onClick={onReset}
-        disabled={isDisabled} 
+        disabled={disabled} 
         sx={{
           width: '50%',
           height: '50px',
           marginTop: 0,
-          opacity: isDisabled ? 0.5 : 1,
+          opacity: disabled ? 0.5 : 1,
           borderRadius: 4,
           outline: `1px solid ${colors.blueOverlay700}`,
           flexDirection: 'column',

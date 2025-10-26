@@ -12,7 +12,7 @@ const Devices: React.FC = () => {
   const limit = import.meta.env.VITE_LIMIT ? parseInt(import.meta.env.VITE_LIMIT) : 10
 
   const { devices, total, isLoading, error, refetch } = useFetchDevices({ page, filterType: filterType ?? undefined })
-  const isDisabled = filterType === null;
+  const disabled = filterType === null;
 
   if (isLoading) return <div>Loading devices...</div>
   if (error) return <div>{error}</div>
@@ -27,7 +27,7 @@ const Devices: React.FC = () => {
           onPageChange={setPage}
           onFilterChange={setFilterType}
           onRefresh={refetch}
-          isResetDisabled={isDisabled}
+          isResetDisabled={disabled}
       />
     </>
   )
