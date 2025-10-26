@@ -543,7 +543,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         buttonType="second"
                         onClick={handleRefresh}
                         disabled={loading || Refreshing}
-                        icon={Refreshing ? <CircularProgress disableShrink size={0} sx={{ color: '#FFFFFF' }} /> : undefined}
+                        icon={Refreshing ? <CircularProgress disableShrink size={20} sx={{ color: '#FFFFFF' }} /> : undefined}
                     />
                 </Box>
                 {lastRefreshTime && (
