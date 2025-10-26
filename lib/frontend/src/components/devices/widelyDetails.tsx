@@ -1,4 +1,4 @@
-import { Box, Snackbar, Alert } from '@mui/material'
+import { Box, Snackbar, Alert, CircularProgress } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
@@ -81,6 +81,17 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const [imeiLocked, setImeiLocked] = useState<boolean>(false);
     const [imeiLockError, setImeiLockError] = useState<string | null>(null);
     const [isUpdatingImeiLock, setIsUpdatingImeiLock] = useState<boolean>(false);
+
+    const [Refreshing, setRefreshing] = useState<boolean>(false);
+    const [lastRefreshTime, setLastRefreshTime] = useState<string | null>(null);
+
+    // Load last refresh time from localStorage on component mount
+    useEffect(() => {
+        const savedTime = localStorage.getItem(`sim_last_refresh_${simNumber}`);
+        if (savedTime) {
+            setLastRefreshTime(savedTime);
+        }
+    }, [simNumber]);
 
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = (packages: PackagesData | null) => {
@@ -472,10 +483,31 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }, [simNumber, setValue, t, isUpdatingLineSuspension, isUpdatingImeiLock]);
 
-    const handleRefresh = () => {
+    const handleRefresh = async () => {
         // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh
         if (!isUpdatingLineSuspension && !isUpdatingImeiLock) {
-            fetchWidelyDetails();
+            setRefreshing(true);
+            try {
+                await fetchWidelyDetails();
+                // Save refresh time to localStorage with date and time
+                const now = new Date();
+                const dateString = now.toLocaleDateString('he-IL', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
+                const timeString = now.toLocaleTimeString('he-IL', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                const fullDateTime = `${dateString} ${timeString}`;
+                setLastRefreshTime(fullDateTime);
+                localStorage.setItem(`sim_last_refresh_${simNumber}`, fullDateTime);
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            } finally {
+                setRefreshing(false);
+            }
         }
     };
 
@@ -497,20 +529,32 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                <CustomButton
-                    label={t('cancelLine')}
-                    buttonType="first"
-                    size="small"
-                    onClick={() => setIsTerminateModalOpen(true)}
-                />
-                <CustomButton
-                    label={t('refreshSIM_data')}
-                    size="small"
-                    buttonType="second"
-                    onClick={handleRefresh}
-                    disabled={loading}
-                />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <CustomButton
+                        label={t('cancelLine')}
+                        buttonType="first"
+                        size="small"
+                        onClick={() => setIsTerminateModalOpen(true)}
+                    />
+                    <CustomButton
+                        label={Refreshing ? '' : t('refreshSIM_data')}
+                        size="small"
+                        buttonType="second"
+                        onClick={handleRefresh}
+                        disabled={loading || Refreshing}
+                        icon={Refreshing ? <CircularProgress disableShrink size={0} sx={{ color: '#FFFFFF' }} /> : undefined}
+                    />
+                </Box>
+                {lastRefreshTime && (
+                    <CustomTypography
+                        text={`${t('lastUpdate')}: ${lastRefreshTime}`}
+                        variant="h4"
+                        weight="regular"
+                        color={colors.blue700}
+                        sx={{ fontSize: '12px' }}
+                    />
+                )}
             </Box>
         </WidelyHeaderSection>
     );
