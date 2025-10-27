@@ -9,8 +9,11 @@ export interface CustomerDetailsRef {
   submitForm: () => void
 }
 
-const CustomerDetails = forwardRef<CustomerDetailsRef, { customer: Customer.Model }>(
-  ({ customer }, ref) => {
+const CustomerDetails = forwardRef<CustomerDetailsRef, { 
+  customer: Customer.Model,
+  onCustomerUpdate?: (customerData: Partial<Customer.Model>) => Promise<void>,
+}>(
+  ({ customer, onCustomerUpdate }, ref) => {
     const formValuesRef = useRef<Partial<Customer.Model>>({})
     const formSubmitRef = useRef<() => void>(() => {})
     const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
@@ -63,8 +66,11 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, { customer: Customer.Mode
           }) : undefined}
           lastComment={lastComment ? lastComment.content : undefined}
           onCommentsRefresh={fetchLastComment}
-          onSubmit={(data) => {
+          onSubmit={async (data) => {
             formValuesRef.current = data
+            if (onCustomerUpdate) {
+              await onCustomerUpdate(data)
+            }
           }}
           setSubmitHandler={(submitFn) => {
             formSubmitRef.current = submitFn

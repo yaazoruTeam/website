@@ -114,8 +114,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
         { title: t('IMEI 1'), value: widelyDetails.imei1 },
-        { title: t('status'), value: widelyDetails.status },
-        { title: t('IMEI_lock'), value: widelyDetails.imei_lock }
+        { title: t('status'), value: t(widelyDetails.status) },
+        { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
     ] : []
 
     // עיצוב החוצץ בין הפריטים
@@ -442,7 +442,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             // Parse error response to determine appropriate user message
-            const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingDeviceDetails'));
+            const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingsimDetails'));
 
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
@@ -455,7 +455,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const partialMatchErrors: { test: (msg: string) => boolean; key: string }[] = [
                 { test: msg => msg.includes('Error loading user data'), key: 'errorLoadingUserData' },
                 { test: msg => msg.includes('Error loading device'), key: 'errorLoadingDeviceData' },
-                { test: msg => msg.includes('Failed to load'), key: 'errorLoadingDeviceDetails' }
+                { test: msg => msg.includes('Failed to load'), key: 'errorLoadingsimDetails' }
             ]
 
             // 🧠 ראשית נבדוק האם ההודעה היא בדיוק אחת מהשגיאות הידועות
@@ -464,7 +464,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 // אם לא – ננסה לזהות בהתבסס על תוכן הודעת השגיאה
                 const match = partialMatchErrors.find(({ test }) => test(errorMessage));
-                setError(t(match?.key || 'errorLoadingDeviceDetails'));
+                setError(t(match?.key || 'errorLoadingsimDetails'));
             }
 
         } finally {

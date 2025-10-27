@@ -16,7 +16,8 @@ import {
   ProcessError,
   ProcessingResult,
   buildProcessingResult,
-  validateRowData
+  validateRowData,
+  createCommentForEntity
 } from './BaseExcelService'
 
 /**
@@ -136,6 +137,14 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
         city: sanitizedCustomer.city,
         address: sanitizedCustomer.address,
       })
+      
+      // יצירת הערה ללקוח אם יש תוכן הערה
+      await createCommentForEntity(
+        existingCustomer.customer_id,
+        'customer',
+        item.comment as string,
+        trx
+      )
       
       await trx.commit()
       successCount++
