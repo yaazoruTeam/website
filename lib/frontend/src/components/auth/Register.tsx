@@ -4,6 +4,7 @@ import { Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { register } from '../../api/authApi'
 import { colors } from '../../styles/theme'
+import { User } from '@model'
 
 const Register: React.FC = () => {
   const navigate = useNavigate()
@@ -20,7 +21,7 @@ const Register: React.FC = () => {
     console.log('Form Data:', data)
     try {
       // מכין את הנתונים בפורמט הנדרש
-      const userPayload = {
+      const userPayload: User.Model = {
         user_id: '',
         first_name: data.first_name,
         last_name: data.last_name,
@@ -29,9 +30,7 @@ const Register: React.FC = () => {
         additional_phone: '',
         email: data.email,
         city: data.city,
-        address1: data.address1,
-        address2: '',
-        zipCode: data.zipCode || '',
+        address: data.address1,
         password: data.password,
         user_name: data.user_name,
         role: 'admin' as const,
