@@ -140,7 +140,7 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
       
       // יצירת הערה ללקוח אם יש תוכן הערה
       await createCommentForEntity(
-        existingCustomer.customer_id,
+        String(existingCustomer.customer_id),
         'customer',
         item.comment as string,
         trx
