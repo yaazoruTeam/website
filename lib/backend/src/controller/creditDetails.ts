@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { CreditDetails, HttpError } from '@model'
+import { customerRepository } from '@repositories/CustomerRepository'
 import config from '@config/index'
 import { handleError } from './err'
 import logger from '../utils/logger'
@@ -19,7 +20,7 @@ const createCreditDetails = async (
     const creditDetailsrData = req.body
     const sanitized = CreditDetails.sanitize(creditDetailsrData, false)
 
-    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
+    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id))
     if (!existCustomer) {
       logger.warn('Customer does not exist for ID:', sanitized.customer_id)
       const error: HttpError.Model = {
@@ -94,7 +95,7 @@ const updateCreditDetails = async (
     CreditDetails.sanitizeIdExisting(req)
     CreditDetails.sanitizeBodyExisting(req)
     const sanitized = CreditDetails.sanitize(req.body, true)
-    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
+    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id))
     if (!existCustomer) {
       const error: HttpError.Model = {
         status: 404,

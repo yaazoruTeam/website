@@ -4,7 +4,7 @@ import { AddCustomerFormInputs } from './AddCustomerForm'
 
 export const addCustomer = async (data: AddCustomerFormInputs): Promise<Customer.Model> => {
   const customerData: Customer.Model = {
-    customer_id: '',
+    customer_id: 0,
     first_name: data.first_name,
     last_name: data.last_name,
     id_number: data.id_number,

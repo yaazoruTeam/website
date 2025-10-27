@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import config from '@config/index'
 import * as db from '@db/index'
 import { CustomerDevice, HttpError } from '@model'
+import { customerRepository } from '@repositories/CustomerRepository'
 import { handleError } from './err'
 
 const limit = config.database.limit
@@ -78,7 +79,7 @@ const getAllDevicesByCustomerId = async (
     const offset = (page - 1) * limit
 
     CustomerDevice.sanitizeIdExisting(req)
-    const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
+    const existCustomer = await customerRepository.doesCustomerExist(parseInt(req.params.id))
     if (!existCustomer) {
       const error: HttpError.Model = {
         status: 404,
@@ -186,7 +187,7 @@ const deleteCustomerDevice = async (
 
 const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasId: boolean) => {
   try {
-    const customerExist = await db.Customer.doesCustomerExist(customerDevice.customer_id)
+    const customerExist = await customerRepository.doesCustomerExist(parseInt(customerDevice.customer_id.toString()))
     if (!customerExist) {
       const error: HttpError.Model = {
         status: 404,

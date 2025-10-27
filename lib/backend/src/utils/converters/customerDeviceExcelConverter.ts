@@ -3,7 +3,7 @@ import { CustomerDeviceExcel } from '@model'
 const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExcel.Model => {
   return {
     customer: {
-      customer_id: '',
+      customer_id: 0,
       first_name: (row.first_name as string) || '',
       last_name: (row.last_name as string) || '',
       id_number: (row.id_number as string) || '',

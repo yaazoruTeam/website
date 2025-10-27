@@ -90,6 +90,7 @@ export const createErrorFileName = (routeName: string): string => {
  * @returns המכשיר החדש שנוצר
  * @throws Error אם המכשיר כבר קיים (עם פרטי השדות הכפולים)
  */
+//to do: לטפל בטרנזקציה
 export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: Knex.Transaction): Promise<Device.Model> => {
   logger.info(`🔍 Checking if device exists:`, {
     SIM_number: deviceModel.SIM_number,

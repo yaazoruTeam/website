@@ -2,9 +2,10 @@
  * CustomerExcelService - שירות עיבוד קבצי Excel ללקוחות בלבד
  * אחראי על כל הלוגיקה הספציפית לעיבוד נתוני לקוחות
  */
-
+//to do: לטפל בטרנזקציה
 import getDbConnection from '@db/connection'
 import * as db from '@db/index'
+import { customerRepository } from '@repositories/CustomerRepository'
 import { Customer } from '@model'
 import { writeErrorsToExcel } from '@utils/excel'
 import { formatErrorMessage } from '@utils/errorHelpers'
@@ -23,7 +24,7 @@ import {
  */
 const convertFlatRowToCustomerModel = (item: ExcelRowData): Customer.Model => {
   return {
-    customer_id: '', 
+    customer_id: 0, 
     first_name: String(item.first_name || '').trim(),
     last_name: String(item.last_name || '').trim(),
     id_number: String(item.id_number || '').trim(),
@@ -104,10 +105,11 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
     const trx = await knex.transaction()
     try {
       // בדיקה אם הלקוח כבר קיים במערכת
-      let existingCustomer = await db.Customer.findCustomer({
+      //to do: לטפל בטרנזקציה
+      let existingCustomer = await customerRepository.findExistingCustomer({
         email: sanitizedCustomer.email,
         id_number: sanitizedCustomer.id_number,
-      }, trx)
+      })
 
       if (existingCustomer) {
         // הלקוח כבר קיים - זו שגיאה או עדכון?
@@ -123,7 +125,17 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
       }
 
       // יצירת לקוח חדש
-      existingCustomer = await db.Customer.createCustomer(sanitizedCustomer, trx)
+      //to do: לטפל בטרנזקציה
+      existingCustomer = await customerRepository.createCustomer({
+        first_name: sanitizedCustomer.first_name,
+        last_name: sanitizedCustomer.last_name,
+        id_number: sanitizedCustomer.id_number,
+        phone_number: sanitizedCustomer.phone_number,
+        additional_phone: sanitizedCustomer.additional_phone || null,
+        email: sanitizedCustomer.email,
+        city: sanitizedCustomer.city,
+        address: sanitizedCustomer.address,
+      })
       
       await trx.commit()
       successCount++

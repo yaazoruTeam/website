@@ -1,7 +1,7 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  customer_id: string
+  customer_id: number
   first_name: string
   last_name: string
   id_number: string
