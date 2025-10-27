@@ -105,7 +105,7 @@ const getCustomersByCity = async (
       throw error
     }
 
-    const { customers, total } = await customerRepository.getCustomersByCity(city, offset)
+    const { customers, total } = await customerRepository.filterCustomers({ city }, offset)
 
     if (customers.length === 0) {
       logger.warn('No customers found in city', { city });
@@ -150,7 +150,10 @@ const getCustomersByStatus = async (
       throw error
     }
 
-    const { customers, total } = await customerRepository.getCustomersByStatus(status as CustomerStatus, offset)
+    const { customers, total } = await customerRepository.filterCustomers(
+      { status: status as CustomerStatus },
+      offset,
+    )
 
     logger.info('getCustomersByStatus success', { status, count: customers.length, total });
     res.status(200).json({
@@ -186,9 +189,11 @@ const getCustomersByDateRange = async (
       throw error
     }
 
-    const { customers, total } = await customerRepository.getCustomersByDateRange(
-      new Date(startDate as string),
-      new Date(endDate as string),
+    const { customers, total } = await customerRepository.filterCustomers(
+      {
+        startDate: new Date(startDate as string),
+        endDate: new Date(endDate as string),
+      },
       offset,
     )
 

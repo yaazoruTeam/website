@@ -73,92 +73,6 @@ export class CustomerRepository {
   }
 
   /**
-   * Get customers by city with pagination
-   */
-  async getCustomersByCity(
-    city: string,
-    offset: number,
-  ): Promise<{ customers: Customer[]; total: number }> {
-    try {
-      logger.debug('[DB] Fetching customers by city', { city, offset })
-
-      const [customers, total] = await this.repository.findAndCount({
-        where: { city },
-        skip: offset,
-        take: limit,
-        order: { customer_id: 'ASC' },
-      })
-
-      logger.debug('[DB] Retrieved customers by city', { city, found: customers.length, total })
-
-      return { customers, total }
-    } catch (err) {
-      logger.error('[DB] Database error fetching customers by city:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Get customers by status with pagination
-   */
-  async getCustomersByStatus(
-    status: CustomerStatus,
-    offset: number,
-  ): Promise<{ customers: Customer[]; total: number }> {
-    try {
-      logger.debug('[DB] Fetching customers by status', { status, offset })
-
-      const [customers, total] = await this.repository.findAndCount({
-        where: { status },
-        skip: offset,
-        take: limit,
-        order: { customer_id: 'ASC' },
-      })
-
-      logger.debug('[DB] Retrieved customers by status', { status, found: customers.length, total })
-
-      return { customers, total }
-    } catch (err) {
-      logger.error('[DB] Database error fetching customers by status:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Get customers by date range with pagination
-   */
-  async getCustomersByDateRange(
-    startDate: Date,
-    endDate: Date,
-    offset: number,
-  ): Promise<{ customers: Customer[]; total: number }> {
-    try {
-      logger.debug('[DB] Fetching customers by date range', { startDate, endDate, offset })
-
-      const [customers, total] = await this.repository.findAndCount({
-        where: {
-          created_at: Between(startDate, endDate),
-        },
-        skip: offset,
-        take: limit,
-        order: { customer_id: 'ASC' },
-      })
-
-      logger.debug('[DB] Retrieved customers by date range', {
-        startDate,
-        endDate,
-        found: customers.length,
-        total,
-      })
-
-      return { customers, total }
-    } catch (err) {
-      logger.error('[DB] Database error fetching customers by date range:', err)
-      throw err
-    }
-  }
-
-  /**
    * Update customer
    */
   async updateCustomer(customer_id: number, updateData: Partial<Customer>): Promise<Customer> {
@@ -401,6 +315,82 @@ export class CustomerRepository {
       return await this.repository.count()
     } catch (err) {
       logger.error('[DB] Database error counting customers:', err)
+      throw err
+    }
+  }
+
+  /**
+   * Generic filter method for flexible customer filtering
+   * Supports multiple filter criteria at once
+   * @param filters - Filter criteria object
+   * @param offset - Pagination offset
+   * @returns Filtered customers and total count
+   */
+  async filterCustomers(
+    filters: {
+      city?: string
+      status?: CustomerStatus
+      startDate?: Date
+      endDate?: Date
+      email?: string
+      id_number?: string
+    },
+    offset: number,
+  ): Promise<{ customers: Customer[]; total: number }> {
+    try {
+      logger.debug('[DB] Filtering customers with criteria', { filters, offset })
+
+      const query = this.repository.createQueryBuilder('customer')
+
+      // Apply city filter
+      if (filters.city) {
+        query.andWhere('customer.city = :city', { city: filters.city })
+      }
+
+      // Apply status filter
+      if (filters.status) {
+        query.andWhere('customer.status = :status', { status: filters.status })
+      }
+
+      // Apply date range filter
+      if (filters.startDate && filters.endDate) {
+        query.andWhere('customer.created_at BETWEEN :startDate AND :endDate', {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+        })
+      } else if (filters.startDate) {
+        query.andWhere('customer.created_at >= :startDate', { startDate: filters.startDate })
+      } else if (filters.endDate) {
+        query.andWhere('customer.created_at <= :endDate', { endDate: filters.endDate })
+      }
+
+      // Apply email filter (exact match or partial)
+      if (filters.email) {
+        query.andWhere('customer.email ILIKE :email', { email: `%${filters.email}%` })
+      }
+
+      // Apply id_number filter (exact match)
+      if (filters.id_number) {
+        query.andWhere('customer.id_number = :id_number', { id_number: filters.id_number })
+      }
+
+      // Get total count before pagination
+      const total = await query.getCount()
+
+      // Apply pagination
+      query.orderBy('customer.customer_id', 'ASC').skip(offset).take(limit)
+
+      const customers = await query.getMany()
+
+      logger.debug('[DB] Filter completed', {
+        filters,
+        found: customers.length,
+        total,
+      })
+
+      return { customers, total }
+    } catch (err) {
+      logger.error('[DB] Database error filtering customers:', err)
       throw err
     }
   }
