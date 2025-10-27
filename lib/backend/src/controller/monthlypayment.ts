@@ -13,8 +13,8 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     MonthlyPayment.sanitizeBodyExisting(req)
     const monthlyPaymentData = req.body
     const sanitized = MonthlyPayment.sanitize(monthlyPaymentData, false)
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id.toString()))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id.toString()))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist',
@@ -67,8 +67,8 @@ const getMonthlyPaymentId = async (req: Request, res: Response, next: NextFuncti
 const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     MonthlyPayment.sanitizeIdExisting(req)
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(req.params.id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(req.params.id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist.',
@@ -170,8 +170,8 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     MonthlyPayment.sanitizeIdExisting(req)
     MonthlyPayment.sanitizeBodyExisting(req)
     const sanitized = MonthlyPayment.sanitize(req.body, true)
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id.toString()))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id.toString()))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist',

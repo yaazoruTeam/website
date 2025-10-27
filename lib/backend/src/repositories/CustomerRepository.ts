@@ -177,21 +177,6 @@ export class CustomerRepository {
   }
 
   /**
-   * Check if customer exists by ID
-   */
-  async doesCustomerExist(customer_id: number): Promise<boolean> {
-    try {
-      const result = await this.repository.count({
-        where: { customer_id },
-      })
-      return result > 0
-    } catch (err) {
-      logger.error('[DB] Database error checking customer existence:', err)
-      throw err
-    }
-  }
-
-  /**
    * Get all unique cities with customers
    */
   async getUniqueCities(): Promise<string[]> {

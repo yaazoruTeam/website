@@ -8,8 +8,8 @@ const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentMana
   const knex = getDbConnection()
   const trx = await knex.transaction()
   try {
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(monthlyPayment.customer_id.toString()))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(monthlyPayment.customer_id.toString()))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist',

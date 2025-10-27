@@ -24,8 +24,8 @@ const createBranchCustomer = async (
       }
       throw error
     }
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist.',
@@ -177,8 +177,8 @@ const updateBranchCustomer = async (
       }
       throw error
     }
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist.',

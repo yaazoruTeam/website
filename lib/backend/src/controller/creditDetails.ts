@@ -20,8 +20,8 @@ const createCreditDetails = async (
     const creditDetailsrData = req.body
     const sanitized = CreditDetails.sanitize(creditDetailsrData, false)
 
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       logger.warn('Customer does not exist for ID:', sanitized.customer_id)
       const error: HttpError.Model = {
         status: 404,
@@ -95,8 +95,8 @@ const updateCreditDetails = async (
     CreditDetails.sanitizeIdExisting(req)
     CreditDetails.sanitizeBodyExisting(req)
     const sanitized = CreditDetails.sanitize(req.body, true)
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(sanitized.customer_id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist',

@@ -79,8 +79,8 @@ const getAllDevicesByCustomerId = async (
     const offset = (page - 1) * limit
 
     CustomerDevice.sanitizeIdExisting(req)
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(req.params.id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(req.params.id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'Customer does not exist.',
@@ -187,8 +187,8 @@ const deleteCustomerDevice = async (
 
 const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasId: boolean) => {
   try {
-    const customerExist = await customerRepository.doesCustomerExist(parseInt(customerDevice.customer_id.toString()))
-    if (!customerExist) {
+    const customer = await customerRepository.getCustomerById(parseInt(customerDevice.customer_id.toString()))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist.',

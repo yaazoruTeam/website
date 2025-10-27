@@ -66,8 +66,8 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     logger.debug('getCustomerById called', { id: req.params.id });
 
     Customer.sanitizeIdExisting(req)
-    const existCustomer = await customerRepository.doesCustomerExist(parseInt(req.params.id))
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(req.params.id))
+    if (!customer) {
       logger.warn('Customer not found', { id: req.params.id });
       const error: HttpError.Model = {
         status: 404,
@@ -75,7 +75,6 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
       }
       throw error
     }
-    const customer = await customerRepository.getCustomerById(parseInt(req.params.id))
     logger.info('getCustomerById success', { id: req.params.id });
     res.status(200).json(customer)
   } catch (error: unknown) {
@@ -255,8 +254,8 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 
     Customer.sanitizeIdExisting(req)
     const numericId = parseInt(req.params.id)
-    const existCustomer = await customerRepository.doesCustomerExist(numericId)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(numericId)
+    if (!customer) {
       logger.warn('Customer not found for deletion', { id: req.params.id });
       const error: HttpError.Model = {
         status: 404,
