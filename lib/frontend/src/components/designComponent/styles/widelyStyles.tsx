@@ -18,6 +18,16 @@ export const WidelyHeaderSection = styled(FlexBase)({
 export const WidelyFormSection = styled(FlexBase)({
   gap: '16px',
   marginBottom: '40px',
+  flexWrap: 'wrap',
+  alignItems: 'flex-start',
+  '& > *': {
+    flex: '0 0 calc(25% - 12px)', 
+    minWidth: 'calc(25% - 12px)',
+  },
+  '& > *:first-child': {
+    flex: '0 0 calc(50% - 8px)',
+    minWidth: 'calc(50% - 8px)',
+  },
 })
 
 export const WidelyConnectionSection = styled('div')({
