@@ -601,7 +601,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     <CustomRadioBox
                         onChange={(value) => handleChangeNetworkConnection(value as 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone')}
                         options={[
-                           { label: t('pelephoneAndPartner'), value: 'Pelephone_and_Partner' },
+                            { label: t('pelephoneAndPartner'), value: 'Pelephone_and_Partner' },
                             { label: t('HotAndPartner'), value: 'Hot_and_Partner' },
                             { label: t('pelephone'), value: 'pelephone' }
                         ]}
