@@ -147,7 +147,7 @@ const getCustomersByStatus = async (
       logger.warn('Invalid status parameter', { status, validStatuses });
       const error: HttpError.Model = {
         status: 400,
-        message: `Invalid status. Allowed values: ${validStatuses.join(', ')}.`,
+        message: `Invalid status. Allowed values: '${validStatuses.join("' or '")}'.`,
       }
       throw error
     }
