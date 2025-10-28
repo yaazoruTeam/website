@@ -67,7 +67,7 @@ const CardCustomer: React.FC = () => {
 
   const deletingCustomer = async () => {
     console.log('delete customer: ', customer?.customer_id)
-    if (customer) await deleteCustomer(parseInt(customer.customer_id))
+    if (customer) await deleteCustomer(customer.customer_id)
     setOpenModal(false)
     navigate('/customers')
   }

@@ -82,7 +82,7 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, {
             phone_number: customer.phone_number,
             additional_phone: customer.additional_phone,
             email: customer.email,
-            address: customer.address1,
+            address: customer.address,
             city: customer.city,
           }}
         />

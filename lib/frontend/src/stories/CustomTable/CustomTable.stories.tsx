@@ -18,9 +18,7 @@ const sampleData = [
     additional_phone: '03-5884523',
     email: 'y0556722985@gmail.com',
     city: 'בני ברק',
-    address1: 'רחוב עזרא 9',
-    address2: '',
-    zipCode: '14587',
+    address: 'רחוב עזרא 9',
   },
   {
     customer_id: 5,
@@ -31,9 +29,7 @@ const sampleData = [
     additional_phone: '03-5884524',
     email: 'danny@gmail.com',
     city: 'תל אביב',
-    address1: 'רחוב גולדה מאיר 10',
-    address2: '',
-    zipCode: '65432',
+    address: 'רחוב גולדה מאיר 10',
   },
 ]
 
@@ -46,9 +42,7 @@ const sampleHeaders = [
   { label: 'טלפון נוסף', key: 'additional_phone' },
   { label: 'אימייל', key: 'email' },
   { label: 'עיר', key: 'city' },
-  { label: 'כתובת 1', key: 'address1' },
-  { label: 'כתובת 2', key: 'address2' },
-  { label: 'מיקוד', key: 'zipCode' },
+  { label: 'כתובת', key: 'address' },
 ]
 
 export const Default = () => (

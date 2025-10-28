@@ -1,14 +1,15 @@
 import getDbConnection from '@db/connection'
 import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from '@model'
 import * as db from '@db/index'
+import { customerRepository } from '@repositories/CustomerRepository'
 import logger from '../utils/logger'
 
 const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentManagement.Model) => {
   const knex = getDbConnection()
   const trx = await knex.transaction()
   try {
-    const existCustomer = await db.Customer.doesCustomerExist(monthlyPayment.customer_id)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(monthlyPayment.customer_id.toString()))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist',
