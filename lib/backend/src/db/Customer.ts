@@ -206,11 +206,12 @@ const findCustomer = async (criteria: {
   customer_id?: string
   email?: string
   id_number?: string
-}) => {
+}, trx?: Knex.Transaction) => {
   const knex = getDbConnection()
   try {
     logger.debug('[DB] Searching for existing customer', { criteria })
-    const customer = await knex('yaazoru.customers')
+    const query = trx ? trx('yaazoru.customers') : knex('yaazoru.customers')
+    const customer = await query
       .where(function () {
         if (criteria.email && criteria.id_number) {
           this.where({ email: criteria.email }).orWhere({ id_number: criteria.id_number })

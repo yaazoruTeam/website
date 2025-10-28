@@ -18,7 +18,7 @@ import {
   ExclamationCircleIcon,
   DocumentTextIcon 
 } from '@heroicons/react/24/outline'
-import { uploadCustomerDeviceExcel, uploadDeviceExcel, downloadErrorFile } from '../../api/excel'
+import { uploadCustomerDeviceExcel, uploadDeviceExcel, uploadCustomerExcel, downloadErrorFile } from '../../api/excel'
 import { ExcelUploadResponse } from '../../api/excel'
 import { useTranslation } from 'react-i18next'
 import CustomTypography from '../designComponent/Typography'
@@ -48,12 +48,19 @@ const ExcelUpload: React.FC = () => {
     error: null
   })
 
+  const [customerUpload, setCustomerUpload] = useState<UploadState>({
+    isUploading: false,
+    progress: 0,
+    result: null,
+    error: null
+  })
+
   const [successMessage, setSuccessMessage] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   const handleFileUpload = async (
     file: File,
-    type: 'customerDevice' | 'device',
+    type: 'customerDevice' | 'device' | 'customer',
     setState: React.Dispatch<React.SetStateAction<UploadState>>
   ) => {
     // Clear previous messages
@@ -69,7 +76,11 @@ const ExcelUpload: React.FC = () => {
     }))
 
     try {
-      const uploadFunction = type === 'customerDevice' ? uploadCustomerDeviceExcel : uploadDeviceExcel
+      const uploadFunction = type === 'customerDevice' 
+        ? uploadCustomerDeviceExcel 
+        : type === 'device' 
+          ? uploadDeviceExcel 
+          : uploadCustomerExcel
       
       const result = await uploadFunction(file, (progress) => {
         setState(prev => ({
@@ -316,6 +327,15 @@ const ExcelUpload: React.FC = () => {
               (file) => handleFileUpload(file, 'device', setDeviceUpload)
             )}
           </Box>
+
+          <Box sx={{ flex: '1 1 400px', minWidth: '400px' }}>
+            {renderUploadCard(
+              t('customersOnly'),
+              t('customerOnlyDescription'),
+              customerUpload,
+              (file) => handleFileUpload(file, 'customer', setCustomerUpload)
+            )}
+          </Box>
         </Box>
 
         <Box sx={{ mt: 3 }}>
@@ -424,6 +444,7 @@ const ExcelUpload: React.FC = () => {
                 />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>additional_phone</code> - {t('additionalPhone')}</li>
+                  <li><code>comment</code> - {t('comment')} ({t('addedToCustomer')})</li>
                 </Box>
               </Alert>
             </Box>
@@ -457,6 +478,44 @@ const ExcelUpload: React.FC = () => {
                 />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>model</code> - {t('model')} ({t('recommended')})</li>
+                  <li><code>comment</code> - {t('comment')} ({t('addedToDevice')})</li>
+                </Box>
+              </Alert>
+            </Box>
+
+            {/* לקוחות בלבד */}
+            <Box sx={{ flex: '1 1 400px', minWidth: '400px' }}>
+              <Alert severity="info" sx={{ mb: 2 }}>
+                <CustomTypography
+                  text={`👥 ${t('customerOnlyFile')}`}
+                  variant="h3"
+                  weight="medium"
+                  sx={{ mb: 1 }}
+                />
+                <CustomTypography
+                  text={`${t('requiredFields')}:`}
+                  variant="h5"
+                  weight="bold"
+                  sx={{ mb: 1 }}
+                />
+                <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
+                  <li><code>first_name</code> - {t('firstName')}</li>
+                  <li><code>last_name</code> - {t('lastName')}</li>
+                  <li><code>city</code> - {t('city')}</li>
+                  <li><code>address1</code> - {t('address')}</li>
+                  <li><code>phone_number</code> - {t('phone')}</li>
+                  <li><code>email</code> - {t('email')}</li>
+                  <li><code>id_number</code> - {t('idNumber')}</li>
+                </Box>
+                <CustomTypography
+                  text={`${t('optionalFields')}:`}
+                  variant="h5"
+                  weight="bold"
+                  sx={{ mt: 1, mb: 1 }}
+                />
+                <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
+                  <li><code>additional_phone</code> - {t('additionalPhone')}</li>
+                  <li><code>comment</code> - {t('comment')} ({t('addedToCustomer')})</li>
                 </Box>
               </Alert>
             </Box>
@@ -496,6 +555,12 @@ const ExcelUpload: React.FC = () => {
             />
             <CustomTypography
               text={`• ${t('dateFormats')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('commentFieldOptional')}`}
               variant="h5"
               weight="regular"
               sx={{ display: 'block' }}

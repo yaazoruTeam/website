@@ -2,6 +2,7 @@ import { EntityType } from "./Comment";
 import * as Customer from './Customer'
 import * as Device from './Device'
 import * as HttpError from './HttpError'
+import * as HttpErrorWithStatus from './HttpErrorWithStatus'
 import * as CreateCommentDto from './Dtos'
 import * as CustomerDevice from './CustomerDevice'
 import * as User from './User'
@@ -28,6 +29,7 @@ export {
   Customer,
   Device,
   HttpError,
+  HttpErrorWithStatus,
   CustomerDevice,
   User,
   JwtPayload,
