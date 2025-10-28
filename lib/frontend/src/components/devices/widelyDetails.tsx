@@ -400,7 +400,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 );
                 
                 if (currentPackage) {
-                    const description = currentPackage.description?.EN || currentPackage.description?.HE || t('noDescriptionAvailable');
+                    const description = currentPackage.description?.EN ||t('noDescriptionAvailable');
                     
                     setValue('replacingPackages', description);
                 } else {
