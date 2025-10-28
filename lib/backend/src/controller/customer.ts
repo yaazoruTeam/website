@@ -41,7 +41,8 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
 
 const getCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string)
+    const page = parseInt(req.query.page as string, 10) || 1
+    
     const offset = (page - 1) * limit
 
     logger.debug('getCustomers called', { page, offset });
@@ -104,7 +105,7 @@ const getCustomersByCity = async (
       throw error
     }
 
-    const { customers, total } = await customerRepository.filterCustomers({ city }, offset)
+    const { customers, total } = await customerRepository.find({ city: city }, offset)
 
     if (customers.length === 0) {
       logger.warn('No customers found in city', { city });
@@ -140,16 +141,18 @@ const getCustomersByStatus = async (
 
     logger.debug('getCustomersByStatus called', { status, page });
 
-    if (status !== 'active' && status !== 'inactive') {
-      logger.warn('Invalid status parameter', { status });
+    // Validate status is one of the allowed enum values
+    const validStatuses = Object.values(CustomerStatus)
+    if (!validStatuses.includes(status as CustomerStatus)) {
+      logger.warn('Invalid status parameter', { status, validStatuses });
       const error: HttpError.Model = {
         status: 400,
-        message: "Invalid status. Allowed values: 'active' or 'inactive'.",
+        message: `Invalid status. Allowed values: '${validStatuses.join("' or '")}'.`,
       }
       throw error
     }
 
-    const { customers, total } = await customerRepository.filterCustomers(
+    const { customers, total } = await customerRepository.find(
       { status: status as CustomerStatus },
       offset,
     )
@@ -188,11 +191,9 @@ const getCustomersByDateRange = async (
       throw error
     }
 
-    const { customers, total } = await customerRepository.filterCustomers(
-      {
-        startDate: new Date(startDate as string),
-        endDate: new Date(endDate as string),
-      },
+    const { customers, total } = await customerRepository.findByDate(
+      new Date(startDate as string),
+      new Date(endDate as string),
       offset,
     )
 
@@ -226,7 +227,7 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
     Customer.sanitizeBodyExisting(req)
     const sanitized = Customer.sanitize(req.body, true)
     await existingCustomer(sanitized, true)
-    
+
     const numericId = parseInt(req.params.id)
     const updateData = {
       first_name: sanitized.first_name,
@@ -254,19 +255,12 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
 
     Customer.sanitizeIdExisting(req)
     const numericId = parseInt(req.params.id)
-    const customer = await customerRepository.getCustomerById(numericId)
-    if (!customer) {
-      logger.warn('Customer not found for deletion', { id: req.params.id });
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Customer does not exist.',
-      }
-      throw error
-    }
-    const deleteCustomer = await customerRepository.deleteCustomer(numericId)
+    
+    // ✅ Repository handles the 404 check internally
+    const deletedCustomer = await customerRepository.deleteCustomer(numericId)
 
     logger.info('Customer deleted successfully', { id: req.params.id });
-    res.status(200).json(deleteCustomer)
+    res.status(200).json(deletedCustomer)
   } catch (error: unknown) {
     logger.error('Error in deleteCustomer', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
@@ -278,19 +272,27 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
     hasId,
     email: customer.email,
     id_number: customer.id_number,
+    phone_number: customer.phone_number,
     customer_id: hasId ? customer.customer_id : 0
   });
 
   let customerEx
   if (hasId) {
+    // ✅ UPDATE: משדרים את customer_id כדי לא להזריק שגיאה על אותו ה-row
+    // ✅ בודקים את כל ה-UNIQUE fields: email, id_number, phone_number
     customerEx = await customerRepository.findExistingCustomer({
+      customer_id: customer.customer_id,
       email: customer.email,
       id_number: customer.id_number,
+      phone_number: customer.phone_number,
     })
   } else {
+    // ✅ CREATE: לא משדרים customer_id (עדיין אין)
+    // ✅ בודקים את כל ה-UNIQUE fields: email, id_number, phone_number
     customerEx = await customerRepository.findExistingCustomer({
       email: customer.email,
       id_number: customer.id_number,
+      phone_number: customer.phone_number,
     })
   }
 
