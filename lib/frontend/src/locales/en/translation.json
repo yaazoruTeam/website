@@ -380,5 +380,5 @@
   "deviceAssignedSuccessfully": "device assigned successfully",
   "deviceAlreadyAssigned": "device already assigned to another customer",
   "noAvailableDevices": "no available devices to assign",
-  "pleaseSelectDevice": "please select a device"
+  "pleaseSelectDevice": "Please select a device"
 }

@@ -137,9 +137,10 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         setAssigning(false)
         return
       }
+      let DEVICE_ALLOCATION_YEARS = 5
       const today = new Date()
       const endDate = new Date()
-      endDate.setFullYear(endDate.getFullYear() + 5)
+      endDate.setFullYear(endDate.getFullYear() + DEVICE_ALLOCATION_YEARS)
 
       const customerDeviceData: Omit<CustomerDevice.Model, 'customerDevice_id'> = {
         customer_id: String(customer.customer_id),
@@ -243,7 +244,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             <Box sx={{ width: '33%' }}> 
               <Autocomplete
                 options={availableDevices}
-                getOptionLabel={(option) => `${option.device_id}${option.model ? ` - ${option.model}` : ''}`} // תצוגת המכשיר
+                getOptionLabel={(option) => `${option.device_id}${option.model ? ` - ${option.model}` : ''}`}
                 value={selectedDevice} 
                 onChange={(_event, newValue) => {
                   setSelectedDevice(newValue)
@@ -286,7 +287,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
                         borderRadius: '6px', 
                         paddingRight: '14px',
                         '& fieldset': {
-                          borderColor: !selectedDevice ? colors.neutral300 : colors.blueOverlay700, // צבע המסגרת
+                          borderColor: !selectedDevice ? colors.neutral300 : colors.blueOverlay700,
                           textAlign: 'right', 
                         },
                         '&:hover fieldset': {
