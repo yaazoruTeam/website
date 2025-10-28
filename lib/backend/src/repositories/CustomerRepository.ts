@@ -55,16 +55,13 @@ export class CustomerRepository {
 
   /**
    * Get customer by ID
+   * Returns null if customer doesn't exist (READ operation)
    */
   async getCustomerById(customer_id: number): Promise<Customer | null> {
     try {
       const customer = await this.repository.findOne({
         where: { customer_id },
       })
-
-      if (!customer) {
-        logger.debug('[DB] Customer not found in database', { customer_id })
-      }
       return customer || null
     } catch (err) {
       logger.error('[DB] Database error fetching customer by ID:', err)
@@ -85,9 +82,7 @@ export class CustomerRepository {
         updated_at: new Date(),
       })
 
-      const updatedCustomer = await this.repository.findOne({
-        where: { customer_id },
-      })
+      const updatedCustomer: Customer | null = await this.getCustomerById(customer_id)
 
       if (!updatedCustomer) {
         logger.warn('[DB] Customer not found for update', { customer_id })
@@ -109,10 +104,7 @@ export class CustomerRepository {
     try {
       logger.debug('[DB] Soft deleting customer (marking inactive)', { customer_id })
 
-      const customer = await this.repository.findOne({
-        where: { customer_id },
-      })
-
+      const customer :Customer | null= await this.getCustomerById(customer_id)
       if (!customer) {
         logger.warn('[DB] Customer not found for deletion', { customer_id })
         throw { status: 404, message: 'Customer not found' }
@@ -131,38 +123,42 @@ export class CustomerRepository {
   }
 
   /**
-   * Find existing customer by email or id_number
+   * Find existing customer by email, id_number, or phone_number
    * Used to check for duplicates before creating/updating
+   * Executes queries in parallel for better performance
+   * 
+   * Important: This checks ALL UNIQUE fields to prevent constraint violations
    */
   async findExistingCustomer(criteria: {
     customer_id?: number
     email?: string
     id_number?: string
+    phone_number?: string
   }): Promise<Customer | null> {
     try {
       logger.debug('[DB] Searching for existing customer', { criteria })
 
-      // Build where array for OR conditions
-      const where: any[] = []
+      // Execute email, id_number, and phone_number queries in parallel
+      const [customerByEmail, customerByIdNumber, customerByPhoneNumber] = await Promise.all([
+        criteria.email
+          ? this.repository.findOne({
+              where: { email: criteria.email },
+            })
+          : Promise.resolve(null),
+        criteria.id_number
+          ? this.repository.findOne({
+              where: { id_number: criteria.id_number },
+            })
+          : Promise.resolve(null),
+        criteria.phone_number
+          ? this.repository.findOne({
+              where: { phone_number: criteria.phone_number },
+            })
+          : Promise.resolve(null),
+      ])
 
-      if (criteria.email) {
-        where.push({ email: criteria.email })
-      }
-      if (criteria.id_number) {
-        where.push({ id_number: criteria.id_number })
-      }
-
-      if (where.length === 0) {
-        return null
-      }
-
-      // Find customers matching email OR id_number
-      const customers = await this.repository.find({
-        where,
-        take: 1, // Only need first match
-      })
-
-      let customer = customers[0] || null
+      // Get first match (email, id_number, or phone_number - in priority order)
+      const customer = customerByEmail || customerByIdNumber || customerByPhoneNumber
 
       // Filter out if it's the same customer being updated
       if (customer && criteria.customer_id && customer.customer_id === criteria.customer_id) {
@@ -172,6 +168,7 @@ export class CustomerRepository {
       if (customer) {
         logger.debug('[DB] Found existing customer with matching criteria', {
           found_id: customer.customer_id,
+          matchedBy: customerByEmail ? 'email' : customerByIdNumber ? 'id_number' : 'phone_number',
         })
       }
 
@@ -184,25 +181,24 @@ export class CustomerRepository {
 
   /**
    * Get all unique cities with customers
+   * Fetches only non-empty cities and returns them sorted alphabetically
+   * Uses QueryBuilder for efficient DISTINCT query at database level
    */
   async getUniqueCities(): Promise<string[]> {
     try {
       logger.debug('[DB] Fetching unique cities')
 
-      // Fetch all customers and extract unique cities
-      const customers = await this.repository.find({
-        select: ['city'],
-        where: { city: Not(IsNull()) }, // Filter out null values
-      })
+      // Use QueryBuilder to get distinct cities directly from database
+      const cities = await this.repository
+        .createQueryBuilder('customer')
+        .select('DISTINCT customer.city', 'city')
+        .where('customer.city IS NOT NULL')
+        .andWhere("customer.city != ''")
+        .orderBy('customer.city', 'ASC')
+        .getRawMany<{ city: string }>()
 
-      // Extract unique cities and filter out empty strings
-      const uniqueCities = Array.from(
-        new Set(
-          customers
-            .map((c) => c.city)
-            .filter((city): city is string => Boolean(city && city.trim())),
-        ),
-      ).sort()
+      // Extract city values from results
+      const uniqueCities = cities.map((row) => row.city)
 
       logger.debug('[DB] Retrieved unique cities', { count: uniqueCities.length })
       return uniqueCities
@@ -310,60 +306,47 @@ export class CustomerRepository {
     }
   }
 
-  /**
-   * Generic filter method for flexible customer filtering
-   * @param filters - Filter criteria object { city, status, email, id_number, startDate, endDate }
-   * @param offset - Pagination offset
-   * @returns Filtered customers and total count
-   */
-  async filterCustomers(
-    filters: {
-      city?: string
-      status?: CustomerStatus
-      startDate?: Date
-      endDate?: Date
-      email?: string
-      id_number?: string
-    },
-    offset: number,
-  ): Promise<{ customers: Customer[]; total: number }> {
+  async find(filter?: Partial<Customer>, offset?: number): Promise<{ customers: Customer[], total: number }> {
     try {
-      logger.debug('[DB] Filtering customers with criteria', { filters, offset })
-
-      // Build where object dynamically - only include filters that are provided
-      const where: Record<string, any> = {}
-
-      // Add exact match filters
-      if (filters.city) where.city = filters.city
-      if (filters.status) where.status = filters.status
-      if (filters.id_number) where.id_number = filters.id_number
-
-      // Add partial match filter (case-insensitive)
-      if (filters.email) {
-        where.email = ILike(`%${filters.email}%`)
+      if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
+        throw { status: 400, message: 'Invalid offset parameter' }
       }
+      
+      // Remove null/undefined values from filter
+      const where = filter ? Object.fromEntries(
+        Object.entries(filter).filter(([_, v]) => v != null)
+      ) : undefined
 
-      // Add date range filter with proper operator selection
-      if (filters.startDate && filters.endDate) {
-        where.created_at = Between(filters.startDate, filters.endDate)
-      } else if (filters.startDate) {
-        where.created_at = MoreThan(filters.startDate)
-      } else if (filters.endDate) {
-        where.created_at = LessThan(filters.endDate)
-      }
-
-      // Execute query with dynamic where conditions
-      const [customers, total] = await this.repository.findAndCount({
-        where: Object.keys(where).length > 0 ? where : undefined,
-        skip: offset,
-        take: limit,
-        order: { customer_id: 'ASC' },
+      const [customers, total] = await this.repository.findAndCount({ 
+        where: where, 
+        skip: offset || 0,  // ✅ תקן: default to 0 אם undefined
+        take: limit 
       })
-
-      logger.debug('[DB] Filter completed', { found: customers.length, total })
       return { customers, total }
     } catch (err) {
-      logger.error('[DB] Database error filtering customers:', err)
+      logger.error('[DB] Database error finding customers:', err)
+      throw err
+    }
+  }
+
+  async findByDate(startDate: Date, endDate: Date, offset?: number): Promise<{ customers: Customer[], total: number }> {
+    try {
+      if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
+        throw { status: 400, message: 'Invalid offset parameter' }
+      }
+      if (startDate > endDate) {
+        throw { status: 400, message: 'startDate must be before endDate' }
+      }
+      const [customers, total] = await this.repository.findAndCount({
+        where: {
+          created_at: Between(startDate, endDate)
+        },
+        skip: offset,
+        take: limit
+      })
+      return { customers, total }
+    } catch (err) {
+      logger.error('[DB] Database error finding customers:', err)
       throw err
     }
   }
