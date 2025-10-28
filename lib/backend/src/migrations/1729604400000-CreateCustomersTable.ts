@@ -12,15 +12,22 @@ export class CreateCustomersTable1729604400000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     console.log('📦 Creating customers table in yaazoru schema...')
 
-    // Step 1: Create ENUM type for customer_status
+    // Step 1: Create ENUM type for customer_status (drop if exists to avoid conflicts)
     console.log('📝 Creating customer_status enum type...')
+    try {
+      await queryRunner.query(`DROP TYPE IF EXISTS yaazoru.customer_status CASCADE`)
+    } catch (error) {
+      // Ignore if type doesn't exist
+    }
+    
     try {
       await queryRunner.query(
         `CREATE TYPE yaazoru.customer_status AS ENUM('active', 'inactive')`
       )
       console.log('✅ ENUM type created')
     } catch (error) {
-      console.log('ℹ️  ENUM type already exists')
+      console.log('ℹ️  ENUM type creation failed:', error)
+      throw error
     }
 
     // Step 2: Create customers table in yaazoru schema
