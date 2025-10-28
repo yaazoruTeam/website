@@ -104,7 +104,7 @@ export class CustomerRepository {
     try {
       logger.debug('[DB] Soft deleting customer (marking inactive)', { customer_id })
 
-      const customer :Customer | null= await this.getCustomerById(customer_id)
+      const customer: Customer | null = await this.getCustomerById(customer_id)
       if (!customer) {
         logger.warn('[DB] Customer not found for deletion', { customer_id })
         throw { status: 404, message: 'Customer not found' }
