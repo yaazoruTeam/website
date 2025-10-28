@@ -371,5 +371,14 @@
   "uploadFailed": "Error uploading file",
   "errors": "Errors",
   "successRate": "Success rate",
-  "noPreviousComments": "No previous comments"
+  "noPreviousComments": "No previous comments",
+  "selectDevice": "Select Device",
+  "searchDevice": "Search device to associate",
+  "assigning": "Assigning...",
+  "assignDevice": "Assign Device",
+  "errorAssigningDevice": "error assigning device",
+  "deviceAssignedSuccessfully": "device assigned successfully",
+  "deviceAlreadyAssigned": "device already assigned to another customer",
+  "noAvailableDevices": "no available devices to assign",
+  "pleaseSelectDevice": "please select a device"
 }
