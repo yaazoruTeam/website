@@ -142,13 +142,6 @@ const sanitizeExistingUser = (userExis: Model, user: Model) => {
     }
     throw error
   }
-  if (userExis.password === user.password) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'password already exists',
-    }
-    throw error
-  }
   if (userExis.user_name === user.user_name) {
     const error: HttpError.Model = {
       status: 409,

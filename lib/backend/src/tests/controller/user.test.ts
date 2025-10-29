@@ -64,7 +64,7 @@ describe('User Controller', () => {
         ...mockUser,
         user_id: undefined,
       })
-      ;(userRepository.findExistingUser as jest.Mock).mockResolvedValue(null)
+      ;(userRepository.findAllExistingUsers as jest.Mock).mockResolvedValue({})
       ;(hashPassword as jest.Mock).mockResolvedValue('hashedPassword')
       ;(userRepository.createUser as jest.Mock).mockResolvedValue({
         ...mockUser,
@@ -80,9 +80,8 @@ describe('User Controller', () => {
     it('should handle user already exists', async () => {
       ;(User.sanitizeBodyExisting as jest.Mock).mockImplementation(() => {})
       ;(User.sanitize as jest.Mock).mockReturnValue(mockUser)
-      ;(userRepository.findExistingUser as jest.Mock).mockResolvedValue(mockUser)
-      ;(User.sanitizeExistingUser as jest.Mock).mockImplementation(() => {
-        throw { status: 409, message: 'email already exists' }
+      ;(userRepository.findAllExistingUsers as jest.Mock).mockResolvedValue({
+        email: mockUser,
       })
 
       const res = await request(app).post('/users').send(mockUser)
@@ -176,7 +175,7 @@ describe('User Controller', () => {
         user_name: 'updatedName',
       })
       ;(hashPassword as jest.Mock).mockResolvedValue('hashedPassword')
-      ;(userRepository.findExistingUser as jest.Mock).mockResolvedValue(null)
+      ;(userRepository.findAllExistingUsers as jest.Mock).mockResolvedValue({})
       ;(userRepository.updateUser as jest.Mock).mockResolvedValue({
         ...mockUser,
         user_name: 'updatedName',
@@ -195,12 +194,8 @@ describe('User Controller', () => {
       ;(User.sanitizeBodyExisting as jest.Mock).mockImplementation(() => {})
       ;(User.sanitize as jest.Mock).mockReturnValue(mockUser)
       ;(hashPassword as jest.Mock).mockResolvedValue('hashedPassword')
-      ;(userRepository.findExistingUser as jest.Mock).mockResolvedValue({
-        ...mockUser,
-        user_id: 999,
-      })
-      ;(User.sanitizeExistingUser as jest.Mock).mockImplementation(() => {
-        throw { status: 409, message: 'email already exists' }
+      ;(userRepository.findAllExistingUsers as jest.Mock).mockResolvedValue({
+        email: { ...mockUser, user_id: 999 },
       })
 
       const res = await request(app).put('/users/123').send(mockUser)
@@ -212,7 +207,7 @@ describe('User Controller', () => {
       ;(User.sanitizeBodyExisting as jest.Mock).mockImplementation(() => {})
       ;(User.sanitize as jest.Mock).mockReturnValue(mockUser)
       ;(hashPassword as jest.Mock).mockResolvedValue('hashedPassword')
-      ;(userRepository.findExistingUser as jest.Mock).mockResolvedValue(null)
+      ;(userRepository.findAllExistingUsers as jest.Mock).mockResolvedValue({})
       ;(userRepository.updateUser as jest.Mock).mockRejectedValue(
         new Error('Database error')
       )

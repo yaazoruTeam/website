@@ -156,43 +156,42 @@ const existingUser = async (user: User.Model, hasId: boolean) => {
     user_id: hasId ? user.user_id : 0
   })
 
-  let userEx
-  if (hasId) {
-    // UPDATE: משדרים את user_id כדי לא להזריק שגיאה על אותו ה-row
-    // בודקים את כל ה-UNIQUE fields: email, id_number, phone_number, user_name
-    userEx = await userRepository.findExistingUser({
-      user_id: typeof user.user_id === 'string' ? parseInt(user.user_id) : user.user_id,
-      email: user.email,
-      id_number: user.id_number,
-      phone_number: user.phone_number,
-      user_name: user.user_name,
+  // Find ALL potential conflicts
+  const conflicts = await userRepository.findAllExistingUsers({
+    user_id: hasId ? (typeof user.user_id === 'string' ? parseInt(user.user_id) : user.user_id) : undefined,
+    email: user.email,
+    id_number: user.id_number,
+    phone_number: user.phone_number,
+    user_name: user.user_name,
+  })
+
+  // If there are any conflicts, throw error immediately
+  if (Object.keys(conflicts).length > 0) {
+    const conflictedFields = Object.keys(conflicts)
+    const firstConflictField = conflictedFields[0]
+    const conflictedUser = conflicts[firstConflictField as keyof typeof conflicts]
+
+    logger.warn('Found conflicting user', {
+      existing_id: conflictedUser?.user_id,
+      conflict_fields: conflictedFields,
+      first_conflict: firstConflictField
     })
-  } else {
-    // CREATE: לא משדרים user_id (עדיין אין)
-    // בודקים את כל ה-UNIQUE fields: email, id_number, phone_number, user_name
-    userEx = await userRepository.findExistingUser({
-      email: user.email,
-      id_number: user.id_number,
-      phone_number: user.phone_number,
-      user_name: user.user_name,
-    })
+
+    // Throw error for the first conflict
+    const conflictMessages: Record<string, string> = {
+      email: 'email already exists',
+      id_number: 'id_number already exists',
+      phone_number: 'phone_number already exists',
+      user_name: 'user_name already exists',
+    }
+
+    throw {
+      status: 409,
+      message: conflictMessages[firstConflictField] || 'Duplicate user data',
+    }
   }
 
-  if (userEx) {
-    logger.warn('Found conflicting user', {
-      existing_id: userEx.user_id,
-      conflict_field: userEx.email === user.email ? 'email' : userEx.id_number === user.id_number ? 'id_number' : userEx.phone_number === user.phone_number ? 'phone_number' : 'user_name'
-    })
-    // Convert TypeORM entity to User.Model interface
-    const userExModel: User.Model = {
-      ...userEx,
-      user_id: String(userEx.user_id),
-      additional_phone: userEx.additional_phone || '',
-    }
-    User.sanitizeExistingUser(userExModel, user)
-  } else {
-    logger.debug('No existing user conflicts found')
-  }
+  logger.debug('No existing user conflicts found')
 }
 
 export { createUser, getUsers, getUserById, updateUser, deleteUser }

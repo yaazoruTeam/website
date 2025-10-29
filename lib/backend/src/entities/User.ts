@@ -23,7 +23,6 @@ export enum UserStatus {
 @Unique(['phone_number'])
 @Unique(['email'])
 @Unique(['user_name'])
-@Unique(['password'])
 export class User {
   @PrimaryGeneratedColumn()
   user_id!: number
