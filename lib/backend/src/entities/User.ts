@@ -19,12 +19,11 @@ export enum UserStatus {
 }
 
 @Entity('users', { schema: 'yaazoru' })
-@Index('idx_users_email', ['email'])
-@Index('idx_users_user_name', ['user_name'])
-@Index('idx_users_status', ['status'])
 @Unique(['id_number'])
+@Unique(['phone_number'])
 @Unique(['email'])
 @Unique(['user_name'])
+@Unique(['password'])
 export class User {
   @PrimaryGeneratedColumn()
   user_id!: number
@@ -47,6 +46,7 @@ export class User {
   @Column({ type: 'varchar', length: 100, unique: true })
   email!: string
 
+  @Index('idx_users_city', ['city'])
   @Column({ type: 'varchar', length: 100 })
   city!: string
 
@@ -56,6 +56,7 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password!: string
 
+  @Index('idx_users_user_name', ['user_name'])
   @Column({ type: 'varchar', length: 100, unique: true })
   user_name!: string
 
@@ -66,6 +67,7 @@ export class User {
   })
   role: UserRole = UserRole.BRANCH
 
+  @Index('idx_users_status', ['status'])
   @Column({
     type: 'enum',
     enum: UserStatus,
