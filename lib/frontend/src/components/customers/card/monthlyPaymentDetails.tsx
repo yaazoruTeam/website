@@ -12,9 +12,9 @@ const MonthlyPaymentDetails: React.FC<{ customer: Customer.Model }> = ({ custome
   const [monthlyPayment, setMonthlyPayment] = useState<MonthlyPayment.Model[]>([])
 
   useEffect(() => {
-    const getMonthlyPayments = async (customer_id: string) => {
+    const getMonthlyPayments = async (customer_id: number) => {
       const { data } =
-        await getMonthlyPaymentByCustomerId(customer_id, 1)
+        await getMonthlyPaymentByCustomerId(customer_id.toString(), 1)
       setMonthlyPayment(data)
     }
     getMonthlyPayments(customer.customer_id)

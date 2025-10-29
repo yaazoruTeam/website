@@ -192,10 +192,10 @@ const EditMonthlyPayment: React.FC = () => {
     })
 
     const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
-      customer_id: customer?.customer_id,
+      customer_id: customer?.customer_id.toString() || '0',
       monthlyPayment: {
         monthlyPayment_id: monthlyPayment?.monthlyPayment_id,
-        customer_id: customer?.customer_id,
+        customer_id: customer?.customer_id.toString() || '0',
         customer_name: `${customer?.first_name} ${customer?.last_name}`,
         belongsOrganization: 'יעזורו',
         start_date: monthlyPayment?.start_date,
@@ -232,7 +232,7 @@ const EditMonthlyPayment: React.FC = () => {
       creditDetails: {
         //to do: פה יש עוד דברים שצריך לשנות
         credit_id: creditDetails.credit_id,
-        customer_id: customer?.customer_id,
+        customer_id: customer?.customer_id.toString() || '0',
         token: creditDetails.token /*paymentData?.token*/,
         expiry_month: creditDetails.expiry_month /*paymentData?.expiry_month*/,
         expiry_year: creditDetails.expiry_year /*paymentData?.expiry_year*/,

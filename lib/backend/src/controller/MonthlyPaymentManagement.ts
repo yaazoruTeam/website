@@ -7,6 +7,7 @@ import {
   MonthlyPaymentManagement,
 } from '@model'
 import * as db from '@db/index'
+import { customerRepository } from '@repositories/CustomerRepository'
 import getDbConnection from '@db/connection'
 import { updateItems } from './item'
 import { handleError } from './err'
@@ -17,8 +18,8 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
   const trx = await knex.transaction()
   try {
     const sanitized = MonthlyPaymentManagement.sanitize(req.body)
-    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist',
@@ -78,8 +79,8 @@ const updateMonthlyPayment = async (req: Request, res: Response, next: NextFunct
     const { customer_id, monthlyPayment, creditDetails, items } = sanitized
     const { id } = req.params
 
-    const existCustomer = await db.Customer.doesCustomerExist(customer_id)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'Customer does not exist',

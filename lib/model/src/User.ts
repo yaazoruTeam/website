@@ -9,9 +9,7 @@ interface Model {
   additional_phone: string
   email: string
   city: string
-  address1: string
-  address2: string
-  zipCode: string
+  address: string
   password: string
   user_name: string
   role: 'admin' | 'branch'
@@ -83,24 +81,10 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(user.address1) || user.address1.trim() === '') {
+  if (!isString(user.address) || user.address.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address1".',
-    }
-    throw error
-  }
-  if (user.address2 && !isString(user.address2)) {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address2".',
-    }
-    throw error
-  }
-  if (!isString(user.zipCode) || user.zipCode.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "zipCode".',
     }
     throw error
   }
@@ -134,9 +118,7 @@ function sanitize(user: Model, hasId: boolean): Model {
     additional_phone: user.additional_phone,
     email: user.email.trim().toLowerCase(),
     city: user.city.trim(),
-    address1: user.address1.trim(),
-    address2: user.address2,
-    zipCode: user.zipCode,
+    address: user.address.trim(),
     password: user.password,
     user_name: user.user_name,
     role: user.role,

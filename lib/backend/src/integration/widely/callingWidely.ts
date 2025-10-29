@@ -23,7 +23,7 @@ const callingWidely = async (
         'Content-Type': 'application/json',
       },
       httpsAgent: new https.Agent({
-        rejectUnauthorized: config.env === 'development' ? false : true, // Disable SSL validation only in development
+        rejectUnauthorized: config.node_env === 'development' ? false : true, // Disable SSL validation only in development
       }),
     })
     logger.debug(`callingWidely Response Data received. Keys: ${Object.keys(response.data).join(', ')}`)

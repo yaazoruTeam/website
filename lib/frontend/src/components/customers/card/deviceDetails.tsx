@@ -18,12 +18,12 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
   const [openedDeviceId, setOpenedDeviceId] = useState<string | null>(null)
 
   const fetchDevicesByCustomerId = useCallback(
-    async (customerId: string) => {
+    async (customerId: number) => {
       try {
         setIsLoading(true)
         setError(null)
 
-        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId, 1) // page 1
+        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId.toString(), 1) // page 1
 
         if (customerDevicesResponse.data.length === 0) {
           setDevices([])
