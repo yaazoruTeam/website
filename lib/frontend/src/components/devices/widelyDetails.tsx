@@ -93,7 +93,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const price = pkg.price || 0;
 
             // בניית הלייבל בפורמט: "תיאור - מחיר₪ לחודש"
-            const label = `${description} בעלות : ${price}₪ ${t('perMonth')}`;
+            const label = `${description} בעלות: ${price}₪ ${t('perMonth')}`;
 
             return {
                 value: pkg.id.toString(),
@@ -396,7 +396,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             
                 // חיפוש התיאור של החבילה הנוכחית
                 const currentPackage = basePackages.data.items.find(
-                    (pkg: PackageItem) => pkg.id.toString() === details.package_id
+                    (pkg: PackageItem) => pkg.id.toString() === String(details.package_id)
                 );
                 
                 if (currentPackage) {
@@ -404,7 +404,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     
                     setValue('replacingPackages', description);
                 } else {
-                    setValue('replacingPackages', details.package_id || '');
+                     setValue('replacingPackages', t('packageNotFound'));
                 }
             }
 
@@ -546,7 +546,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         control={control}
                         name="replacingPackages"
                         label={t('replacingPackages')}
-                        disabled={false}
                         icon={<ChevronDownIcon />}
                         slotProps={{
                             input: {
