@@ -17,7 +17,6 @@ services:
       NODE_ENV: development
       FIREBASE_SERVICE_ACCOUNT_KEY: ${FIREBASE_SERVICE_ACCOUNT_KEY}
       GOOGLE_APPLICATION_CREDENTIALS_JSON: ${GOOGLE_APPLICATION_CREDENTIALS_JSON}
-      # Temporary fix for SSL certificate issues in development
     volumes:
       - ./lib/backend:/app
       - ./lib/model:/app/model
