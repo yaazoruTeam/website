@@ -396,7 +396,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             
                 // חיפוש התיאור של החבילה הנוכחית
                 const currentPackage = basePackages.data.items.find(
-                    (pkg: PackageItem) => pkg.id.toString() === details.package_id
+                    (pkg: PackageItem) => pkg.id.toString() === String(details.package_id)
                 );
                 
                 if (currentPackage) {
