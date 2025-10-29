@@ -21,12 +21,11 @@ export const WidelyFormSection = styled(FlexBase)({
   flexWrap: 'wrap',
   alignItems: 'flex-start',
   '& > *': {
-    flex: '0 0 calc(25% - 12px)', 
-    minWidth: 'calc(25% - 12px)',
+    flex: 1,
+    minWidth: 0,
   },
   '& > *:first-child': {
-    flex: '0 0 calc(50% - 8px)',
-    minWidth: 'calc(50% - 8px)',
+    flex: 2,
   },
 })
 
