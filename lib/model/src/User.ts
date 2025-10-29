@@ -84,7 +84,7 @@ function sanitize(user: Model, hasId: boolean): Model {
   if (!isString(user.address) || user.address.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "address1".',
+      message: 'Invalid or missing "address".',
     }
     throw error
   }
