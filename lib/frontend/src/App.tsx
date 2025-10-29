@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles'
 
 import './App.css'
 import SideNav from './components/layout/SideNav'
+import { GoogleAuthService } from './services/googleAuthService'
 
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
@@ -17,9 +18,6 @@ import Branches from './components/branches/Branches'
 import Permissions from './components/Permissions/Permissions'
 import ProtectedRoute from './components/ProtectedRoute'
 import Switchboard from './components/switchboard/Switchboard'
-
-import dashboardIconWhite from '../src/assets/dashboardIcon-white.svg'
-import dashboardIconBlue from '../src/assets/dashboardIcon-blue.svg'
 import customerIconWhite from '../src/assets/customerIcon-white.svg'
 import customerIconBlue from '../src/assets/customerIcon-blue.svg'
 import devicesIconWhite from '../src/assets/deviceIcon-white.svg'
@@ -45,6 +43,7 @@ import CallLog from './components/switchboard/CallLog'
 import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
+import ExcelUpload from './components/excel/ExcelUpload'
 
 function App() {
   const { t } = useTranslation()
@@ -52,6 +51,17 @@ function App() {
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
+    
+    // Handle Google Auth redirect result when app loads
+    const handleAuthRedirect = async () => {
+      try {
+        await GoogleAuthService.handleRedirectResult()
+      } catch (error) {
+        console.log('No redirect result or error handling redirect:', error)
+      }
+    }
+    
+    handleAuthRedirect()
   }, [navigate])
 
   return (
@@ -72,12 +82,6 @@ function App() {
                 <div style={{ display: 'flex' }}>
                   <SideNav
                     listItems={[
-                      {
-                        iconWhite: dashboardIconWhite,
-                        iconBlue: dashboardIconBlue,
-                        link: '../dashboard',
-                        text: t('dashboard'),
-                      },
                       {
                         iconWhite: customerIconWhite,
                         iconBlue: customerIconBlue,
@@ -143,6 +147,7 @@ function App() {
                         <Route path='/branches' element={<Branches />} />
                         <Route path='/monthlyPayment' element={<MonthlyPaymentComponen />} />
                         <Route path='/monthlyPayment/edit/:id' element={<EditMonthlyPayment />} />
+                        <Route path='/excel' element={<ExcelUpload />} />
                         <Route path='/permissions' element={<Permissions />} />
                         <Route path='/switchboard' element={<Switchboard />} />
                         <Route path='/switchboard/callCenter/:id' element={<CallCenter />} />

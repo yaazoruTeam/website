@@ -4,8 +4,37 @@ import { User, HttpError } from '@model'
 import { hashPassword } from '@utils/password'
 import config from '@config/index'
 import { handleError } from './err'
+import jwt from 'jsonwebtoken'
 
 const limit = config.database.limit
+
+// Helper function to check if user can access/modify another user's data
+const checkUserPermissions = (req: Request, targetUserId: string) => {
+  const token = req.headers['authorization']?.split(' ')[1]
+  if (!token) {
+    const error: HttpError.Model = {
+      status: 403,
+      message: 'Access denied - missing token',
+    }
+    throw error
+  }
+
+  const decoded = jwt.verify(token, config.jwt.secret) as any
+  
+  // Allow if: admin, branch, or accessing own data
+  const sameUser = String(targetUserId) === String(decoded.user_id)
+  const isPrivileged = ['admin', 'branch'].includes(decoded.role)
+
+  if (isPrivileged || sameUser) {
+    return decoded
+  }
+
+  const error: HttpError.Model = {
+    status: 403,
+    message: 'Access denied - you can only access your own user data',
+  }
+  throw error
+}
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -13,7 +42,12 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
     const userData = req.body
     const sanitized = User.sanitize(userData, false)
     await existingUser(sanitized, false)
-    sanitized.password = await hashPassword(sanitized.password)
+    
+    // Hash password only if it exists (Google users don't have passwords)
+    if (sanitized.password) {
+      sanitized.password = await hashPassword(sanitized.password)
+    }
+    
     const user = await db.User.createUser(sanitized)
     res.status(201).json(user)
   } catch (error: unknown) {
@@ -42,6 +76,10 @@ const getUsers = async (req: Request, res: Response, next: NextFunction): Promis
 const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     User.sanitizeIdExisting(req)
+    
+    // Check permissions
+    checkUserPermissions(req, req.params.id)
+    
     const existUser = await db.User.doesUserExist(req.params.id)
     if (!existUser) {
       const error: HttpError.Model = {
@@ -61,6 +99,10 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
   try {
     User.sanitizeIdExisting(req)
     User.sanitizeBodyExisting(req)
+    
+    // Check permissions
+    checkUserPermissions(req, req.params.id)
+    
     const userData = req.body
     if (userData.password) {
       userData.password = await hashPassword(userData.password)

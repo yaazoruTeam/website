@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 interface NoResultsMessageProps {
   messageType: 'date' | 'status' | 'general'
-  onClose: () => void
+  onClose?: () => void
   showButton?: boolean
   buttonLabel?: string
 }

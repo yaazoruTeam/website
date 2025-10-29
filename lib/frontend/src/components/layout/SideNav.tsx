@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, Drawer, List, ListItem } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom' 
 
 import logoIcon from '../../assets/logoIcon.svg'
 import { colors } from '../../styles/theme'
@@ -45,20 +45,26 @@ const SideNav: React.FunctionComponent<SideNavProps> = (props) => {
           alignItems: 'center',
           height: '100px',
           padding: '10px',
+          cursor: 'pointer',
         }}
       >
-        <img
-          src={logoIcon}
-          alt='Logo'
-          style={{
-            width: '67px',
-            height: '64px',
-          }}
-        />
+        <Link 
+          to="/dashboard" 
+          onClick={() => handleLinkClick('/dashboard')} 
+        >
+          <img
+            src={logoIcon}
+            alt='Logo'
+            style={{
+              width: '67px',
+              height: '64px',
+            }}
+          />
+        </Link>
       </Box>
 
       <List>
-        {props.listItems.map((li, index) => (
+        {props.listItems.map((li,index) => (
           <ListItem
             key={index}
             component={Link}

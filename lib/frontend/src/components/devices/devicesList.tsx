@@ -26,9 +26,10 @@ interface DevicesListProps {
   onPageChange: (page: number) => void
   onFilterChange: (filter: DeviceFilterType) => void
   onRefresh: () => void
+  isResetDisabled: boolean 
 }
 
-const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, onPageChange, onFilterChange, onRefresh }) => {
+const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, onPageChange, onFilterChange, onRefresh, isResetDisabled }) => {
   const totalPages = Math.ceil(total / limit)
   const { t } = useTranslation()
   const [showAddDevice, setShowAddDevice] = useState(false)
@@ -167,7 +168,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           />
         </Box>
         <Box sx={{ flex: 1, maxWidth: '15%', paddingLeft: 3 }}>
-          <FilterResetButton onReset={handleResetFilters} />
+          <FilterResetButton onReset={handleResetFilters} disabled={isResetDisabled} />
         </Box>
       </Box>
       <Box
