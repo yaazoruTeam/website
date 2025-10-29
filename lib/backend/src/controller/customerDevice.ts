@@ -90,13 +90,6 @@ const getAllDevicesByCustomerId = async (
       req.params.id,
       offset,
     )
-    if (customerDevices.length === 0) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'This customer has no devices.',
-      }
-      throw error
-    }
     res.status(200).json({
       data: customerDevices,
       page,

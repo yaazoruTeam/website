@@ -376,5 +376,14 @@
   "uploadFailed": "שגיאה בהעלאת הקובץ",
   "errors": "שגיאות",
   "successRate": "אחוז הצלחה",
-  "No previous comments": "אין הערות קודמות"
+  "No previous comments": "אין הערות קודמות",
+  "selectDevice": "בחר מכשיר",
+  "searchDevice": "חפש מכשיר לשיוך",
+  "assigning": "משייך...",
+  "assignDevice": "שייך מכשיר",
+  "errorAssigningDevice": "שגיאה בשיוך המכשיר",
+  "deviceAssignedSuccessfully": "המכשיר שוייך בהצלחה",
+  "deviceAlreadyAssigned": "המכשיר כבר משוייך ללקוח אחר",
+  "noAvailableDevices": "אין מכשירים לשיוך",
+  "pleaseSelectDevice": "נא לבחור מכשיר"
 }
