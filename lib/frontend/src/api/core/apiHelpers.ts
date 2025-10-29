@@ -127,8 +127,14 @@ export const safePaginated = async <T>(
 
 // Helper function to build paginated URLs
 const buildPaginatedUrl = (endpoint: string, page: number): string => {
-  const separator = endpoint.includes('?') ? '&' : '?'
-  return `${endpoint}${separator}page=${page}`
+  // נפריד בין הpath לquery parameters
+  const [basePath, queryParams] = endpoint.split('?')
+  const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath
+  
+  // נבנה את ה-URL עם /page/{pageNumber} ואז נוסיף את ה-query parameters
+  const paginatedPath = `${cleanBasePath}/page/${page}`
+  const finalUrl = queryParams ? `${paginatedPath}?${queryParams}` : paginatedPath
+  return finalUrl
 }
 
 // Aliases לתאימות עם קוד קיים

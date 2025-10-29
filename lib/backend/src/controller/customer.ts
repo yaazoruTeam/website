@@ -183,11 +183,6 @@ const getCustomersByDateRange = async (
 
     if (customers.length === 0) {
       logger.warn('No customers found in date range', { startDate, endDate });
-      const error: HttpError.Model = {
-        status: 404,
-        message: `No customers found between ${startDate} and ${endDate}`,
-      }
-      throw error
     }
 
     logger.info('getCustomersByDateRange success', { startDate, endDate, count: customers.length, total });
