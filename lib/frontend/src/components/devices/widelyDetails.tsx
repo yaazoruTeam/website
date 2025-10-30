@@ -217,7 +217,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             await executeWithRefresh(async () => {
                 await sendApn(widelyDetails.endpoint_id);
                 setSuccessMessage(t('apnSentSuccessfully'));
-            }).catch (err => {
+            }).catch(err => {
                 console.error('Error sending APN:', err);
                 setErrorMessage(t('errorSendingApn'));
             });
@@ -548,9 +548,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh
         if (!isUpdatingLineSuspension && !isUpdatingImeiLock) {
             setRefreshing(true);
-            updateRefreshTime();
+            try {
+                await fetchWidelyDetails();
+                updateRefreshTime();
+            } finally {
                 setRefreshing(false);
-            
+            }
         }
     };
 
