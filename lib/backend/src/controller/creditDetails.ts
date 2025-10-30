@@ -47,7 +47,7 @@ const createCreditDetails = async (
 
 const getCreditDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { creditDetails, total } = await db.CreditDetails.getCreditDetails(offset)
