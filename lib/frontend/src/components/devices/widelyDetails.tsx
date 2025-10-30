@@ -52,7 +52,6 @@ import {
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import ModelPackages from './modelPackage'
 import SwitchWithLoader from '../designComponent/SwitchWithLoader'
-import { AxiosError } from 'axios'
 import { handleError as handleErrorUtil } from '../../utils/errorHelpers'
 
 
@@ -93,6 +92,45 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }, []);
 
+
+    const startRefreshing = () => {
+        setRefreshing(true);
+        setLastRefreshTime(null);
+    };
+
+    const updateRefreshTime = () => {
+        const now = new Date();
+        const dateString = now.toLocaleDateString('he-IL', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric' 
+        });
+        const timeString = now.toLocaleTimeString('he-IL', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        const fullDateTime = `${dateString} ${timeString}`;
+        setLastRefreshTime(fullDateTime);
+        localStorage.setItem('sim_last_refresh', fullDateTime);
+    };
+
+    const executeWithRefresh = async <T,>(
+        action: () => Promise<T>, 
+        shouldFetchDetails: boolean = true
+    ): Promise<T | undefined> => {
+        startRefreshing();
+        try {
+            const result = await action();
+            if (shouldFetchDetails) {
+                await fetchWidelyDetails();
+            }
+            updateRefreshTime();
+            return result;
+        } finally {
+           setRefreshing(false);
+        }
+    };
+    
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = (packages: PackagesData | null) => {
         // לפי המבנה שתיארת: packages.data.items
@@ -139,21 +177,28 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-        try {
+        await executeWithRefresh(async () => {
             await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
             setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
-        } catch (err) {
+        }).catch(err => {
             console.error('Error resetting voicemail pincode:', err);
             setErrorMessage(t('errorResettingVoicemailPincode'));
-        }
+        });
     }
 
     const handleChangeNetworkConnection = async (network_connection: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
+        // עדכון אופטימיסטי - מציג את הבחירה מיידית
+        const previousValue = selectedNetworkConnection;
+        setSelectedNetworkConnection(network_connection);
+        
         try {
-            await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
-            await fetchWidelyDetails(); // רענון הנתונים לאחר השינוי
-            setSuccessMessage(t('preferredNetworkChangedSuccessfully'));
+            await executeWithRefresh(async () => {
+                await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
+                setSuccessMessage(t('preferredNetworkChangedSuccessfully'));
+            });
         } catch (error) {
+            // במקרה של שגיאה, נחזיר את הערך הקודם
+            setSelectedNetworkConnection(previousValue);
             console.error('Error setting preferred network:', error);
             setErrorMessage(t('errorSettingPreferredNetwork'));
         }
@@ -161,18 +206,21 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     //פונקציה לשינוי תוכנית
     const handleChangePackages = async (selectedPackage: number): Promise<Widely.Model> => {
-        return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage)
+        const result = await executeWithRefresh(async () => {
+            return await changePackages(widelyDetails?.endpoint_id || 0, selectedPackage);
+        });
+        return result as Widely.Model;
     }
 
     const handleSendApn = async () => {
         if (widelyDetails && widelyDetails.endpoint_id) {
-            try {
+            await executeWithRefresh(async () => {
                 await sendApn(widelyDetails.endpoint_id);
                 setSuccessMessage(t('apnSentSuccessfully'));
-            } catch (err) {
+            }).catch (err => {
                 console.error('Error sending APN:', err);
                 setErrorMessage(t('errorSendingApn'));
-            }
+            });
         } else {
             console.error('Error: endpoint_id is missing or widelyDetails is null');
             setErrorMessage(t('errorSendingApn'));
@@ -181,21 +229,24 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     //פונקציה להוספת חבילת גיגה חד פעמית
     const handleAddOneTimeGigabyte = async (selectedPackage: number): Promise<Widely.Model> => {
-        return await addOneTimePackage(widelyDetails?.endpoint_id || 0, widelyDetails?.domain_user_id || 0, selectedPackage)
+        const result = await executeWithRefresh(async () => {
+            return await addOneTimePackage(widelyDetails?.endpoint_id || 0, widelyDetails?.domain_user_id || 0, selectedPackage);
+        });
+        return result as Widely.Model;
     }
 
     // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
+        setIsTerminating(true);
         try {
-            setIsTerminating(true);
-            await terminateLine(widelyDetails.endpoint_id);
-            setIsTerminateModalOpen(false);
-            // ניתן להוסיף הודעת הצלחה או לרענן את הנתונים
+            await executeWithRefresh(async () => {
+                await terminateLine(widelyDetails.endpoint_id);
+                setIsTerminateModalOpen(false);
+            });
         } catch (err) {
             console.error('Error terminating line:', err);
-            // ניתן להוסיף הודעת שגיאה
         } finally {
             setIsTerminating(false);
         }
@@ -223,6 +274,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             return;
         }
 
+        startRefreshing();
         try {
             setLoading(true);
             const result = await ComprehensiveResetDevice(widelyDetails.endpoint_id, deviceName);
@@ -232,17 +284,21 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     `${t('comprehensiveResetSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
                 );
                 // רענון הנתונים לאחר איפוס מוצלח
-                setTimeout(() => {
-                    fetchWidelyDetails();
+                setTimeout(async () => {
+                    await fetchWidelyDetails();
+                    updateRefreshTime();
+                    setRefreshing(false);
                 }, 2000);
             } else {
                 setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
+                setRefreshing(false);
             }
-        } catch (err: AxiosError | unknown) {
+        } catch (err: unknown) {
             console.error('Error in comprehensive reset:', err);
             const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
             alert(`Error in comprehensive reset: ${errorMsg}`);
+            setRefreshing(false);
         } finally {
             setLoading(false);
         }
@@ -262,21 +318,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
         if (!confirmed) return;
 
+        setLoading(true);
         try {
-            setLoading(true);
             setErrorMessage(null);
             setSuccessMessage(null);
 
-            const result = await softResetDevice(widelyDetails.endpoint_id);
-
-            if (result.error_code === 200 || result.error_code === undefined) {
-                setSuccessMessage(t('softResetSuccessful'));
-                // רענון הנתונים לאחר האיפוס הקל
-                await fetchWidelyDetails();
-            } else {
-                setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
-            }
-        } catch (err: AxiosError | unknown) {
+            await executeWithRefresh(async () => {
+                const result = await softResetDevice(widelyDetails.endpoint_id);
+                if (result.error_code === 200 || result.error_code === undefined) {
+                    setSuccessMessage(t('softResetSuccessful'));
+                } else {
+                    setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
+                }
+            });
+        } catch (err: unknown) {
             console.error('Error in soft reset:', err);
             const errorMsg = handleErrorUtil('softReset', err, t('softResetError'));
             setErrorMessage(`${t('softResetFailed')}: ${errorMsg}`);
@@ -295,6 +350,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         const previousState = lineSuspension;
         setLineSuspension(freeze);
         setIsUpdatingLineSuspension(true);
+        startRefreshing();
 
         try {
             const action = freeze ? 'freeze' : 'unfreeze';
@@ -304,6 +360,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא צריך לקרוא ל-fetchWidelyDetails כי זה ידרוס את המצב
+            updateRefreshTime();
         } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
             setLineSuspension(previousState);
@@ -316,6 +373,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             console.error('Error updating line suspension:', error);
         } finally {
             setIsUpdatingLineSuspension(false);
+            setRefreshing(false);
         }
     }
 
@@ -329,6 +387,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         const previousState = imeiLocked;
         setImeiLocked(lock);
         setIsUpdatingImeiLock(true);
+        startRefreshing();
 
         try {
             const response = await lockUnlockImei(widelyDetails?.endpoint_id || 0, widelyDetails?.iccid || '', lock);
@@ -339,6 +398,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             // הקריאה הצליחה - המצב כבר נכון במצב האופטימיסטי
             // לא נעשה refresh כדי לא לדרוס את השינוי
+            updateRefreshTime();
 
         } catch (error: unknown) {
             // במקרה של שגיאה, נחזיר את המצב הקודם
@@ -352,6 +412,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             console.error('Error updating IMEI lock:', error);
         } finally {
             setIsUpdatingImeiLock(false);
+            setRefreshing(false);
         }
     }
 
@@ -451,7 +512,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
-        } catch (err: AxiosError | unknown) {
+        } catch (err: unknown) {
             // Parse error response to determine appropriate user message
             const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingDeviceDetails'));
 
@@ -487,27 +548,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh
         if (!isUpdatingLineSuspension && !isUpdatingImeiLock) {
             setRefreshing(true);
-            try {
-                await fetchWidelyDetails();
-                // Save refresh time to localStorage with date and time
-                const now = new Date();
-                const dateString = now.toLocaleDateString('he-IL', { 
-                    day: '2-digit', 
-                    month: '2-digit', 
-                    year: 'numeric' 
-                });
-                const timeString = now.toLocaleTimeString('he-IL', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                const fullDateTime = `${dateString} ${timeString}`;
-                setLastRefreshTime(fullDateTime);
-                localStorage.setItem('sim_last_refresh', fullDateTime);
-            } catch (error) {
-                console.error('Error refreshing data:', error);
-            } finally {
+            updateRefreshTime();
                 setRefreshing(false);
-            }
+            
         }
     };
 
