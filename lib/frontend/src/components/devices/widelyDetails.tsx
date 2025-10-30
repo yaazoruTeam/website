@@ -90,6 +90,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (savedTime) {
             setLastRefreshTime(savedTime);
         }
+        
+        return () => {
+            localStorage.removeItem('sim_last_refresh');
+        };
     }, []);
 
 
@@ -177,13 +181,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     // פונקציה לאיפוס סיסמת תא קולי
     const handleResetVoicemailPincode = async () => {
-        await executeWithRefresh(async () => {
-            await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
-            setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
-        }).catch(err => {
+        try {
+            await executeWithRefresh(async () => {
+                await resetVoicemailPincode(widelyDetails?.endpoint_id || 0);
+                setSuccessMessage(t('voicemailPincodeResetSuccessfully'));
+            });
+        } catch (err) {
             console.error('Error resetting voicemail pincode:', err);
             setErrorMessage(t('errorResettingVoicemailPincode'));
-        });
+        }
     }
 
     const handleChangeNetworkConnection = async (network_connection: 'Pelephone_and_Partner' | 'Hot_and_Partner' | 'pelephone') => {
@@ -214,13 +220,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const handleSendApn = async () => {
         if (widelyDetails && widelyDetails.endpoint_id) {
-            await executeWithRefresh(async () => {
-                await sendApn(widelyDetails.endpoint_id);
-                setSuccessMessage(t('apnSentSuccessfully'));
-            }).catch(err => {
+            try {
+                await executeWithRefresh(async () => {
+                    await sendApn(widelyDetails.endpoint_id);
+                    setSuccessMessage(t('apnSentSuccessfully'));
+                });
+            } catch (err) {
                 console.error('Error sending APN:', err);
                 setErrorMessage(t('errorSendingApn'));
-            });
+            }
         } else {
             console.error('Error: endpoint_id is missing or widelyDetails is null');
             setErrorMessage(t('errorSendingApn'));
