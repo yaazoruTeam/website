@@ -1,9 +1,11 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
 import { addCustomer } from './addCustomerLogic'
+import { TempComment } from '@model'
 import {  AxiosError } from 'axios'
 import {
   AddCustomerContainer,
@@ -13,18 +15,19 @@ import {
 
 const AddCustomer: React.FC = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
-  const handleAddCustomer = async (data: AddCustomerFormInputs) => {
+  const handleAddCustomer = async (data: AddCustomerFormInputs, localComments?: TempComment.Model[]) => {
     try {
-      const newCustomer = await addCustomer(data)
-      alert('הלקוח נוסף בהצלחה')
-      console.log(newCustomer)
-      window.location.reload()
+      await addCustomer(data, localComments)
+      alert(t('customerAddedSuccessfully'))
+      navigate('/customers')
     } catch (err: AxiosError | unknown) {
       if (err instanceof AxiosError && err.response?.status === 409) {
-        alert(`שגיאה: מספר ת.ז או אימייל כבר קיימים`)
+        alert(t('errorDuplicateIdOrEmail'))
+      } else {
+        alert(`${t('error')}: ${err}`)
       }
-      alert(`שגיאה: ${err}`)
     }
   }
 
