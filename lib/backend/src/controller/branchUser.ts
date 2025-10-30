@@ -46,7 +46,7 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
 
 const getAllBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { branchUsers, total } = await db.BranchUser.getAllBranchUser(offset)
@@ -90,7 +90,7 @@ const getBranchUserByBranch_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     BranchUser.sanitizeIdExisting(req)
@@ -123,7 +123,7 @@ const getBranchUserByUser_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     BranchUser.sanitizeIdExisting(req)

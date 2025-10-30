@@ -30,7 +30,7 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
 
 const getCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string)
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     logger.debug('getCustomers called', { page, offset });
@@ -80,7 +80,7 @@ const getCustomersByCity = async (
 ): Promise<void> => {
   try {
     const { city } = req.params
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     logger.debug('getCustomersByCity called', { city, page });
@@ -125,7 +125,7 @@ const getCustomersByStatus = async (
 ): Promise<void> => {
   try {
     const { status } = req.params
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     logger.debug('getCustomersByStatus called', { status, page });
@@ -161,7 +161,7 @@ const getCustomersByDateRange = async (
 ): Promise<void> => {
   try {
     const { startDate, endDate } = req.query
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     logger.debug('getCustomersByDateRange called', { startDate, endDate, page });
@@ -183,11 +183,6 @@ const getCustomersByDateRange = async (
 
     if (customers.length === 0) {
       logger.warn('No customers found in date range', { startDate, endDate });
-      const error: HttpError.Model = {
-        status: 404,
-        message: `No customers found between ${startDate} and ${endDate}`,
-      }
-      throw error
     }
 
     logger.info('getCustomersByDateRange success', { startDate, endDate, count: customers.length, total });
@@ -295,7 +290,7 @@ const getCities = async (req: Request, res: Response, next: NextFunction): Promi
 const searchCustomers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const searchTerm = req.query.q as string
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     logger.debug('searchCustomers called', { searchTerm, page });

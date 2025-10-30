@@ -93,7 +93,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const price = pkg.price || 0;
 
             // בניית הלייבל בפורמט: "תיאור - מחיר₪ לחודש"
-            const label = `${description} - ${price}₪ ${t('perMonth')}`;
+            const label = `${description} בעלות: ${price}₪ ${t('perMonth')}`;
 
             return {
                 value: pkg.id.toString(),
@@ -114,8 +114,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
         { title: t('IMEI 1'), value: widelyDetails.imei1 },
-        { title: t('status'), value: widelyDetails.status },
-        { title: t('IMEI_lock'), value: widelyDetails.imei_lock }
+        { title: t('status'), value: t(widelyDetails.status) },
+        { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
     ] : []
 
     // עיצוב החוצץ בין הפריטים
@@ -393,9 +393,20 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
             if (isPackagesData(basePackages)) {
                 setBasePackages(basePackages);
+            
+                // חיפוש התיאור של החבילה הנוכחית
+                const currentPackage = basePackages.data.items.find(
+                    (pkg: PackageItem) => pkg.id.toString() === String(details.package_id)
+                );
+                
+                if (currentPackage) {
+                    const description = currentPackage.description?.EN || t('noDescriptionAvailable');
+                    
+                    setValue('replacingPackages', description);
+                } else {
+                     setValue('replacingPackages', t('packageNotFound'));
+                }
             }
-
-
 
             // עדכון מצב ההקפאה רק אם לא במהלך עדכון אופטימיסטי
             // אם active=true אז הקו פעיל ולכן lineSuspension=false (אין השהיה)
@@ -424,15 +435,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 return newState;
             });
 
-            // קביעת ערך ברירת מחדל לחבילות החלפה
-            if (isPackagesData(basePackages)) {
-                const baseItems = basePackages.data.items;
-                if (baseItems && Array.isArray(baseItems) && baseItems.length > 0) {
-                    const defaultValue = baseItems[0].id.toString();
-                    setValue('replacingPackages', defaultValue);
-                }
-            }
-
             if (isPackagesData(extraPackages)) {
                 const extraItems = extraPackages.data.items;
                 if (extraItems && Array.isArray(extraItems) && extraItems.length > 0) {
@@ -442,7 +444,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
         } catch (err: AxiosError | unknown) {
             // Parse error response to determine appropriate user message
-            const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingDeviceDetails'));
+            const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingsimDetails'));
 
             // 🔁 שדרוג: טיפול בשגיאות באמצעות Map
             const exactMatchErrors: Record<string, string> = {
@@ -455,7 +457,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             const partialMatchErrors: { test: (msg: string) => boolean; key: string }[] = [
                 { test: msg => msg.includes('Error loading user data'), key: 'errorLoadingUserData' },
                 { test: msg => msg.includes('Error loading device'), key: 'errorLoadingDeviceData' },
-                { test: msg => msg.includes('Failed to load'), key: 'errorLoadingDeviceDetails' }
+                { test: msg => msg.includes('Failed to load'), key: 'errorLoadingsimDetails' }
             ]
 
             // 🧠 ראשית נבדוק האם ההודעה היא בדיוק אחת מהשגיאות הידועות
@@ -464,7 +466,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 // אם לא – ננסה לזהות בהתבסס על תוכן הודעת השגיאה
                 const match = partialMatchErrors.find(({ test }) => test(errorMessage));
-                setError(t(match?.key || 'errorLoadingDeviceDetails'));
+                setError(t(match?.key || 'errorLoadingsimDetails'));
             }
 
         } finally {
@@ -544,18 +546,23 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         control={control}
                         name="replacingPackages"
                         label={t('replacingPackages')}
-                        disabled={true}
                         icon={<ChevronDownIcon />}
-
+                        slotProps={{
+                            input: {
+                                readOnly: true,
+                            }
+                        }}
+                        sx={{
+                            cursor: 'pointer',
+                            '& .MuiInputBase-root': {
+                                cursor: 'pointer',
+                            },
+                            '& input': {
+                                cursor: 'pointer',
+                            }
+                        }}
                     />
                 </Box>
-                <ModelPackages
-                    packages={getPackageOptions(basePackages)}
-                    open={openBasePackagesModel}
-                    close={() => setOpenBasePackagesModel(false)}
-                    defaultValue={selectedPackage}
-                    approval={handleChangePackages}
-                />
                 <Box onClick={() => { setOpenExtraPackagesModel(true); }} sx={{ cursor: 'pointer' }}>
                     <CustomTextField
                         control={control}
@@ -565,14 +572,22 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         icon={<ChevronDownIcon />}
                     />
                 </Box>
-                <ModelPackages
-                    packages={getPackageOptions(extraPackages)}
-                    open={openExtraPackagesModel}
-                    close={() => setOpenExtraPackagesModel(false)}
-                    defaultValue={selectedPackage}
-                    approval={async (selectedPackage: number) => handleAddOneTimeGigabyte(selectedPackage)}
-                />
             </WidelyFormSection>
+            
+            <ModelPackages
+                packages={getPackageOptions(basePackages)}
+                open={openBasePackagesModel}
+                close={() => setOpenBasePackagesModel(false)}
+                defaultValue={selectedPackage}
+                approval={handleChangePackages}
+            />
+            <ModelPackages
+                packages={getPackageOptions(extraPackages)}
+                open={openExtraPackagesModel}
+                close={() => setOpenExtraPackagesModel(false)}
+                defaultValue={selectedPackage}
+                approval={async (selectedPackage: number) => handleAddOneTimeGigabyte(selectedPackage)}
+            />
 
             <WidelyConnectionSection>
                 <CustomTypography

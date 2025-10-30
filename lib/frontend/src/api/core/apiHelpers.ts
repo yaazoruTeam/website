@@ -118,16 +118,28 @@ export const safePaginated = async <T>(
   config: Omit<ApiConfig<PaginatedResponse<T>>, 'safe' | 'fallback'> = {}
 ): Promise<PaginatedResponse<T>> => {
   const fallback: PaginatedResponse<T> = { data: [], total: 0, page, totalPages: 0 }
-  return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`, { 
+  return apiGet<PaginatedResponse<T>>(buildPaginatedUrl(endpoint, page), { 
     ...config, 
     safe: true, 
     fallback 
   })
 }
 
+// Helper function to build paginated URLs
+const buildPaginatedUrl = (endpoint: string, page: number): string => {
+  // נפריד בין הpath לquery parameters
+  const [basePath, queryParams] = endpoint.split('?')
+  const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath
+  
+  // נבנה את ה-URL עם /page/{pageNumber} ואז נוסיף את ה-query parameters
+  const paginatedPath = `${cleanBasePath}/page/${page}`
+  const finalUrl = queryParams ? `${paginatedPath}?${queryParams}` : paginatedPath
+  return finalUrl
+}
+
 // Aliases לתאימות עם קוד קיים
 export const safeGetPaginated = safePaginated
 export const safeGet = safeApiGet
 export const getPaginatedData = <T>(endpoint: string, page: number = 1): Promise<PaginatedResponse<T>> => {
-  return apiGet<PaginatedResponse<T>>(`${endpoint}?page=${page}`)
+  return apiGet<PaginatedResponse<T>>(buildPaginatedUrl(endpoint, page))
 }
