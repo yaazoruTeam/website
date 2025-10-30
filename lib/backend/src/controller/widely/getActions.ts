@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, WidelyDeviceDetails } from '@model'
+import { HttpError, HttpErrorWithStatus, Widely, WidelyDeviceDetails } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { config } from '@config/index'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
@@ -48,11 +48,9 @@ const searchUsersData = async (simNumber: string): Promise<Widely.WidelyUserData
   // If no results found
   if (dataArray.length === 0) {
     logger.debug('No users found in Widely API response', { result })
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
-    }
-    logger.debug('searchUsersData throwing error - no results found', { error })
+    const error = new Error('SIM number not found.') as HttpErrorWithStatus.Model;
+    error.status = 404;
+    logger.debug('searchUsersData throwing error - no results found', { error: error.message })
     throw error
   }
 
@@ -63,11 +61,9 @@ const searchUsersData = async (simNumber: string): Promise<Widely.WidelyUserData
       dataArrayLength: dataArray.length,
       allUsersData: dataArray
     })
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'Multiple SIM numbers found - please provide more specific SIM number.',
-    }
-    logger.debug('searchUsersData throwing error - multiple results found', { error })
+    const error = new Error('Multiple SIM numbers found - please provide more specific SIM number.') as HttpErrorWithStatus.Model;
+    error.status = 404;
+    logger.debug('searchUsersData throwing error - multiple results found', { error: error.message })
     throw error
   }
 
@@ -90,11 +86,9 @@ const searchUsersData = async (simNumber: string): Promise<Widely.WidelyUserData
       hasName: !!userData?.name,
       userDataKeys: userData ? Object.keys(userData) : 'userData is null/undefined'
     })
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'SIM number not found.',
-    }
-    logger.debug('searchUsersData throwing error - missing required fields', { error })
+    const error = new Error('SIM number not found.') as HttpErrorWithStatus.Model;
+    error.status = 404;
+    logger.debug('searchUsersData throwing error - missing required fields', { error: error.message })
     throw error
   }
   
@@ -137,11 +131,9 @@ const getMobilesData = async (domain_user_id: number): Promise<Widely.WidelyMobi
   
   if (!mobileData) {
     logger.debug('getMobilesData no mobile data found', { result })
-    const error: HttpError.Model = {
-      status: 404,
-      message: 'No devices found for this user.',
-    }
-    logger.debug('getMobilesData throwing error - no devices found', { error })
+    const error = new Error('No devices found for this user.') as HttpErrorWithStatus.Model;
+    error.status = 404;
+    logger.debug('getMobilesData throwing error - no devices found', { error: error.message })
     throw error
   }
 
@@ -188,11 +180,9 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
 
     if (!mobileData || Object.keys(mobileData).length === 0) {
       logger.debug('getMobileInfoData mobile data is empty or missing', { mobileData })
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading device details.',
-      }
-      logger.debug('getMobileInfoData throwing error - empty mobile data', { error })
+      const error = new Error('Error loading device details.') as HttpErrorWithStatus.Model;
+      error.status = 500;
+      logger.debug('getMobileInfoData throwing error - empty mobile data', { error: error.message })
       throw error
     }
 
@@ -209,11 +199,9 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
   // Handle direct object response (without data property)
   if (!result || Object.keys(result).length === 0) {
     logger.debug('getMobileInfoData result is empty or missing', { result })
-    const error: HttpError.Model = {
-      status: 500,
-      message: 'Error loading device details.',
-    }
-    logger.debug('getMobileInfoData throwing error - empty result', { error })
+    const error = new Error('Error loading device details.') as HttpErrorWithStatus.Model;
+    error.status = 500;
+    logger.debug('getMobileInfoData throwing error - empty result', { error: error.message })
     throw error
   }
 
@@ -291,11 +279,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const domain_user_id = user.domain_user_id
     if (!domain_user_id) {
       logger.debug('getAllUserData domain_user_id is missing', { user })
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading user data - missing domain_user_id.',
-      }
-      logger.debug('getAllUserData throwing error - missing domain_user_id', { error })
+      const error = new Error('Error loading user data - missing domain_user_id.') as HttpErrorWithStatus.Model;
+      error.status = 500;
+      logger.debug('getAllUserData throwing error - missing domain_user_id', { error: error.message })
       throw error
     }
 
@@ -311,11 +297,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const endpoint_id = mobile.endpoint_id
     if (!endpoint_id) {
       logger.debug('getAllUserData endpoint_id is missing', { mobile })
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading device data - missing endpoint_id.',
-      }
-      logger.debug('getAllUserData throwing error - missing endpoint_id', { error })
+      const error = new Error('Error loading device data - missing endpoint_id.') as HttpErrorWithStatus.Model;
+      error.status = 500;
+      logger.debug('getAllUserData throwing error - missing endpoint_id', { error: error.message })
       throw error
     }
 
@@ -330,11 +314,9 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
 
     if (!mobileInfo) {
       logger.debug('getAllUserData mobileInfo is missing', { mobileInfo })
-      const error: HttpError.Model = {
-        status: 500,
-        message: 'Error loading device details.',
-      }
-      logger.debug('getAllUserData throwing error - missing mobileInfo', { error })
+      const error = new Error('Error loading device details.') as HttpErrorWithStatus.Model;
+      error.status = 500;
+      logger.debug('getAllUserData throwing error - missing mobileInfo', { error: error.message })
       throw error
     }
 

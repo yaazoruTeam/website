@@ -83,3 +83,7 @@ export const lockUnlockImei = async (endpoint_id: number, iccid: string, action:
   })
 }
 
+export const softResetDevice = async (endpoint_id: number): Promise<Widely.Model> => {
+  return apiPost<Widely.Model>(`${ENDPOINT}/reregister_in_hlr`, { endpoint_id })
+}
+

@@ -1,49 +1,61 @@
 /**
- * to do:
- * 
- * TEMPORARY SOLUTION - Google Authentication Types
- * 
- * ⚠️ WARNING: This is a temporary implementation ⚠️
- * 
- * This file defines TypeScript interfaces for Google authentication integration.
- * These interfaces are designed to work with the current mock Firebase implementation
- * and will need to be validated/updated when real Firebase authentication is implemented.
- * 
- * CURRENT STATUS:
- * - Interfaces are defined but working with mock Firebase
- * - Backend integration may need adjustment
- * - Token handling is placeholder
- * 
- * TODO BEFORE PRODUCTION:
- * 1. Validate interfaces work with real Firebase auth
- * 2. Test backend authentication flow
- * 3. Verify token validation and security
- * 4. Update documentation with actual auth flow
- * 
- * @author Development Team
- * @date October 2025
- * @status TEMPORARY - VALIDATE WITH REAL FIREBASE
+ * Firebase user data that we receive from Google OAuth
  */
-
 export interface GoogleAuthParams {
-  uid: string
-  email: string
-  displayName: string | null
-  photoURL: string | null
-  emailVerified: boolean
-  idToken: string
+  uid: string;
+  email: string;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+  idToken: string;
 }
 
+/**
+ * Backend user data returned after successful authentication
+ */
 export interface BackendUser {
-  user_id: string
-  email: string
-  user_name: string
-  photo_url?: string
-  role: string
+  user_id: string;
+  email: string;
+  user_name: string;
+  photo_url?: string;
+  role: string;
 }
 
+/**
+ * Backend authentication response
+ */
 export interface BackendAuthResult {
-  success: boolean
-  user: BackendUser
-  token: string
+  success: boolean;
+  user: BackendUser;
+  token: string;
+}
+
+/**
+ * Complete Google sign-in result containing both Firebase and backend data
+ * Note: firebaseUser type will be imported from firebase/auth in the service layer
+ */
+export interface GoogleSignInResult {
+  firebaseUser: any; // Will be typed as Firebase User in the service layer
+  backendResult?: BackendAuthResult;
+  backendError?: Error;
+}
+
+/**
+ * Google Auth error with additional context
+ */
+export interface GoogleAuthError extends Error {
+  code?: string;
+  status?: number;
+  userMessage?: string;
+}
+
+/**
+ * Namespace for Google Auth types
+ */
+export namespace GoogleAuth {
+  export type Params = GoogleAuthParams;
+  export type User = BackendUser;
+  export type Result = BackendAuthResult;
+  export type SignInResult = GoogleSignInResult;
+  export type AuthError = GoogleAuthError;
 }
