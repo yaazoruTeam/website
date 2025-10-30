@@ -365,5 +365,10 @@
   "uploadFailed": "Error uploading file",
   "errors": "Errors",
   "successRate": "Success rate",
-  "noPreviousComments": "No previous comments"
+  "noPreviousComments": "No previous comments",
+  "pleaseCreateCustomerFirst": "Please save customer details first before adding comments",
+  "saveCustomerFirstToAddComments": "Save customer details first to add comments",
+  "customerAddedSuccessfully": "Customer added successfully!",
+  "errorDuplicateIdOrEmail": "Error: ID number or email already exists",
+  "error": "Error"
 }

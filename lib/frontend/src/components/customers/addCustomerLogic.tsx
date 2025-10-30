@@ -1,10 +1,9 @@
 import { createCustomer } from '../../api/customerApi'
 import { createComment } from '../../api/comment'
-import { Customer, EntityType, CreateCommentDto } from '@model'
+import { Customer, EntityType, CreateCommentDto, TempComment } from '@model'
 import { AddCustomerFormInputs } from './AddCustomerForm'
-import { tempCommentsManager } from '../../utils/tempCommentsManager'
 
-export const addCustomer = async (data: AddCustomerFormInputs, tempEntityId?: string): Promise<Customer.Model> => {
+export const addCustomer = async (data: AddCustomerFormInputs, localComments?: TempComment.Model[]): Promise<Customer.Model> => {
   
   const customerData: Customer.Model = {
     customer_id: '',
@@ -26,39 +25,27 @@ export const addCustomer = async (data: AddCustomerFormInputs, tempEntityId?: st
   try {
     // יצירת הלקוח החדש
     const newCustomer = await createCustomer(customerData)
+    // אם יש הערות מקומיות שנכתבו בטופס, נשמור אותן בבסיס הנתונים מיד אחרי שיש לנו customer_id
+    if (localComments && localComments.length > 0) {
+      for (const tempComment of localComments) {
+        const commentData: CreateCommentDto.Model = {
+          entity_id: String(newCustomer.customer_id),
+          entity_type: EntityType.Customer,
+          content: tempComment.content,
+          created_at: tempComment.created_at.toISOString(),
+        }
 
-    // אם יש הערות זמניות, נוסיף אותן ללקוח החדש
-    if (tempEntityId && tempCommentsManager.hasComments(tempEntityId)) {
-      const tempComments = tempCommentsManager.getComments(tempEntityId)
-    
-    // הוספת כל ההערות הזמניות ללקוח החדש
-    for (const tempComment of tempComments) {
-      const commentData: CreateCommentDto.Model = {
-        entity_id: String(newCustomer.customer_id),
-        entity_type: EntityType.Customer,
-        content: tempComment.content,
-        created_at: tempComment.created_at.toISOString(),
-      }
-      
-      try {
-        await createComment(commentData)
-      } catch (error) {
-        console.error('Error creating comment for new customer:', error)
-        // נמשיך גם אם נכשלנו ביצירת הערה אחת
+        try {
+          await createComment(commentData)
+        } catch (err) {
+          console.error('Error creating comment:', err)
+        }
       }
     }
-    
-    // ננקה את ההערות הזמניות אחרי הוספה מוצלחת
-    tempCommentsManager.clearComments(tempEntityId)
-  }
 
     return newCustomer
   } catch (error) {
     console.error('Error creating customer:', error)
-    // אם יצירת הלקוח נכשלת, לא נניח להערות הזמניות "תקועות"
-    if (tempEntityId && tempCommentsManager.hasComments(tempEntityId)) {
-      console.log('Customer creation failed, but keeping temp comments for retry')
-    }
     throw error
   }
 }

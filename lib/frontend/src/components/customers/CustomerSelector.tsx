@@ -11,6 +11,7 @@ import AddCustomerForm, { AddCustomerFormInputs } from './AddCustomerForm'
 import CustomModal from '../designComponent/Modal'
 import { useTranslation } from 'react-i18next'
 import { addCustomer } from './addCustomerLogic'
+import { TempComment } from '@model'
 import { useDebounce } from '../../utils/useDebounce'
 import { CustomButton } from '../designComponent/Button'
 import { RecordCustomer } from '../../stories/RecordCustomer/RecordCustomer'
@@ -107,10 +108,9 @@ const CustomerSelector: React.FC<CustomerSelectorProps> = ({
     }
   }
 
-  const handleAddCustomer = async (data: AddCustomerFormInputs) => {
+  const handleAddCustomer = async (data: AddCustomerFormInputs, localComments?: TempComment.Model[]) => {
     try {
-      const tempEntityId = 'temp-new-customer'
-      const newCustomer = await addCustomer(data, tempEntityId)
+      const newCustomer = await addCustomer(data, localComments)
       setSelectedCustomer(newCustomer)
       onCustomerSelect(newCustomer)
       setOpenModal(false)

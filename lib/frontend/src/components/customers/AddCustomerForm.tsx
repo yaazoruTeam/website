@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useMediaQuery } from '@mui/material'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
@@ -21,11 +21,11 @@ import {
 import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
-import { tempCommentsManager } from '../../utils/tempCommentsManager'
+import { EntityType, TempComment } from '@model'
 
 interface AddCustomerFormProps {
-  onSubmit: (data: AddCustomerFormInputs) => void
+  // onSubmit now receives the form data and optional local comments written during creation
+  onSubmit: (data: AddCustomerFormInputs, comments?: TempComment.Model[]) => void
   initialValues?: AddCustomerFormInputs
   setSubmitHandler?: (submit: () => void) => void
   customerId?: string
@@ -56,21 +56,26 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [localComments, setLocalComments] = useState<TempComment.Model[]>([])
+
+  // לוג כל פעם שההערות המקומיות משתנות
+  useEffect(() => {
+    console.log('📝 AddCustomerForm: הערות מקומיות עודכנו:', localComments.length, 'הערות');
+    localComments.forEach((comment, index) => {
+      console.log(`   ${index + 1}. "${comment.content.substring(0, 50)}${comment.content.length > 50 ? '...' : ''}"`);
+    });
+  }, [localComments]);
 
   // פונקציה לקביעת ההערה האחרונה שתוצג
   const getDisplayLastComment = () => {
     // אם יש lastComment (לקוח קיים), נחזיר אותו
     if (lastComment) return lastComment
-    
-    // אם זה לקוח חדש, נבדוק אם יש הערות זמניות
+
+    // אם זה לקוח חדש, נסתכל על ההערות המקומיות בטופס
     if (!customerId || customerId === 'temp-new-customer') {
-      const tempComments = tempCommentsManager.getComments('temp-new-customer')
-      if (tempComments.length > 0) {
-        // נחזיר את ההערה האחרונה מההערות הזמניות
-        return tempComments[tempComments.length - 1].content
-      }
+      if (localComments.length > 0) return localComments[localComments.length - 1].content
     }
-    
+
     // במקרה שאין הערות כלל
     return t('noPreviousComments')
   }
@@ -88,19 +93,21 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
     },
   })
 
+  const handleFormSubmit = useCallback((data: AddCustomerFormInputs) => {
+    onSubmit(data, localComments);
+  }, [localComments, onSubmit]);
+
   useEffect(() => {
     if (setSubmitHandler) {
-      setSubmitHandler(handleSubmit(onSubmit))
+      setSubmitHandler(handleSubmit(handleFormSubmit))
     }
-  }, [handleSubmit, onSubmit, setSubmitHandler])
-
-
+  }, [handleSubmit, setSubmitHandler, handleFormSubmit])
 
   const isMobile = useMediaQuery('(max-width:600px)')
   const hasInitialValues = !!initialValues
 
   return (
-    <FormContainer component="form" onSubmit={handleSubmit(onSubmit)}>
+    <FormContainer component="form" onSubmit={handleSubmit(handleFormSubmit)}>
       <OuterCard>
         <InnerContent>
           {/* --- Row 1 --- */}
@@ -253,6 +260,15 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
             <ChatBot
               entityType={EntityType.Customer}
               entityId={customerId || 'temp-new-customer'}
+              onLocalCommentsChange={(c) => {
+                setLocalComments(c.map(cc => ({
+                  content: cc.content,
+                  created_at: cc.created_at,
+                  file_url: cc.file_url,
+                  file_name: cc.file_name,
+                  file_type: cc.file_type,
+                })));
+              }}
               onClose={() => {
                 setIsChatOpen(false)
                 if (onCommentsRefresh) onCommentsRefresh()

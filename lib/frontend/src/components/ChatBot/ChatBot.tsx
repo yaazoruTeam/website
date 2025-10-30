@@ -25,9 +25,6 @@ import {
   createComment,
 } from "../../api/comment";
 
-// Utils
-import { tempCommentsManager } from "../../utils/tempCommentsManager";
-
 // Styles and assets
 import { colors } from "../../styles/theme";
 import { chatStyles } from "./styles";
@@ -37,6 +34,7 @@ interface ChatBotProps {
   entityId: string;
   onClose?: () => void;
   commentType?: string;
+  onLocalCommentsChange?: (comments: { content: string; created_at: Date; file_url?: string; file_name?: string; file_type?: string }[]) => void;
 }
 
 interface ClientComment extends Comment.Model {
@@ -52,7 +50,7 @@ const generateTempId = (): string => {
   return `temp-${Date.now()}-${tempIdCounter}`;
 };
 
-const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commentType }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commentType, onLocalCommentsChange }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -124,31 +122,9 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
       
       const response = await getCommentsByEntityTypeAndEntityId(entityType, entityId, page);
       
-      // אם זה הטעינה הראשונה, נבדוק אם יש הערות זמניות להציג
+      // אם זה הטעינה הראשונה עבור לקוח זמני, לא נטען הערות כלל
       if (page === 1 && !loadMore && entityId === 'temp-new-customer') {
-        const tempComments = tempCommentsManager.getComments(entityId);
-        if (tempComments.length > 0) {
-          // נמיר הערות זמניות לפורמט של הצ'אט
-          const tempClientComments: ClientComment[] = tempComments.map((tempComment, index) => ({
-            comment_id: `temp-display-${index}`,
-            entity_id: entityId,
-            entity_type: entityType,
-            content: tempComment.content,
-            created_at: tempComment.created_at,
-            file_url: tempComment.file_url,
-            file_name: tempComment.file_name,
-            file_type: tempComment.file_type,
-          }));
-          
-          // נציג הערות זמניות + הערות מהשרת
-          const allComments = [...tempClientComments, ...response.data];
-          addCommentsToList(allComments, false);
-          
-          // ננקה הערות זמניות אחרי הצגה
-          tempCommentsManager.clearComments(entityId);
-        } else {
-          addCommentsToList(response.data, loadMore);
-        }
+        addCommentsToList([], false);
       } else {
         addCommentsToList(response.data, loadMore);
       }
@@ -170,6 +146,20 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     // כשמוסיפים הודעה חדשה, תמיד גלול לתחתית
     setShouldScrollToBottom(true);
   };
+
+  // נודיע להורה על שינויים בהערות המקומיות של לקוח חדש
+  useEffect(() => {
+    if (entityId === 'temp-new-customer' && typeof onLocalCommentsChange === 'function') {
+      const local = comments.map(c => ({
+        content: c.content,
+        created_at: c.created_at,
+        file_url: c.file_url,
+        file_name: c.file_name,
+        file_type: c.file_type,
+      }));
+      onLocalCommentsChange(local);
+    }
+  }, [comments, entityId, onLocalCommentsChange]);
 
   const updateComment = (tempId: string, updatedComment: ClientComment) => {
     setComments(prev => prev.map(c => c.comment_id === tempId ? updatedComment : c));
@@ -196,34 +186,26 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     setInputText("");
 
     try {
-      // בדיקה אם זה לקוח זמני
+      // אם מדובר בלקוח זמני - נשאיר את ההערה מקומית ונעדכן את ההורה
       if (entityId === 'temp-new-customer') {
-        // שמירת ההערה במנהל הזמני
-        tempCommentsManager.addComment(entityId, {
-          content: tempComment.content,
-          created_at: tempComment.created_at,
-        });
-        
-        // עדכון ההערה כנשלחה בהצלחה
-        updateComment(tempCommentId, {
-          ...tempComment,
-          comment_id: tempCommentId,
-        });
-      } else {
-        // שליחה רגילה לשרת
-        const commentData: CreateCommentDto.Model = {
-          entity_type: entityType,
-          entity_id: entityId,
-          content: tempComment.content,
-          created_at: tempComment.created_at.toISOString(),
-        };
-
-        const sentComment = await createComment(commentData);
-        updateComment(tempCommentId, sentComment);
+        // אין שליחה לשרת עדיין - ההורה יקבל את ההערות דרך onLocalCommentsChange
+        return;
       }
+
+      // שליחה רגילה לשרת
+      const commentData: CreateCommentDto.Model = {
+        entity_type: entityType,
+        entity_id: entityId,
+        content: tempComment.content,
+        created_at: tempComment.created_at.toISOString(),
+      };
+
+      const sentComment = await createComment(commentData);
+      updateComment(tempCommentId, sentComment);
     } catch (err) {
       console.error("Error sending comment:", err);
       setError(t("FailedToSendComment.PleaseTryAgain."));
+      // אם נכשלנו בשליחה לשרת - נמחק את ההערה המקומית (או נשאיר לפי העדפת UX)
       removeComment(tempCommentId);
     }
   };
@@ -247,44 +229,28 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     addTempComment(tempAudioComment);
 
     try {
-      // בדיקה אם זה לקוח זמני
+      // אם זה לקוח זמני - נשאיר את ההערה המקומית (ולא נשלח לשרת)
       if (entityId === 'temp-new-customer') {
-        // שמירת ההערה במנהל הזמני
-        tempCommentsManager.addComment(entityId, {
-          content: transcription,
-          created_at: new Date(),
-        });
-        
-        // עדכון ההערה כנשלחה בהצלחה
-        updateComment(tempId, {
-          comment_id: tempId,
-          entity_type: entityType,
-          entity_id: entityId,
-          content: transcription,
-          created_at: new Date(),
-          isAudio: true,
-          audioUrl: tempAudioComment.audioUrl,
-          audioDuration: duration,
-          isPending: false,
-        });
-      } else {
-        // שליחה רגילה לשרת
-        const commentData: CreateCommentDto.Model = {
-          entity_type: entityType,
-          entity_id: entityId,
-          content: transcription,
-          created_at: new Date().toISOString(),
-        };
-
-        const sentComment = await createComment(commentData);
-        updateComment(tempId, {
-          ...sentComment,
-          isAudio: true,
-          audioUrl: tempAudioComment.audioUrl,
-          audioDuration: duration,
-          isPending: false,
-        });
+        // עדכון ההורה יתקיים דרך ה-effect שמאזין ל-comments
+        return;
       }
+
+      // שליחה רגילה לשרת
+      const commentData: CreateCommentDto.Model = {
+        entity_type: entityType,
+        entity_id: entityId,
+        content: transcription,
+        created_at: new Date().toISOString(),
+      };
+
+      const sentComment = await createComment(commentData);
+      updateComment(tempId, {
+        ...sentComment,
+        isAudio: true,
+        audioUrl: tempAudioComment.audioUrl,
+        audioDuration: duration,
+        isPending: false,
+      });
     } catch (err) {
       console.error("Error sending audio comment:", err);
       setError(t("FailedToSendAudioComment.PleaseTryAgain."));
@@ -330,7 +296,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     
     // טעינת הערות מהשרת
     fetchComments(1);
-  }, [entityId, entityType]);
+  }, [entityId, entityType, fetchComments]);
 
   // useEffect לגלילה חכמה
   useEffect(() => {
