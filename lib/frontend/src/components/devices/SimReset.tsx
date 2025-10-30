@@ -39,13 +39,18 @@ const SimReset: React.FC = () => {
     }
   })
 
+  // פונקציה לבניית מספר סים מלא
+  const buildFullSimNumber = (input: string): string => {
+    return input.length > 6 ? input : `8997212330000${input}`
+  }
+
   const checkDeviceStatus = async (data: SimResetFormData) => {
     if (!data.simLastSixDigits.trim()) {
       setErrorMessage(t('allFieldsRequired'))
       return
     }
 
-    const fullSimNumber = `8997212330000${data.simLastSixDigits}`
+    const fullSimNumber = buildFullSimNumber(data.simLastSixDigits)
     setIsChecking(true)
     setErrorMessage(null)
     setDeviceInfo(null)
@@ -83,7 +88,7 @@ const SimReset: React.FC = () => {
     }
 
     // בניית מספר הסים המלא
-    const fullSimNumber = `8997212330000${data.simLastSixDigits}`
+    const fullSimNumber = buildFullSimNumber(data.simLastSixDigits)
 
     setIsLoading(true)
     setErrorMessage(null)
@@ -200,8 +205,8 @@ const SimReset: React.FC = () => {
           rules={{ 
             required: t('simNumberRequired'),
             pattern: {
-              value: /^\d{6}$/,
-              message: t('simNumberSixDigitsOnly')
+              value: /^\d{6,}$/,
+              message: t('simNumberMinSixDigits')
             }
           }}
           errorMessage={errors.simLastSixDigits?.message}
