@@ -1,14 +1,16 @@
+import { padding } from "@mui/system";
 import { colors } from "../../styles/theme";
 
 export const chatStyles = {
   container: {
     position: 'relative' as const,
-    width: 420,
-    margin: '0 auto',
-    marginBottom: 16,
+    width: '100%',
+    height: '100%',
     padding: 3,
     paddingTop: 8,
+    paddingBottom: 3,
     background: colors.neutral0,
+    boxSizing: 'border-box' as const,
   },
   
   closeButton: {
@@ -39,17 +41,23 @@ export const chatStyles = {
   },
   
   messagesContainer: {
-    paddingRight: 1,
-    paddingLeft: 1,
-    overflowY: 'scroll' as const,
-    height: 500,
-    minHeight: 400,
+    paddingRight: 2,
+    paddingLeft: 2,
+    overflowY: 'auto' as const,
+    overflowX: 'hidden' as const,
+    flex: 1,
     display: 'flex',
     flexDirection: 'column' as const,
-    scrollbarWidth: 'none' as const,
-    msOverflowStyle: 'none' as const,
+    scrollbarWidth: 'thin' as const,
     '&::-webkit-scrollbar': {
-      display: 'none',
+      width: '6px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: colors.neutral100,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: colors.neutral350,
+      borderRadius: '3px',
     },
   },
   
