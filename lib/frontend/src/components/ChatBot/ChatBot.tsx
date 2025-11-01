@@ -268,7 +268,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
   }, [handleScroll]);
 
   return (
-    <Box sx={chatStyles.container}>
+    <Box sx={{
+      ...chatStyles.container,
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+    }}>
       <IconButton 
         title={t('closed')} 
         disableRipple 
@@ -291,9 +296,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
         ref={messagesContainerRef} 
         sx={{
           ...chatStyles.messagesContainer,
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
         {isLoadingMore && (
