@@ -1,6 +1,7 @@
 import { CustomerDevice } from '@model'
 import { 
   apiGet,
+  apiPost,
   safeGetPaginated,
   // safeApiGet,
   PaginatedResponse 
@@ -23,4 +24,7 @@ export const getCustomerDeviceByDeviceId = async (device_id: string): Promise<Cu
     console.error('Error fetching customer device by device id', error)
     return null
   }
+}
+export const createCustomerDevice = async (customerDeviceData: Omit<CustomerDevice.Model, 'customerDevice_id'>): Promise<CustomerDevice.Model> => {
+  return apiPost<CustomerDevice.Model>(ENDPOINT, customerDeviceData)
 }

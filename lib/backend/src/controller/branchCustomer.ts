@@ -55,7 +55,7 @@ const getAllBranchCustomer = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { branchCustomers, total } = await db.BranchCustomer.getAllBranchCustomer(offset)
@@ -99,7 +99,7 @@ const getBranchCustomerByBranch_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     BranchCustomer.sanitizeIdExisting(req)
@@ -132,7 +132,7 @@ const getBranchCustomerByCustomer_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     BranchCustomer.sanitizeIdExisting(req)
