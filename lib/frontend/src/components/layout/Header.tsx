@@ -36,6 +36,7 @@ const Header: React.FunctionComponent = () => {
     localStorage.removeItem('token')
     setToken('')
     setUserName(null)
+    navigate('/login')
   }
 
   const getUserFromToken = async (token: string) => {
