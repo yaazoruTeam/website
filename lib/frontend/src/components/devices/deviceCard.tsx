@@ -32,11 +32,11 @@ const DeviceCard: React.FC = () => {
       setCustomerDevice(customerDeviceData)
       
     } catch (err: unknown) {
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err as { response?: { data?: string } }).response?.data || 'Failed to fetch device data'
-        : 'Failed to fetch device data'
+      // פישוט לוגיקת טיפול השגיאות
+      const errorMessage = 
+        err instanceof Error ? err.message : 'Failed to fetch device data'
       setError(errorMessage)
-      alert(`Error fetching device: ${errorMessage}`)
+      console.error('Error fetching device:', err)
     } finally {
       setLoading(false)
     }
