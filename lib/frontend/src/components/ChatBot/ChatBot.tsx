@@ -272,7 +272,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
       ...chatStyles.container,
       display: 'flex',
       flexDirection: 'column',
-      height: '100vh',
     }}>
       <IconButton 
         title={t('closed')} 

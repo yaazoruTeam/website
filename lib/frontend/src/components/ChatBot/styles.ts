@@ -1,4 +1,3 @@
-import { padding } from "@mui/system";
 import { colors } from "../../styles/theme";
 
 export const chatStyles = {
