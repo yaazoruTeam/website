@@ -2,6 +2,7 @@ import { Box } from '@mui/system'
 import React, { useState } from 'react'
 import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
+import { CustomButton } from '../designComponent/Button'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -10,10 +11,11 @@ import {
   CustomerCommentsSection,
 } from '../designComponent/styles/chatCommentCardStyles'
 import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
+import { EntityType, Device } from '@model'
 import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import CustomTypography from '../designComponent/Typography'
+import AddDeviceForm from './AddDeviceForm'
 
 export interface deviceFormInputs {
   device_number: string
@@ -35,6 +37,8 @@ interface DeviceFormProps {
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
+  deviceData?: Device.Model
+  onDeviceUpdate?: () => void
 }
 
 const DeviceForm: React.FC<DeviceFormProps> = ({
@@ -43,9 +47,12 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
+  deviceData,
+  onDeviceUpdate,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
@@ -65,6 +72,13 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
     },
   })
 
+  const handleEditSuccess = () => {
+    setIsEditModalOpen(false)
+    if (onDeviceUpdate) {
+      onDeviceUpdate()
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -73,18 +87,31 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         padding: '28px',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
-        <CustomTypography
-          text={t('deviceData')}
-          variant='h3'
-          weight='medium'
-        />
-        <CustomTypography
-          text={initialValues ? initialValues.device_number : ''}
-          variant='h4'
-          weight='regular'
-        />
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb:'40px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <CustomTypography
+            text={t('deviceData')}
+            variant='h3'
+            weight='medium'
+          />
+          <CustomTypography
+            text={initialValues ? initialValues.device_number : ''}
+            variant='h4'
+            weight='regular'
+          />
+        </Box>
+        
+        {deviceData && (
+          <CustomButton
+            label={t('editDevice')}
+            state='default'
+            size='large'
+            buttonType='first'
+            onClick={() => setIsEditModalOpen(true)}
+          />
+        )}
       </Box>
+
       <Box
         sx={{
           display: 'flex',
@@ -174,6 +201,16 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
             />
           </ChatModalContainer>
         </ChatModalOverlay>
+      )}
+
+      {deviceData && (
+        <AddDeviceForm
+          open={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={handleEditSuccess}
+          editMode={true}
+          deviceData={deviceData}
+        />
       )}
     </Box>
   )

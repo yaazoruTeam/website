@@ -7,14 +7,15 @@ import CustomTypography from '../designComponent/Typography'
 import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
-import { createDevice } from '../../api/device'
+import { createDevice, updateDevice } from '../../api/device'
 import { Device } from '@model'
-import { extractErrorMessage } from '../../utils/errorHelpers'
 
 interface AddDeviceFormProps {
   open: boolean
   onClose: () => void
   onSuccess: () => void
+  editMode?: boolean
+  deviceData?: Device.Model
 }
 
 interface DeviceFormData {
@@ -26,7 +27,13 @@ interface DeviceFormData {
   model: string
 }
 
-const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess }) => {
+const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ 
+  open, 
+  onClose, 
+  onSuccess, 
+  editMode = false,
+  deviceData 
+}) => {
   const { t } = useTranslation()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -48,7 +55,13 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
   })
 
   const { control, handleSubmit, reset } = useForm<DeviceFormData>({
-    defaultValues: {
+    defaultValues: editMode && deviceData ? {
+      device_number: deviceData.device_number || '',
+      SIM_number: deviceData.SIM_number || '',
+      IMEI_1: deviceData.IMEI_1 || '',
+      serialNumber: deviceData.serialNumber || '',
+      model: deviceData.model || '',
+    } : {
       device_number: '',
       SIM_number: '',
       IMEI_1: '',
@@ -59,26 +72,48 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
 
   const onSubmit = useCallback(async (data: DeviceFormData) => {
     try {
-      const deviceData: Omit<Device.Model, 'device_id'> = {
-        ...data,
-        status: 'active',
-        purchaseDate: null,
-        registrationDate: new Date(),
-        plan: '', //?? מאיפה מקבלים את זה to do
+      if (editMode && deviceData?.device_id) {
+        const updateData = {
+          ...data,
+          device_id: deviceData.device_id,
+          status: deviceData.status || 'active',
+          purchaseDate: deviceData.purchaseDate || null,
+          registrationDate: deviceData.registrationDate || new Date(),
+          plan: deviceData.plan || '',
+        }
+        await updateDevice(deviceData.device_id.toString(), updateData)
+        setSuccessMessage(t('deviceUpdatedSuccessfully'))
+      } else {
+        // מצב הוספה - יצירת מכשיר חדש
+        const deviceDataToCreate: Omit<Device.Model, 'device_id'> = {
+          ...data,
+          status: 'active',
+          purchaseDate: null,
+          registrationDate: new Date(),
+          plan: '',
+        }
+        await createDevice(deviceDataToCreate)
+        setSuccessMessage(t('deviceAddedSuccessfully'))
       }
-
-      await createDevice(deviceData)
-
-      setSuccessMessage(t('deviceAddedSuccessfully'))
 
       reset()
       onClose()
-      onSuccess() // Refresh the devices list
+      onSuccess()
     } catch (error: unknown) {
-      const errorMsg = extractErrorMessage(error, t('deviceAddFailed'))
+      console.error('Error saving device:', error)
+      
+      // טיפול נכון בשגיאה - המרת השגיאה למחרוזת
+      let errorMsg = editMode ? t('deviceUpdateFailed') : t('deviceAddFailed')
+      
+      if (error && typeof error === 'object' && 'message' in error) {
+        errorMsg += ': ' + String(error.message)
+      } else if (typeof error === 'string') {
+        errorMsg += ': ' + error
+      }
+      
       setErrorMessage(errorMsg)
     }
-  }, [t, reset, onClose, onSuccess])
+  }, [t, reset, onClose, onSuccess, editMode, deviceData])
 
   useEffect(() => {
     setSubmitHandler(() => handleSubmit(onSubmit))
@@ -102,7 +137,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       {/* Header */}
       <Box sx={{ mb: 2 }}>
         <CustomTypography
-          text={t('addingDevice')}
+          text={editMode ? t('editDevice') || 'עריכת מכשיר' : t('addingDevice')}
           variant='h1'
           weight='bold'
           color={colors.blue900}
@@ -183,7 +218,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
         }}
       >
         <CustomButton
-          label={t('save')}
+          label={editMode ? t('update'):t('save')}
           state='default'
           size={isMobile ? 'small' : 'large'}
           buttonType='first'

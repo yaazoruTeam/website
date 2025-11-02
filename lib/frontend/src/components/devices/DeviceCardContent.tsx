@@ -13,6 +13,7 @@ interface DeviceCardContentProps {
 
 const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
@@ -39,14 +40,18 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     fetchLastComment()
   }, [fetchLastComment])
 
+  const handleDeviceUpdate = () => {
+    setRefreshKey(prev => prev + 1)
+    window.location.reload()
+  }
+
   return (
     <Box>
       {/* טופס פרטי המכשיר */}
       <DeviceForm
-        key={lastComment?.comment_id || 'no-comment'}
+        key={`${lastComment?.comment_id || 'no-comment'}-${refreshKey}`}
         initialValues={{
           device_number: device.device_number,
-          // SIM_number: device.SIM_number,
           IMEI_1: device.IMEI_1,
           model: device.model,
           serialNumber: device.serialNumber || '',
@@ -57,9 +62,6 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
           planEndDate: customerDevice?.planEndDate
             ? formatDateToString(new Date(customerDevice.planEndDate))
             : '',
-          // plan: device?.plan || '',
-          // filterVersion: customerDevice?.filterVersion || '',
-          // deviceProgram: customerDevice?.deviceProgram || '',
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
@@ -74,7 +76,10 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        deviceData={device}
+        onDeviceUpdate={handleDeviceUpdate}
       />
+      
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
