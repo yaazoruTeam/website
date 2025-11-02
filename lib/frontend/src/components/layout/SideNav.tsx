@@ -66,7 +66,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
       variant='permanent'
       anchor='right'
     >
-      {/* כפתור פתיחה/סגירה */}
       <Box
         sx={{
           display: 'flex',
@@ -117,7 +116,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
         </Link>
       </Box>
 
-      {/* רשימת פריטי תפריט */}
       <List sx={{ padding: 0, position: 'relative' }}>
         {listItems.map((li, index) => {
           const isSelected = selectedLink === li.link
@@ -161,7 +159,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
                     '&:hover': {
                       backgroundColor: colors.blue500,
                     },
-                    // במצב ריחוף - הצגת התפריט המלא מעל האחרים
                     ...(isHovered && !isOpen && {
                       position: 'absolute',
                       top: 0,
@@ -178,7 +175,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
                     }),
                   }}
                 >
-                  {/* אייקון */}
                   <Box
                     sx={{
                       position: 'relative',

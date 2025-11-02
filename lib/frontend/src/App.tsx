@@ -48,7 +48,6 @@ function App() {
   const navigate = useNavigate()
   const [SideNavOpen, setSideNavOpen] = useState(false)
 
-  // קבועים לרוחב התפריט
   const COLLAPSED_WIDTH = 40
   const EXPANDED_WIDTH = 20
   
