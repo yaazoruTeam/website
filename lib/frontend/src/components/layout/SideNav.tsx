@@ -89,7 +89,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
         </IconButton>
       </Box>
 
-      {/* לוגו */}
       <Box
         sx={{
           display: 'flex',
@@ -193,7 +192,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
                     />
                   </Box>
 
-                  {/* טקסט */}
                   {(isOpen || isHovered) && (
                     <CustomTypography
                       text={li.text}
@@ -210,7 +208,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
                 </ListItem>
               </Tooltip>
               
-              {/* Spacer - שומר על המרחק בין האייקונים גם כשיש ריחוף */}
               {!isOpen && isHovered && (
                 <Box sx={{ height: MENU_ITEM_HEIGHT, visibility: 'hidden' }} />
               )}
