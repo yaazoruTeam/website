@@ -6,15 +6,6 @@ import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValid
 import { handleError } from '../err'
 import logger from '@/src/utils/logger'
 
-// Function for network identification
-const getNetworkConnection = (mccMnc: string): string => {
-  const networkMap: { [key: string]: string } = {
-    '425_03': 'Pelephone',
-    '425_02': 'Partner',
-    '425_07': 'HOT',
-  }
-  return networkMap[mccMnc] || `Not available (${mccMnc})`
-}
 
 const searchUsersData = async (simNumber: string): Promise<Widely.WidelyUserData> => {
   logger.debug(`---------------searchUsersData simNumber: ${simNumber}---------------`)
@@ -324,12 +315,24 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     logger.debug('getAllUserData Step 4: Starting data extraction and formatting')
     const dataUsage = (mobileInfo?.subscriptions?.[0]?.data?.[0]?.usage as number) || (mobileInfo?.data_used as number) || 0
     const maxDataAllowance = (mobileInfo?.data_limit as number) || 0
-    const mccMnc = mobileInfo?.registration_info?.mcc_mnc || ''
-    const networkConnection = getNetworkConnection(mccMnc)
+    const networkConnection = mobileInfo?.registration_info?.plmn_name || 'Not available'
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
-    
-    // Determine status based on active field
-    const status = (mobileInfo as any)?.active ? 'Active' : 'Inactive'
+   let status = mobileInfo?.registration_info?.status
+    if (!status) {
+     status = (mobileInfo as any)?.active ? 'Active' : 'Inactive'
+    }
+
+  logger.debug('getAllUserData extracted data fields', {
+    dataUsage,
+    maxDataAllowance,
+    networkConnection,
+    imei,
+    status,
+    subscriptions: mobileInfo?.subscriptions,
+    data_used: mobileInfo?.data_used,
+    data_limit: mobileInfo?.data_limit,
+    registration_info: mobileInfo?.registration_info,
+
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
       endpoint_id: endpoint_id,
