@@ -137,7 +137,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({
       {/* Header */}
       <Box sx={{ mb: 2 }}>
         <CustomTypography
-          text={editMode ? t('editDevice') || 'עריכת מכשיר' : t('addingDevice')}
+          text={editMode ? t('editDevice') : t('addingDevice')}
           variant='h1'
           weight='bold'
           color={colors.blue900}
@@ -218,7 +218,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({
         }}
       >
         <CustomButton
-          label={editMode ? t('update'):t('save')}
+          label={editMode ? t('update') : t('save')}
           state='default'
           size={isMobile ? 'small' : 'large'}
           buttonType='first'

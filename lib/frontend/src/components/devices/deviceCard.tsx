@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Box } from '@mui/system'
 import { useParams } from 'react-router-dom'
 import { getDeviceById } from '../../api/device'
 import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
 import { Device, CustomerDevice } from '@model'
 import DeviceCardContent from './DeviceCardContent'
-import { AxiosError } from 'axios'
 
 const DeviceCard: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -14,36 +13,38 @@ const DeviceCard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchDeviceData = async () => {
-      if (!id) {
-        setError('No device ID provided')
-        return
-      }
-
-      setLoading(true)
-      setError(null)
-
-      try {
-        // שליפת נתוני המכשיר
-        const deviceData = await getDeviceById(id)
-        setDevice(deviceData)
-
-        // ניסיון לשלוף נתוני customerDevice
-        const customerDeviceData = await getCustomerDeviceByDeviceId(id)
-        setCustomerDevice(customerDeviceData)
-        
-      } catch (err: AxiosError | unknown) {
-        // if (err instanceof AxiosError && err.response?.status === 409) {
-        setError(err instanceof AxiosError && err.response?.data || 'Failed to fetch device data')
-        alert(`Error fetching device: ${err instanceof AxiosError ? err.response?.data : err}`)
-      } finally {
-        setLoading(false)
-      }
+  const fetchDeviceData = useCallback(async () => {
+    if (!id) {
+      setError('No device ID provided')
+      return
     }
 
-    fetchDeviceData()
+    setLoading(true)
+    setError(null)
+
+    try {
+      // שליפת נתוני המכשיר
+      const deviceData = await getDeviceById(id)
+      setDevice(deviceData)
+
+      // ניסיון לשלוף נתוני customerDevice
+      const customerDeviceData = await getCustomerDeviceByDeviceId(id)
+      setCustomerDevice(customerDeviceData)
+      
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err 
+        ? (err as { response?: { data?: string } }).response?.data || 'Failed to fetch device data'
+        : 'Failed to fetch device data'
+      setError(errorMessage)
+      alert(`Error fetching device: ${errorMessage}`)
+    } finally {
+      setLoading(false)
+    }
   }, [id])
+
+  useEffect(() => {
+    fetchDeviceData()
+  }, [fetchDeviceData])
 
   if (loading) {
     return <Box>Loading device data...</Box>
@@ -63,7 +64,8 @@ const DeviceCard: React.FC = () => {
         {/* תוכן המכשיר */}
         <DeviceCardContent 
           device={device} 
-          customerDevice={customerDevice || undefined} 
+          customerDevice={customerDevice || undefined}
+          onDeviceUpdate={fetchDeviceData}
         />
       </Box>
     </>

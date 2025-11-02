@@ -9,9 +9,10 @@ import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
+  onDeviceUpdate?: () => Promise<void>
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice, onDeviceUpdate }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
@@ -40,9 +41,12 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     fetchLastComment()
   }, [fetchLastComment])
 
-  const handleDeviceUpdate = () => {
+  const handleDeviceUpdate = async () => {
     setRefreshKey(prev => prev + 1)
-    window.location.reload()
+    // רענון הנתונים מהשרת
+    if (onDeviceUpdate) {
+      await onDeviceUpdate()
+    }
   }
 
   return (
