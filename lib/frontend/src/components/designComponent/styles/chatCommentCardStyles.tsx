@@ -107,13 +107,13 @@ export const ChatModalOverlay = styled(FlexBase)({
   top: 0,
   left: 0,
   bottom: 0,
-  width: '400px', // רוחב קבוע בצד שמאל
-  backgroundColor: 'transparent', // רקע שקוף במקום overlay
+  width: '400px',
+  backgroundColor: 'transparent',
   zIndex: 1000,
   justifyContent: 'flex-start',
-  pointerEvents: 'none', // מאפשר לקליק לעבור דרך האזור השקוף
+  pointerEvents: 'none', 
   '& > *': {
-    pointerEvents: 'auto', // הצ'אטבוט עצמו ניתן ללחיצה
+    pointerEvents: 'auto',
   },
 })
 
