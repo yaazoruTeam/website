@@ -29,7 +29,7 @@ const createMonthlyPayment = async (req: Request, res: Response, next: NextFunct
 
 const getMonthlyPayments = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPayments(offset)
@@ -74,7 +74,7 @@ const getMonthlyPaymentByCustomerId = async (req: Request, res: Response, next: 
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByCustomerId(
@@ -109,7 +109,7 @@ const getMonthlyPaymentsByStatus = async (req: Request, res: Response, next: Nex
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByStatus(
@@ -138,7 +138,7 @@ const getMonthlyPaymentByOrganization = async (req: Request, res: Response, next
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { monthlyPayments, total } = await db.MonthlyPayment.getMonthlyPaymentsByOrganization(

@@ -5,12 +5,13 @@
 
 import getDbConnection from '@db/connection'
 import * as db from '@db/index'
-import { Device } from '@model'
+import { Device, Comment } from '@model'
 import { Knex } from 'knex'
 import logger from '../../utils/logger'
 
 export interface ExcelRowData {
   [key: string]: unknown
+  comment?: string // שדה הערות אופציונלי
 }
 
 export interface ProcessError {
@@ -137,5 +138,46 @@ export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: K
   } catch (createError) {
     logger.error(`❌ Failed to create device:`, createError)
     throw createError
+  }
+}
+
+/**
+ * יוצר הערה לישות (לקוח או מכשיר) אם יש תוכן הערה
+ * @param entityId - מזהה הישות (customer_id או device_id)
+ * @param entityType - סוג הישות ('customer' או 'device')
+ * @param commentContent - תוכן ההערה
+ * @param trx - טרנזקציה אופציונלית
+ * @returns true אם הערה נוצרה, false אחרת
+ */
+export const createCommentForEntity = async (
+  entityId: string,
+  entityType: 'customer' | 'device',
+  commentContent?: string,
+  trx?: Knex.Transaction
+): Promise<boolean> => {
+  // בדיקה אם יש תוכן הערה
+  if (!commentContent || typeof commentContent !== 'string' || commentContent.trim() === '') {
+    logger.debug(`No comment content provided for ${entityType} ${entityId}`)
+    return false
+  }
+
+  try {
+    logger.info(`💬 Creating comment for ${entityType} ${entityId}`)
+    
+    const commentModel: Comment.Model = {
+      comment_id: '', // יוגדר אוטומטית
+      entity_id: entityId,
+      entity_type: entityType as Comment.EntityType,
+      content: commentContent.trim(),
+      created_at: new Date()
+    }
+
+    await db.Comment.createComment(commentModel, trx)
+    logger.info(`✅ Comment created successfully for ${entityType} ${entityId}`)
+    return true
+  } catch (error) {
+    logger.error(`❌ Failed to create comment for ${entityType} ${entityId}:`, error)
+    // לא זורקים שגיאה כי הערה היא אופציונלית
+    return false
   }
 }
