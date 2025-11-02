@@ -19,6 +19,7 @@ interface SideNavProps {
 
 const COLLAPSED_WIDTH = 80 
 const EXPANDED_WIDTH = 200 
+const MENU_ITEM_HEIGHT = 66 // קונסטנטה לגובה פריט תפריט
 
 // אייקון תפריט פשוטי
 const MenuIcon = () => (
@@ -152,7 +153,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
                     gap: isOpen ? 2 : 0.5,
                     transition: 'all 0.3s ease',
                     display: 'flex',
-                    minHeight: 66,
+                    minHeight: MENU_ITEM_HEIGHT,
                     paddingLeft: isOpen ? '20px' : '10px',
                     paddingRight: '10px',
                     cursor: 'pointer',
@@ -216,7 +217,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({ listItems, isOpen, onT
               
               {/* Spacer - שומר על המרחק בין האייקונים גם כשיש ריחוף */}
               {!isOpen && isHovered && (
-                <Box sx={{ height: 66, visibility: 'hidden' }} />
+                <Box sx={{ height: MENU_ITEM_HEIGHT, visibility: 'hidden' }} />
               )}
             </Box>
           )

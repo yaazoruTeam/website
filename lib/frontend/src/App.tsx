@@ -46,18 +46,18 @@ import ExcelUpload from './components/excel/ExcelUpload'
 function App() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [isSideNavOpen, setIsSideNavOpen] = useState(false)
+  const [SideNavOpen, setSideNavOpen] = useState(false)
 
   // קבועים לרוחב התפריט
   const COLLAPSED_WIDTH = 40
   const EXPANDED_WIDTH = 20
   
-  // חישוב margin-right דינמי - כשפתוח יהיה 33% מהסגור
+  // חישוב margin-right דינמי
   const getMarginRight = () => {
-    if (isSideNavOpen) {
-      return EXPANDED_WIDTH * 0.33 // 33% מרוחב התפריט הפתוח
+    if (SideNavOpen) {
+      return EXPANDED_WIDTH 
     }
-    return COLLAPSED_WIDTH // רוחב מלא כשסגור
+    return COLLAPSED_WIDTH 
   }
 
   useEffect(() => {
@@ -65,7 +65,7 @@ function App() {
   }, [navigate])
 
   const handleSideNavToggle = () => {
-    setIsSideNavOpen(!isSideNavOpen)
+    setSideNavOpen(!SideNavOpen)
   }
 
   return (
@@ -129,20 +129,20 @@ function App() {
                         text: t('permissions'),
                       },
                     ]}
-                    isOpen={isSideNavOpen}
+                    isOpen={SideNavOpen}
                     onToggle={handleSideNavToggle}
                   />
                   <main
                     style={{
                       flexGrow: 1,
-                      padding: isSideNavOpen ? '20px' : '20px',
+                      padding: '20px',
                       overflow: 'auto',
                       background: colors.neutral75,
                       marginRight: `${getMarginRight()}px`,
                       transition: 'margin-right 0.3s ease-in-out',
                     }}
                   >
-                    <AppLayout isSideNavOpen={isSideNavOpen}>
+                    <AppLayout SideNavOpen={SideNavOpen}>
                       <Routes>
                         <Route path='/dashboard' element={<Dashboard />} />
                         <Route path='/customers' element={<Customers />} />

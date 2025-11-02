@@ -4,15 +4,15 @@ import ReturnButton from '../designComponent/ReturnButton'
 
 interface AppLayoutProps {
   children: React.ReactNode
-  isSideNavOpen?: boolean
+  SideNavOpen?: boolean
 }
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ children, isSideNavOpen = false }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({ children, SideNavOpen = false }) => {
   return (
     <Box
       sx={{
-        paddingLeft: isSideNavOpen ? '40px' : '80px',
-        paddingRight: isSideNavOpen ? '40px' : '80px',
+        paddingLeft: SideNavOpen ? '40px' : '80px',
+        paddingRight: SideNavOpen ? '40px' : '80px',
         paddingTop: '2rem',
         minHeight: '100vh',
         display: 'flex',
@@ -20,12 +20,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, isSideNavOpen = 
         gap: 4,
         transition: 'padding 0.3s ease-in-out',
         '@media (min-width: 768px)': {
-          paddingLeft: isSideNavOpen ? '60px' : '80px',
-          paddingRight: isSideNavOpen ? '26px' : '60px',
+          paddingLeft: SideNavOpen ? '60px' : '80px',
+          paddingRight: SideNavOpen ? '26px' : '60px',
         },
         '@media (min-width: 1200px)': {
-          paddingLeft: isSideNavOpen ? '80px' : '120px',
-          paddingRight: isSideNavOpen ? '40px' : '90px',
+          paddingLeft: SideNavOpen ? '80px' : '120px',
+          paddingRight: SideNavOpen ? '40px' : '90px',
         },
       }}
     >
