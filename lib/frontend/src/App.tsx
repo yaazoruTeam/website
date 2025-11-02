@@ -52,13 +52,7 @@ function App() {
   const COLLAPSED_WIDTH = 40
   const EXPANDED_WIDTH = 20
   
-  // חישוב margin-right דינמי
-  const getMarginRight = () => {
-    if (SideNavOpen) {
-      return EXPANDED_WIDTH 
-    }
-    return COLLAPSED_WIDTH 
-  }
+  const marginRight = SideNavOpen ? EXPANDED_WIDTH : COLLAPSED_WIDTH
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
@@ -138,7 +132,7 @@ function App() {
                       padding: '20px',
                       overflow: 'auto',
                       background: colors.neutral75,
-                      marginRight: `${getMarginRight()}px`,
+                      marginRight: `${marginRight}px`,
                       transition: 'margin-right 0.3s ease-in-out',
                     }}
                   >

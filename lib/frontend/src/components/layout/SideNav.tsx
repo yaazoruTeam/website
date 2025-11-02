@@ -19,9 +19,8 @@ interface SideNavProps {
 
 const COLLAPSED_WIDTH = 80 
 const EXPANDED_WIDTH = 200 
-const MENU_ITEM_HEIGHT = 66 // קונסטנטה לגובה פריט תפריט
+const MENU_ITEM_HEIGHT = 66
 
-// אייקון תפריט פשוטי
 const MenuIcon = () => (
   <svg 
     width="24" 
