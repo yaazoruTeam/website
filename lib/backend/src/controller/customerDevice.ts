@@ -31,7 +31,7 @@ const getCustomersDevices = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { customerDevices, total } = await db.CustomerDevice.getCustomersDevices(offset)
@@ -75,7 +75,7 @@ const getAllDevicesByCustomerId = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     CustomerDevice.sanitizeIdExisting(req)
@@ -91,13 +91,6 @@ const getAllDevicesByCustomerId = async (
       req.params.id,
       offset,
     )
-    if (customerDevices.length === 0) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'This customer has no devices.',
-      }
-      throw error
-    }
     res.status(200).json({
       data: customerDevices,
       page,
@@ -115,7 +108,7 @@ const getCustomerIdByDeviceId = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     CustomerDevice.sanitizeIdExisting(req)

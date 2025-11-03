@@ -41,7 +41,7 @@ const getDevices = async (req: Request, res: Response, next: NextFunction): Prom
   try {
     logger.debug('[Controller] Fetching devices with pagination')
 
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     if (page < 1) {
       throw { status: 400, message: 'Page must be greater than 0' }
     }
@@ -114,7 +114,7 @@ const getDevicesByStatus = async (
       throw error
     }
 
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     if (page < 1) {
       throw { status: 400, message: 'Page must be greater than 0' }
     }

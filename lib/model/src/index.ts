@@ -24,7 +24,8 @@ import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ComprehensiveResetResponse from './ComprehensiveResetResponse'
 import * as Request from './Request'
 import * as Switchboard from './Switchboard'
-import * as GoogleAuth from './GoogleAuth' //to do:TEMPORARY SOLUTION - Google Authentication Types
+import * as GoogleAuth from './GoogleAuth'
+import * as TempComment from './TempComment'
 
 export {
   Customer,
@@ -53,5 +54,6 @@ export {
   ComprehensiveResetResponse,
   Request,
   Switchboard,
-  GoogleAuth, //tp do:TEMPORARY SOLUTION - Google Authentication Types
+  GoogleAuth,
+  TempComment,
 }

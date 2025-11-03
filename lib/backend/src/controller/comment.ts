@@ -48,7 +48,7 @@ const getComments = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { comments, total } = await db.Comment.getComments(offset)
@@ -107,7 +107,7 @@ const getCommentsByEntity = async (
       throw error
     }
 
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { comments, total } = await db.Comment.getCommentsByEntity(
