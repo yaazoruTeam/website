@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material/styles'
 
@@ -49,6 +49,12 @@ import SimReset from './components/devices/SimReset'
 function App() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const [SideNavOpen, setSideNavOpen] = useState(false)
+
+  const Margins_in_narrow_menu = 40
+  const Margin_at_expand_menu = 20
+  
+  const marginRight = SideNavOpen ? Margin_at_expand_menu : Margins_in_narrow_menu
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
@@ -64,6 +70,10 @@ function App() {
     
     handleAuthRedirect()
   }, [navigate])
+
+  const handleSideNavToggle = () => {
+    setSideNavOpen(!SideNavOpen)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -127,6 +137,8 @@ function App() {
                         text: t('permissions'),
                       },
                     ]}
+                    isOpen={SideNavOpen}
+                    onToggle={handleSideNavToggle}
                   />
                   <main
                     style={{
@@ -134,10 +146,11 @@ function App() {
                       padding: '20px',
                       overflow: 'auto',
                       background: colors.neutral75,
-                      marginRight: '130px', // רוחב ה-SideNav
+                      marginRight: `${marginRight}px`,
+                      transition: 'margin-right 0.3s ease-in-out',
                     }}
                   >
-                    <AppLayout>
+                    <AppLayout SideNavOpen={SideNavOpen}>
                       <Routes>
                         <Route path='/dashboard' element={<Dashboard />} />
                         <Route path='/customers' element={<Customers />} />
