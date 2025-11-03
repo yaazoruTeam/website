@@ -233,12 +233,13 @@ export class UserRepository {
         id_number?: string | number
         phone_number?: string
         user_name?: string
-    }): Promise<{ email?: User; id_number?: User; phone_number?: User; user_name?: User }> {
+        google_uid?: string
+    }): Promise<{ email?: User; id_number?: User; phone_number?: User; user_name?: User; google_uid?: User }> {
         try {
             logger.debug('[DB] Searching for all existing users by criteria', { criteria })
 
             // Execute all queries in parallel
-            const [userByEmail, userByIdNumber, userByPhoneNumber, userByUserName] = await Promise.all([
+            const [userByEmail, userByIdNumber, userByPhoneNumber, userByUserName, userByGoogleUid] = await Promise.all([
                 criteria.email
                     ? this.repository.findOne({ where: { email: criteria.email } })
                     : Promise.resolve(undefined),
@@ -257,10 +258,15 @@ export class UserRepository {
                         where: { user_name: criteria.user_name },
                     })
                     : Promise.resolve(undefined),
+                criteria.google_uid
+                    ? this.repository.findOne({
+                        where: { google_uid: criteria.google_uid },
+                    })
+                    : Promise.resolve(undefined),
             ])
 
             // Filter out if it's the same user being updated
-            const result: { email?: User; id_number?: User; phone_number?: User; user_name?: User } = {}
+            const result: { email?: User; id_number?: User; phone_number?: User; user_name?: User; google_uid?: User } = {}
 
             if (userByEmail && (!criteria.user_id || userByEmail.user_id !== criteria.user_id)) {
                 result.email = userByEmail
@@ -273,6 +279,9 @@ export class UserRepository {
             }
             if (userByUserName && (!criteria.user_id || userByUserName.user_id !== criteria.user_id)) {
                 result.user_name = userByUserName
+            }
+            if (userByGoogleUid && (!criteria.user_id || userByGoogleUid.user_id !== criteria.user_id)) {
+                result.google_uid = userByGoogleUid
             }
 
             if (Object.keys(result).length > 0) {

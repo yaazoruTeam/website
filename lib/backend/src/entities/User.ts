@@ -23,6 +23,7 @@ export enum UserStatus {
 @Unique(['phone_number'])
 @Unique(['email'])
 @Unique(['user_name'])
+@Unique(['google_uid'])
 export class User {
   @PrimaryGeneratedColumn()
   user_id!: number
@@ -44,6 +45,15 @@ export class User {
 
   @Column({ type: 'varchar', length: 100, unique: true })
   email!: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  photo_url: string | null = null
+
+  @Column({ type: 'boolean', default: false, nullable: true })
+  email_verified: boolean = false
+
+  @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
+  google_uid: string | null = null
 
   @Index('idx_users_city', ['city'])
   @Column({ type: 'varchar', length: 100 })

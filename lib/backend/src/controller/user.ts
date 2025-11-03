@@ -3,10 +3,39 @@ import { User, HttpError } from '@model'
 import { hashPassword } from '@utils/password'
 import config from '@config/index'
 import { handleError } from './err'
+import jwt from 'jsonwebtoken'
 import { userRepository } from '@repositories/UserRepository'
 import logger from '../utils/logger'
 
 const limit = config.database.limit
+
+// Helper function to check if user can access/modify another user's data
+const checkUserPermissions = (req: Request, targetUserId: string) => {
+  const token = req.headers['authorization']?.split(' ')[1]
+  if (!token) {
+    const error: HttpError.Model = {
+      status: 403,
+      message: 'Access denied - missing token',
+    }
+    throw error
+  }
+
+  const decoded = jwt.verify(token, config.jwt.secret) as any
+  
+  // Allow if: admin, branch, or accessing own data
+  const sameUser = String(targetUserId) === String(decoded.user_id)
+  const isPrivileged = ['admin', 'branch'].includes(decoded.role)
+
+  if (isPrivileged || sameUser) {
+    return decoded
+  }
+
+  const error: HttpError.Model = {
+    status: 403,
+    message: 'Access denied - you can only access your own user data',
+  }
+  throw error
+}
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -18,8 +47,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
 
     logger.debug('Checking for existing user', { email: sanitized.email, id_number: sanitized.id_number, user_name: sanitized.user_name })
     await existingUser(sanitized, false)
-
+    
+    // Hash password only if it exists (Google users don't have passwords)
+    if (sanitized.password) {
+  
     sanitized.password = await hashPassword(sanitized.password)
+    }
+    
     
     // Convert User.Model to Partial<User> (TypeORM entity)
     const userEntity = await userRepository.createUser({
@@ -34,6 +68,9 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
       password: sanitized.password,
       user_name: sanitized.user_name,
       role: (sanitized.role as any) || 'branch',
+      google_uid: (sanitized as any).google_uid || null,
+      photo_url: (sanitized as any).photo_url || null,
+      email_verified: (sanitized as any).email_verified || false,
     })
 
     logger.info('User created successfully', { user_id: userEntity.user_id })
@@ -71,6 +108,10 @@ const getUserById = async (req: Request, res: Response, next: NextFunction): Pro
     logger.debug('getUserById called', { id: req.params.id })
 
     User.sanitizeIdExisting(req)
+    
+    // Check permissions
+    checkUserPermissions(req, req.params.id)
+    
     const numericId = parseInt(req.params.id)
     
     const user = await userRepository.getUserById(numericId)
@@ -97,6 +138,10 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
 
     User.sanitizeIdExisting(req)
     User.sanitizeBodyExisting(req)
+    
+    // Check permissions
+    checkUserPermissions(req, req.params.id)
+    
     const userData = req.body
     if (userData.password) {
       userData.password = await hashPassword(userData.password)
@@ -118,6 +163,9 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
       password: sanitized.password,
       user_name: sanitized.user_name,
       role: (sanitized.role as any) || 'branch',
+      google_uid: (sanitized as any).google_uid || null,
+      photo_url: (sanitized as any).photo_url || null,
+      email_verified: (sanitized as any).email_verified || false,
     })
 
     logger.info('User updated successfully', { id: req.params.id })
@@ -163,6 +211,7 @@ const existingUser = async (user: User.Model, hasId: boolean) => {
     id_number: user.id_number,
     phone_number: user.phone_number,
     user_name: user.user_name,
+    google_uid: (user as any).google_uid || undefined,
   })
 
   // If there are any conflicts, throw error immediately

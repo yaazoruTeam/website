@@ -3,10 +3,12 @@ import express from 'express'
 import { createUser, getUsers, getUserById, updateUser, deleteUser } from '../../controller/user'
 import { userRepository } from '../../repositories/UserRepository'
 import { hashPassword } from '../../utils/password'
+import jwt from 'jsonwebtoken'
 
 // Mock repositories, utilities, and models
 jest.mock('../../repositories/UserRepository')
 jest.mock('../../utils/password')
+jest.mock('jsonwebtoken')
 jest.mock('../../utils/logger', () => ({
   debug: jest.fn(),
   info: jest.fn(),
@@ -55,6 +57,11 @@ describe('User Controller', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Mock jwt.verify to return a valid token by default
+    ;(jwt.verify as jest.Mock).mockReturnValue({
+      user_id: 123,
+      role: 'admin',
+    })
   })
 
   describe('createUser', () => {
@@ -141,7 +148,9 @@ describe('User Controller', () => {
       ;(User.sanitizeIdExisting as jest.Mock).mockImplementation(() => {})
       ;(userRepository.getUserById as jest.Mock).mockResolvedValue(mockUser)
 
-      const res = await request(app).get('/users/123')
+      const res = await request(app)
+        .get('/users/123')
+        .set('Authorization', 'Bearer fake-token')
       expect(res.status).toBe(200)
       expect(res.body.email).toBe('test@example.com')
       expect(res.body.user_id).toBe(123)
@@ -152,7 +161,9 @@ describe('User Controller', () => {
       ;(User.sanitizeIdExisting as jest.Mock).mockImplementation(() => {})
       ;(userRepository.getUserById as jest.Mock).mockResolvedValue(null)
 
-      const res = await request(app).get('/users/999')
+      const res = await request(app)
+        .get('/users/999')
+        .set('Authorization', 'Bearer fake-token')
       expect(res.status).toBe(404)
     })
 
@@ -183,6 +194,7 @@ describe('User Controller', () => {
 
       const res = await request(app)
         .put('/users/123')
+        .set('Authorization', 'Bearer fake-token')
         .send({ ...mockUser, user_name: 'updatedName' })
       expect(res.status).toBe(200)
       expect(res.body.user_name).toBe('updatedName')
@@ -198,7 +210,10 @@ describe('User Controller', () => {
         email: { ...mockUser, user_id: 999 },
       })
 
-      const res = await request(app).put('/users/123').send(mockUser)
+      const res = await request(app)
+        .put('/users/123')
+        .set('Authorization', 'Bearer fake-token')
+        .send(mockUser)
       expect(res.status).toBe(409)
     })
 
@@ -212,7 +227,10 @@ describe('User Controller', () => {
         new Error('Database error')
       )
 
-      const res = await request(app).put('/users/123').send(mockUser)
+      const res = await request(app)
+        .put('/users/123')
+        .set('Authorization', 'Bearer fake-token')
+        .send(mockUser)
       expect(res.status).toBe(500)
     })
   })
