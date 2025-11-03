@@ -31,7 +31,7 @@ const getCustomersDevices = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { customerDevices, total } = await db.CustomerDevice.getCustomersDevices(offset)
@@ -75,7 +75,7 @@ const getAllDevicesByCustomerId = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     CustomerDevice.sanitizeIdExisting(req)
@@ -108,7 +108,7 @@ const getCustomerIdByDeviceId = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     CustomerDevice.sanitizeIdExisting(req)

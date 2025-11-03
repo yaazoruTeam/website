@@ -1,8 +1,10 @@
 import { createCustomer } from '../../api/customerApi'
-import { Customer } from '@model'
+import { createComment } from '../../api/comment'
+import { Customer, EntityType, CreateCommentDto, TempComment } from '@model'
 import { AddCustomerFormInputs } from './AddCustomerForm'
 
-export const addCustomer = async (data: AddCustomerFormInputs): Promise<Customer.Model> => {
+export const addCustomer = async (data: AddCustomerFormInputs, localComments?: TempComment.Model[]): Promise<Customer.Model> => {
+  
   const customerData: Customer.Model = {
     customer_id: 0,
     first_name: data.first_name,
@@ -18,5 +20,30 @@ export const addCustomer = async (data: AddCustomerFormInputs): Promise<Customer
     updated_at: new Date(Date.now()),
   }
 
-  return await createCustomer(customerData)
+  try {
+    // יצירת הלקוח החדש
+    const newCustomer = await createCustomer(customerData)
+    // אם יש הערות מקומיות שנכתבו בטופס, נשמור אותן בבסיס הנתונים מיד אחרי שיש לנו customer_id
+    if (localComments && localComments.length > 0) {
+      for (const tempComment of localComments) {
+        const commentData: CreateCommentDto.Model = {
+          entity_id: String(newCustomer.customer_id),
+          entity_type: EntityType.Customer,
+          content: tempComment.content,
+          created_at: tempComment.created_at.toISOString(),
+        }
+
+        try {
+          await createComment(commentData)
+        } catch (err) {
+          console.error('Error creating comment:', err)
+        }
+      }
+    }
+
+    return newCustomer
+  } catch (error) {
+    console.error('Error creating customer:', error)
+    throw error
+  }
 }
