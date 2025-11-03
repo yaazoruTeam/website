@@ -34,8 +34,6 @@ const Header: React.FunctionComponent = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
-    setToken('')
-    setUserName(null)
     navigate('/login')
   }
 
