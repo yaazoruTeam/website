@@ -44,6 +44,11 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
     setTimeout(() => setResetTrigger(false), 0)
   }
 
+  const handleAddDeviceSuccess = () => {
+    setShowAddDevice(false)
+    onRefresh() // Refresh the devices list
+  }
+
   const columns = [
     { label: t('deviceNumber'), key: 'device_number' },
     // { label: t('mehalchaNumber'), key: 'mehalcha_number' },
@@ -74,11 +79,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
 
   const onClickDevice = (device: Device.Model) => {
     navigate(`/device/card/${device.device_id}`)
-  }
-
-  const handleAddDeviceSuccess = () => {
-    setShowAddDevice(false)
-    onRefresh() // Refresh the devices list
   }
 
   // פונקציה מותאמת אישית שמחלצת את ה-ID מנתוני השורה ומעבירה לפונקציה המקורית

@@ -10,10 +10,13 @@ import {
   CustomerCommentsSection,
 } from '../designComponent/styles/chatCommentCardStyles'
 import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
+import { EntityType, Device } from '@model'
 import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import CustomTypography from '../designComponent/Typography'
+import { CustomButton } from '../designComponent/Button'
+import { useMediaQuery } from '@mui/material'
+import AddDeviceForm from './AddDeviceForm'
 
 export interface deviceFormInputs {
   device_number: string
@@ -35,6 +38,8 @@ interface DeviceFormProps {
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
+  device?: Device.Model
+  onDeviceUpdate?: () => Promise<void>
 }
 
 const DeviceForm: React.FC<DeviceFormProps> = ({
@@ -43,9 +48,13 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
+  device,
+  onDeviceUpdate,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [showEditDevice, setShowEditDevice] = useState(false)
+  const isMobile = useMediaQuery('(max-width:600px)')
 
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
@@ -65,6 +74,13 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
     },
   })
 
+  const handleEditSuccess = () => {
+    setShowEditDevice(false)
+    if (onDeviceUpdate) {
+      onDeviceUpdate()
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -73,18 +89,38 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         padding: '28px',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
-        <CustomTypography
-          text={t('deviceData')}
-          variant='h3'
-          weight='medium'
-        />
-        <CustomTypography
-          text={initialValues ? initialValues.device_number : ''}
-          variant='h4'
-          weight='regular'
-        />
+      <AddDeviceForm
+        open={showEditDevice}
+        onClose={() => setShowEditDevice(false)}
+        onSuccess={handleEditSuccess}
+        editDevice={device || null}
+      />
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb:'40px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap:1 }}>
+          <CustomTypography
+            text={t('deviceData')}
+            variant='h3'
+            weight='medium'
+          />
+          <CustomTypography
+            text={initialValues ? initialValues.device_number : ''}
+            variant='h4'
+            weight='regular'
+          />
+        </Box>
+        
+        {device && (
+          <CustomButton
+            label={t('editDevice')}
+            size={isMobile ? 'small' : 'large'}
+            state='default'
+            buttonType='first'
+            onClick={() => setShowEditDevice(true)}
+          />
+        )}
       </Box>
+      
       <Box
         sx={{
           display: 'flex',
