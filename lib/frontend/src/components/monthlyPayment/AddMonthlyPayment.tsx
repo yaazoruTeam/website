@@ -41,10 +41,10 @@ const AddMonthlyPayment: React.FC = () => {
     })
 
     const monthlyPaymentManagement: MonthlyPaymentManagement.Model = {
-      customer_id: customerData?.customer_id || '',
+      customer_id: customerData?.customer_id.toString() || '0',
       monthlyPayment: {
         monthlyPayment_id: '',
-        customer_id: customerData?.customer_id || '',
+        customer_id: customerData?.customer_id.toString() || '0',
         customer_name: `${customerData?.first_name || ''} ${customerData?.last_name || ''}`,
         belongsOrganization: 'יעזורו',
         start_date: timeData.startDate,
@@ -68,7 +68,7 @@ const AddMonthlyPayment: React.FC = () => {
       },
       creditDetails: {
         credit_id: '',
-        customer_id: customerData?.customer_id || '',
+        customer_id: customerData?.customer_id.toString() || '0',
         token: paymentData?.token || '',
         expiry_month: paymentData?.expiry_month || '',
         expiry_year: paymentData?.expiry_year || '',

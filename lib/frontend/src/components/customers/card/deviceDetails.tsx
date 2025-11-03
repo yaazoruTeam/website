@@ -26,12 +26,12 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
   const [Assigning, setAssigning] = useState<boolean>(false) // האם מתבצע שיוך כרגע
 
   const fetchDevicesByCustomerId = useCallback(
-    async (customerId: string) => {
+    async (customerId: number) => {
       try {
         setIsLoading(true)
         setError(null)
 
-        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId, 1)
+        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId.toString(), 1)
 
         if (!customerDevicesResponse.data || customerDevicesResponse.data.length === 0) {
           setDevices([])

@@ -1,4 +1,3 @@
-import * as Customer from './Customer'
 import * as Device from './Device'
 import * as CustomerDevice from './CustomerDevice'
 import * as User from './User'
@@ -13,7 +12,6 @@ import * as PaymentCreditLink from './PaymentCreditLink'
 import * as Comment from './Comment'
 
 export {
-  Customer,
   Device,
   CustomerDevice,
   User,

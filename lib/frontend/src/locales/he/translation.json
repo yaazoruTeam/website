@@ -373,7 +373,7 @@
   "dateFormats": "תאריכים בפורמט: YYYY-MM-DD או DD/MM/YYYY",
   "customerDeviceDescription": "העלה קובץ Excel המכיל נתוני לקוחות ומכשירים משולבים (14 שדות: פרטי מכשיר + פרטי לקוח). הקובץ יעובד ויעדכן את המידע במערכת.",
   "deviceOnlyDescription": "העלה קובץ Excel המכיל נתוני מכשירים בלבד (4-5 שדות: device_number, SIM_number, IMEI_1, serialNumber, model). הקובץ יעובד ויעדכן את פרטי המכשירים במערכת.",
-  "customerOnlyDescription": "העלה קובץ Excel המכיל נתוני לקוחות בלבד (7 שדות: first_name, last_name, city, address1, phone_number, email, id_number + שדה אופציונלי: additional_phone). הקובץ יעובד ויוסיף לקוחות חדשים למערכת.",
+  "customerOnlyDescription": "העלה קובץ Excel המכיל נתוני לקוחות בלבד (7 שדות: first_name, last_name, city, address, phone_number, email, id_number + שדה אופציונלי: additional_phone). הקובץ יעובד ויוסיף לקוחות חדשים למערכת.",
   "uploadSuccessful": "הקובץ הועלה בהצלחה!",
   "uploadFailed": "שגיאה בהעלאת הקובץ",
   "errors": "שגיאות",

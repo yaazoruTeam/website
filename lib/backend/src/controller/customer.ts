@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { config } from '@config/index'
-import * as db from '@db/index'
+import { customerRepository } from '@repositories/CustomerRepository'
 import { Customer, HttpError } from '@model'
+import { CustomerStatus } from '../entities/Customer'
 import { handleError } from './err'
 import logger from '../utils/logger'
 
@@ -18,7 +19,17 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction): 
     logger.debug('Checking for existing customer', { email: sanitized.email, id_number: sanitized.id_number });
     await existingCustomer(sanitized, false)
 
-    const customer = await db.Customer.createCustomer(sanitized)
+    const customer = await customerRepository.createCustomer({
+      first_name: sanitized.first_name,
+      last_name: sanitized.last_name,
+      id_number: sanitized.id_number,
+      phone_number: sanitized.phone_number,
+      additional_phone: sanitized.additional_phone || null,
+      email: sanitized.email,
+      city: sanitized.city,
+      address: sanitized.address,
+      status: (sanitized.status as CustomerStatus) || CustomerStatus.ACTIVE,
+    })
 
     logger.info('Customer created successfully', { customer_id: customer.customer_id });
     res.status(201).json(customer)
@@ -35,7 +46,7 @@ const getCustomers = async (req: Request, res: Response, next: NextFunction): Pr
 
     logger.debug('getCustomers called', { page, offset });
 
-    const { customers, total } = await db.Customer.getCustomers(offset)
+    const { customers, total } = await customerRepository.getCustomers(offset)
 
     logger.info('getCustomers success', { count: customers.length, total });
     res.status(200).json({
@@ -55,8 +66,8 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
     logger.debug('getCustomerById called', { id: req.params.id });
 
     Customer.sanitizeIdExisting(req)
-    const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(req.params.id))
+    if (!customer) {
       logger.warn('Customer not found', { id: req.params.id });
       const error: HttpError.Model = {
         status: 404,
@@ -64,7 +75,6 @@ const getCustomerById = async (req: Request, res: Response, next: NextFunction):
       }
       throw error
     }
-    const customer = await db.Customer.getCustomerById(req.params.id)
     logger.info('getCustomerById success', { id: req.params.id });
     res.status(200).json(customer)
   } catch (error: unknown) {
@@ -94,7 +104,7 @@ const getCustomersByCity = async (
       throw error
     }
 
-    const { customers, total } = await db.Customer.getCustomersByCity(city, offset)
+    const { customers, total } = await customerRepository.find({ city: city }, offset)
 
     if (customers.length === 0) {
       logger.warn('No customers found in city', { city });
@@ -112,8 +122,8 @@ const getCustomersByCity = async (
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    logger.error('Error in getCustomersByCity', { city: req.params.city, error: error.message });
+  } catch (error: unknown) {
+    logger.error('Error in getCustomersByCity', { city: req.params.city, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -130,16 +140,21 @@ const getCustomersByStatus = async (
 
     logger.debug('getCustomersByStatus called', { status, page });
 
-    if (status !== 'active' && status !== 'inactive') {
-      logger.warn('Invalid status parameter', { status });
+    // Validate status is one of the allowed enum values
+    const validStatuses = Object.values(CustomerStatus)
+    if (!validStatuses.includes(status as CustomerStatus)) {
+      logger.warn('Invalid status parameter', { status, validStatuses });
       const error: HttpError.Model = {
         status: 400,
-        message: "Invalid status. Allowed values: 'active' or 'inactive'.",
+        message: `Invalid status. Allowed values: '${validStatuses.join("' or '")}'.`,
       }
       throw error
     }
 
-    const { customers, total } = await db.Customer.getCustomersByStatus(status, offset)
+    const { customers, total } = await customerRepository.find(
+      { status: status as CustomerStatus },
+      offset,
+    )
 
     logger.info('getCustomersByStatus success', { status, count: customers.length, total });
     res.status(200).json({
@@ -175,9 +190,9 @@ const getCustomersByDateRange = async (
       throw error
     }
 
-    const { customers, total } = await db.Customer.getCustomersByDateRange(
-      startDate as string,
-      endDate as string,
+    const { customers, total } = await customerRepository.findByDate(
+      new Date(startDate as string),
+      new Date(endDate as string),
       offset,
     )
 
@@ -206,7 +221,19 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
     Customer.sanitizeBodyExisting(req)
     const sanitized = Customer.sanitize(req.body, true)
     await existingCustomer(sanitized, true)
-    const updateCustomer = await db.Customer.updateCustomer(req.params.id, sanitized)
+
+    const numericId = parseInt(req.params.id)
+    const updateData = {
+      first_name: sanitized.first_name,
+      last_name: sanitized.last_name,
+      phone_number: sanitized.phone_number,
+      additional_phone: sanitized.additional_phone || null,
+      email: sanitized.email,
+      city: sanitized.city,
+      address: sanitized.address,
+      status: (sanitized.status as CustomerStatus) || CustomerStatus.ACTIVE,
+    }
+    const updateCustomer = await customerRepository.updateCustomer(numericId, updateData)
 
     logger.info('Customer updated successfully', { id: req.params.id });
     res.status(200).json(updateCustomer)
@@ -221,19 +248,13 @@ const deleteCustomer = async (req: Request, res: Response, next: NextFunction): 
     logger.debug('deleteCustomer called', { id: req.params.id });
 
     Customer.sanitizeIdExisting(req)
-    const existCustomer = await db.Customer.doesCustomerExist(req.params.id)
-    if (!existCustomer) {
-      logger.warn('Customer not found for deletion', { id: req.params.id });
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Customer does not exist.',
-      }
-      throw error
-    }
-    const deleteCustomer = await db.Customer.deleteCustomer(req.params.id)
+    const numericId = parseInt(req.params.id)
+    
+    // ✅ Repository handles the 404 check internally
+    const deletedCustomer = await customerRepository.deleteCustomer(numericId)
 
     logger.info('Customer deleted successfully', { id: req.params.id });
-    res.status(200).json(deleteCustomer)
+    res.status(200).json(deletedCustomer)
   } catch (error: unknown) {
     logger.error('Error in deleteCustomer', { id: req.params.id, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
@@ -245,20 +266,27 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
     hasId,
     email: customer.email,
     id_number: customer.id_number,
-    customer_id: hasId ? customer.customer_id : 'new'
+    phone_number: customer.phone_number,
+    customer_id: hasId ? customer.customer_id : 0
   });
 
   let customerEx
   if (hasId) {
-    customerEx = await db.Customer.findCustomer({
+    // ✅ UPDATE: משדרים את customer_id כדי לא להזריק שגיאה על אותו ה-row
+    // ✅ בודקים את כל ה-UNIQUE fields: email, id_number, phone_number
+    customerEx = await customerRepository.findExistingCustomer({
       customer_id: customer.customer_id,
       email: customer.email,
       id_number: customer.id_number,
+      phone_number: customer.phone_number,
     })
   } else {
-    customerEx = await db.Customer.findCustomer({
+    // ✅ CREATE: לא משדרים customer_id (עדיין אין)
+    // ✅ בודקים את כל ה-UNIQUE fields: email, id_number, phone_number
+    customerEx = await customerRepository.findExistingCustomer({
       email: customer.email,
       id_number: customer.id_number,
+      phone_number: customer.phone_number,
     })
   }
 
@@ -267,7 +295,13 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       existing_id: customerEx.customer_id,
       conflict_field: customerEx.email === customer.email ? 'email' : 'id_number'
     });
-    Customer.sanitizeExistingCustomer(customerEx, customer)
+    // Convert TypeORM entity to Customer.Model interface
+    const customerExModel: Customer.Model = {
+      ...customerEx,
+      customer_id: (customerEx.customer_id),
+      additional_phone: customerEx.additional_phone || '',
+    }
+    Customer.sanitizeExistingCustomer(customerExModel, customer)
   } else {
     logger.debug('No existing customer conflicts found');
   }
@@ -277,12 +311,12 @@ const getCities = async (req: Request, res: Response, next: NextFunction): Promi
   try {
     logger.debug('getCities called');
 
-    const cities = await db.Customer.getUniqueCities()
+    const cities = await customerRepository.getUniqueCities()
 
     logger.info('getCities success', { count: cities.length });
     res.status(200).json(cities)
-  } catch (error: any) {
-    logger.error('Error in getCities', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Error in getCities', { error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }
@@ -301,7 +335,7 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
       return
     }
 
-    const { customers, total } = await db.Customer.searchCustomersByName(searchTerm, offset)
+    const { customers, total } = await customerRepository.searchCustomersByName(searchTerm, offset)
 
     logger.info('searchCustomers success', { searchTerm, count: customers.length, total });
     res.status(200).json({
@@ -310,8 +344,8 @@ const searchCustomers = async (req: Request, res: Response, next: NextFunction):
       totalPages: Math.ceil(total / limit),
       total,
     })
-  } catch (error: any) {
-    logger.error('Error in searchCustomers', { searchTerm: req.query.q, error: error.message });
+  } catch (error: unknown) {
+    logger.error('Error in searchCustomers', { searchTerm: req.query.q, error: error instanceof Error ? error.message : String(error) });
     handleError(error, next)
   }
 }

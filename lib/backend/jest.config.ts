@@ -19,6 +19,7 @@ const config: Config = {
     '^@model/(.*)$': '<rootDir>/../model/src/$1',
     '^@db$': '<rootDir>/src/db',
     '^@db/(.*)$': '<rootDir>/src/db/$1',
+    '^@repositories/(.*)$': '<rootDir>/src/repositories/$1',
     '^@service/(.*)$': '<rootDir>/src/service/$1',
     '^@controller/(.*)$': '<rootDir>/src/controller/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',

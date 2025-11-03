@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import * as db from '@db/index'
 import { BranchCustomer, HttpError } from '@model'
+import { customerRepository } from '@repositories/CustomerRepository'
 import config from '@config/index'
 import { handleError } from './err'
 
@@ -23,8 +24,8 @@ const createBranchCustomer = async (
       }
       throw error
     }
-    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist.',
@@ -176,8 +177,8 @@ const updateBranchCustomer = async (
       }
       throw error
     }
-    const existCustomer = await db.Customer.doesCustomerExist(sanitized.customer_id)
-    if (!existCustomer) {
+    const customer = await customerRepository.getCustomerById(parseInt(sanitized.customer_id))
+    if (!customer) {
       const error: HttpError.Model = {
         status: 404,
         message: 'customer does not exist.',

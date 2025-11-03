@@ -6,7 +6,7 @@ import { AddCustomerFormInputs } from './AddCustomerForm'
 export const addCustomer = async (data: AddCustomerFormInputs, localComments?: TempComment.Model[]): Promise<Customer.Model> => {
   
   const customerData: Customer.Model = {
-    customer_id: '',
+    customer_id: 0,
     first_name: data.first_name,
     last_name: data.last_name,
     id_number: data.id_number,
@@ -14,9 +14,7 @@ export const addCustomer = async (data: AddCustomerFormInputs, localComments?: T
     phone_number: data.phone_number,
     additional_phone: data.additional_phone,
     city: data.city,
-    address1: data.address,
-    address2: '',
-    zipCode: '2222',
+    address: data.address,
     status: '',
     created_at: new Date(Date.now()),
     updated_at: new Date(Date.now()),
