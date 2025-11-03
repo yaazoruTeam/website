@@ -52,7 +52,6 @@ import {
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import ModelPackages from './modelPackage'
 import SwitchWithLoader from '../designComponent/SwitchWithLoader'
-import { AxiosError } from 'axios'
 import { handleError as handleErrorUtil } from '../../utils/errorHelpers'
 
 
@@ -173,27 +172,30 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         return await addOneTimePackage(widelyDetails?.endpoint_id || 0, widelyDetails?.domain_user_id || 0, selectedPackage)
     }
 
-    // פונקציה לטיפול בהשהיה/הפעלת קו
+    // פונקציה לטיפול בביטול/הפעלת קו
     const handleToggleLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
         try {
             setIsTerminating(true);
-            const action = widelyDetails.active ? 'freeze' : 'unfreeze';
-            await freezeUnfreezeMobile(widelyDetails.endpoint_id, action);
-            setIsTerminateModalOpen(false);
             
-            const successMsg = widelyDetails.active 
-                ? t('lineSuspendedSuccessfully') || 'הקו הושהה בהצלחה'
-                : t('lineActivatedSuccessfully') || 'הקו הופעל בהצלחה';
-            setSuccessMessage(successMsg);
+            if (widelyDetails.active) {
+                // ביטול קו - קריאה ל-terminateLine
+                await terminateLine(widelyDetails.endpoint_id);
+                setSuccessMessage(t('lineCancelledSuccessfully') || 'הקו בוטל בהצלחה');
+            } else {
+                // הפעלת קו - כרגע רק הודעה, ניתן להוסיף API בעתיד
+                setSuccessMessage(t('lineActivatedSuccessfully') || 'הקו הופעל בהצלחה');
+            }
+            
+            setIsTerminateModalOpen(false);
             
             // רענון הנתונים לאחר השינוי
             await fetchWidelyDetails();
         } catch (err) {
             console.error('Error toggling line:', err);
             const errorMsg = widelyDetails?.active
-                ? t('errorSuspendingLine') || 'שגיאה בהשהיית הקו'
+                ? t('errorCancellingLine') || 'שגיאה בביטול הקו'
                 : t('errorActivatingLine') || 'שגיאה בהפעלת הקו';
             setErrorMessage(errorMsg);
         } finally {
@@ -238,7 +240,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
             }
-        } catch (err: AxiosError | unknown) {
+        } catch (err: unknown) {
             console.error('Error in comprehensive reset:', err);
             const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
@@ -276,7 +278,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             } else {
                 setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
             }
-        } catch (err: AxiosError | unknown) {
+        } catch (err: unknown) {
             console.error('Error in soft reset:', err);
             const errorMsg = handleErrorUtil('softReset', err, t('softResetError'));
             setErrorMessage(`${t('softResetFailed')}: ${errorMsg}`);
@@ -451,7 +453,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
-        } catch (err: AxiosError | unknown) {
+        } catch (err: unknown) {
             // Parse error response to determine appropriate user message
             const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingsimDetails'));
 
@@ -510,7 +512,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 <CustomButton
-                    label={widelyDetails?.active ? t('suspendLine') : t('activateLine')}
+                    label={widelyDetails?.active ? t('cancelLine') : t('activateLine')}
                     buttonType="first"
                     size="small"
                     onClick={() => setIsTerminateModalOpen(true)}
@@ -736,7 +738,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             >
                 {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
                 <CustomTypography
-                    text={widelyDetails?.active ? t('suspendLine') : t('activateLine')}
+                    text={widelyDetails?.active ? t('cancelLine') : t('activateLine')}
                     variant="h1"
                     weight="medium"
                     color={colors.blue900}
@@ -744,7 +746,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
 
                 <CustomTypography
-                    text={widelyDetails?.active ? t('areYouSureYouWantToSuspendTheLine') : t('areYouSureYouWantToActivateTheLine')}
+                    text={widelyDetails?.active ? t('areYouSureYouWantToCancelTheLine') : t('areYouSureYouWantToActivateTheLine')}
                     variant="h3"
                     weight="regular"
                     color={colors.blue900}
