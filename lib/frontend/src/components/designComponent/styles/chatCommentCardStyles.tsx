@@ -106,18 +106,21 @@ export const ChatModalOverlay = styled(FlexBase)({
   position: 'fixed',
   top: 0,
   left: 0,
-  right: 0,
   bottom: 0,
-  backgroundColor: colors.neutralShadow,
-  zIndex: 9999,
+  width: '400px',
+  backgroundColor: 'transparent',
+  zIndex: 1000,
   justifyContent: 'flex-start',
+  pointerEvents: 'none', 
+  '& > *': {
+    pointerEvents: 'auto',
+  },
 })
 
 export const ChatModalContainer = styled(FlexColumn)({
-  marginTop: '38px',
-  marginRight: '-3px',
+  height: '100vh',
+  width: '100%',
   backgroundColor: colors.neutral0,
-  borderTopLeftRadius: '6px',
-  borderBottomLeftRadius: '6px',
-  boxShadow: `0 10px 25px ${colors.neutralShadow}`,
+  boxShadow: `2px 0 15px ${colors.neutralShadow}`,
+  overflowY: 'auto',
 })
