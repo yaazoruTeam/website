@@ -18,11 +18,30 @@ const Header: React.FunctionComponent = () => {
   const navigate = useNavigate()
   const [token, setToken] = useState<string>('')
   const [userName, setUserName] = useState<string | null>(null)
+  const [userPhoto, setUserPhoto] = useState<string | null>(null)
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
     if (storedToken) {
       setToken(storedToken)
+    }
+
+    // Listen for auth updates from Google Auth
+    const handleAuthUpdate = (event: CustomEvent) => {
+      console.log('🔄 Auth update event received:', event.detail)
+      const storedToken = localStorage.getItem('token')
+      if (storedToken) {
+        setToken(storedToken)
+        // Force refresh user data
+        getUserFromToken(storedToken)
+      }
+    }
+
+    window.addEventListener('userAuthUpdated', handleAuthUpdate as EventListener)
+    
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('userAuthUpdated', handleAuthUpdate as EventListener)
     }
   }, [])
 
@@ -42,8 +61,12 @@ const Header: React.FunctionComponent = () => {
       const payload = token.split('.')[1]
       const decodedPayload = JSON.parse(atob(payload))
       const user_id: string = decodedPayload.user_id
+      console.log('📊 Getting user from token, user_id:', user_id)
       const user = await getUserById(user_id)
+      console.log('👤 User data received:', user)
+      console.log('📸 Photo URL:', user.photo_url)
       setUserName(user.first_name)
+      setUserPhoto(user.photo_url || null)
       return user
     } catch (error) {
       console.error('Error decoding token', error)
@@ -190,14 +213,55 @@ const Header: React.FunctionComponent = () => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    overflow: 'hidden', // Important for circular image
                   }}
                 >
-                  <CustomTypography
-                    text={userName ? userName?.charAt(0) : ''}
-                    variant='h1'
-                    weight='medium'
-                    color={colors.blue600}
-                  />
+                  {userPhoto ? (
+                    <>
+                      <img
+                        src={userPhoto}
+                        alt={userName || 'User Avatar'}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '100%',
+                        }}
+                        onLoad={() => {
+                          console.log('✅ Image loaded successfully:', userPhoto)
+                        }}
+                        onError={(e) => {
+                          console.error('❌ Image failed to load:', userPhoto)
+                          // If image fails to load, hide it to show fallback letter
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                      {/* Fallback letter - shown when image fails to load */}
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          zIndex: -1, // Behind the image
+                        }}
+                      >
+                        <CustomTypography
+                          text={userName ? userName?.charAt(0) : ''}
+                          variant='h1'
+                          weight='medium'
+                          color={colors.blue600}
+                        />
+                      </Box>
+                    </>
+                  ) : (
+                    <CustomTypography
+                      text={userName ? userName?.charAt(0) : ''}
+                      variant='h1'
+                      weight='medium'
+                      color={colors.blue600}
+                    />
+                  )}
                 </Box>
               </Box>
             )}
