@@ -111,7 +111,7 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     }
     
     // Exclude device_id from body before spreading to avoid duplicates
-    const { device_id, ...bodyWithoutDeviceId } = req.body
+    const { device_id: _device_id, ...bodyWithoutDeviceId } = req.body
     const deviceDataWithId = {
       ...bodyWithoutDeviceId,
       device_id: urlDeviceId,

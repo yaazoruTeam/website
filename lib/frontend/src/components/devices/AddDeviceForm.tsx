@@ -68,7 +68,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
         serialNumber: editDevice.serialNumber || '',
         model: editDevice.model || '',
       })
-    } else if (!open) {
+    } else if (open && !editDevice) {
       reset({
         device_number: '',
         SIM_number: '',
