@@ -97,10 +97,24 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     Device.sanitizeIdExisting(req)
     Device.sanitizeBodyExisting(req)
     
-    // הוספת device_id לגוף הבקשה לפני ה-sanitize
+    // Validate device_id in body matches URL param if present
+    const urlDeviceId = parseInt(req.params.id, 10)
+    if (
+      Object.prototype.hasOwnProperty.call(req.body, 'device_id') &&
+      req.body.device_id !== urlDeviceId
+    ) {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'device_id in request body does not match device_id in URL.',
+      }
+      throw error
+    }
+    
+    // Exclude device_id from body before spreading to avoid duplicates
+    const { device_id, ...bodyWithoutDeviceId } = req.body
     const deviceDataWithId = {
-      ...req.body,
-      device_id: parseInt(req.params.id, 10)
+      ...bodyWithoutDeviceId,
+      device_id: urlDeviceId,
     }
     
     logger.debug(`Device data with ID: ${JSON.stringify(deviceDataWithId)}`)
