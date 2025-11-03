@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, terminateLine } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 
@@ -173,18 +173,29 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         return await addOneTimePackage(widelyDetails?.endpoint_id || 0, widelyDetails?.domain_user_id || 0, selectedPackage)
     }
 
-    // פונקציה לטיפול בביטול קו
-    const handleTerminateLine = async () => {
+    // פונקציה לטיפול בהשהיה/הפעלת קו
+    const handleToggleLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
         try {
             setIsTerminating(true);
-            await terminateLine(widelyDetails.endpoint_id);
+            const action = widelyDetails.active ? 'freeze' : 'unfreeze';
+            await freezeUnfreezeMobile(widelyDetails.endpoint_id, action);
             setIsTerminateModalOpen(false);
-            // ניתן להוסיף הודעת הצלחה או לרענן את הנתונים
+            
+            const successMsg = widelyDetails.active 
+                ? t('lineSuspendedSuccessfully') || 'הקו הושהה בהצלחה'
+                : t('lineActivatedSuccessfully') || 'הקו הופעל בהצלחה';
+            setSuccessMessage(successMsg);
+            
+            // רענון הנתונים לאחר השינוי
+            await fetchWidelyDetails();
         } catch (err) {
-            console.error('Error terminating line:', err);
-            // ניתן להוסיף הודעת שגיאה
+            console.error('Error toggling line:', err);
+            const errorMsg = widelyDetails?.active
+                ? t('errorSuspendingLine') || 'שגיאה בהשהיית הקו'
+                : t('errorActivatingLine') || 'שגיאה בהפעלת הקו';
+            setErrorMessage(errorMsg);
         } finally {
             setIsTerminating(false);
         }
@@ -499,7 +510,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 <CustomButton
-                    label={t('cancelLine')}
+                    label={widelyDetails?.active ? t('suspendLine') : t('activateLine')}
                     buttonType="first"
                     size="small"
                     onClick={() => setIsTerminateModalOpen(true)}
@@ -725,7 +736,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             >
                 {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
                 <CustomTypography
-                    text={t('cancelLine')}
+                    text={widelyDetails?.active ? t('suspendLine') : t('activateLine')}
                     variant="h1"
                     weight="medium"
                     color={colors.blue900}
@@ -733,7 +744,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
 
                 <CustomTypography
-                    text={t('areYouSureYouWantToCancelTheLine')}
+                    text={widelyDetails?.active ? t('areYouSureYouWantToSuspendTheLine') : t('areYouSureYouWantToActivateTheLine')}
                     variant="h3"
                     weight="regular"
                     color={colors.blue900}
@@ -751,7 +762,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         label={t('confirm')}
                         buttonType="third"
                         size="small"
-                        onClick={handleTerminateLine}
+                        onClick={handleToggleLine}
                         disabled={isTerminating}
                     />
                 </Box>
