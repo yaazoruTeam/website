@@ -9,6 +9,23 @@ import logger from '../utils/logger'
 
 const limit = config.database.limit
 
+// Helper function to build user entity payload
+const buildUserPayload = (sanitized: User.Model) => ({
+  first_name: sanitized.first_name,
+  last_name: sanitized.last_name,
+  phone_number: sanitized.phone_number,
+  additional_phone: sanitized.additional_phone ?? null,
+  email: sanitized.email,
+  city: sanitized.city,
+  address: sanitized.address,
+  password: sanitized.password,
+  user_name: sanitized.user_name,
+  role: (sanitized.role as any) ?? 'branch',
+  google_uid: (sanitized as any).google_uid ?? null,
+  photo_url: (sanitized as any).photo_url ?? null,
+  email_verified: (sanitized as any).email_verified ?? false,
+})
+
 // Helper function to check if user can access/modify another user's data
 const checkUserPermissions = (req: Request, targetUserId: string) => {
   const token = req.headers['authorization']?.split(' ')[1]
@@ -47,31 +64,12 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
 
     logger.debug('Checking for existing user', { email: sanitized.email, id_number: sanitized.id_number, user_name: sanitized.user_name })
     await existingUser(sanitized, false)
-    
+
     // Hash password only if it exists (Google users don't have passwords)
-    if (sanitized.password) {
-  
-    sanitized.password = await hashPassword(sanitized.password)
-    }
-    
-    
+    sanitized.password &&= await hashPassword(sanitized.password)
+
     // Convert User.Model to Partial<User> (TypeORM entity)
-    const userEntity = await userRepository.createUser({
-      first_name: sanitized.first_name,
-      last_name: sanitized.last_name,
-      id_number: sanitized.id_number,
-      phone_number: sanitized.phone_number,
-      additional_phone: sanitized.additional_phone || null,
-      email: sanitized.email,
-      city: sanitized.city,
-      address: sanitized.address,
-      password: sanitized.password,
-      user_name: sanitized.user_name,
-      role: (sanitized.role as any) || 'branch',
-      google_uid: (sanitized as any).google_uid || null,
-      photo_url: (sanitized as any).photo_url || null,
-      email_verified: (sanitized as any).email_verified || false,
-    })
+    const userEntity = await userRepository.createUser(buildUserPayload(sanitized))
 
     logger.info('User created successfully', { user_id: userEntity.user_id })
     res.status(201).json(userEntity)
@@ -143,30 +141,14 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
     checkUserPermissions(req, req.params.id)
     
     const userData = req.body
-    if (userData.password) {
-      userData.password = await hashPassword(userData.password)
-    }
+    userData.password &&= await hashPassword(userData.password)
     const sanitized = User.sanitize(userData, true)
     await existingUser(sanitized, true)
 
     const numericId = parseInt(req.params.id)
     
     // Convert User.Model to Partial<User> (TypeORM entity)
-    const updateData = await userRepository.updateUser(numericId, {
-      first_name: sanitized.first_name,
-      last_name: sanitized.last_name,
-      phone_number: sanitized.phone_number,
-      additional_phone: sanitized.additional_phone || null,
-      email: sanitized.email,
-      city: sanitized.city,
-      address: sanitized.address,
-      password: sanitized.password,
-      user_name: sanitized.user_name,
-      role: (sanitized.role as any) || 'branch',
-      google_uid: (sanitized as any).google_uid || null,
-      photo_url: (sanitized as any).photo_url || null,
-      email_verified: (sanitized as any).email_verified || false,
-    })
+    const updateData = await userRepository.updateUser(numericId, buildUserPayload(sanitized))
 
     logger.info('User updated successfully', { id: req.params.id })
     res.status(200).json(updateData)
