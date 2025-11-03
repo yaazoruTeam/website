@@ -1,9 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material/styles'
 
 import './App.css'
 import SideNav from './components/layout/SideNav'
+import { GoogleAuthService } from './services/googleAuthService'
+
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
 import Devices from './components/devices/devices'
@@ -42,14 +44,36 @@ import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
 import ExcelUpload from './components/excel/ExcelUpload'
+import SimReset from './components/devices/SimReset'
 
 function App() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const [SideNavOpen, setSideNavOpen] = useState(false)
+
+  const Margins_in_narrow_menu = 40
+  const Margin_at_expand_menu = 20
+  
+  const marginRight = SideNavOpen ? Margin_at_expand_menu : Margins_in_narrow_menu
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
+    
+    // Handle Google Auth redirect result when app loads
+    const handleAuthRedirect = async () => {
+      try {
+        await GoogleAuthService.handleRedirectResult()
+      } catch (error) {
+        console.log('No redirect result or error handling redirect:', error)
+      }
+    }
+    
+    handleAuthRedirect()
   }, [navigate])
+
+  const handleSideNavToggle = () => {
+    setSideNavOpen(!SideNavOpen)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -58,6 +82,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/sim-reset' element={<SimReset />} />
         
         {/* עמודים מוגנים עם Header ו-SideNav */}
         <Route
@@ -112,6 +137,8 @@ function App() {
                         text: t('permissions'),
                       },
                     ]}
+                    isOpen={SideNavOpen}
+                    onToggle={handleSideNavToggle}
                   />
                   <main
                     style={{
@@ -119,10 +146,11 @@ function App() {
                       padding: '20px',
                       overflow: 'auto',
                       background: colors.neutral75,
-                      marginRight: '130px', // רוחב ה-SideNav
+                      marginRight: `${marginRight}px`,
+                      transition: 'margin-right 0.3s ease-in-out',
                     }}
                   >
-                    <AppLayout>
+                    <AppLayout SideNavOpen={SideNavOpen}>
                       <Routes>
                         <Route path='/dashboard' element={<Dashboard />} />
                         <Route path='/customers' element={<Customers />} />

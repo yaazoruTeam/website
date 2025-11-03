@@ -1,7 +1,7 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  customer_id: string
+  customer_id: number
   first_name: string
   last_name: string
   id_number: string
@@ -9,9 +9,7 @@ interface Model {
   additional_phone: string
   email: string
   city: string
-  address1: string
-  address2: string
-  zipCode: string
+  address: string
   status: string
   created_at: Date
   updated_at: Date
@@ -115,21 +113,12 @@ function sanitize(customer: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customer.address1) || customer.address1.trim() === '') {
-    console.log('Customer missing or invalid address1');
+  if (!isString(customer.address) || customer.address.trim() === '') {
+    console.log('Customer missing or invalid address');
     
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "address1".',
-    }
-    throw error
-  }
-  if (customer.address2 && !isString(customer.address2)) {
-    console.log('Customer invalid address2');
-    
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "address2".',
+      message: 'Invalid or missing "address".',
     }
     throw error
   }
@@ -143,9 +132,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     additional_phone: customer.additional_phone ? cleanAndNormalizePhone(customer.additional_phone) : customer.additional_phone,
     email: customer.email.trim().toLowerCase(),
     city: customer.city.trim(),
-    address1: customer.address1.trim(),
-    address2: customer.address2,
-    zipCode: customer.zipCode || '',
+    address: customer.address.trim(),
     status: customer.status || 'active',
     created_at: customer.created_at || new Date(Date.now()),
     updated_at: customer.updated_at || new Date(Date.now()),
