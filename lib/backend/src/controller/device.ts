@@ -91,13 +91,29 @@ const getDevicesByStatus = async (
 
 const updateDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    logger.info(`Updating device with ID: ${req.params.id}`)
+    logger.debug(`Request body: ${JSON.stringify(req.body)}`)
+    
     Device.sanitizeIdExisting(req)
     Device.sanitizeBodyExisting(req)
-    const sanitized = Device.sanitize(req.body, true)
+    
+    // הוספת device_id לגוף הבקשה לפני ה-sanitize
+    const deviceDataWithId = {
+      ...req.body,
+      device_id: parseInt(req.params.id, 10)
+    }
+    
+    logger.debug(`Device data with ID: ${JSON.stringify(deviceDataWithId)}`)
+    const sanitized = Device.sanitize(deviceDataWithId, true)
+    logger.debug(`Sanitized device data: ${JSON.stringify(sanitized)}`)
+    
     await existingDevice(sanitized, true)
-    const updateDevice = await db.Device.updateDevice(req.params.id, sanitized)
-    res.status(200).json(updateDevice)
+    const updatedDevice = await db.Device.updateDevice(req.params.id, sanitized)
+    
+    logger.info(`Device updated successfully: ${updatedDevice.device_id}`)
+    res.status(200).json(updatedDevice)
   } catch (error: unknown) {
+    logger.error(`Error updating device: ${JSON.stringify(error)}`)
     handleError(error, next)
   }
 }
