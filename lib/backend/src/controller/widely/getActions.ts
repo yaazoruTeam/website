@@ -332,6 +332,7 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     data_used: mobileInfo?.data_used,
     data_limit: mobileInfo?.data_limit,
     registration_info: mobileInfo?.registration_info,
+  })
 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
