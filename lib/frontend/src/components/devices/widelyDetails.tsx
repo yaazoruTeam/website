@@ -176,30 +176,28 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const handleToggleLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
+        // בדיקה מוקדמת אם הפעלת קו אינה נתמכת
+        if (!widelyDetails.active) {
+            setIsTerminateModalOpen(false);
+            setErrorMessage(t('activationNotSupported') || 'הפעלת קו אינה נתמכת כרגע');
+            // TODO: Implement line activation API call when available
+            return;
+        }
+
         try {
             setIsTerminating(true);
             
-            if (widelyDetails.active) {
-                // ביטול קו - קריאה ל-terminateLine
-                await terminateLine(widelyDetails.endpoint_id);
-                setSuccessMessage(t('lineCancelledSuccessfully') || 'הקו בוטל בהצלחה');
-            } else {
-                 // הפעלת קו אינה נתמכת כרגע
-                 setErrorMessage(t('activationNotSupported') || 'הפעלת קו אינה נתמכת כרגע');
-                 // TODO: Implement line activation API call when available
-                  return;
-            }
-            
+            // ביטול קו - קריאה ל-terminateLine
+            await terminateLine(widelyDetails.endpoint_id);
+            setSuccessMessage(t('lineCancelledSuccessfully') || 'הקו בוטל בהצלחה');
             setIsTerminateModalOpen(false);
             
             // רענון הנתונים לאחר השינוי
             await fetchWidelyDetails();
         } catch (err) {
-            console.error('Error toggling line:', err);
-            const errorMsg = widelyDetails?.active
-                ? t('errorCancellingLine') || 'שגיאה בביטול הקו'
-                : t('errorActivatingLine') || 'שגיאה בהפעלת הקו';
-            setErrorMessage(errorMsg);
+            console.error('Error cancelling line:', err);
+            setErrorMessage(t('errorCancellingLine') || 'שגיאה בביטול הקו');
+            setIsTerminateModalOpen(false);
         } finally {
             setIsTerminating(false);
         }
