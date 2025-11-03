@@ -5,6 +5,7 @@ import { errorHandler } from '@middleware/errorHandler'
 import config from '@config/index'
 import logger from '@utils/logger'
 import { initializeDatabase, closeDatabase } from './data-source'
+import { createSchema } from './db/schema'
 
 // Import express type extensions globally
 declare global {
@@ -42,7 +43,9 @@ const startServer = async () => {
     // Initialize TypeORM database connection
     // זה בעצמו מריץ מיגרציות אוטומטית!
     logger.info('🗄️  Initializing database...')
-    await initializeDatabase()
+    //to do: change back
+    // await initializeDatabase()
+    await createSchema();
     logger.info('✅ Database initialized successfully')
 
     app.listen(PORT, () => {
