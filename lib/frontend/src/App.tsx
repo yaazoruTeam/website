@@ -48,10 +48,10 @@ function App() {
   const navigate = useNavigate()
   const [SideNavOpen, setSideNavOpen] = useState(false)
 
-  const COLLAPSED_WIDTH = 40
-  const EXPANDED_WIDTH = 20
+  const Margins_in_narrow_menu = 40
+  const Margin_at_expand_menu = 20
   
-  const marginRight = SideNavOpen ? EXPANDED_WIDTH : COLLAPSED_WIDTH
+  const marginRight = SideNavOpen ? Margin_at_expand_menu : Margins_in_narrow_menu
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
