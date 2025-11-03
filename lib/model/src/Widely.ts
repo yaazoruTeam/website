@@ -43,7 +43,7 @@ interface WidelyMobileData {
   data_used?: number
   data_limit?: number
   registration_info?: {
-    mcc_mnc?: string
+    plmn_name?: string
     imei?: string
     status?: string
     msisdn?: string

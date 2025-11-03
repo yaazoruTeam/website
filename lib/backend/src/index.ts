@@ -1,9 +1,11 @@
+import 'reflect-metadata'
 import express, { Request, Response } from 'express'
 import { router } from '@routers/router'
 import { errorHandler } from '@middleware/errorHandler'
 import config from '@config/index'
-import { createSchema } from '@db/schema'
 import logger from '@utils/logger'
+import { initializeDatabase, closeDatabase } from './data-source'
+import { createSchema } from './db/schema'
 
 // Import express type extensions globally
 declare global {
@@ -38,27 +40,35 @@ app.use(errorHandler)
 // פונקציה להפעלת השרת
 const startServer = async () => {
   try {
-    logger.debug("Creating database schema...");
+    // Initialize TypeORM database connection
+    // זה בעצמו מריץ מיגרציות אוטומטית!
+    logger.info('🗄️  Initializing database...')
+    //to do: change back
+    // await initializeDatabase()
     await createSchema();
+    logger.info('✅ Database initialized successfully')
+
     app.listen(PORT, () => {
-      logger.info(`Server is running on http://localhost:${PORT}`);
-      logger.info(`Health check available at http://localhost:${PORT}/health`);
-    });
+      logger.info(`🚀 Server is running on http://localhost:${PORT}`)
+      logger.info(`💚 Health check available at http://localhost:${PORT}/health`)
+    })
   } catch (error) {
-    logger.error("Failed to start server:", error);
-    process.exit(1);
+    logger.error('❌ Failed to start server:', error)
+    process.exit(1)
   }
-};
+}
 
-// טיפול בסגירה נכונה
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  process.exit(0);
-});
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  logger.info('SIGTERM signal received: closing HTTP server')
+  await closeDatabase()
+  process.exit(0)
+})
 
-process.on('SIGINT', () => {
-  logger.info('SIGINT received, shutting down gracefully');
-  process.exit(0);
-});
+process.on('SIGINT', async () => {
+  logger.info('SIGINT signal received: closing HTTP server')
+  await closeDatabase()
+  process.exit(0)
+})
 
 startServer();

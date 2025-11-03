@@ -31,7 +31,7 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
 
 const getItems = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { items, total } = await db.Item.getItems(offset)
@@ -76,7 +76,7 @@ const getAllItemsByMonthlyPaymentId = async (req: Request, res: Response, next: 
       }
       throw error
     }
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { items, total } = await db.Item.getAllItemByMonthlyPaymentId(req.params.id, offset)
