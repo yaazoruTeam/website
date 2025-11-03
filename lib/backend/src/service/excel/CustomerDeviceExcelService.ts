@@ -63,7 +63,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
         const existDevice = await createDeviceIfNotExists(sanitized.device, trx)
 
         let existingRelation = await db.CustomerDevice.findCustomerDevice({
-          device_id: existDevice.device_id,
+          device_id: String(existDevice.device_id),
         })
 
         if (!existingRelation) {
@@ -75,7 +75,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
             {
               customerDevice_id: '',
               customer_id: String(existCustomer.customer_id),
-              device_id: existDevice.device_id,
+              device_id: String(existDevice.device_id),
               receivedAt: date,
               planEndDate: planEndDate,
             },

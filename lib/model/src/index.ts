@@ -1,6 +1,7 @@
 import { EntityType } from "./Comment";
 import * as Customer from './Customer'
 import * as Device from './Device'
+import { DeviceStatus } from './Device'
 import * as HttpError from './HttpError'
 import * as HttpErrorWithStatus from './HttpErrorWithStatus'
 import * as CreateCommentDto from './Dtos'
@@ -28,6 +29,7 @@ import * as GoogleAuth from './GoogleAuth' //to do:TEMPORARY SOLUTION - Google A
 export {
   Customer,
   Device,
+  DeviceStatus,
   HttpError,
   HttpErrorWithStatus,
   CustomerDevice,
