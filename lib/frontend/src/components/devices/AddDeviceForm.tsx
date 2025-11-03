@@ -7,7 +7,7 @@ import CustomTypography from '../designComponent/Typography'
 import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
-import { createDevice } from '../../api/device'
+import { createDevice, updateDevice } from '../../api/device'
 import { Device } from '@model'
 import { extractErrorMessage } from '../../utils/errorHelpers'
 
@@ -15,23 +15,24 @@ interface AddDeviceFormProps {
   open: boolean
   onClose: () => void
   onSuccess: () => void
+  editDevice?: Device.Model | null
 }
 
 interface DeviceFormData {
   device_number: string
   SIM_number: string
   IMEI_1: string
-  // mehalcha_number: string
   serialNumber: string
   model: string
 }
 
-const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess }) => {
+const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess, editDevice = null }) => {
   const { t } = useTranslation()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null)
   const isMobile = useMediaQuery('(max-width:600px)')
+  const isEditMode = !!editDevice
 
   // Common configuration for numeric fields
   const numericInputProps = {
@@ -57,28 +58,64 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
     }
   })
 
+  // טעינת נתוני המכשיר במצב עריכה
+  useEffect(() => {
+    if (editDevice && open) {
+      reset({
+        device_number: editDevice.device_number || '',
+        SIM_number: editDevice.SIM_number || '',
+        IMEI_1: editDevice.IMEI_1 || '',
+        serialNumber: editDevice.serialNumber || '',
+        model: editDevice.model || '',
+      })
+    } else if (!open) {
+      reset({
+        device_number: '',
+        SIM_number: '',
+        IMEI_1: '',
+        serialNumber: '',
+        model: '',
+      })
+    }
+  }, [editDevice, open, reset])
+
   const onSubmit = useCallback(async (data: DeviceFormData) => {
     try {
-      const deviceData: Omit<Device.Model, 'device_id'> = {
-        ...data,
-        status: 'active',
-        purchaseDate: null,
-        registrationDate: new Date(),
-        plan: '', //?? מאיפה מקבלים את זה to do
+      if (isEditMode && editDevice) {
+        // מצב עריכה - עדכון מכשיר קיים
+        const deviceData: Partial<Device.Model> = {
+          device_number: data.device_number,
+          SIM_number: data.SIM_number,
+          IMEI_1: data.IMEI_1,
+          serialNumber: data.serialNumber,
+          model: data.model,
+        }
+        await updateDevice(editDevice.device_id, deviceData)
+        setSuccessMessage(t('deviceUpdatedSuccessfully'))
+      } else {
+        // מצב הוספה - יצירת מכשיר חדש
+        const deviceData: Omit<Device.Model, 'device_id'> = {
+          ...data,
+          status: 'active',
+          purchaseDate: null,
+          registrationDate: new Date(),
+          plan: '',
+        }
+        await createDevice(deviceData)
+        setSuccessMessage(t('deviceAddedSuccessfully'))
       }
-
-      await createDevice(deviceData)
-
-      setSuccessMessage(t('deviceAddedSuccessfully'))
 
       reset()
       onClose()
-      onSuccess() // Refresh the devices list
+      onSuccess()
     } catch (error: unknown) {
-      const errorMsg = extractErrorMessage(error, t('deviceAddFailed'))
+      const errorMsg = extractErrorMessage(
+        error, 
+        isEditMode ? t('deviceUpdateFailed') : t('deviceAddFailed')
+      )
       setErrorMessage(errorMsg)
     }
-  }, [t, reset, onClose, onSuccess])
+  }, [t, reset, onClose, onSuccess, isEditMode, editDevice])
 
   useEffect(() => {
     setSubmitHandler(() => handleSubmit(onSubmit))
@@ -102,14 +139,14 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
       {/* Header */}
       <Box sx={{ mb: 2 }}>
         <CustomTypography
-          text={t('addingDevice')}
+          text={isEditMode ? t('editDevice') : t('addingDevice')}
           variant='h1'
           weight='bold'
           color={colors.blue900}
         />
       </Box>
 
-      {/* First row: mehalcha_number and model */}
+      {/* First row: serialNumber and model */}
       <Box
         sx={{
           display: 'flex',
@@ -122,7 +159,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           control={control}
           name="serialNumber"
           label={t('serialNumber')}
-        // to do : להוסיף ולידציות 
         />
         <CustomTextField
           control={control}

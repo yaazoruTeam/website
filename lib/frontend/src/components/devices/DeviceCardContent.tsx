@@ -9,9 +9,10 @@ import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
+  onDeviceUpdate?: () => Promise<void>
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice, onDeviceUpdate }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
 
   // הבאת ההערה האחרונה של המכשיר
@@ -38,6 +39,13 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
   useEffect(() => {
     fetchLastComment()
   }, [fetchLastComment])
+
+  const handleDeviceUpdate = async () => {
+    // רענון הנתונים מהשרת
+    if (onDeviceUpdate) {
+      await onDeviceUpdate()
+    }
+  }
 
   return (
     <Box>
@@ -74,6 +82,8 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        device={device}
+        onDeviceUpdate={handleDeviceUpdate}
       />
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
