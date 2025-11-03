@@ -184,8 +184,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 await terminateLine(widelyDetails.endpoint_id);
                 setSuccessMessage(t('lineCancelledSuccessfully') || 'הקו בוטל בהצלחה');
             } else {
-                // הפעלת קו - כרגע רק הודעה, ניתן להוסיף API בעתיד
-                setSuccessMessage(t('lineActivatedSuccessfully') || 'הקו הופעל בהצלחה');
+                 // הפעלת קו אינה נתמכת כרגע
+                 setErrorMessage(t('activationNotSupported') || 'הפעלת קו אינה נתמכת כרגע');
+                 // TODO: Implement line activation API call when available
+                  return;
             }
             
             setIsTerminateModalOpen(false);
