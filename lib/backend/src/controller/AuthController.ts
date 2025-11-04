@@ -241,7 +241,6 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
     // Update user with Google info (link Google account and update profile data)
     user = await db.User.updateUserPartial(user.user_id, { 
       google_uid: verifiedUid,
-      user_name: verifiedDisplayName || user.user_name,
       photo_url: verifiedPhotoURL || user.photo_url,
       email_verified: verifiedEmailVerified || user.email_verified
     })
