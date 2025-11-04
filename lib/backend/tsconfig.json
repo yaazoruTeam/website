@@ -58,6 +58,9 @@
       ],
       "@repositories/*": [
         "src/repositories/*"
+      ],
+      "@entities/*": [
+        "src/entities/*"
       ]
     }
   },

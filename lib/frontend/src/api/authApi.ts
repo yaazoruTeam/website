@@ -16,7 +16,7 @@ export const register = async (userData: User.Model): Promise<User.Model> => {
 
 // POST
 export const login = async (userPayload: {
-  user_name: string
+  phone_number: number
   password: string
 }): Promise<string> => {
   try {
