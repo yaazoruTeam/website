@@ -34,7 +34,7 @@ export class User {
   @Column({ type: 'varchar', length: 50 })
   last_name!: string
 
-  @Column({ type: 'varchar', length: 9, unique: true })
+  @Column({ type: 'varchar', length: 9, unique: true, nullable: true })
   id_number!: string
 
   @Column({ type: 'varchar', length: 20 })
@@ -56,10 +56,10 @@ export class User {
   google_uid: string | null = null
 
   @Index('idx_users_city', ['city'])
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   city!: string
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   address!: string
 
   @Column({ type: 'varchar', length: 255 })
