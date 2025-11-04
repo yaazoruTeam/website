@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreatDeviceTable1762164802674 implements MigrationInterface {
-    name = 'CreatDeviceTable1762164802674'
+export class CreateDeviceTable1762262016412 implements MigrationInterface {
+    name = 'CreateDeviceTable1762262016412'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "yaazoru"."devices_status_enum" AS ENUM('active', 'inactive', 'blocked', 'lock_in_imei')`);
