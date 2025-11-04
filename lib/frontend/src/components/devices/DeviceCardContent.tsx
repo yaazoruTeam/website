@@ -50,17 +50,9 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
 
   const handleEditDeviceSuccess = async () => {
     setShowEditDevice(false)
-    // רענון נתוני המכשיר
-    if (device.device_id) {
-      try {
-        const updatedDevice = await getDeviceById(device.device_id.toString())
-        setDevice(updatedDevice)
-        if (onDeviceUpdate) {
-          onDeviceUpdate()
-        }
-      } catch (error) {
-        console.error('Error refreshing device data:', error)
-      }
+    // רענון נתוני המכשיר מהרכיב האב
+    if (onDeviceUpdate) {
+      onDeviceUpdate()
     }
   }
 
