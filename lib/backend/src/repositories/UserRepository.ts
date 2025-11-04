@@ -154,7 +154,114 @@ export class UserRepository {
     }
 
     /**
-     * Find existing user by email, id_number, user_name, or phone_number
+     * Partial update for specific fields (e.g., Google Auth)
+     * Only allows safe fields to be updated
+     * Used for Google OAuth linking and profile updates
+     * 
+     * Allowed fields: user_name, google_uid, photo_url, email_verified
+     * Critical fields (role, status, email, password) require full update
+     */
+    async updateUserPartial(user_id: number, partialData: Partial<User>): Promise<User> {
+        try {
+            logger.debug('[DB] Partial updating user', { user_id, fields: Object.keys(partialData) })
+
+            // Define allowed fields for partial updates (safe fields only)
+            const allowedFields = new Set([
+                'user_name',
+                'google_uid',
+                'photo_url',
+                'email_verified',
+            ])
+
+            // Validate input - only allow safe fields
+            const sanitizedUpdate: Record<string, any> = {}
+
+            for (const [key, value] of Object.entries(partialData)) {
+                // Skip fields that are not allowed
+                if (!allowedFields.has(key)) {
+                    logger.warn('[DB] Attempted to update restricted field via partial update', {
+                        user_id,
+                        field: key,
+                    })
+                    continue
+                }
+
+                // Skip undefined/null values for update
+                if (value === undefined) {
+                    continue
+                }
+
+                // Validate specific fields
+                switch (key) {
+                    case 'user_name':
+                        if (typeof value === 'string' && value.trim().length > 0) {
+                            sanitizedUpdate[key] = value.trim()
+                        }
+                        break
+
+                    case 'google_uid':
+                        if (typeof value === 'string' && value.trim().length > 0) {
+                            sanitizedUpdate[key] = value.trim()
+                        }
+                        break
+
+                    case 'photo_url':
+                        if (value === null) {
+                            sanitizedUpdate[key] = null
+                        } else if (typeof value === 'string' && value.length > 0) {
+                            // Basic URL validation
+                            try {
+                                new URL(value)
+                                sanitizedUpdate[key] = value
+                            } catch {
+                                logger.warn('[DB] Invalid URL format for photo_url', {
+                                    user_id,
+                                    url: value,
+                                })
+                            }
+                        }
+                        break
+
+                    case 'email_verified':
+                        if (typeof value === 'boolean') {
+                            sanitizedUpdate[key] = value
+                        }
+                        break
+                }
+            }
+
+            // If no valid fields to update, return current user
+            if (Object.keys(sanitizedUpdate).length === 0) {
+                logger.debug('[DB] No valid fields to update for user', { user_id })
+                const user = await this.getUserById(user_id)
+                if (!user) {
+                    throw new Error(`User not found: ${user_id}`)
+                }
+                return user
+            }
+
+            // Always update the updated_at timestamp
+            sanitizedUpdate.updated_at = new Date()
+
+            // Perform the update
+            await this.repository.update(user_id, sanitizedUpdate)
+
+            // Fetch and return updated user
+            const updatedUser = await this.getUserById(user_id)
+            if (!updatedUser) {
+                throw new Error(`User not found after update: ${user_id}`)
+            }
+
+            logger.debug('[DB] User partially updated successfully', { user_id, updatedFields: Object.keys(sanitizedUpdate) })
+            return updatedUser
+        } catch (err) {
+            logger.error('[DB] Database error during partial update:', { user_id, error: err })
+            throw err
+        }
+    }
+
+    /**
+     * Find existing user by email, id_number, user_name, phone_number, or google_uid
      * Used to check for duplicates before creating/updating
      * Executes queries in parallel for better performance
      * 
@@ -166,12 +273,13 @@ export class UserRepository {
         id_number?: string
         phone_number?: string
         user_name?: string
+        google_uid?: string
     }): Promise<User | null> {
         try {
             logger.debug('[DB] Searching for existing user', { criteria })
 
-            // Execute email, id_number, phone_number, and user_name queries in parallel
-            const [userByEmail, userByIdNumber, userByPhoneNumber, userByUserName] = await Promise.all([
+            // Execute email, id_number, phone_number, user_name, and google_uid queries in parallel
+            const [userByEmail, userByIdNumber, userByPhoneNumber, userByUserName, userByGoogleUid] = await Promise.all([
                 criteria.email
                     ? this.repository.findOne({
                         where: { email: criteria.email },
@@ -192,10 +300,15 @@ export class UserRepository {
                         where: { user_name: criteria.user_name },
                     })
                     : Promise.resolve(null),
+                criteria.google_uid
+                    ? this.repository.findOne({
+                        where: { google_uid: criteria.google_uid },
+                    })
+                    : Promise.resolve(null),
             ])
 
-            // Get first match (email, id_number, phone_number, or user_name - in priority order)
-            const user = userByEmail || userByIdNumber || userByPhoneNumber || userByUserName
+            // Get first match (priority: email, google_uid, id_number, phone_number, user_name)
+            const user = userByEmail || userByGoogleUid || userByIdNumber || userByPhoneNumber || userByUserName
 
             // Filter out if it's the same user being updated
             if (user && criteria.user_id && user.user_id === criteria.user_id) {
@@ -207,11 +320,13 @@ export class UserRepository {
                     found_id: user.user_id,
                     matchedBy: userByEmail
                         ? 'email'
-                        : userByIdNumber
-                            ? 'id_number'
-                            : userByPhoneNumber
-                                ? 'phone_number'
-                                : 'user_name',
+                        : userByGoogleUid
+                            ? 'google_uid'
+                            : userByIdNumber
+                                ? 'id_number'
+                                : userByPhoneNumber
+                                    ? 'phone_number'
+                                    : 'user_name',
                 })
             }
 

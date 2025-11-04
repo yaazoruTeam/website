@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { User, HttpError } from '@model'
+import { User as UserEntity } from '@entities/User'
 import { hashPassword } from '@utils/password'
 import config from '@config/index'
 import { handleError } from './err'
@@ -9,22 +10,18 @@ import logger from '../utils/logger'
 
 const limit = config.database.limit
 
-// Helper function to build user entity payload
-const buildUserPayload = (sanitized: User.Model) => ({
-  first_name: sanitized.first_name,
-  last_name: sanitized.last_name,
-  phone_number: sanitized.phone_number,
-  additional_phone: sanitized.additional_phone ?? null,
-  email: sanitized.email,
-  city: sanitized.city,
-  address: sanitized.address,
-  password: sanitized.password,
-  user_name: sanitized.user_name,
-  role: (sanitized.role as any) ?? 'branch',
-  google_uid: (sanitized as any).google_uid ?? null,
-  photo_url: (sanitized as any).photo_url ?? null,
-  email_verified: (sanitized as any).email_verified ?? false,
-})
+// Helper function to convert User.Model to TypeORM User entity
+// User.sanitize() already handles all validation and defaults
+const buildUserPayload = (sanitized: User.Model): Partial<UserEntity> => {
+  // Return only fields that TypeORM needs, excluding user_id on creation
+  const { user_id, ...payload } = sanitized;
+  return {
+    ...payload,
+    additional_phone: sanitized.additional_phone ?? null,
+    google_uid: sanitized.google_uid ?? null,
+    photo_url: sanitized.photo_url ?? null,
+  } as Partial<UserEntity>;
+};
 
 // Helper function to check if user can access/modify another user's data
 const checkUserPermissions = (req: Request, targetUserId: string) => {
@@ -38,7 +35,7 @@ const checkUserPermissions = (req: Request, targetUserId: string) => {
   }
 
   const decoded = jwt.verify(token, config.jwt.secret) as any
-  
+
   // Allow if: admin, branch, or accessing own data
   const sameUser = String(targetUserId) === String(decoded.user_id)
   const isPrivileged = ['admin', 'branch'].includes(decoded.role)
@@ -106,12 +103,12 @@ const getUserById = async (req: Request, res: Response, next: NextFunction): Pro
     logger.debug('getUserById called', { id: req.params.id })
 
     User.sanitizeIdExisting(req)
-    
+
     // Check permissions
     checkUserPermissions(req, req.params.id)
-    
+
     const numericId = parseInt(req.params.id)
-    
+
     const user = await userRepository.getUserById(numericId)
     if (!user) {
       logger.warn('User not found', { id: req.params.id })
@@ -136,17 +133,17 @@ const updateUser = async (req: Request, res: Response, next: NextFunction): Prom
 
     User.sanitizeIdExisting(req)
     User.sanitizeBodyExisting(req)
-    
+
     // Check permissions
     checkUserPermissions(req, req.params.id)
-    
+
     const userData = req.body
     userData.password &&= await hashPassword(userData.password)
     const sanitized = User.sanitize(userData, true)
     await existingUser(sanitized, true)
 
     const numericId = parseInt(req.params.id)
-    
+
     // Convert User.Model to Partial<User> (TypeORM entity)
     const updateData = await userRepository.updateUser(numericId, buildUserPayload(sanitized))
 
@@ -164,7 +161,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction): Prom
 
     User.sanitizeIdExisting(req)
     const numericId = parseInt(req.params.id)
-    
+
     // Repository handles the 404 check internally
     const deletedUser = await userRepository.deleteUser(numericId)
 
@@ -183,12 +180,12 @@ const existingUser = async (user: User.Model, hasId: boolean) => {
     id_number: user.id_number,
     phone_number: user.phone_number,
     user_name: user.user_name,
-    user_id: hasId ? user.user_id : 0
+    user_id: hasId ? user.user_id : undefined
   })
 
   // Find ALL potential conflicts
   const conflicts = await userRepository.findAllExistingUsers({
-    user_id: hasId ? (typeof user.user_id === 'string' ? parseInt(user.user_id) : user.user_id) : undefined,
+    user_id: hasId && user.user_id ? user.user_id : undefined,
     email: user.email,
     id_number: user.id_number,
     phone_number: user.phone_number,

@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError, User, GoogleAuth } from '@model'
-import * as db from '@db/index'
+import { User as UserEntity } from '@entities/User'
 import { generateToken, verifyToken } from '@utils/jwt'
 import { comparePasswords } from '@utils/password'
 import { createUser } from './user'
 import { handleError } from './err'
+import { userRepository } from '@repositories/UserRepository'
 import * as admin from 'firebase-admin'
 import logger from '@utils/logger'
 
@@ -49,33 +50,45 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
 const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { user_name, password } = req.body
-    const user: User.Model = await db.User.findUser({ user_name })
+
+    logger.debug('Login attempt', { user_name })
+
+    // Find user by user_name
+    const user = await userRepository.findExistingUser({ user_name })
     if (!user) {
+      logger.warn('Login failed - user not found', { user_name })
       const error: HttpError.Model = {
         status: 404,
         message: 'User not found',
       }
       throw error
     }
+
     if (!user.password) {
+      logger.warn('Login failed - password not set', { user_id: user.user_id, user_name })
       const error: HttpError.Model = {
         status: 400,
         message: 'User password not found',
       }
       throw error
     }
+
     const isPasswordCorrect = await comparePasswords(password, user.password)
     if (!isPasswordCorrect) {
+      logger.warn('Login failed - incorrect password', { user_id: user.user_id, user_name })
       const error: HttpError.Model = {
         status: 401,
         message: 'Incorrect password',
       }
       throw error
     }
+
     const accessToken = generateToken(user.user_id, user.role)
 
+    logger.info('User login successful', { user_id: user.user_id })
     res.status(200).json(accessToken)
   } catch (error: unknown) {
+    logger.error('Error in login', { error: error instanceof Error ? error.message : String(error) })
     handleError(error, next)
   }
 }
@@ -94,7 +107,7 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction): Pr
     const { valid, decoded } = verifyToken(token)
     if (valid && decoded) {
       const { user_id, role } = decoded
-      const newAccessToken = generateToken(user_id, role)
+      const newAccessToken = generateToken(Number(user_id), role)
       res.status(200).json(newAccessToken)
     } else {
       const error: HttpError.Model = {
@@ -227,21 +240,23 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
     }
 
     // Check if user already exists by Google UID
-    let user: User.Model | null = await db.User.findUser({ google_uid: verifiedUid })
+    let user: UserEntity | null = await userRepository.findExistingUser({ google_uid: verifiedUid })
     
     if (!user) {
       // Check if user exists by email (in case they previously registered with email/password)
-      user = await db.User.findUser({ email: verifiedEmail })
+      user = await userRepository.findExistingUser({ email: verifiedEmail })
       
       if (user) {
         // Link Google account to existing user
-        user = await db.User.updateUserPartial(user.user_id, { 
+        logger.info('Linking Google account to existing user', { user_id: user.user_id, email: verifiedEmail })
+        user = await userRepository.updateUserPartial(user.user_id, { 
           google_uid: verifiedUid,
           photo_url: verifiedPhotoURL ?? user.photo_url,
-          email_verified: verifiedEmailVerified ?? false
+          email_verified: verifiedEmailVerified ?? false,
         })
       } else {
         // User not found in database - deny access
+        logger.warn('Google Auth failed - user not found in system', { email: verifiedEmail, uid: verifiedUid })
         const error: HttpError.Model = {
           status: 403,
           message: 'Access denied. Your account is not authorized to use this system. Please contact the administrator.',
@@ -250,10 +265,11 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
       }
     } else {
       // Update existing Google user info with verified data
-      user = await db.User.updateUserPartial(user.user_id, {
+      logger.debug('Updating existing Google user', { user_id: user.user_id })
+      user = await userRepository.updateUserPartial(user.user_id, {
         user_name: verifiedDisplayName || user.user_name,
         photo_url: verifiedPhotoURL || user.photo_url,
-        email_verified: verifiedEmailVerified || user.email_verified
+        email_verified: verifiedEmailVerified || user.email_verified,
       })
     }
 

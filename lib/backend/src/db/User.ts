@@ -89,7 +89,7 @@ const deleteUser = async (user_id: string) => {
 }
 
 // Partial update function for Google Auth fields
-const updateUserPartial = async (user_id: string, partialUser: Partial<User.Model>) => {
+const updateUserPartial = async (user_id: number | undefined, partialUser: Partial<User.Model>) => {
   const knex = getDbConnection()
   
   // Define allowed fields for partial updates

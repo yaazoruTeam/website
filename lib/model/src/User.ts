@@ -1,7 +1,7 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  user_id: string
+  user_id?: number // Optional during creation, TypeORM assigns it
   first_name: string
   last_name: string
   id_number?: string
@@ -111,21 +111,11 @@ function sanitize(user: Model, hasId: boolean): Model {
     throw error
   }
   const newUser: Model = {
-    user_id: user.user_id,
-    first_name: user.first_name.trim(),
-    last_name: user.last_name.trim(),
-    id_number: user.id_number,
+   ...user,
     phone_number: user.phone_number?.trim(),
     additional_phone: user.additional_phone?.trim(),
     email: user.email.trim().toLowerCase(),
-    city: user.city?.trim(),
-    address: user.address?.trim(),
-    password: user.password,
-    user_name: user.user_name,
-    role: user.role,
     status: user.status || 'active',
-    google_uid: user.google_uid,
-    photo_url: user.photo_url,
     email_verified: user.email_verified || false,
   }
   return newUser
