@@ -4,6 +4,8 @@ import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CustomButton } from '../designComponent/Button'
+import { Snackbar, Alert } from '@mui/material'
 import {
   ChatModalContainer,
   ChatModalOverlay,
@@ -32,22 +34,29 @@ export interface deviceFormInputs {
 interface DeviceFormProps {
   initialValues?: deviceFormInputs
   deviceId?: string
+  customerDeviceId?: string
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
+  onSave?: (planEndDate: string) => Promise<void>
 }
 
 const DeviceForm: React.FC<DeviceFormProps> = ({
   initialValues,
   deviceId,
+  customerDeviceId,
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
+  onSave,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const { control } = useForm<deviceFormInputs>({
+  const { control, getValues, formState: { isDirty } } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
       // device_number: '',
       // SIM_number: '',//מספר סידורי במקום זה 
@@ -65,6 +74,30 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
     },
   })
 
+  const handleSave = async () => {
+    if (!customerDeviceId) {
+      setErrorMessage(t('errorSavingData'))
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      const values = getValues()
+      console.log('Saving planEndDate:', values.planEndDate)
+      
+      if (onSave) {
+        await onSave(values.planEndDate)
+      }
+      
+      setSuccessMessage(t('dataSavedSuccessfully'))
+    } catch (error) {
+      console.error('Error saving plan end date:', error)
+      setErrorMessage(t('errorSavingData'))
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -73,17 +106,29 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         padding: '28px',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
-        <CustomTypography
-          text={t('deviceData')}
-          variant='h3'
-          weight='medium'
-        />
-        <CustomTypography
-          text={initialValues ? initialValues.device_number : ''}
-          variant='h4'
-          weight='regular'
-        />
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb:'40px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap:1 }}>
+          <CustomTypography
+            text={t('deviceData')}
+            variant='h3'
+            weight='medium'
+          />
+          <CustomTypography
+            text={initialValues ? initialValues.device_number : ''}
+            variant='h4'
+            weight='regular'
+          />
+        </Box>
+        
+        {isDirty && (
+          <CustomButton
+            label={isSaving ? t('saving') : t('save')}
+            buttonType="third"
+            size="small"
+            onClick={handleSave}
+            disabled={isSaving}
+          />
+        )}
       </Box>
       <Box
         sx={{
@@ -109,10 +154,14 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
       >
         {/* <CustomTextField control={control} name='model' label={t('model')} /> */}
         {/* <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} /> */}
-        <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} />
-        <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} />
-        <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
-
+        <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} disabled />
+        <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} disabled />
+        <CustomTextField 
+          control={control} 
+          name='planEndDate' 
+          label={t('programEndDate')} 
+          type="date"
+        />
       </Box>
       {/* <Box
         sx={{
@@ -175,6 +224,19 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
           </ChatModalContainer>
         </ChatModalOverlay>
       )}
+
+      {/* הודעות הצלחה ושגיאה */}
+      <Snackbar open={!!successMessage} autoHideDuration={4000} onClose={() => setSuccessMessage(null)}>
+        <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: "100%" }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage(null)}>
+        <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: "100%" }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

@@ -415,5 +415,11 @@
   "deviceAssignedSuccessfully": "device assigned successfully",
   "deviceAlreadyAssigned": "device already assigned to another customer",
   "noAvailableDevices": "no available devices to assign",
-  "pleaseSelectDevice": "Please select a device"
+  "pleaseSelectDevice": "Please select a device",
+  "lineCancelled": "line cancelled",
+  "lineCancelledAutomatically": "line cancelled automatically due to inactivity",
+  "cancellationDate": "cancellation date",
+  "packageNotFound": "package not found",
+  "dataSavedSuccessfully": "data saved successfully",
+  "errorSavingData": "error saving data"
 }

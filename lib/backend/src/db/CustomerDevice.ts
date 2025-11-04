@@ -169,6 +169,21 @@ const doesCustomerDeviceExist = async (customerDevice_id: string): Promise<boole
   }
 }
 
+const getExpiredPlanDevices = async (): Promise<CustomerDevice.Model[]> => {
+  const knex = getDbConnection()
+  try {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    return await knex('yaazoru.customerDevice')
+      .select('*')
+      .whereNotNull('planEndDate')
+      .where('planEndDate', '<=', today)
+  } catch (err) {
+    throw err
+  }
+}
+
 export {
   createCustomerDevice,
   getCustomersDevices,
@@ -179,4 +194,5 @@ export {
   deleteCustomerDevice,
   findCustomerDevice,
   doesCustomerDeviceExist,
+  getExpiredPlanDevices,
 }

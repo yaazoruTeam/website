@@ -5,6 +5,7 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
+import { updateCustomerDevice } from '../../api/customerDevice'
 
 interface DeviceCardContentProps {
   device: Device.Model
@@ -13,6 +14,12 @@ interface DeviceCardContentProps {
 
 const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
+
+  // Debug: הדפסת ה-customerDevice כדי לראות מה יש בו
+  useEffect(() => {
+    console.log('CustomerDevice:', customerDevice)
+    console.log('CustomerDevice ID:', customerDevice?.customerDevice_id)
+  }, [customerDevice])
 
   // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
@@ -35,6 +42,16 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     }
   }, [device.device_id])
 
+  const handleSavePlanEndDate = async (planEndDate: string) => {
+    if (!customerDevice?.customerDevice_id) {
+      throw new Error('Customer device ID is missing')
+    }
+
+    await updateCustomerDevice(customerDevice.customerDevice_id, {
+      planEndDate: planEndDate ? new Date(planEndDate) : undefined,
+    })
+  }
+
   useEffect(() => {
     fetchLastComment()
   }, [fetchLastComment])
@@ -46,7 +63,6 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         key={lastComment?.comment_id || 'no-comment'}
         initialValues={{
           device_number: device.device_number,
-          // SIM_number: device.SIM_number,
           IMEI_1: device.IMEI_1,
           model: device.model,
           serialNumber: device.serialNumber || '',
@@ -57,12 +73,10 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
           planEndDate: customerDevice?.planEndDate
             ? formatDateToString(new Date(customerDevice.planEndDate))
             : '',
-          // plan: device?.plan || '',
-          // filterVersion: customerDevice?.filterVersion || '',
-          // deviceProgram: customerDevice?.deviceProgram || '',
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
+        customerDeviceId={customerDevice?.customerDevice_id}
         lastCommentDate={
           lastComment
             ? new Date(lastComment.created_at).toLocaleDateString('he-IL', {
@@ -74,6 +88,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        onSave={handleSavePlanEndDate}
       />
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>

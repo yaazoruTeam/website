@@ -6,6 +6,7 @@ import config from '@config/index'
 import logger from '@utils/logger'
 import { initializeDatabase, closeDatabase } from './data-source'
 import { createSchema } from './db/schema'
+import { startAutoCancelLineScheduler } from './services/autoCancelLineService'
 
 // Import express type extensions globally
 declare global {
@@ -47,6 +48,9 @@ const startServer = async () => {
     // await initializeDatabase()
     await createSchema();
     logger.info('✅ Database initialized successfully')
+
+    // הפעלת שירות ביטול קווים אוטומטי
+    startAutoCancelLineScheduler()
 
     app.listen(PORT, () => {
       logger.info(`🚀 Server is running on http://localhost:${PORT}`)

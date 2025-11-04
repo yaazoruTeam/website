@@ -417,5 +417,11 @@
   "deviceAssignedSuccessfully": "המכשיר שוייך בהצלחה",
   "deviceAlreadyAssigned": "המכשיר כבר משוייך ללקוח אחר",
   "noAvailableDevices": "אין מכשירים לשיוך",
-  "pleaseSelectDevice": "נא לבחור מכשיר"
+  "pleaseSelectDevice": "נא לבחור מכשיר",
+  "lineCancelled": "קו בוטל",
+  "lineCancelledAutomatically": "תוקף התוכנית פג - ביטול אוטומטי",
+  "cancellationDate": "תאריך ביטול",
+  "packageNotFound": "חבילה לא נמצאה",
+  "dataSavedSuccessfully": "הנתונים נשמרו בהצלחה",
+  "errorSavingData": "שגיאה בשמירת הנתונים"
 }
