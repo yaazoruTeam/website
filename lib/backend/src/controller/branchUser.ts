@@ -3,6 +3,7 @@ import * as db from '@db/index'
 import { BranchUser, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
+import { userRepository } from '../repositories/UserRepository'
 
 const limit = config.database.limit
 const createBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -18,7 +19,7 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
       }
       throw error
     }
-    const existUser = await db.User.doesUserExist(sanitized.user_id)
+    const existUser = await userRepository.doesUserExist(Number(sanitized.user_id))
     if (!existUser) {
       const error: HttpError.Model = {
         status: 404,
@@ -160,7 +161,7 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
       }
       throw error
     }
-    const existUser = await db.User.doesUserExist(sanitized.user_id)
+    const existUser = await userRepository.doesUserExist(Number(sanitized.user_id))
     if (!existUser) {
       const error: HttpError.Model = {
         status: 404,

@@ -415,5 +415,8 @@
   "deviceAssignedSuccessfully": "device assigned successfully",
   "deviceAlreadyAssigned": "device already assigned to another customer",
   "noAvailableDevices": "no available devices to assign",
-  "pleaseSelectDevice": "Please select a device"
+  "pleaseSelectDevice": "Please select a device",
+  "loginNotThroughGoogle": "Not logging in through Google? Click here.",
+  "registerButton": "Need to register? Click here.",
+  "loginThroughGoogle": "Log back in via Google"
 }
