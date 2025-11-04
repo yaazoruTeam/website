@@ -11,10 +11,13 @@ const limit = config.database.limit
  * Replaces the old knex-based db/Customer.ts
  */
 export class CustomerRepository {
-  private repository: Repository<Customer>
+  private repository: Repository<Customer> | null = null
 
-  constructor() {
-    this.repository = AppDataSource.getRepository(Customer)
+  private getRepository(): Repository<Customer> {
+    if (!this.repository) {
+      this.repository = AppDataSource.getRepository(Customer)
+    }
+    return this.repository
   }
 
   /**
@@ -24,8 +27,8 @@ export class CustomerRepository {
     try {
       logger.debug('[DB] Creating customer in database', { email: customerData.email })
 
-      const customer = this.repository.create(customerData)
-      const savedCustomer = await this.repository.save(customer)
+      const customer = this.getRepository().create(customerData)
+      const savedCustomer = await this.getRepository().save(customer)
 
       logger.debug('[DB] Customer created successfully', { customer_id: savedCustomer.customer_id })
       return savedCustomer
@@ -40,7 +43,7 @@ export class CustomerRepository {
     try {
       logger.debug('[DB] Fetching customers from database (LEGACY OFFSET)', { offset, limit })
 
-      const [customers, total] = await this.repository.findAndCount({
+      const [customers, total] = await this.getRepository().findAndCount({
         skip: offset,
         take: limit,
         order: { customer_id: 'ASC' },
@@ -59,7 +62,7 @@ export class CustomerRepository {
    */
   async getCustomerById(customer_id: number): Promise<Customer | null> {
     try {
-      const customer = await this.repository.findOne({
+      const customer = await this.getRepository().findOne({
         where: { customer_id },
       })
       return customer || null
@@ -77,7 +80,7 @@ export class CustomerRepository {
       logger.debug('[DB] Updating customer in database', { customer_id })
 
       // Update with new updated_at timestamp
-      await this.repository.update(customer_id, {
+      await this.getRepository().update(customer_id, {
         ...updateData,
         updated_at: new Date(),
       })
@@ -112,7 +115,7 @@ export class CustomerRepository {
 
       // Soft delete - just mark as inactive
       customer.status = CustomerStatus.INACTIVE
-      const deletedCustomer = await this.repository.save(customer)
+      const deletedCustomer = await this.getRepository().save(customer)
 
       logger.debug('[DB] Customer soft deleted successfully', { customer_id })
       return deletedCustomer
@@ -138,20 +141,22 @@ export class CustomerRepository {
     try {
       logger.debug('[DB] Searching for existing customer', { criteria })
 
+      const repo = this.getRepository()
+      
       // Execute email, id_number, and phone_number queries in parallel
       const [customerByEmail, customerByIdNumber, customerByPhoneNumber] = await Promise.all([
         criteria.email
-          ? this.repository.findOne({
+          ? repo.findOne({
               where: { email: criteria.email },
             })
           : Promise.resolve(null),
         criteria.id_number
-          ? this.repository.findOne({
+          ? repo.findOne({
               where: { id_number: criteria.id_number },
             })
           : Promise.resolve(null),
         criteria.phone_number
-          ? this.repository.findOne({
+          ? repo.findOne({
               where: { phone_number: criteria.phone_number },
             })
           : Promise.resolve(null),
@@ -189,7 +194,7 @@ export class CustomerRepository {
       logger.debug('[DB] Fetching unique cities')
 
       // Use QueryBuilder to get distinct cities directly from database
-      const cities = await this.repository
+      const cities = await this.getRepository()
         .createQueryBuilder('customer')
         .select('DISTINCT customer.city', 'city')
         .where('customer.city IS NOT NULL')
@@ -238,7 +243,7 @@ export class CustomerRepository {
       // Flatten the array and use findAndCount
       const flatWhere = where.flat()
 
-      const [customers, total] = await this.repository.findAndCount({
+      const [customers, total] = await this.getRepository().findAndCount({
         where: flatWhere,
         skip: offset,
         take: limit,
@@ -264,7 +269,7 @@ export class CustomerRepository {
   async getAllCustomers(): Promise<Customer[]> {
     try {
       logger.debug('[DB] Fetching all customers')
-      return await this.repository.find()
+      return await this.getRepository().find()
     } catch (err) {
       logger.error('[DB] Database error fetching all customers:', err)
       throw err
@@ -281,7 +286,7 @@ export class CustomerRepository {
     try {
       logger.debug('[DB] Bulk updating customers status', { count: customer_ids.length, status })
 
-      const result = await this.repository.update(
+      const result = await this.getRepository().update(
         { customer_id: In(customer_ids) },
         { status },
       )
@@ -299,7 +304,7 @@ export class CustomerRepository {
    */
   async countCustomers(): Promise<number> {
     try {
-      return await this.repository.count()
+      return await this.getRepository().count()
     } catch (err) {
       logger.error('[DB] Database error counting customers:', err)
       throw err
@@ -317,9 +322,9 @@ export class CustomerRepository {
         Object.entries(filter).filter(([_, v]) => v != null)
       ) : undefined
 
-      const [customers, total] = await this.repository.findAndCount({ 
+      const [customers, total] = await this.getRepository().findAndCount({ 
         where: where, 
-        skip: offset || 0,  // ✅ תקן: default to 0 אם undefined
+        skip: offset || 0,
         take: limit 
       })
       return { customers, total }
@@ -337,7 +342,7 @@ export class CustomerRepository {
       if (startDate > endDate) {
         throw { status: 400, message: 'startDate must be before endDate' }
       }
-      const [customers, total] = await this.repository.findAndCount({
+      const [customers, total] = await this.getRepository().findAndCount({
         where: {
           created_at: Between(startDate, endDate)
         },

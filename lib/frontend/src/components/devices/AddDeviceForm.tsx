@@ -28,7 +28,6 @@ interface DeviceFormData {
 
 const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess, editDevice = null }) => {
   const { t } = useTranslation()
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null)
   const isMobile = useMediaQuery('(max-width:600px)')
@@ -61,6 +60,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
   // טעינת נתוני המכשיר במצב עריכה
   useEffect(() => {
     if (editDevice && open) {
+      setErrorMessage(null)
+      
       reset({
         device_number: editDevice.device_number || '',
         SIM_number: editDevice.SIM_number || '',
@@ -69,6 +70,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
         model: editDevice.model || '',
       })
     } else if (open && !editDevice) {
+      setErrorMessage(null)
+      
       reset({
         device_number: '',
         SIM_number: '',
@@ -91,7 +94,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
           model: data.model,
         }
         await updateDevice(editDevice.device_id, deviceData)
-        setSuccessMessage(t('deviceUpdatedSuccessfully'))
       } else {
         // מצב הוספה - יצירת מכשיר חדש
         const deviceData: Omit<Device.Model, 'device_id'> = {
@@ -102,9 +104,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
           plan: '',
         }
         await createDevice(deviceData)
-        setSuccessMessage(t('deviceAddedSuccessfully'))
       }
-
+      
       reset()
       onClose()
       onSuccess()
@@ -123,7 +124,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
 
   const handleClose = () => {
     reset()
-    setSuccessMessage(null)
     setErrorMessage(null)
     onClose()
   }
@@ -226,18 +226,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess,
           onClick={handleSave}
         />
       </Box>
-
-      {/* Success Snackbar */}
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={4000}
-        onClose={() => setSuccessMessage(null)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
-          {successMessage}
-        </Alert>
-      </Snackbar>
 
       {/* Error Snackbar */}
       <Snackbar

@@ -226,6 +226,7 @@ const updateCustomer = async (req: Request, res: Response, next: NextFunction): 
     const updateData = {
       first_name: sanitized.first_name,
       last_name: sanitized.last_name,
+      id_number: sanitized.id_number,
       phone_number: sanitized.phone_number,
       additional_phone: sanitized.additional_phone || null,
       email: sanitized.email,

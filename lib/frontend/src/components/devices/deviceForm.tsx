@@ -74,10 +74,10 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
     },
   })
 
-  const handleEditSuccess = () => {
+  const handleEditSuccess = async () => {
     setShowEditDevice(false)
     if (onDeviceUpdate) {
-      onDeviceUpdate()
+      await onDeviceUpdate()
     }
   }
 

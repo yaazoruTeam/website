@@ -10,9 +10,10 @@ interface DeviceRowInlineProps {
   device: Device.Model & { customerDevice: CustomerDevice.Model }
   isOpen: boolean
   onClick: () => void
+  onDeviceUpdate?: () => Promise<void>
 }
 
-const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onClick }) => {
+const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onClick, onDeviceUpdate }) => {
   const iconStyle = {
     width: '24px',
     height: '24px',
@@ -61,7 +62,11 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
       {/* תוכן המכשיר - נפתח בלחיצה */}
       {isOpen && (
         <Box sx={{ padding: '16px' }}>
-          <DeviceCardContent device={device} customerDevice={device.customerDevice} />
+          <DeviceCardContent 
+            device={device} 
+            customerDevice={device.customerDevice} 
+            onDeviceUpdate={onDeviceUpdate}
+          />
         </Box>
       )}
     </Box>

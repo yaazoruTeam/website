@@ -13,8 +13,8 @@ export const AppDataSource = new DataSource({
   // כל הטבלאות האחרות יהיו בyaazoru schema (מוגדר בEntity)
   synchronize: false, // כבוי - משתמשים רק במיגרציות
   logging: process.env.NODE_ENV === 'development',
-  entities: ['src/entities/**/*.ts'],
-  migrations: ['src/migrations/**/*.ts'],
+  entities: [__dirname + '/entities/**/*.{ts,js}'],
+  migrations: [__dirname + '/migrations/**/*.{ts,js}'],
   migrationsRun: true, // הרצת מיגרציות אוטומטית בהתחלת האפליקציה
 })
 

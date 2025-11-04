@@ -210,6 +210,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
               device={device}
               isOpen={openedDeviceId === device.device_id}
               onClick={() => handleRowClick(device.device_id)}
+              onDeviceUpdate={() => fetchDevicesByCustomerId(customer.customer_id)}
             />
           ))}
         </Box>
