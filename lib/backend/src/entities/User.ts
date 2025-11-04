@@ -43,7 +43,7 @@ export class User {
   @Column({ type: 'varchar', length: 20, nullable: true })
   additional_phone: string | null = null
 
-  @Column({ type: 'varchar', length: 100, unique: true })
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
   email!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -62,11 +62,12 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   address!: string
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password!: string
 
+  //to do check if need user_name
   @Index('idx_users_user_name', ['user_name'])
-  @Column({ type: 'varchar', length: 100, unique: true })
+  @Column({ type: 'varchar', length: 100, unique: true ,nullable: true})
   user_name!: string
 
   @Column({

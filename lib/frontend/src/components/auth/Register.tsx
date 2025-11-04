@@ -22,7 +22,7 @@ const Register: React.FC = () => {
     try {
       // מכין את הנתונים בפורמט הנדרש
       const userPayload: User.Model = {
-        user_id: '',
+        user_id: 0,
         first_name: data.first_name,
         last_name: data.last_name,
         id_number: data.id_number,

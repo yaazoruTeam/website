@@ -9,7 +9,7 @@ import CustomTypography from '../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 
 interface LoginFormInputs {
-  username: string
+  phone_number: number
   password: string
 }
 
@@ -29,7 +29,7 @@ const Login2222: React.FC = () => {
     console.log('Form Data:', data)
     try {
       const userPayload = {
-        user_name: data.username,
+        phone_number: data.phone_number,
         password: data.password,
       }
       const response = await login(userPayload)

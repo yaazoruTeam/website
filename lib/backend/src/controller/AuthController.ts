@@ -49,14 +49,14 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
 
 const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { user_name, password } = req.body
+    const { phone_number, password } = req.body
 
-    logger.debug('Login attempt', { user_name })
+    logger.debug('Login attempt', { phone_number })
 
-    // Find user by user_name
-    const user = await userRepository.findExistingUser({ user_name })
+    // Find user by phone_number
+    const user = await userRepository.findExistingUser({ phone_number })
     if (!user) {
-      logger.warn('Login failed - user not found', { user_name })
+      logger.warn('Login failed - user not found', { phone_number })
       const error: HttpError.Model = {
         status: 404,
         message: 'User not found',
@@ -65,7 +65,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
     }
 
     if (!user.password) {
-      logger.warn('Login failed - password not set', { user_id: user.user_id, user_name })
+      logger.warn('Login failed - password not set', { user_id: user.user_id, phone_number })
       const error: HttpError.Model = {
         status: 400,
         message: 'User password not found',
@@ -75,7 +75,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
 
     const isPasswordCorrect = await comparePasswords(password, user.password)
     if (!isPasswordCorrect) {
-      logger.warn('Login failed - incorrect password', { user_id: user.user_id, user_name })
+      logger.warn('Login failed - incorrect password', { user_id: user.user_id, phone_number })
       const error: HttpError.Model = {
         status: 401,
         message: 'Incorrect password',

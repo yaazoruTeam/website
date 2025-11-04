@@ -417,5 +417,8 @@
   "deviceAssignedSuccessfully": "המכשיר שוייך בהצלחה",
   "deviceAlreadyAssigned": "המכשיר כבר משוייך ללקוח אחר",
   "noAvailableDevices": "אין מכשירים לשיוך",
-  "pleaseSelectDevice": "נא לבחור מכשיר"
+  "pleaseSelectDevice": "נא לבחור מכשיר",
+  "loginNotThroughGoogle": "התחברות לא דרך גוגל? לחץ כאן",
+  "registerButton": "צריך להירשם? לחץ כאן.",
+  "loginThroughGoogle": "חזור להתחברות דרך גוגל"
 }
