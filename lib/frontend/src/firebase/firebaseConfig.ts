@@ -1,87 +1,18 @@
 /**
- * to do:
- * TEMPORARY SOLUTION - Firebase Mock Configuration
+ * Firebase Configuration
  * 
- * ⚠️ WARNING: This is a temporary implementation ⚠️
- * 
- * This file currently provides mock Firebase authentication objects to allow
- * the application to run without proper Firebase configuration. This is NOT
- * suitable for production use.
- * 
- * WHAT THIS DOES:
- * - Provides mock auth, provider, and analytics objects
- * - Allows the app to compile and run without Firebase environment variables
- * - Simulates basic auth behavior with null user state
- * 
- * WHAT NEEDS TO BE DONE:
- * 1. Set up proper Firebase project and obtain configuration
- * 2. Configure environment variables (VITE_FIREBASE_*)
- * 3. Replace this mock implementation with real Firebase initialization
- * 4. Test authentication flow with actual Firebase
- * 
- * RELATED FILES:
- * - GoogleAuth.ts - Contains the auth interfaces
- * - Any components using Firebase auth
+ * This file initializes Firebase with proper authentication and analytics.
+ * It reads configuration from environment variables and sets up Google Auth provider.
  * 
  * @author Development Team
- * @date October 2025
- * @status TEMPORARY - REPLACE BEFORE PRODUCTION
+ * @date November 2025
  */
 
-// Firebase configuration with graceful fallback for development
-// For now, using mock objects until Firebase is properly configured
-
-// Mock auth object for development
-function createMockAuth() {
-  return {
-    currentUser: null,
-    name: 'mock-auth',
-    app: {} as any,
-    config: {} as any,
-    onAuthStateChanged: (callback: any) => {
-      // Call callback immediately with null user
-      setTimeout(() => callback(null), 0);
-      // Return unsubscribe function
-      return () => {};
-    },
-    signOut: () => Promise.resolve(),
-    signInWithPopup: () => Promise.reject(new Error('Firebase not configured')),
-    signInWithRedirect: () => Promise.reject(new Error('Firebase not configured')),
-    getRedirectResult: () => Promise.resolve(null),
-    setPersistence: () => Promise.resolve(),
-    useDeviceLanguage: () => {},
-    languageCode: null,
-    tenantId: null,
-    settings: {} as any,
-    beforeAuthStateChanged: () => () => {},
-    onIdTokenChanged: () => () => {},
-    updateCurrentUser: () => Promise.resolve(),
-  };
-}
-
-// Mock provider object
-const createMockProvider = () => ({
-  addScope: () => {},
-  setCustomParameters: () => {},
-  providerId: 'google.com',
-});
-
-// Mock analytics object
-const createMockAnalytics = () => ({});
-
-console.log('⚠️ Firebase disabled: Using mock auth for development. Configure Firebase environment variables to enable.');
-
-// Export mock objects for now - using type assertion to satisfy TypeScript
-export const auth = createMockAuth() as any;
-export const provider = createMockProvider() as any;
-export const analytics = createMockAnalytics();
-
-// TODO: Replace with real Firebase initialization when environment variables are configured
-/*
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 
+// Firebase configuration from environment variables
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -92,10 +23,36 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Validate that all required environment variables are present
+const requiredKeys = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_AUTH_DOMAIN', 'VITE_FIREBASE_PROJECT_ID'];
+const missingKeys = requiredKeys.filter(key => !import.meta.env[key]);
+
+if (missingKeys.length > 0) {
+  console.error('❌ Missing Firebase environment variables:', missingKeys);
+  throw new Error(`Missing Firebase configuration: ${missingKeys.join(', ')}`);
+}
+
+console.log('🔥 Initializing Firebase with project:', firebaseConfig.projectId);
+
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
+
+// Initialize Google Auth Provider
 export const provider = new GoogleAuthProvider();
 provider.addScope('profile');
 provider.addScope('email');
-export const analytics = getAnalytics(app);
-*/
+
+// Initialize Analytics (only in production/browser environment)
+let analytics;
+try {
+  if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
+    analytics = getAnalytics(app);
+  }
+} catch (error) {
+  console.warn('⚠️ Analytics initialization failed:', error);
+}
+
+export { analytics };
