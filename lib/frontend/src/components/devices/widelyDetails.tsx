@@ -179,7 +179,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // בדיקה מוקדמת אם הפעלת קו אינה נתמכת
         if (!widelyDetails.active) {
             setIsTerminateModalOpen(false);
-            setErrorMessage(t('activationNotSupported') || 'הפעלת קו אינה נתמכת כרגע');
+            setErrorMessage(t('activationNotSupported'));
             // TODO: Implement line activation API call when available
             return;
         }
@@ -189,14 +189,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             
             // ביטול קו - קריאה ל-terminateLine
             await terminateLine(widelyDetails.endpoint_id);
-            setSuccessMessage(t('lineCancelledSuccessfully') || 'הקו בוטל בהצלחה');
+            setSuccessMessage(t('lineCancelledSuccessfully'));
             setIsTerminateModalOpen(false);
             
             // רענון הנתונים לאחר השינוי
             await fetchWidelyDetails();
         } catch (err) {
             console.error('Error cancelling line:', err);
-            setErrorMessage(t('errorCancellingLine') || 'שגיאה בביטול הקו');
+            setErrorMessage(t('errorCancellingLine'));
             setIsTerminateModalOpen(false);
         } finally {
             setIsTerminating(false);
