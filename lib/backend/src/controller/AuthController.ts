@@ -226,36 +226,25 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
       throw error
     }
 
-    // Check if user already exists by Google UID
-    let user: User.Model | null = await db.User.findUser({ google_uid: verifiedUid })
+    // Check if user exists by email (users must be pre-registered in the system)
+    let user: User.Model | null = await db.User.findUser({ email: verifiedEmail })
     
     if (!user) {
-      // Check if user exists by email (in case they previously registered with email/password)
-      user = await db.User.findUser({ email: verifiedEmail })
-      
-      if (user) {
-        // Link Google account to existing user
-        user = await db.User.updateUserPartial(user.user_id, { 
-          google_uid: verifiedUid,
-          photo_url: verifiedPhotoURL ?? user.photo_url,
-          email_verified: verifiedEmailVerified ?? false
-        })
-      } else {
-        // User not found in database - deny access
-        const error: HttpError.Model = {
-          status: 403,
-          message: 'Access denied. Your account is not authorized to use this system. Please contact the administrator.',
-        }
-        throw error
+      // User not found in database - deny access
+      const error: HttpError.Model = {
+        status: 403,
+        message: 'Access denied. Your account is not authorized to use this system. Please contact the administrator.',
       }
-    } else {
-      // Update existing Google user info with verified data
-      user = await db.User.updateUserPartial(user.user_id, {
-        user_name: verifiedDisplayName || user.user_name,
-        photo_url: verifiedPhotoURL || user.photo_url,
-        email_verified: verifiedEmailVerified || user.email_verified
-      })
+      throw error
     }
+    
+    // Update user with Google info (link Google account and update profile data)
+    user = await db.User.updateUserPartial(user.user_id, { 
+      google_uid: verifiedUid,
+      user_name: verifiedDisplayName || user.user_name,
+      photo_url: verifiedPhotoURL || user.photo_url,
+      email_verified: verifiedEmailVerified || user.email_verified
+    })
 
     // Runtime safety check – TypeScript should guarantee user is non-null here
     if (!user) {
