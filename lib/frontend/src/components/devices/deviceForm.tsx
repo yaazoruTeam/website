@@ -14,6 +14,7 @@ import { EntityType } from '@model'
 import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import CustomTypography from '../designComponent/Typography'
+import { CustomButton } from '../designComponent/Button'
 
 export interface deviceFormInputs {
   device_number: string
@@ -35,6 +36,7 @@ interface DeviceFormProps {
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
+  onEditClick?: () => void
 }
 
 const DeviceForm: React.FC<DeviceFormProps> = ({
@@ -43,6 +45,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
+  onEditClick,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -73,17 +76,28 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         padding: '28px',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
-        <CustomTypography
-          text={t('deviceData')}
-          variant='h3'
-          weight='medium'
-        />
-        <CustomTypography
-          text={initialValues ? initialValues.device_number : ''}
-          variant='h4'
-          weight='regular'
-        />
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb:'40px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <CustomTypography
+            text={t('deviceData')}
+            variant='h3'
+            weight='medium'
+          />
+          <CustomTypography
+            text={initialValues ? initialValues.device_number : ''}
+            variant='h4'
+            weight='regular'
+          />
+        </Box>
+        {onEditClick && (
+          <CustomButton
+            label={t('editDevice')}
+            state='default'
+            size='large'
+            buttonType='first'
+            onClick={onEditClick}
+          />
+        )}
       </Box>
       <Box
         sx={{

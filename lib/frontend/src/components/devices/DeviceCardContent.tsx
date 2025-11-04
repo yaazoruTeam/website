@@ -5,14 +5,19 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
+import EditDeviceForm from './EditDeviceForm'
+import { getDeviceById } from '../../api/device'
 
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
+  onDeviceUpdate?: () => void
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDevice, customerDevice, onDeviceUpdate }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
+  const [showEditDevice, setShowEditDevice] = useState(false)
+  const [device, setDevice] = useState<Device.Model>(initialDevice)
 
   // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
@@ -38,6 +43,26 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
   useEffect(() => {
     fetchLastComment()
   }, [fetchLastComment])
+
+  useEffect(() => {
+    setDevice(initialDevice)
+  }, [initialDevice])
+
+  const handleEditDeviceSuccess = async () => {
+    setShowEditDevice(false)
+    // רענון נתוני המכשיר
+    if (device.device_id) {
+      try {
+        const updatedDevice = await getDeviceById(device.device_id.toString())
+        setDevice(updatedDevice)
+        if (onDeviceUpdate) {
+          onDeviceUpdate()
+        }
+      } catch (error) {
+        console.error('Error refreshing device data:', error)
+      }
+    }
+  }
 
   return (
     <Box>
@@ -74,7 +99,18 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        onEditClick={() => setShowEditDevice(true)}
       />
+
+      {showEditDevice && (
+        <EditDeviceForm
+          open={showEditDevice}
+          onClose={() => setShowEditDevice(false)}
+          onSuccess={handleEditDeviceSuccess}
+          device={device}
+        />
+      )}
+
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
