@@ -1,5 +1,5 @@
 import { Box } from '@mui/system'
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
@@ -14,6 +14,10 @@ import { EntityType } from '@model'
 import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import CustomTypography from '../designComponent/Typography'
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import ImeiDetailsModal from './ImeiDetailsModal'
+import { getWidelyDetails } from '../../api/widely'
+import { WidelyDeviceDetails } from '@model'
 
 export interface deviceFormInputs {
   device_number: string
@@ -32,6 +36,7 @@ export interface deviceFormInputs {
 interface DeviceFormProps {
   initialValues?: deviceFormInputs
   deviceId?: string
+  simNumber?: string
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
@@ -40,12 +45,15 @@ interface DeviceFormProps {
 const DeviceForm: React.FC<DeviceFormProps> = ({
   initialValues,
   deviceId,
+  simNumber,
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isImeiModalOpen, setIsImeiModalOpen] = useState(false)
+  const [widelyImei, setWidelyImei] = useState<string | undefined>(undefined)
 
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
@@ -64,6 +72,25 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
       notes: '',
     },
   })
+
+  // Fetch Widely IMEI when component mounts
+  const fetchWidelyImei = useCallback(async () => {
+    if (!simNumber) return
+
+    try {
+      const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber)
+      setWidelyImei(details.imei1)
+    } catch (error) {
+      console.error('Error fetching Widely IMEI:', error)
+      setWidelyImei(undefined)
+    }
+  }, [simNumber])
+
+  useEffect(() => {
+    if (simNumber) {
+      fetchWidelyImei()
+    }
+  }, [fetchWidelyImei, simNumber])
 
   return (
     <Box
@@ -96,7 +123,41 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         {/* <CustomTextField control={control} name='SIM_number' label={t('SIM_number')}
          /> */}
         <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
-        <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
+        <CustomTextField 
+          control={control} 
+          name='IMEI_1' 
+          label={t('IMEI_1')}
+          icon={
+            <Box
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsImeiModalOpen(true)
+              }}
+              sx={{
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                backgroundColor: colors.blueOverlay100,
+                transition: 'all 0.2s',
+                '&:hover': {
+                  backgroundColor: colors.blueOverlay200,
+                },
+              }}
+            >
+              <InformationCircleIcon
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  color: colors.blue700,
+                }}
+              />
+            </Box>
+          }
+        />
         <CustomTextField control={control} name='model' label={t('modelDevice')} />
         {/* <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} /> */}
       </Box>
@@ -175,6 +236,14 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
           </ChatModalContainer>
         </ChatModalOverlay>
       )}
+
+      <ImeiDetailsModal
+        open={isImeiModalOpen}
+        onClose={() => setIsImeiModalOpen(false)}
+        imeiFromDatabase={initialValues?.IMEI_1 || ''}
+        imeiFromSim={widelyImei}
+        serialNumber={initialValues?.serialNumber}
+      />
     </Box>
   )
 }

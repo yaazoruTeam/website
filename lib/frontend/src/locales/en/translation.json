@@ -415,5 +415,9 @@
   "deviceAssignedSuccessfully": "device assigned successfully",
   "deviceAlreadyAssigned": "device already assigned to another customer",
   "noAvailableDevices": "no available devices to assign",
-  "pleaseSelectDevice": "Please select a device"
+  "pleaseSelectDevice": "Please select a device",
+  "imeiDetails": "IMEI Details",
+  "imeiFromDatabase": "IMEI from Database",
+  "imeiFromSim": "IMEI from SIM (Widely)",
+  "imeiFromSamsung": "Serial Number (Samsung)"
 }

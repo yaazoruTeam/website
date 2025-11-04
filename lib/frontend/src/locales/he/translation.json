@@ -416,6 +416,10 @@
   "errorAssigningDevice": "שגיאה בשיוך המכשיר",
   "deviceAssignedSuccessfully": "המכשיר שוייך בהצלחה",
   "deviceAlreadyAssigned": "המכשיר כבר משוייך ללקוח אחר",
-  "noAvailableDevices": "אין מכשירים לשיוך",
-  "pleaseSelectDevice": "נא לבחור מכשיר"
+  "noAvailableDevices": "אין מכשירים זמינים לשיוך",
+  "pleaseSelectDevice": "נא לבחור מכשיר",
+  "imeiDetails": "פרטי IMEI",
+  "imeiFromDatabase": "IMEI ממסד הנתונים",
+  "imeiFromSim": "IMEI מהסים (Widely)",
+  "imeiFromSamsung": "מספר סידורי (סמסונג)"
 }

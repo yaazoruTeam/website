@@ -63,6 +63,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
+        simNumber={device.SIM_number}
         lastCommentDate={
           lastComment
             ? new Date(lastComment.created_at).toLocaleDateString('he-IL', {
