@@ -44,8 +44,8 @@ const startServer = async () => {
     // זה בעצמו מריץ מיגרציות אוטומטית!
     logger.info('🗄️  Initializing database...')
     //to do: change back
-    await initializeDatabase()
-    // await createSchema();
+    // await initializeDatabase()
+    await createSchema();
     logger.info('✅ Database initialized successfully')
 
     app.listen(PORT, () => {
