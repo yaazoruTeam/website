@@ -185,11 +185,8 @@ const existingUser = async (user: User.Model, hasId: boolean) => {
 
   // Find ALL potential conflicts
   const conflicts = await userRepository.findAllExistingUsers({
+    ...user,
     user_id: hasId && user.user_id ? user.user_id : undefined,
-    email: user.email,
-    id_number: user.id_number,
-    phone_number: user.phone_number,
-    user_name: user.user_name,
     google_uid: (user as any).google_uid || undefined,
   })
 
