@@ -13,7 +13,7 @@ interface Model {
   SIM_number: string
   IMEI_1: string
   model: string
-  status?: string | DeviceStatus // active, inactive, blocked, lock_in_imei - default is 'active'
+  status?: DeviceStatus // active, inactive, blocked, lock_in_imei - default is 'active'
   serialNumber: string //במסונג?
   registrationDate?: Date  //תאריך רישום - default is today
   purchaseDate?: Date | null //תאריך רכישה - optional
@@ -84,7 +84,7 @@ function sanitize(device: Model, hasId: boolean): Model {
     SIM_number: device.SIM_number,
     IMEI_1: device.IMEI_1,
     model: device.model,
-    status: device.status || 'active',
+    status: device.status || DeviceStatus.ACTIVE,
     serialNumber: device.serialNumber,
     purchaseDate: device.purchaseDate || null,
     registrationDate: device.registrationDate || new Date(Date.now()),

@@ -6,8 +6,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
  * מיגרציה זו תיוצר את ה-schema 'yaazoru' שכל הטבלאות יהיו בתוכו
  * זו חייבת להיות המיגרציה הראשונה!
  */
-export class CreateYaazoluSchema1729604100000 implements MigrationInterface {
-  name = 'CreateYaazoluSchema1729604100000'
+export class CreateYaazoruSchema1729604100000 implements MigrationInterface {
+  name = 'CreateYaazoruSchema1729604100000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     console.log('🏗️  Creating yaazoru schema...')

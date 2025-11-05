@@ -1,3 +1,4 @@
+import { DeviceStatus } from '@/src/entities'
 import { Device } from '@model'
 
 /**
@@ -19,7 +20,7 @@ const convertFlatRowToDeviceModel = (row: Record<string, unknown>): Device.Model
     SIM_number: toSafeString(row.SIM_number),
     IMEI_1: toSafeString(row.IMEI_1),
     model: toSafeString(row.model),
-    status: 'active',
+    status: (row.status as DeviceStatus) || DeviceStatus.ACTIVE,
     serialNumber: toSafeString(row.serialNumber),
     purchaseDate: null,
     registrationDate: new Date(),
