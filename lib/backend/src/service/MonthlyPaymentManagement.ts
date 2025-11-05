@@ -1,12 +1,10 @@
-import getDbConnection from '@db/connection'
 import { CreditDetails, HttpError, MonthlyPayment, MonthlyPaymentManagement } from '@model'
-import * as db from '@db/index'
 import { customerRepository } from '@repositories/CustomerRepository'
 import logger from '../utils/logger'
 
 const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentManagement.Model) => {
-  const knex = getDbConnection()
-  const trx = await knex.transaction()
+  // const knex = getDbConnection()
+  // const trx = await knex.transaction()
   try {
     const customer = await customerRepository.getCustomerById(parseInt(monthlyPayment.customer_id.toString()))
     if (!customer) {
@@ -17,29 +15,29 @@ const createMonthlyPaymentManagement = async (monthlyPayment: MonthlyPaymentMana
       throw error
     }
     const sanitized = MonthlyPaymentManagement.sanitize(monthlyPayment)
-    const monthlyPaymentData: MonthlyPayment.Model = await db.MonthlyPayment.createMonthlyPayment(
-      sanitized.monthlyPayment,
-    )
-    const creditDetailsData: CreditDetails.Model = await db.CreditDetails.createCreditDetails(
-      sanitized.creditDetails,
-    )
-    sanitized.paymentCreditLink.monthlyPayment_id = monthlyPaymentData.monthlyPayment_id
-    sanitized.paymentCreditLink.creditDetails_id = creditDetailsData.credit_id
-    const paymentCreditLinkData = await db.PaymentCreditLink.createPaymentCreditLink(
-      sanitized.paymentCreditLink,
-    )
+    // const monthlyPaymentData: MonthlyPayment.Model = await db.MonthlyPayment.createMonthlyPayment(
+    //   sanitized.monthlyPayment,
+    // )
+    // const creditDetailsData: CreditDetails.Model = await db.CreditDetails.createCreditDetails(
+    //   sanitized.creditDetails,
+    // )
+    // sanitized.paymentCreditLink.monthlyPayment_id = monthlyPaymentData.monthlyPayment_id
+    // sanitized.paymentCreditLink.creditDetails_id = creditDetailsData.credit_id
+    // const paymentCreditLinkData = await db.PaymentCreditLink.createPaymentCreditLink(
+    //   sanitized.paymentCreditLink,
+    // )
     for (const payment of sanitized.payments) {
-      payment.monthlyPayment_id = monthlyPaymentData.monthlyPayment_id
-      await db.Payments.createPayments(payment)
+      // payment.monthlyPayment_id = monthlyPaymentData.monthlyPayment_id
+      // await db.Payments.createPayments(payment)
     }
     for (const item of sanitized.items) {
-      item.monthlyPayment_id = monthlyPaymentData.monthlyPayment_id
-      await db.Item.createItem(item)
+      // item.monthlyPayment_id = monthlyPaymentData.monthlyPayment_id
+      // await db.Item.createItem(item)
     }
-    await trx.commit()
+    // await trx.commit()
     logger.info('All actions completed successfully')
   } catch (error) {
-    await trx.rollback()
+    // await trx.rollback()
     logger.error('Transaction failed, all actions rolled back:', error)
 
     // החזרת שגיאה מסודרת
