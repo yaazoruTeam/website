@@ -216,7 +216,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
               key={device.device_id}
               device={device}
               isOpen={openedDeviceId === device.device_id?.toString()}
-              onClick={() => handleRowClick(device.device_id?.toString() || '')}
+              onClick={() => device.device_id !== undefined && handleRowClick(device.device_id.toString())}
             />
           ))}
         </Box>

@@ -15,7 +15,6 @@ const convertFlatRowToDeviceModel = (row: Record<string, unknown>): Device.Model
   }
 
   return {
-    device_id: 0,
     device_number: toSafeString(row.device_number),
     SIM_number: toSafeString(row.SIM_number),
     IMEI_1: toSafeString(row.IMEI_1),
