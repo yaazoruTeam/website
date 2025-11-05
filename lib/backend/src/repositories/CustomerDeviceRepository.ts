@@ -155,9 +155,7 @@ export class CustomerDeviceRepository {
 
       if (!result.affected) {
         logger.warn('[DB] Customer device not found for update', { customerDevice_id })
-        const error = new Error('Customer device not found')
-        ;(error as any).status = 404
-        throw error
+        throw { status: 404, message: 'Customer device not found' }
       }
 
       const updatedCustomerDevice = await this.getCustomerDeviceById(customerDevice_id)
@@ -184,9 +182,7 @@ export class CustomerDeviceRepository {
 
       if (!result.affected) {
         logger.warn('[DB] Customer device not found for deletion', { customerDevice_id })
-        const error = new Error('Customer device not found')
-        ;(error as any).status = 404
-        throw error
+        throw { status: 404, message: 'Customer device not found' }
       }
 
       logger.debug('[DB] Customer device deleted successfully', { customerDevice_id })
@@ -272,9 +268,7 @@ export class CustomerDeviceRepository {
   ): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
       if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        const error = new Error('Invalid offset parameter')
-        ;(error as any).status = 400
-        throw error
+        throw { status: 400, message: 'Invalid offset parameter' }
       }
 
       // Filter only scalar fields - exclude relations and complex types
@@ -290,7 +284,7 @@ export class CustomerDeviceRepository {
 
       const [customerDevices, total] = await this.repository.findAndCount({
         where: where,
-        skip: offset || 0,
+        skip: offset ?? 0,
         take: limit,
         relations: ['customer', 'device'],
         order: { customerDevice_id: 'ASC' },
@@ -319,14 +313,10 @@ export class CustomerDeviceRepository {
   ): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
       if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        const error = new Error('Invalid offset parameter')
-        ;(error as any).status = 400
-        throw error
+        throw { status: 400, message: 'Invalid offset parameter' }
       }
       if (startDate > endDate) {
-        const error = new Error('startDate must be before endDate')
-        ;(error as any).status = 400
-        throw error
+        throw { status: 400, message: 'startDate must be before endDate' }
       }
 
       logger.debug('[DB] Finding customer devices by date range', { startDate, endDate })
@@ -335,7 +325,7 @@ export class CustomerDeviceRepository {
         where: {
           receivedAt: Between(startDate, endDate),
         },
-        skip: offset || 0,
+        skip: offset ?? 0,
         take: limit,
         relations: ['customer', 'device'],
         order: { receivedAt: 'DESC' },
