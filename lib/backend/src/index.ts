@@ -43,7 +43,7 @@ const startServer = async () => {
     // Initialize TypeORM database connection
     // זה בעצמו מריץ מיגרציות אוטומטית!
     logger.info('🗄️  Initializing database...')
-    //to do: change back
+    // TODO: change back
      await initializeDatabase()
     //await createSchema();
     logger.info('✅ Database initialized successfully')

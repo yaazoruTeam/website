@@ -18,7 +18,11 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Create a new customer device assignment
+   * Create a new customer device assignment.
+   * @param {Partial<CustomerDevice>} customerDeviceData - Data for the customer device. 
+   *   Required fields: customer_id, device_id, receivedAt. 
+   *   Optional fields: planEndDate and other properties of CustomerDevice may be provided.
+   * @returns {Promise<CustomerDevice>} The newly created CustomerDevice entity.
    */
   async createCustomerDevice(customerDeviceData: Partial<CustomerDevice>): Promise<CustomerDevice> {
     try {
@@ -42,6 +46,8 @@ export class CustomerDeviceRepository {
 
   /**
    * Get customer devices with pagination
+   * @param {number} offset - The number of records to skip for pagination
+   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing array of customer devices and total count
    */
   async getCustomerDevices(offset: number): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
@@ -62,7 +68,9 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Get customer device by ID
+   * Retrieves a customer device assignment by its unique ID.
+   * @param {number} customerDevice_id - The unique identifier of the customer device assignment to retrieve.
+   * @returns {Promise<CustomerDevice | null>} A Promise that resolves to the CustomerDevice object if found, or null if not found.
    */
   async getCustomerDeviceById(customerDevice_id: number): Promise<CustomerDevice | null> {
     try {
@@ -82,6 +90,8 @@ export class CustomerDeviceRepository {
 
   /**
    * Get all devices for a specific customer
+   * @param {number} customer_id - The ID of the customer whose devices are to be fetched
+   * @returns {Promise<CustomerDevice[]>} Array of CustomerDevice objects with device relations loaded
    */
   async getDevicesByCustomerId(customer_id: number): Promise<CustomerDevice[]> {
     try {
@@ -102,6 +112,8 @@ export class CustomerDeviceRepository {
 
   /**
    * Get all customers for a specific device
+   * @param {number} device_id - The ID of the device to fetch customers for
+   * @returns {Promise<CustomerDevice[]>} An array of CustomerDevice entities associated with the device
    */
   async getCustomersByDeviceId(device_id: number): Promise<CustomerDevice[]> {
     try {
@@ -122,6 +134,10 @@ export class CustomerDeviceRepository {
 
   /**
    * Update customer device
+   * @param {number} customerDevice_id - The ID of the customer device to update
+   * @param {Partial<CustomerDevice>} updateData - Partial device data to update
+   * @returns {Promise<CustomerDevice>} Updated customer device
+   * @throws {object} Throws a 404 error object if the customer device is not found
    */
   async updateCustomerDevice(
     customerDevice_id: number,
@@ -152,6 +168,9 @@ export class CustomerDeviceRepository {
 
   /**
    * Delete customer device
+   * @param {number} customerDevice_id - The ID of the customer device to delete
+   * @returns {Promise<void>}
+   * @throws {object} Throws a 404 error object if the customer device is not found
    */
   async deleteCustomerDevice(customerDevice_id: number): Promise<void> {
     try {
@@ -174,6 +193,9 @@ export class CustomerDeviceRepository {
   /**
    * Find existing customer device by customer_id and device_id
    * Used to check if a device is already assigned to a customer
+   * @param {number} customer_id - The customer ID to search for
+   * @param {number} device_id - The device ID to search for
+   * @returns {Promise<CustomerDevice | null>} The existing CustomerDevice if found, null otherwise
    */
   async findExistingCustomerDevice(
     customer_id: number,
@@ -201,6 +223,7 @@ export class CustomerDeviceRepository {
 
   /**
    * Get all customer devices (without pagination) - use with caution!
+   * @returns {Promise<CustomerDevice[]>} Array of all customer devices with customer and device relations loaded
    */
   async getAllCustomerDevices(): Promise<CustomerDevice[]> {
     try {
@@ -216,7 +239,8 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Count total customer devices
+   * Counts the total number of customer devices in the database.
+   * @returns {Promise<number>} Promise resolving to the total count of customer devices.
    */
   async countCustomerDevices(): Promise<number> {
     try {
@@ -229,6 +253,10 @@ export class CustomerDeviceRepository {
 
   /**
    * Find customer devices by filter criteria with pagination
+   * @param {Partial<CustomerDevice>} [filter] - Optional filter criteria to match customer devices
+   * @param {number} [offset] - The number of records to skip for pagination (must be >= 0)
+   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing filtered customer devices and total count
+   * @throws {object} Throws a 400 error object if offset is invalid (negative or non-integer)
    */
   async find(
     filter?: Partial<CustomerDevice>,
@@ -261,6 +289,11 @@ export class CustomerDeviceRepository {
 
   /**
    * Find customer devices by date range (receivedAt)
+   * @param {Date} startDate - The start date of the range (inclusive)
+   * @param {Date} endDate - The end date of the range (inclusive)
+   * @param {number} [offset] - The number of records to skip for pagination (must be >= 0)
+   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing customer devices within the date range and total count
+   * @throws {object} Throws a 400 error object if offset is invalid or if startDate is after endDate
    */
   async findByDate(
     startDate: Date,
@@ -296,7 +329,9 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Find customer devices with expired plans
+   * Finds customer devices with expired plans.
+   * @param {Date} [referenceDate] - The date to compare plan end dates against. Defaults to the current date if not provided.
+   * @returns {Promise<CustomerDevice[]>} Promise resolving to an array of customer devices with expired plans.
    */
   async findExpiredPlans(referenceDate?: Date): Promise<CustomerDevice[]> {
     try {
@@ -322,6 +357,8 @@ export class CustomerDeviceRepository {
 
   /**
    * Bulk delete customer devices by IDs
+   * @param {number[]} customerDevice_ids - Array of customer device IDs to delete
+   * @returns {Promise<number>} The count of deleted records
    */
   async bulkDelete(customerDevice_ids: number[]): Promise<number> {
     try {
