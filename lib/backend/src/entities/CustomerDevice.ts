@@ -6,12 +6,14 @@ import {
   UpdateDateColumn,
   Index,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
+  Unique
 } from 'typeorm'
 import { Customer } from './Customer'
 import { Device } from './Device'
 
 @Entity('customer_devices', { schema: 'yaazoru' })
+@Unique(['customer_id', 'device_id'])
 export class CustomerDevice {
   @PrimaryGeneratedColumn()
   customerDevice_id!: number

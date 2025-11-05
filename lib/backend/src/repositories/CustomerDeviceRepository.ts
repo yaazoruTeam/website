@@ -137,7 +137,7 @@ export class CustomerDeviceRepository {
    * @param {number} customerDevice_id - The ID of the customer device to update
    * @param {Partial<CustomerDevice>} updateData - Partial device data to update
    * @returns {Promise<CustomerDevice>} Updated customer device
-   * @throws {object} Throws a 404 error object if the customer device is not found
+   * @throws {Error} Throws a 404 error if the customer device is not found
    */
   async updateCustomerDevice(
     customerDevice_id: number,
@@ -146,20 +146,22 @@ export class CustomerDeviceRepository {
     try {
       logger.debug('[DB] Updating customer device in database', { customerDevice_id })
 
-      await this.repository.update(customerDevice_id, {
+      const result = await this.repository.update(customerDevice_id, {
         ...updateData,
         updated_at: new Date(),
       })
 
-      const updatedCustomerDevice = await this.getCustomerDeviceById(customerDevice_id)
-
-      if (!updatedCustomerDevice) {
+      if (!result.affected) {
         logger.warn('[DB] Customer device not found for update', { customerDevice_id })
-        throw { status: 404, message: 'Customer device not found' }
+        const error = new Error('Customer device not found')
+        ;(error as any).status = 404
+        throw error
       }
 
+      const updatedCustomerDevice = await this.getCustomerDeviceById(customerDevice_id)
+
       logger.debug('[DB] Customer device updated successfully', { customerDevice_id })
-      return updatedCustomerDevice
+      return updatedCustomerDevice!
     } catch (err) {
       logger.error('[DB] Database error updating customer device:', err)
       throw err
@@ -170,7 +172,7 @@ export class CustomerDeviceRepository {
    * Delete customer device
    * @param {number} customerDevice_id - The ID of the customer device to delete
    * @returns {Promise<void>}
-   * @throws {object} Throws a 404 error object if the customer device is not found
+   * @throws {Error} Throws a 404 error if the customer device is not found
    */
   async deleteCustomerDevice(customerDevice_id: number): Promise<void> {
     try {
@@ -180,7 +182,9 @@ export class CustomerDeviceRepository {
 
       if (!result.affected) {
         logger.warn('[DB] Customer device not found for deletion', { customerDevice_id })
-        throw { status: 404, message: 'Customer device not found' }
+        const error = new Error('Customer device not found')
+        ;(error as any).status = 404
+        throw error
       }
 
       logger.debug('[DB] Customer device deleted successfully', { customerDevice_id })
@@ -253,10 +257,12 @@ export class CustomerDeviceRepository {
 
   /**
    * Find customer devices by filter criteria with pagination
-   * @param {Partial<CustomerDevice>} [filter] - Optional filter criteria to match customer devices
+   * @param {Partial<CustomerDevice>} [filter] - Optional filter criteria to match customer devices.
+   *   Supported fields: customerDevice_id, customer_id, device_id.
+   *   Note: Date fields and relation objects are not supported in this filter.
    * @param {number} [offset] - The number of records to skip for pagination (must be >= 0)
    * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing filtered customer devices and total count
-   * @throws {object} Throws a 400 error object if offset is invalid (negative or non-integer)
+   * @throws {Error} Throws a 400 error if offset is invalid (negative or non-integer)
    */
   async find(
     filter?: Partial<CustomerDevice>,
@@ -264,11 +270,20 @@ export class CustomerDeviceRepository {
   ): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
       if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        throw { status: 400, message: 'Invalid offset parameter' }
+        const error = new Error('Invalid offset parameter')
+        ;(error as any).status = 400
+        throw error
       }
 
+      // Filter only scalar fields - exclude relations and complex types
       const where = filter
-        ? Object.fromEntries(Object.entries(filter).filter(([_, v]) => v != null))
+        ? Object.fromEntries(
+            Object.entries(filter).filter(([key, v]) => {
+              // Only allow specific scalar fields
+              const allowedFields = ['customerDevice_id', 'customer_id', 'device_id']
+              return allowedFields.includes(key) && v != null
+            })
+          )
         : undefined
 
       const [customerDevices, total] = await this.repository.findAndCount({
@@ -293,7 +308,7 @@ export class CustomerDeviceRepository {
    * @param {Date} endDate - The end date of the range (inclusive)
    * @param {number} [offset] - The number of records to skip for pagination (must be >= 0)
    * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing customer devices within the date range and total count
-   * @throws {object} Throws a 400 error object if offset is invalid or if startDate is after endDate
+   * @throws {Error} Throws a 400 error if offset is invalid or if startDate is after endDate
    */
   async findByDate(
     startDate: Date,
@@ -302,10 +317,14 @@ export class CustomerDeviceRepository {
   ): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
       if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        throw { status: 400, message: 'Invalid offset parameter' }
+        const error = new Error('Invalid offset parameter')
+        ;(error as any).status = 400
+        throw error
       }
       if (startDate > endDate) {
-        throw { status: 400, message: 'startDate must be before endDate' }
+        const error = new Error('startDate must be before endDate')
+        ;(error as any).status = 400
+        throw error
       }
 
       logger.debug('[DB] Finding customer devices by date range', { startDate, endDate })

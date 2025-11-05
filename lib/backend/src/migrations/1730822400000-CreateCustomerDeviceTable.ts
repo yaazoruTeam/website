@@ -4,7 +4,7 @@ export class CreateCustomerDeviceTable1730822400000 implements MigrationInterfac
     name = 'CreateCustomerDeviceTable1730822400000'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "yaazoru"."customer_devices" ("customerDevice_id" SERIAL NOT NULL, "customer_id" integer NOT NULL, "device_id" integer NOT NULL, "receivedAt" date NOT NULL, "planEndDate" date, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_customerDevice_id" PRIMARY KEY ("customerDevice_id"))`);
+        await queryRunner.query(`CREATE TABLE "yaazoru"."customer_devices" ("customerDevice_id" SERIAL NOT NULL, "customer_id" integer NOT NULL, "device_id" integer NOT NULL, "receivedAt" date NOT NULL, "planEndDate" date, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_customer_device" UNIQUE ("customer_id", "device_id"), CONSTRAINT "PK_customerDevice_id" PRIMARY KEY ("customerDevice_id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_customer_devices_customer_id" ON "yaazoru"."customer_devices" ("customer_id") `);
         await queryRunner.query(`CREATE INDEX "IDX_customer_devices_device_id" ON "yaazoru"."customer_devices" ("device_id") `);
         await queryRunner.query(`CREATE INDEX "IDX_customer_devices_created_at" ON "yaazoru"."customer_devices" ("created_at") `);
