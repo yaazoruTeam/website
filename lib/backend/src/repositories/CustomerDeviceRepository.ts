@@ -19,10 +19,12 @@ export class CustomerDeviceRepository {
 
   /**
    * Create a new customer device assignment.
-   * @param {Partial<CustomerDevice>} customerDeviceData - Data for the customer device. 
-   *   Required fields: customer_id, device_id, receivedAt. 
+   * @param {Partial<CustomerDevice>} customerDeviceData - Data for the customer device.
+   *   Note: While the type is Partial, the database schema requires customer_id, device_id, and receivedAt.
+   *   Missing required fields will cause a database constraint violation.
    *   Optional fields: planEndDate and other properties of CustomerDevice may be provided.
    * @returns {Promise<CustomerDevice>} The newly created CustomerDevice entity.
+   * @throws {Error} Database error if required fields are missing or constraint violations occur (e.g., duplicate customer_id + device_id combination)
    */
   async createCustomerDevice(customerDeviceData: Partial<CustomerDevice>): Promise<CustomerDevice> {
     try {
