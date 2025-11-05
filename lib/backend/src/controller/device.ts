@@ -155,7 +155,7 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
     const sanitized = Device.sanitize(req.body, true)
 
     // Check for existing device with duplicate unique fields
-    await checkExistingDevice({ ...sanitized, device_id }, false)
+    await checkExistingDevice({ ...sanitized, device_id }, true)
 
     const updatedDevice = await deviceRepository.updateDevice(device_id, sanitized as any)
     res.status(200).json(updatedDevice)
