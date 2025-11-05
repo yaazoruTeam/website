@@ -214,7 +214,7 @@ export class CustomerDeviceRepository {
         })
       }
 
-      return customerDevice
+      return customerDevice || null
     } catch (err) {
       logger.error('[DB] Database error searching for customer device:', err)
       throw err
