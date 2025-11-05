@@ -8,6 +8,7 @@ import * as db from '@db/index'
 import { Device, Comment } from '@model'
 import { Knex } from 'knex'
 import logger from '../../utils/logger'
+import { deviceRepository } from '@/src/repositories'
 
 export interface ExcelRowData {
   [key: string]: unknown
@@ -100,7 +101,7 @@ export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: K
     serialNumber: deviceModel.serialNumber
   })
 
-  let existDevice = await db.Device.findDevice({
+  let existDevice = await deviceRepository.findExistingDevice({
     SIM_number: deviceModel.SIM_number,
     IMEI_1: deviceModel.IMEI_1,
     device_number: deviceModel.device_number,
@@ -133,7 +134,8 @@ export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: K
   // המכשיר לא קיים - ניצור חדש
   logger.info('📱 Device not found in DB - creating new device...')
   try {
-    existDevice = await db.Device.createDevice(deviceModel, trx)
+    //to do: לטפל בטרנזקציה trx זה אמור להיות בתוך טרנזקציה 
+    existDevice = await deviceRepository.createDevice(deviceModel)
     logger.info(`✅ Device created successfully with ID: ${existDevice.device_id}`)
     return existDevice
   } catch (createError) {
