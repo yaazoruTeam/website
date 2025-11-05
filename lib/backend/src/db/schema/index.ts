@@ -1,9 +1,4 @@
-import { Knex } from 'knex'
-import { createYaazoruSchema } from './yaazoru'
-import { createCustomerSchema } from './customer'
-import { createDeviceSchema } from './device'
 import { createCustomerDeviceSchema } from './customerDevice'
-import { createUserSchema } from './user'
 import { createBranchSchema } from './branch'
 import { createBranchCustomerSchema } from './branchCustomer'
 import { createBranchUserSchema } from './branchUser'
@@ -18,11 +13,7 @@ import logger from '@/src/utils/logger'
 const createSchema = async () => {
   logger.debug('Creating schema...')
   try {
-    await createYaazoruSchema()
-    await createCustomerSchema()
-    await createDeviceSchema()
     await createCustomerDeviceSchema()
-    await createUserSchema()
     await createBranchSchema()
     await createBranchCustomerSchema()
     await createBranchUserSchema()

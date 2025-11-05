@@ -4,6 +4,7 @@ import * as db from '@db/index'
 import { CustomerDevice, HttpError } from '@model'
 import { customerRepository } from '@repositories/CustomerRepository'
 import { handleError } from './err'
+import { deviceRepository } from '../repositories'
 
 const limit = config.database.limit
 
@@ -113,7 +114,7 @@ const getCustomerIdByDeviceId = async (
 
     CustomerDevice.sanitizeIdExisting(req)
     const device_id = req.params.id
-    const deviceExist = await db.Device.doesDeviceExist(device_id)
+    const deviceExist = await deviceRepository.doesDeviceExist(Number(device_id))
     if (!deviceExist) {
       const error: HttpError.Model = {
         status: 404,
@@ -188,7 +189,7 @@ const existingCustomerDevice = async (customerDevice: CustomerDevice.Model, hasI
       }
       throw error
     }
-    const deviceExist = await db.Device.doesDeviceExist(customerDevice.device_id)
+    const deviceExist = await deviceRepository.doesDeviceExist(Number(customerDevice.device_id))
     if (!deviceExist) {
       const error: HttpError.Model = {
         status: 404,

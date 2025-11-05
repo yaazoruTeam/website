@@ -92,7 +92,8 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       
       for (const device of allDevices) {
         try {
-          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id)
+          if (!device.device_id) continue
+          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id.toString())
           if (!customerDevice) {
             availableList.push(device)
           }
@@ -131,7 +132,13 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       setAssignmentError(null)
       setAssignmentSuccess(null)
 
-      const existingAssignment = await getCustomerDeviceByDeviceId(selectedDevice.device_id)
+      if (!selectedDevice.device_id) {
+        setAssignmentError(t('pleaseSelectDevice'))
+        setAssigning(false)
+        return
+      }
+
+      const existingAssignment = await getCustomerDeviceByDeviceId(selectedDevice.device_id.toString())
       if (existingAssignment) {
         setAssignmentError(t('deviceAlreadyAssigned'))
         setAssigning(false)
@@ -208,8 +215,8 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             <DeviceRowInline
               key={device.device_id}
               device={device}
-              isOpen={openedDeviceId === device.device_id}
-              onClick={() => handleRowClick(device.device_id)}
+              isOpen={openedDeviceId === device.device_id?.toString()}
+              onClick={() => device.device_id !== undefined && handleRowClick(device.device_id.toString())}
             />
           ))}
         </Box>
