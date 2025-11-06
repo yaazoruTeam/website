@@ -71,6 +71,10 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         backgroundColor: colors.neutral0,
         direction: 'rtl',
         padding: '28px',
+        marginLeft: isChatOpen ? '400px' : '0',
+        transition: 'margin-left 0.3s ease',
+        maxHeight: '100vh',
+        overflowY: 'auto',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>

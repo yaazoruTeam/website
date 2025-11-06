@@ -79,7 +79,16 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   const hasInitialValues = !!initialValues
 
   return (
-    <FormContainer component="form" onSubmit={handleSubmit(onSubmit)}>
+    <FormContainer 
+      component="form" 
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        marginLeft: isChatOpen ? '400px' : '0',
+        transition: 'margin-left 0.3s ease',
+        maxHeight: '100vh',
+        overflowY: 'auto',
+      }}
+    >
       <OuterCard>
         <InnerContent>
           {/* --- Row 1 --- */}
