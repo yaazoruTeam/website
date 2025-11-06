@@ -168,8 +168,8 @@ export const createCommentForEntity = async (
     logger.info(`💬 Creating comment for ${entityType} ${entityId}`)
     
     const commentModel: Comment.Model = {
-      comment_id: '', // יוגדר אוטומטית
-      entity_id: entityId,
+      comment_id: 0, // יוגדר אוטומטית על ידי הדאטהבייס
+      entity_id: parseInt(entityId), // המרה מ-string ל-number
       entity_type: entityType as Comment.EntityType,
       content: commentContent.trim(),
       created_at: new Date()
