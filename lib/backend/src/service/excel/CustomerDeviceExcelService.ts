@@ -2,9 +2,10 @@
  * CustomerDeviceExcelService - שירות עיבוד קבצי Excel ללקוחות ומכשירים
  * אחראי על כל הלוגיקה הספציפית לעיבוד נתוני לקוחות ומכשירים
  */
-
+//to do: לטפל בטרנזקציה
 import getDbConnection from '@db/connection'
 import * as db from '@db/index'
+import { customerRepository } from '@repositories/CustomerRepository'
 import { CustomerDeviceExcel } from '@model'
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
@@ -62,7 +63,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
         const existDevice = await createDeviceIfNotExists(sanitized.device, trx)
 
         let existingRelation = await db.CustomerDevice.findCustomerDevice({
-          device_id: existDevice.device_id,
+          device_id: String(existDevice.device_id),
         })
 
         if (!existingRelation) {
@@ -73,8 +74,8 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
           await db.CustomerDevice.createCustomerDevice(
             {
               customerDevice_id: '',
-              customer_id: existCustomer.customer_id,
-              device_id: existDevice.device_id,
+              customer_id: String(existCustomer.customer_id),
+              device_id: String(existDevice.device_id),
               receivedAt: date,
               planEndDate: planEndDate,
             },
@@ -84,7 +85,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 
         // יצירת הערה ללקוח בלבד (לא למכשיר) בטבלת לקוחות-מכשירים
         await createCommentForEntity(
-          existCustomer.customer_id,
+          String(existCustomer.customer_id),
           'customer',
           item.comment as string,
           trx
@@ -148,14 +149,23 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.T
       throw new Error('Customer is undefined in sanitized object.')
     }
 
-    let existCustomer = await db.Customer.findCustomer({
+    let existCustomer = await customerRepository.findExistingCustomer({
       email: sanitized.customer.email,
       id_number: sanitized.customer.id_number,
     })
 
     if (!existCustomer) {
       logger.debug('Creating new customer...')
-      existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
+      existCustomer = await customerRepository.createCustomer({
+        first_name: sanitized.customer.first_name,
+        last_name: sanitized.customer.last_name,
+        id_number: sanitized.customer.id_number,
+        phone_number: sanitized.customer.phone_number,
+        additional_phone: sanitized.customer.additional_phone || null,
+        email: sanitized.customer.email,
+        city: sanitized.customer.city,
+        address: sanitized.customer.address,
+      })
       logger.debug('Customer created successfully')
     } else {
       logger.debug('Customer already exists, using existing record')

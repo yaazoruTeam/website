@@ -3,6 +3,7 @@ import * as db from '@db/index'
 import { BranchUser, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
+import { userRepository } from '../repositories/UserRepository'
 
 const limit = config.database.limit
 const createBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -18,7 +19,7 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
       }
       throw error
     }
-    const existUser = await db.User.doesUserExist(sanitized.user_id)
+    const existUser = await userRepository.doesUserExist(Number(sanitized.user_id))
     if (!existUser) {
       const error: HttpError.Model = {
         status: 404,
@@ -46,7 +47,7 @@ const createBranchUser = async (req: Request, res: Response, next: NextFunction)
 
 const getAllBranchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     const { branchUsers, total } = await db.BranchUser.getAllBranchUser(offset)
@@ -90,7 +91,7 @@ const getBranchUserByBranch_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     BranchUser.sanitizeIdExisting(req)
@@ -123,7 +124,7 @@ const getBranchUserByUser_id = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
     BranchUser.sanitizeIdExisting(req)
@@ -160,7 +161,7 @@ const updateBranchUser = async (req: Request, res: Response, next: NextFunction)
       }
       throw error
     }
-    const existUser = await db.User.doesUserExist(sanitized.user_id)
+    const existUser = await userRepository.doesUserExist(Number(sanitized.user_id))
     if (!existUser) {
       const error: HttpError.Model = {
         status: 404,

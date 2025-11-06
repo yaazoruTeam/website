@@ -154,7 +154,7 @@ const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingR
       
       // יצירת הערה למכשיר אם יש תוכן הערה (עם טרנזקציה)
       await createCommentForEntity(
-        processedDevice.device_id,
+        String(processedDevice.device_id),
         'device',
         item.comment as string,
         trx

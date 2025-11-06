@@ -1,27 +1,30 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  user_id: string
+  user_id?: number // Optional during creation, TypeORM assigns it
   first_name: string
   last_name: string
-  id_number: string
-  phone_number: string
-  additional_phone: string
+  id_number?: string
+  phone_number?: string
+  additional_phone?: string
   email: string
-  city: string
-  address1: string
-  address2: string
-  zipCode: string
-  password: string
+  city?: string
+  address?: string
+  password?: string
   user_name: string
   role: 'admin' | 'branch'
   status: string
+  // Google OAuth fields
+  google_uid?: string //לא חובה , UNIQUE
+  photo_url?: string // לא חובה, 
+  email_verified?: boolean // לא חובה, DEFAULT TO לבדוק מה זה אומר -- ערך ברירת מחדל false  
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
   const isString = (value: unknown) => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isValidPhoneNumber = (phone: string) => /^\d{9,15}$/.test(phone)
+  const isValidIdNumber = (id: string) => /^\d{9}$/.test(id)
 
   if (hasId && !user.user_id) {
     const error: HttpError.Model = {
@@ -44,10 +47,10 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!user.id_number) {
+  if (user.id_number && !isValidIdNumber(user.id_number)) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "id_number".',
+      message: 'Invalid "id_number". It must be exactly 9 digits.',
     }
     throw error
   }
@@ -58,14 +61,10 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (
-    user.additional_phone &&
-    (!isString(user.additional_phone) || !isValidPhoneNumber(user.additional_phone))
-  ) {
+  if (user.additional_phone && !isValidPhoneNumber(user.additional_phone)) {
     const error: HttpError.Model = {
       status: 400,
-      message:
-        'Invalid or missing "additional_phone". It must be a number between 9 and 15 digits.',
+      message: 'Invalid "additional_phone". It must be a number between 9 and 15 digits.',
     }
     throw error
   }
@@ -83,31 +82,17 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(user.address1) || user.address1.trim() === '') {
+  if (!isString(user.address) || user.address.trim() === '') {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "address1".',
+      message: 'Invalid or missing "address".',
     }
     throw error
   }
-  if (user.address2 && !isString(user.address2)) {
+  if (user.password && !isString(user.password)) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Invalid or missing "address2".',
-    }
-    throw error
-  }
-  if (!isString(user.zipCode) || user.zipCode.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "zipCode".',
-    }
-    throw error
-  }
-  if (!isString(user.password) || user.password.trim() === '') {
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "password".',
+      message: 'Invalid "password".',
     }
     throw error
   }
@@ -126,21 +111,12 @@ function sanitize(user: Model, hasId: boolean): Model {
     throw error
   }
   const newUser: Model = {
-    user_id: user.user_id,
-    first_name: user.first_name.trim(),
-    last_name: user.last_name.trim(),
-    id_number: user.id_number,
-    phone_number: user.phone_number.trim(),
-    additional_phone: user.additional_phone,
+   ...user,
+    phone_number: user.phone_number?.trim(),
+    additional_phone: user.additional_phone?.trim(),
     email: user.email.trim().toLowerCase(),
-    city: user.city.trim(),
-    address1: user.address1.trim(),
-    address2: user.address2,
-    zipCode: user.zipCode,
-    password: user.password,
-    user_name: user.user_name,
-    role: user.role,
     status: user.status || 'active',
+    email_verified: user.email_verified || false,
   }
   return newUser
 }
@@ -157,13 +133,6 @@ const sanitizeExistingUser = (userExis: Model, user: Model) => {
     const error: HttpError.Model = {
       status: 409,
       message: 'email already exists',
-    }
-    throw error
-  }
-  if (userExis.password === user.password) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'password already exists',
     }
     throw error
   }

@@ -1,6 +1,7 @@
 import { EntityType } from "./Comment";
 import * as Customer from './Customer'
 import * as Device from './Device'
+import { DeviceStatus } from './Device'
 import * as HttpError from './HttpError'
 import * as HttpErrorWithStatus from './HttpErrorWithStatus'
 import * as CreateCommentDto from './Dtos'
@@ -23,11 +24,13 @@ import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ComprehensiveResetResponse from './ComprehensiveResetResponse'
 import * as Request from './Request'
 import * as Switchboard from './Switchboard'
-import * as GoogleAuth from './GoogleAuth' //to do:TEMPORARY SOLUTION - Google Authentication Types
+import * as GoogleAuth from './GoogleAuth'
+import * as TempComment from './TempComment'
 
 export {
   Customer,
   Device,
+  DeviceStatus,
   HttpError,
   HttpErrorWithStatus,
   CustomerDevice,
@@ -51,5 +54,6 @@ export {
   ComprehensiveResetResponse,
   Request,
   Switchboard,
-  GoogleAuth, //tp do:TEMPORARY SOLUTION - Google Authentication Types
+  GoogleAuth,
+  TempComment,
 }

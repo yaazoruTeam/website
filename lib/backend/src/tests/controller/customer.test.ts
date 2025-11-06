@@ -1,4 +1,4 @@
-jest.mock('@db');
+jest.mock('../../repositories/CustomerRepository');
 jest.mock('../../../../model/src', () => ({
   Customer: {
     sanitizeBodyExisting: jest.fn(),
@@ -12,8 +12,9 @@ jest.mock('../../../../model/src', () => ({
 }))
 
 import { Request, Response, NextFunction } from "express";
-import * as db from '../../db';
+import { customerRepository } from '../../repositories/CustomerRepository';
 import { Customer, HttpError } from '../../../../model/src';
+import { CustomerStatus } from '../../entities/Customer';
 import { createCustomer, deleteCustomer, existingCustomer, getCustomerById, getCustomers, getCustomersByCity, getCustomersByDateRange, getCustomersByStatus, updateCustomer } from "../../controller/customer";
 
 
@@ -44,18 +45,28 @@ describe("Customer Controller", () => {
         id_number: "123456789",
         phone_number: '053-3016587',
         city: 'Tel Aviv',
-        address1: '123 Main St',
+        address: '123 Main St',
       };
 
       (Customer.sanitizeBodyExisting as jest.Mock).mockImplementation(() => { });
       (Customer.sanitize as jest.Mock).mockReturnValue(req.body);
-      (db.Customer.createCustomer as jest.Mock).mockResolvedValue(req.body);
+      (customerRepository.createCustomer as jest.Mock).mockResolvedValue(req.body);
 
       await createCustomer(req as Request, res as Response, next);
 
       expect(Customer.sanitizeBodyExisting).toHaveBeenCalledWith(req);
       expect(Customer.sanitize).toHaveBeenCalledWith(req.body, false);
-      expect(db.Customer.createCustomer).toHaveBeenCalledWith(req.body);
+      expect(customerRepository.createCustomer).toHaveBeenCalledWith({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        id_number: req.body.id_number,
+        phone_number: req.body.phone_number,
+        additional_phone: null,
+        email: req.body.email,
+        city: req.body.city,
+        address: req.body.address,
+        status: 'active',
+      });
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(req.body);
     });
@@ -71,7 +82,7 @@ describe("Customer Controller", () => {
 
       (Customer.sanitizeBodyExisting as jest.Mock).mockImplementation(() => { });
       (Customer.sanitize as jest.Mock).mockReturnValue(req.body);
-      (db.Customer.createCustomer as jest.Mock).mockRejectedValue(error);
+      (customerRepository.createCustomer as jest.Mock).mockRejectedValue(error);
 
       await createCustomer(req as Request, res as Response, next);
 
@@ -83,11 +94,11 @@ describe("Customer Controller", () => {
     it("should return a list of customers with 200 status", async () => {
       const customers = [{ id: 1, name: "John Doe" }];
       req.query = { page: '1' };
-      (db.Customer.getCustomers as jest.Mock).mockResolvedValue({ customers, total: 1 });
+      (customerRepository.getCustomers as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomers(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomers).toHaveBeenCalled();
+      expect(customerRepository.getCustomers).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         data: customers,
@@ -100,7 +111,7 @@ describe("Customer Controller", () => {
     it("should call next with an error if fetching customers fails", async () => {
       const error = new Error("Database error");
       req.query = { page: '1' };
-      (db.Customer.getCustomers as jest.Mock).mockRejectedValue(error);
+      (customerRepository.getCustomers as jest.Mock).mockRejectedValue(error);
 
       await getCustomers(req as Request, res as Response, next);
 
@@ -111,17 +122,15 @@ describe("Customer Controller", () => {
   describe("getCustomerById", () => {
     it("should return a customer by ID with 200 status", async () => {
       req.params = { id: "1" };
-      const customer = { id: 1, name: "John Doe" };
+      const customer = { customer_id: 1, first_name: "John", last_name: "Doe" };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
-      (db.Customer.doesCustomerExist as jest.Mock).mockResolvedValue(true);
-      (db.Customer.getCustomerById as jest.Mock).mockResolvedValue(customer);
+      (customerRepository.getCustomerById as jest.Mock).mockResolvedValue(customer);
 
       await getCustomerById(req as Request, res as Response, next);
 
       expect(Customer.sanitizeIdExisting).toHaveBeenCalledWith(req);
-      expect(db.Customer.doesCustomerExist).toHaveBeenCalledWith("1");
-      expect(db.Customer.getCustomerById).toHaveBeenCalledWith("1");
+      expect(customerRepository.getCustomerById).toHaveBeenCalledWith(1);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(customer);
     });
@@ -130,7 +139,7 @@ describe("Customer Controller", () => {
       req.params = { id: "1" };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
-      (db.Customer.doesCustomerExist as jest.Mock).mockResolvedValue(false);
+      (customerRepository.getCustomerById as jest.Mock).mockResolvedValue(null);
 
       await getCustomerById(req as Request, res as Response, next);
 
@@ -145,7 +154,7 @@ describe("Customer Controller", () => {
       req.params = { id: "1" };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
-      (db.Customer.doesCustomerExist as jest.Mock).mockRejectedValue(error);
+      (customerRepository.getCustomerById as jest.Mock).mockRejectedValue(error);
 
       await getCustomerById(req as Request, res as Response, next);
 
@@ -155,15 +164,14 @@ describe("Customer Controller", () => {
   // בדיקות עבור getCustomersByCity
   describe("getCustomersByCity", () => {
     it("should return customers by city with 200 status", async () => {
-      req.params = { city: "New York" };
+      req.params = { city: "Tel Aviv" };
       req.query = { page: '1' };
-      const customers = [{ id: 1, name: "John Doe" }];
+      const customers = [{ customer_id: 1, city: "Tel Aviv" }];
 
-      (db.Customer.getCustomersByCity as jest.Mock).mockResolvedValue({ customers, total: 1 });
+      (customerRepository.find as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomersByCity(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomersByCity).toHaveBeenCalledWith("New York", 0);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         data: customers,
@@ -177,7 +185,7 @@ describe("Customer Controller", () => {
       req.params = { city: "Unknown City" };
       req.query = { page: '1' };
 
-      (db.Customer.getCustomersByCity as jest.Mock).mockResolvedValue({ customers: [], total: 0 });
+      (customerRepository.find as jest.Mock).mockResolvedValue({ customers: [], total: 0 });
 
       await getCustomersByCity(req as Request, res as Response, next);
 
@@ -189,10 +197,10 @@ describe("Customer Controller", () => {
 
     it("should call next with an error if fetching customers by city fails", async () => {
       const error = new Error("Database error");
-      req.params = { city: "New York" };
+      req.params = { city: "Tel Aviv" };
       req.query = { page: '1' };
 
-      (db.Customer.getCustomersByCity as jest.Mock).mockRejectedValue(error);
+      (customerRepository.find as jest.Mock).mockRejectedValue(error);
 
       await getCustomersByCity(req as Request, res as Response, next);
 
@@ -205,13 +213,12 @@ describe("Customer Controller", () => {
     it("should return customers by status with 200 status", async () => {
       req.params = { status: "active" };
       req.query = { page: '1' };
-      const customers = [{ id: 1, name: "John Doe" }];
+      const customers = [{ customer_id: 1, status: "active" }];
 
-      (db.Customer.getCustomersByStatus as jest.Mock).mockResolvedValue({ customers, total: 1 });
+      (customerRepository.find as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomersByStatus(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomersByStatus).toHaveBeenCalledWith("active", 0);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         data: customers,
@@ -238,7 +245,7 @@ describe("Customer Controller", () => {
       req.params = { status: "active" };
       req.query = { page: '1' };
 
-      (db.Customer.getCustomersByStatus as jest.Mock).mockRejectedValue(error);
+      (customerRepository.find as jest.Mock).mockRejectedValue(error);
 
       await getCustomersByStatus(req as Request, res as Response, next);
 
@@ -250,13 +257,12 @@ describe("Customer Controller", () => {
   describe("getCustomersByDateRange", () => {
     it("should return customers by date range with 200 status", async () => {
       req.query = { startDate: "2023-01-01", endDate: "2023-12-31", page: '1' };
-      const customers = [{ id: 1, name: "John Doe" }];
+      const customers = [{ customer_id: 1, created_at: new Date() }];
 
-      (db.Customer.getCustomersByDateRange as jest.Mock).mockResolvedValue({ customers, total: 1 });
+      (customerRepository.findByDate as jest.Mock).mockResolvedValue({ customers, total: 1 });
 
       await getCustomersByDateRange(req as Request, res as Response, next);
 
-      expect(db.Customer.getCustomersByDateRange).toHaveBeenCalledWith("2023-01-01", "2023-12-31", 0);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         data: customers,
@@ -280,7 +286,7 @@ describe("Customer Controller", () => {
     it("should return 404 if no customers found in the date range", async () => {
       req.query = { startDate: "2023-01-01", endDate: "2023-12-31", page: '1' };
 
-      (db.Customer.getCustomersByDateRange as jest.Mock).mockResolvedValue({ customers: [], total: 0 });
+      (customerRepository.findByDate as jest.Mock).mockResolvedValue({ customers: [], total: 0 });
 
       await getCustomersByDateRange(req as Request, res as Response, next);
 
@@ -294,7 +300,7 @@ describe("Customer Controller", () => {
       const error = new Error("Database error");
       req.query = { startDate: "2023-01-01", endDate: "2023-12-31", page: '1' };
 
-      (db.Customer.getCustomersByDateRange as jest.Mock).mockRejectedValue(error);
+      (customerRepository.findByDate as jest.Mock).mockRejectedValue(error);
 
       await getCustomersByDateRange(req as Request, res as Response, next);
 
@@ -307,20 +313,20 @@ describe("Customer Controller", () => {
     it("should update a customer and return 200 status", async () => {
       req.params = { id: "1" };
       req.body = { first_name: "Jane", last_name: "Doe" };
+      const updatedCustomer = { customer_id: 1, ...req.body };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
       (Customer.sanitizeBodyExisting as jest.Mock).mockImplementation(() => { });
       (Customer.sanitize as jest.Mock).mockReturnValue(req.body);
-      (db.Customer.updateCustomer as jest.Mock).mockResolvedValue(req.body);
+      (customerRepository.updateCustomer as jest.Mock).mockResolvedValue(updatedCustomer);
 
       await updateCustomer(req as Request, res as Response, next);
 
       expect(Customer.sanitizeIdExisting).toHaveBeenCalledWith(req);
       expect(Customer.sanitizeBodyExisting).toHaveBeenCalledWith(req);
       expect(Customer.sanitize).toHaveBeenCalledWith(req.body, true);
-      expect(db.Customer.updateCustomer).toHaveBeenCalledWith("1", req.body);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(req.body);
+      expect(res.json).toHaveBeenCalledWith(updatedCustomer);
     });
 
     it("should call next with an error if updating customer fails", async () => {
@@ -331,7 +337,7 @@ describe("Customer Controller", () => {
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
       (Customer.sanitizeBodyExisting as jest.Mock).mockImplementation(() => { });
       (Customer.sanitize as jest.Mock).mockReturnValue(req.body);
-      (db.Customer.updateCustomer as jest.Mock).mockRejectedValue(error);
+      (customerRepository.updateCustomer as jest.Mock).mockRejectedValue(error);
 
       await updateCustomer(req as Request, res as Response, next);
 
@@ -343,31 +349,33 @@ describe("Customer Controller", () => {
   describe("deleteCustomer", () => {
     it("should delete a customer and return 200 status", async () => {
       req.params = { id: "1" };
+      const deletedCustomer = { customer_id: 1, status: "inactive" };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
-      (db.Customer.doesCustomerExist as jest.Mock).mockResolvedValue(true);
-      (db.Customer.deleteCustomer as jest.Mock).mockResolvedValue({ success: true });
+      (customerRepository.deleteCustomer as jest.Mock).mockResolvedValue(deletedCustomer);
 
       await deleteCustomer(req as Request, res as Response, next);
 
       expect(Customer.sanitizeIdExisting).toHaveBeenCalledWith(req);
-      expect(db.Customer.doesCustomerExist).toHaveBeenCalledWith("1");
-      expect(db.Customer.deleteCustomer).toHaveBeenCalledWith("1");
+      expect(customerRepository.deleteCustomer).toHaveBeenCalledWith(1);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ success: true });
+      expect(res.json).toHaveBeenCalledWith(deletedCustomer);
     });
 
     it("should return 404 if customer does not exist", async () => {
       req.params = { id: "1" };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
-      (db.Customer.doesCustomerExist as jest.Mock).mockResolvedValue(false);
+      (customerRepository.deleteCustomer as jest.Mock).mockRejectedValue({
+        status: 404,
+        message: "Customer not found",
+      });
 
       await deleteCustomer(req as Request, res as Response, next);
 
       expect(next).toHaveBeenCalledWith({
         status: 404,
-        message: "Customer does not exist.",
+        message: "Customer not found",
       });
     });
 
@@ -376,7 +384,7 @@ describe("Customer Controller", () => {
       req.params = { id: "1" };
 
       (Customer.sanitizeIdExisting as jest.Mock).mockImplementation(() => { });
-      (db.Customer.doesCustomerExist as jest.Mock).mockRejectedValue(error);
+      (customerRepository.deleteCustomer as jest.Mock).mockRejectedValue(error);
 
       await deleteCustomer(req as Request, res as Response, next);
 
@@ -385,111 +393,103 @@ describe("Customer Controller", () => {
   });
 
   describe("existingCustomer", () => {
-
     const customer: Customer.Model = {
-      customer_id: "1",
+      customer_id: 1,
       email: "john.doe@example.com",
       id_number: "123456789",
       first_name: "John",
       last_name: "Doe",
       phone_number: "053-3016587",
-      additional_phone: '',
+      additional_phone: "",
       city: "Tel Aviv",
-      address1: "123 Main St",
-      address2: '',
-      zipCode: "12345",
-      status: "active",
+      address: "123 Main St",
+      status: CustomerStatus.ACTIVE,
       created_at: new Date(),
       updated_at: new Date(),
     };
+
     test('existingCustomer should call sanitizeExistingCustomer if customer exists', async () => {
       const mockCustomer = {
-        customer_id: '123',
+        customer_id: 123,
         email: 'test@example.com',
         id_number: '123456789',
         first_name: 'John',
         last_name: 'Doe',
         phone_number: '053-3016587',
-        additional_phone: '',
+        additional_phone: "",
         city: 'Tel Aviv',
-        address1: '123 Main St',
-        address2: '',
-        zipCode: '12345',
-        status: 'active',
+        address: '123 Main St',
+        status: CustomerStatus.ACTIVE,
         created_at: new Date(),
         updated_at: new Date()
       };
       const mockDbResponse = mockCustomer;
 
-      (db.Customer.findCustomer as jest.Mock).mockResolvedValue(mockDbResponse);
+      (customerRepository.findExistingCustomer as jest.Mock).mockResolvedValue(mockDbResponse);
       const sanitizeSpy = jest.spyOn(Customer, 'sanitizeExistingCustomer').mockImplementation(() => { });
 
-      await existingCustomer(mockCustomer, true);
+      await existingCustomer(mockCustomer as Customer.Model, true);
 
       expect(sanitizeSpy).toHaveBeenCalledWith(mockDbResponse, mockCustomer);
     });
+
     test('existingCustomer should not call sanitizeExistingCustomer if customer does not exist', async () => {
       const mockCustomer = {
-        customer_id: '123',
+        customer_id: 123,
         email: 'new@example.com',
         id_number: '987654321',
         first_name: 'Jane',
         last_name: 'Smith',
         phone_number: '054-1234567',
-        additional_phone: '',
+        additional_phone: "",
         city: 'Haifa',
-        address1: '456 Another St',
-        address2: '',
-        zipCode: '54321',
-        status: 'active',
+        address: '456 Another St',
+        status: CustomerStatus.ACTIVE,
         created_at: new Date(),
         updated_at: new Date()
       };
 
-      (db.Customer.findCustomer as jest.Mock).mockResolvedValue(undefined);
+      (customerRepository.findExistingCustomer as jest.Mock).mockResolvedValue(null);
 
       const sanitizeSpy = jest.spyOn(Customer, 'sanitizeExistingCustomer').mockImplementation(() => { });
 
-      await existingCustomer(mockCustomer, true);
+      await existingCustomer(mockCustomer as Customer.Model, true);
 
       expect(sanitizeSpy).not.toHaveBeenCalled();
     });
 
     it('should throw error if customer with same id_number exists', async () => {
       const mockCustomer = {
-        customer_id: '123',
+        customer_id: 123,
         email: 'test@example.com',
         id_number: '123456789',
         first_name: 'John',
         last_name: 'Doe',
         phone_number: '053-3016587',
-        additional_phone: '',
+        additional_phone: "",
         city: 'Tel Aviv',
-        address1: '123 Main St',
-        address2: '',
-        zipCode: '12345',
-        status: 'active',
+        address: '123 Main St',
+        status: CustomerStatus.ACTIVE,
         created_at: new Date(),
         updated_at: new Date()
       };
 
       const existing = {
+        customer_id: 456,
         email: 'other@example.com',
         id_number: '123456789',
         first_name: 'Jane',
         last_name: 'Smith',
         phone_number: '054-1234567',
-        additional_phone: '',
+        additional_phone: "",
         city: 'Haifa',
-        address1: '456 Another St',
-        address2: '',
-        zipCode: '54321',
-        status: 'active',
+        address: '456 Another St',
+        status: CustomerStatus.ACTIVE,
         created_at: new Date(),
         updated_at: new Date()
       };
 
-      jest.spyOn(db.Customer, 'findCustomer').mockResolvedValue(existing);
+      jest.spyOn(customerRepository, 'findExistingCustomer').mockResolvedValue(existing as any);
       jest.spyOn(Customer, 'sanitizeExistingCustomer').mockImplementation(() => {
         throw {
           status: 409,
@@ -497,7 +497,7 @@ describe("Customer Controller", () => {
         };
       });
 
-      await expect(existingCustomer(mockCustomer, true)).rejects.toEqual({
+      await expect(existingCustomer(mockCustomer as Customer.Model, true)).rejects.toEqual({
         status: 409,
         message: 'id_number already exists',
       });
