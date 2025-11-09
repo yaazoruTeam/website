@@ -5,7 +5,6 @@ import { errorHandler } from '@middleware/errorHandler'
 import config from '@config/index'
 import logger from '@utils/logger'
 import { initializeDatabase, closeDatabase } from './data-source'
-import { createSchema } from './db/schema'
 
 // Import express type extensions globally
 declare global {

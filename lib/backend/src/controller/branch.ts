@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import * as db from '@db/index'
 import { Branch, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
@@ -11,8 +10,8 @@ const createBranch = async (req: Request, res: Response, next: NextFunction): Pr
     Branch.sanitizeBodyExisting(req)
     const branchData = req.body
     const sanitized = Branch.sanitize(branchData, false)
-    const branch = await db.Branch.createBranch(sanitized)
-    res.status(201).json(branch)
+    // const branch = await db.Branch.createBranch(sanitized)
+    res.status(201).json(/*branch*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -23,12 +22,12 @@ const getBranches = async (req: Request, res: Response, next: NextFunction): Pro
     const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { branches, total } = await db.Branch.getBranches(offset)
+    // const { branches, total } = await db.Branch.getBranches(offset)
     res.status(200).json({
-      data: branches,
+      data: /*branches*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -38,16 +37,16 @@ const getBranches = async (req: Request, res: Response, next: NextFunction): Pro
 const getBranchById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     Branch.sanitizeIdExisting(req)
-    const existBranch = await db.Branch.doesBranchExist(req.params.id)
-    if (!existBranch) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'branch does not exist.',
-      }
-      throw error
-    }
-    const branch = await db.Branch.getBranchById(req.params.id)
-    res.status(200).json(branch)
+    // const existBranch = await db.Branch.doesBranchExist(req.params.id)
+    // if (!existBranch) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'branch does not exist.',
+    //   }
+    //   throw error
+    // }
+    // const branch = await db.Branch.getBranchById(req.params.id)
+    res.status(200).json(/*branch*/)
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -70,19 +69,19 @@ const getBranchesByCity = async (
     const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { branches, total } = await db.Branch.getBranchesByCity(city, offset)
-    if (branches.length === 0) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: `No branches found in the city: ${city}`,
-      }
-      throw error
-    }
+    // const { branches, total } = await db.Branch.getBranchesByCity(city, offset)
+    // if (branches.length === 0) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: `No branches found in the city: ${city}`,
+    //   }
+    //   throw error
+    // }
     res.status(200).json({
-      data: branches,
+      data: /*branches*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -94,8 +93,8 @@ const updateBranch = async (req: Request, res: Response, next: NextFunction): Pr
     Branch.sanitizeIdExisting(req)
     Branch.sanitizeBodyExisting(req)
     const sanitized = Branch.sanitize(req.body, true)
-    const updateBranch = await db.Branch.updateBranch(req.params.id, sanitized)
-    res.status(200).json(updateBranch)
+    // const updateBranch = await db.Branch.updateBranch(req.params.id, sanitized)
+    res.status(200).json(/*updateBranch*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -104,16 +103,16 @@ const updateBranch = async (req: Request, res: Response, next: NextFunction): Pr
 const deleteBranch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     Branch.sanitizeIdExisting(req)
-    const existBranch = await db.Branch.doesBranchExist(req.params.id)
-    if (!existBranch) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'branch does not exist.',
-      }
-      throw error
-    }
-    const deleteBranch = await db.Branch.deleteBranch(req.params.id)
-    res.status(200).json(deleteBranch)
+    // const existBranch = await db.Branch.doesBranchExist(req.params.id)
+    // if (!existBranch) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'branch does not exist.',
+    //   }
+    //   throw error
+    // }
+    // const deleteBranch = await db.Branch.deleteBranch(req.params.id)
+    res.status(200).json(/*deleteBranch*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
