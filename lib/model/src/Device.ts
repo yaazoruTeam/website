@@ -10,7 +10,7 @@ export enum DeviceStatus {
 interface Model {
   device_id?: number // Optional - auto-generated on create
   device_number: string
-  SIM_number: string
+  // SIM_number: string
   IMEI_1: string
   model: string
   status?: DeviceStatus // active, inactive, blocked, lock_in_imei - default is 'active'
@@ -32,15 +32,15 @@ function sanitize(device: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!device.SIM_number) {
-    console.log('Device missing SIM_number');
+  // if (!device.SIM_number) {
+  //   console.log('Device missing SIM_number');
     
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "SIM_number".',
-    }
-    throw error
-  }
+  //   const error: HttpError.Model = {
+  //     status: 400,
+  //     message: 'Invalid or missing "SIM_number".',
+  //   }
+  //   throw error
+  // }
   if (!device.IMEI_1) {
     console.log('Device missing IMEI_1');
     
@@ -81,7 +81,7 @@ function sanitize(device: Model, hasId: boolean): Model {
   const newDevice: Model = {
     device_id: device.device_id,
     device_number: device.device_number,
-    SIM_number: device.SIM_number,
+    // SIM_number: device.SIM_number,
     IMEI_1: device.IMEI_1,
     model: device.model,
     status: device.status || DeviceStatus.ACTIVE,
@@ -95,13 +95,13 @@ function sanitize(device: Model, hasId: boolean): Model {
 }
 
 const sanitizeExistingDevice = (deviceExis: Model, device: Model) => {
-  if (deviceExis.SIM_number === device.SIM_number) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'SIM_number already exists',
-    }
-    throw error
-  }
+  // if (deviceExis.SIM_number === device.SIM_number) {
+  //   const error: HttpError.Model = {
+  //     status: 409,
+  //     message: 'SIM_number already exists',
+  //   }
+  //   throw error
+  // }
   if (deviceExis.IMEI_1 === device.IMEI_1) {
     const error: HttpError.Model = {
       status: 409,
