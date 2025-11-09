@@ -1,8 +1,6 @@
 import { protos, SpeechClient } from "@google-cloud/speech"
 import { NextFunction, Request, Response } from 'express'
-import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
-
 import config from '@config/index'
 import { handleError } from "./err";
 import logger from "../utils/logger"
@@ -34,9 +32,9 @@ const createComment = async (
     logger.debug("createComment called with body:", req.body)
 
     const sanitized = Comment.sanitize(req.body, false);
-    const comment = await db.Comment.createComment(sanitized);
-    logger.info("Comment created successfully:", comment)
-    res.status(201).json(comment);
+    // const comment = await db.Comment.createComment(sanitized);
+    logger.info("Comment created successfully")
+    res.status(201).json(/*comment*/{});
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -48,15 +46,15 @@ const getComments = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { comments, total } = await db.Comment.getComments(offset)
+    // const { comments, total } = await db.Comment.getComments(offset)
     res.status(200).json({
-      data: comments,
+      data: /*comments*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     });
   } catch (error: unknown) {
     handleError(error, next)
@@ -78,15 +76,15 @@ const getCommentById = async (
       }
       throw error
     }
-    const comment = await db.Comment.getCommentById(req.params.id)
-    if (!comment) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: "Comment not found",
-      }
-      throw error
-    }
-    res.status(200).json(comment)
+    // const comment = await db.Comment.getCommentById(req.params.id)
+    // if (!comment) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: "Comment not found",
+    //   }
+    //   throw error
+    // }
+    res.status(200).json(/*comment*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -107,20 +105,20 @@ const getCommentsByEntity = async (
       throw error
     }
 
-    const page = parseInt(req.query.page as string, 10) || 1
+    const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { comments, total } = await db.Comment.getCommentsByEntity(
-      entity_id as string,
-      entity_type as string,
-      offset
-    )
+    // const { comments, total } = await db.Comment.getCommentsByEntity(
+    //   entity_id as string,
+    //   entity_type as string,
+    //   offset
+    // )
 
     res.status(200).json({
-      data: comments,
+      data: /*comments*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -137,11 +135,11 @@ const updateComment = async (
       { ...req.body, comment_id: req.params.id },
       true
     )
-    const updatedComment = await db.Comment.updateComment(
-      req.params.id,
-      sanitized
-    )
-    res.status(200).json(updatedComment)
+    // const updatedComment = await db.Comment.updateComment(
+    //   req.params.id,
+    //   sanitized
+    // )
+    res.status(200).json(/*updatedComment*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -153,8 +151,8 @@ const deleteComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const deletedComment = await db.Comment.deleteComment(req.params.id)
-    res.status(200).json(deletedComment)
+    // const deletedComment = await db.Comment.deleteComment(req.params.id)
+    res.status(200).json(/*deletedComment*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }

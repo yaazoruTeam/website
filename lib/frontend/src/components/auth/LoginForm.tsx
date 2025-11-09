@@ -10,13 +10,15 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import GoogleLoginButton from '../google/GoogleLoginButton'
 import { GoogleSignInResult } from '../../services/googleAuthService'
+import { validatePhoneNumber } from '../../utils/phoneValidate'
+import React from 'react'
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormInputs) => void
 }
 
 interface LoginFormInputs {
-  username: string
+  phone_number: number,
   password: string
 }
 
@@ -25,9 +27,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const { control, handleSubmit } = useForm<LoginFormInputs>()
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
+  const [showLoginForm, setShowLoginForm] = React.useState(false)
 
   const handleRegisterClick = () => {
     navigate('/register')
+  }
+
+  const handleToggleLoginForm = () => {
+    setShowLoginForm(!showLoginForm)
   }
 
   const handleGoogleSuccess = (result: GoogleSignInResult) => {
@@ -83,95 +90,147 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         <img style={{ width: 47.19, height: 45.45 }} src={logo2} alt='' />
       </Box>
 
-      <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
-        <CustomTextField
-          control={control}
-          name='username'
-          label={t('userName')}
-          // helperText: "Please enter your email",
-          rules={{
-            required: t('requiredField'),
-          }}
-        />
-        <CustomTextField
-          control={control}
-          name='password'
-          label={t('password')}
-          type='password'
-          // helperText: "Please enter your email",
-          rules={{
-            required: t('requiredField'),
-            // minLength: {
-            //   value: 6,
-            //   message: "הסיסמה חייבת להיות לפחות 6 תווים"
-            // }
-          }}
-        />
-        <CustomTypography
-          text={t('forgotPassword?')}
-          variant='h3'
-          weight='medium'
-          color={colors.blue900}
-          sx={{
-            textAlign: 'right',
-            textDecoration: 'underline',
-            cursor: 'pointer',
-          }}
-        />
-        <Box
-          onClick={handleRegisterClick}
-          sx={{
-            textAlign: 'center',
-            cursor: 'pointer',
-            marginTop: 1,
-          }}
-        >
-          <CustomTypography
-            text="צריך להירשם? לחץ כאן"
-            variant='h3'
-            weight='medium'
-            color={colors.blue900}
+      {!showLoginForm ? (
+        <>
+          {/* Google Login View - Default */}
+          <Box
             sx={{
-              textDecoration: 'underline',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 3,
+              alignItems: 'center',
             }}
+          >
+            <CustomTypography
+              text={t('loginSystem')}
+              variant='h2'
+              weight='bold'
+              color={colors.neutral900}
+              sx={{
+                marginBottom: 2,
+              }}
+            />
+            
+            {/* Google Login Button */}
+            <GoogleLoginButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              useRedirect={isMobile}
+            />
+
+            {/* Toggle to Phone/Password Login */}
+            <Box
+              sx={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                marginTop: 2,
+              }}
+              onClick={handleToggleLoginForm}
+            >
+              <CustomTypography
+                text={t('loginNotThroughGoogle')}
+                variant='h3'
+                weight='medium'
+                color={colors.blue900}
+                sx={{
+                  textDecoration: 'underline',
+                }}
+              />
+            </Box>
+          </Box>
+
+          {/* Sign Up Link Outside */}
+          <Box
+            onClick={handleRegisterClick}
+            sx={{
+              textAlign: 'center',
+              cursor: 'pointer',
+              marginTop: 3,
+            }}
+          >
+            <CustomTypography
+              text={t('registerButton')}
+              variant='h3'
+              weight='medium'
+              color={colors.blue900}
+              sx={{
+                textDecoration: 'underline',
+              }}
+            />
+          </Box>
+        </>
+      ) : (
+        <>
+          {/* Phone & Password Login View */}
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <CustomTextField
+              control={control}
+              name='phone_number'
+              label={t('phoneNumber')}
+              rules={{
+                required: t('requiredField'),
+                validate: (value: string | number) => validatePhoneNumber(String(value), t),
+              }}
+            />
+            <CustomTextField
+              control={control}
+              name='password'
+              label={t('password')}
+              type='password'
+              rules={{
+                required: t('requiredField'),
+              }}
+            />
+            <CustomTypography
+              text={t('forgotPassword?')}
+              variant='h3'
+              weight='medium'
+              color={colors.blue900}
+              sx={{
+                textAlign: 'right',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+              }}
+            />
+          </Box>
+
+          <CustomButton
+            label={t('loginSystem')}
+            size={isMobile ? 'small' : 'large'}
+            state='default'
+            buttonType='first'
+            onClick={handleSubmit(onSubmit)}
           />
-        </Box>
-      </Box>
 
-      <CustomButton
-        label={t('loginSystem')}
-        size={isMobile ? 'small' : 'large'}
-        state='default'
-        buttonType='first'
-        onClick={handleSubmit(onSubmit)}
-      />
-      
-      {/* Divider between regular login and Google login */}
-      <Box sx={{ width: '100%', my: 2, display: 'flex', alignItems: 'center' }}>
-        <Box sx={{ flex: 1, height: '1px', backgroundColor: colors.neutral300 }} />
-        <CustomTypography
-          text={t('or')}
-          variant='h3'
-          weight='medium'
-          color={colors.neutral500}
-          sx={{ mx: 2 }}
-        />
-        <Box sx={{ flex: 1, height: '1px', backgroundColor: colors.neutral300 }} />
-      </Box>
-
-      {/* Google Login Button */}
-      <GoogleLoginButton
-        onSuccess={handleGoogleSuccess}
-        onError={handleGoogleError}
-        useRedirect={isMobile} // Use redirect on mobile for better UX
-      />
+          {/* Toggle back to Google Login */}
+          <Box
+            sx={{
+              textAlign: 'center',
+              cursor: 'pointer',
+              marginTop: 2,
+            }}
+            onClick={handleToggleLoginForm}
+          >
+            <CustomTypography
+              text={t('loginThroughGoogle')}
+              variant='h3'
+              weight='medium'
+              color={colors.blue900}
+              sx={{
+                textDecoration: 'underline',
+              }}
+            />
+          </Box>
+        </>
+      )}
     </Box>
   )
 }

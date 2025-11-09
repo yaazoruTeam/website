@@ -8,7 +8,7 @@ import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import { createDevice } from '../../api/device'
-import { Device } from '@model'
+import { Device, DeviceStatus } from '@model'
 import { extractErrorMessage } from '../../utils/errorHelpers'
 
 interface AddDeviceFormProps {
@@ -61,7 +61,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
     try {
       const deviceData: Omit<Device.Model, 'device_id'> = {
         ...data,
-        status: 'active',
+        status: DeviceStatus.ACTIVE,
         purchaseDate: null,
         registrationDate: new Date(),
         plan: '', //?? מאיפה מקבלים את זה to do

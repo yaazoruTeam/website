@@ -431,7 +431,7 @@ const ExcelUpload: React.FC = () => {
                   <li><code>first_name</code> - {t('firstName')}</li>
                   <li><code>last_name</code> - {t('lastName')}</li>
                   <li><code>city</code> - {t('city')}</li>
-                  <li><code>address1</code> - {t('address')}</li>
+                  <li><code>address</code> - {t('address')}</li>
                   <li><code>phone_number</code> - {t('phone')}</li>
                   <li><code>email</code> - {t('email')}</li>
                   <li><code>id_number</code> - {t('idNumber')}</li>
@@ -502,7 +502,7 @@ const ExcelUpload: React.FC = () => {
                   <li><code>first_name</code> - {t('firstName')}</li>
                   <li><code>last_name</code> - {t('lastName')}</li>
                   <li><code>city</code> - {t('city')}</li>
-                  <li><code>address1</code> - {t('address')}</li>
+                  <li><code>address</code> - {t('address')}</li>
                   <li><code>phone_number</code> - {t('phone')}</li>
                   <li><code>email</code> - {t('email')}</li>
                   <li><code>id_number</code> - {t('idNumber')}</li>

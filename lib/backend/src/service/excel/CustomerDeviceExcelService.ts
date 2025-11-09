@@ -2,9 +2,8 @@
  * CustomerDeviceExcelService - שירות עיבוד קבצי Excel ללקוחות ומכשירים
  * אחראי על כל הלוגיקה הספציפית לעיבוד נתוני לקוחות ומכשירים
  */
-
-import getDbConnection from '@db/connection'
-import * as db from '@db/index'
+//to do: לטפל בטרנזקציה
+import { customerRepository } from '@repositories/CustomerRepository'
 import { CustomerDeviceExcel } from '@model'
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
@@ -25,7 +24,7 @@ import {
  * פונקציה זו אחראית על פילטור ועיבוד נתונים של לקוחות ומכשירים בלבד
  */
 const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingResult> => {
-  const knex = getDbConnection()
+  // const knex = getDbConnection()
   const errors: ProcessError[] = []
   let successCount = 0
 
@@ -56,46 +55,46 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 
     if (isCustomer) {
       // עיבוד עם לקוח ומכשיר
-      const trx = await knex.transaction()
+      // const trx = await knex.transaction()
       try {
-        const existCustomer = await processCustomer(sanitized, trx)
-        const existDevice = await createDeviceIfNotExists(sanitized.device, trx)
+        const existCustomer = await processCustomer(sanitized/*, trx*/)
+        const existDevice = await createDeviceIfNotExists(sanitized.device/*, trx*/)
 
-        let existingRelation = await db.CustomerDevice.findCustomerDevice({
-          device_id: existDevice.device_id,
-        })
+        // let existingRelation = await db.CustomerDevice.findCustomerDevice({
+        //   device_id: String(existDevice.device_id),
+        // })
 
-        if (!existingRelation) {
-          const date: Date = new Date(sanitized.receivedAt)
-          const planEndDate = new Date(date)
-          planEndDate.setFullYear(planEndDate.getFullYear() + 5)
+        // if (!existingRelation) {
+        //   const date: Date = new Date(sanitized.receivedAt)
+        //   const planEndDate = new Date(date)
+        //   planEndDate.setFullYear(planEndDate.getFullYear() + 5)
 
-          await db.CustomerDevice.createCustomerDevice(
-            {
-              customerDevice_id: '',
-              customer_id: existCustomer.customer_id,
-              device_id: existDevice.device_id,
-              receivedAt: date,
-              planEndDate: planEndDate,
-            },
-            trx,
-          )
-        }
+        //   await db.CustomerDevice.createCustomerDevice(
+        //     {
+        //       customerDevice_id: '',
+        //       customer_id: String(existCustomer.customer_id),
+        //       device_id: String(existDevice.device_id),
+        //       receivedAt: date,
+        //       planEndDate: planEndDate,
+        //     },
+        //     trx,
+        //   )
+        // }
 
         // יצירת הערה ללקוח בלבד (לא למכשיר) בטבלת לקוחות-מכשירים
-        await createCommentForEntity(
-          existCustomer.customer_id,
-          'customer',
-          item.comment as string,
-          trx
-        )
+        // await createCommentForEntity(
+        //   String(existCustomer.customer_id),
+        //   'customer',
+        //   item.comment as string,
+        //   trx
+        // )
 
-        await trx.commit()
+        // await trx.commit()
         successCount++
         logger.debug(`Row ${rowIndex}: Customer-Device processed successfully`)
       } catch (err: unknown) {
         try {
-          await trx.rollback()
+          // await trx.rollback()
         } catch (rollbackErr) {
           logger.error(`Row ${rowIndex}: Transaction rollback failed:`, rollbackErr)
         }
@@ -142,20 +141,29 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 /**
  * עיבוד נתוני לקוח - מטפל בכל השגיאות האפשריות
  */
-const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx: Knex.Transaction) => {
+const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx?: Knex.Transaction) => {
   try {
     if (!sanitized.customer) {
       throw new Error('Customer is undefined in sanitized object.')
     }
 
-    let existCustomer = await db.Customer.findCustomer({
+    let existCustomer = await customerRepository.findExistingCustomer({
       email: sanitized.customer.email,
       id_number: sanitized.customer.id_number,
     })
 
     if (!existCustomer) {
       logger.debug('Creating new customer...')
-      existCustomer = await db.Customer.createCustomer(sanitized.customer, trx)
+      existCustomer = await customerRepository.createCustomer({
+        first_name: sanitized.customer.first_name,
+        last_name: sanitized.customer.last_name,
+        id_number: sanitized.customer.id_number,
+        phone_number: sanitized.customer.phone_number,
+        additional_phone: sanitized.customer.additional_phone || null,
+        email: sanitized.customer.email,
+        city: sanitized.customer.city,
+        address: sanitized.customer.address,
+      })
       logger.debug('Customer created successfully')
     } else {
       logger.debug('Customer already exists, using existing record')
