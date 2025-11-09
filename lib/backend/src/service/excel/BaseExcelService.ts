@@ -3,8 +3,6 @@
  * מכיל פונקציות משותפות שיכולות להיות בשימוש על ידי כל שירותי Excel
  */
 
-import getDbConnection from '@db/connection'
-import * as db from '@db/index'
 import { Device, Comment } from '@model'
 import { Knex } from 'knex'
 import logger from '../../utils/logger'
@@ -175,7 +173,7 @@ export const createCommentForEntity = async (
       created_at: new Date()
     }
 
-    await db.Comment.createComment(commentModel, trx)
+    // await db.Comment.createComment(commentModel, trx)
     logger.info(`✅ Comment created successfully for ${entityType} ${entityId}`)
     return true
   } catch (error) {
