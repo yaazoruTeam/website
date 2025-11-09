@@ -32,8 +32,6 @@ if (missingKeys.length > 0) {
   throw new Error(`Missing Firebase configuration: ${missingKeys.join(', ')}`);
 }
 
-console.log('🔥 Initializing Firebase with project:', firebaseConfig.projectId);
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
