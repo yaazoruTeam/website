@@ -1,16 +1,15 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  customerDevice_id: string
-  customer_id: string
-  device_id: string
+  customerDevice_id: number
+  customer_id: number
+  device_id: number
   receivedAt: Date
-  planEndDate?: Date
-  //תאריך רישום המכשיר?? כאן או בטבלה של המכשירים
+  planEndDate?: Date | null
 }
 
 function sanitize(customerDevice: Model, hasId: boolean): Model {
-  const isString = (value: unknown) => typeof value === 'string'
+  const isNumber = (value: unknown) => typeof value === 'number' && !isNaN(value)
 
   if (hasId && !customerDevice.customerDevice_id) {
     const error: HttpError.Model = {
@@ -19,14 +18,14 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!isString(customerDevice.customer_id) || customerDevice.customer_id.trim() === '') {
+  if (!isNumber(customerDevice.customer_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
     }
     throw error
   }
-  if (!isString(customerDevice.device_id) || customerDevice.device_id.trim() === '') {
+  if (!isNumber(customerDevice.device_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "device_id".',
@@ -40,13 +39,6 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     }
     throw error
   }
-  // if (!isString(customerDevice.Plan) || customerDevice.Plan.trim() === '') {
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "Plan".',
-  //   }
-  //   throw error
-  // }
 
   const newCustomerDevice: Model = {
     customerDevice_id: customerDevice.customerDevice_id,
@@ -54,17 +46,17 @@ function sanitize(customerDevice: Model, hasId: boolean): Model {
     device_id: customerDevice.device_id,
     receivedAt: customerDevice.receivedAt,
     planEndDate: customerDevice.planEndDate,
-    // Plan: customerDevice.Plan,
   }
 
   return newCustomerDevice
 }
 
 const sanitizeExistingCustomerDevice = (customerDeviceExis: Model, customerDevice: Model) => {
-  if (customerDeviceExis.device_id === customerDevice.device_id) {
+  if (customerDeviceExis.customer_id === customerDevice.customer_id && 
+      customerDeviceExis.device_id === customerDevice.device_id) {
     const error: HttpError.Model = {
       status: 409,
-      message: 'device_id already exists',
+      message: 'Customer device assignment already exists',
     }
     throw error
   }

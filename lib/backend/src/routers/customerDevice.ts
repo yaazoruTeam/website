@@ -4,15 +4,22 @@ import { hasRole } from '@middleware/auth'
 
 const customerDeviceRouter = Router()
 
+// POST - Create
 customerDeviceRouter.post(
   '/',
   hasRole('admin', 'branch'),
   customerDevicesController.createCustomerDevice,
 )
-customerDeviceRouter.get('/', hasRole('admin'), customerDevicesController.getCustomersDevices)
+
+// GET - Specific routes FIRST (before generic /:id)
+customerDeviceRouter.get('/page/:page', hasRole('admin'), customerDevicesController.getCustomersDevices)
+customerDeviceRouter.get('/allDevices/:id/page/:page', customerDevicesController.getAllDevicesByCustomerId)
+customerDeviceRouter.get('/device/:id/page/:page', customerDevicesController.getCustomerIdByDeviceId)
+
+// GET - Generic routes LAST
 customerDeviceRouter.get('/:id', hasRole('admin'), customerDevicesController.getCustomerDeviceById)
-customerDeviceRouter.get('/allDevices/:id', customerDevicesController.getAllDevicesByCustomerId)
-customerDeviceRouter.get('/device/:id', customerDevicesController.getCustomerIdByDeviceId)
+
+// PUT & DELETE
 customerDeviceRouter.put('/:id', customerDevicesController.updateCustomerDevice)
 customerDeviceRouter.delete('/:id', customerDevicesController.deleteCustomerDevice)
 
