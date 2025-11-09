@@ -35,7 +35,7 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, {
       
       try {
         const response = await getCommentsByEntityTypeAndEntityId(
-          EntityType.Customer,
+          EntityType.CUSTOMER,
           customer.customer_id.toString(),
           1
         )

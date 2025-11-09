@@ -20,7 +20,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
 
     try {
       const response = await getCommentsByEntityTypeAndEntityId(
-        EntityType.Device,
+        EntityType.DEVICE,
         device.device_id.toString(),
         1,
       )

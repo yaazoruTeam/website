@@ -161,7 +161,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         >
           <ChatModalContainer>
             <ChatBot
-              entityType={EntityType.Device}
+              entityType={EntityType.DEVICE}
               entityId={deviceId}
               onClose={() => {
                 setIsChatOpen(false)

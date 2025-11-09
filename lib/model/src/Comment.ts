@@ -1,10 +1,11 @@
 import { HttpError } from '.';
 
 export enum EntityType {
-  Customer = "customer",
-  Device = "device",
-  Branch = "branch",
+  CUSTOMER = "customer",
+  DEVICE = "device",
+  BRANCH = "branch",
 };
+
 interface Model {
   comment_id: number
   entity_id: number
