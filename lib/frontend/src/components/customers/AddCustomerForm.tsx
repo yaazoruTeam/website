@@ -258,7 +258,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
         >
           <ChatModalContainer>
             <ChatBot
-              entityType={EntityType.Customer}
+              entityType={EntityType.CUSTOMER}
               entityId={customerId || 'temp-new-customer'}
               onLocalCommentsChange={(c) => {
                 setLocalComments(c.map(cc => ({

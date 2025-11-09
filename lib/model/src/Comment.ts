@@ -1,13 +1,14 @@
 import { HttpError } from '.';
 
 export enum EntityType {
-  Customer = "customer",
-  Device = "device",
-  Branch = "branch",
+  CUSTOMER = "customer",
+  DEVICE = "device",
+  BRANCH = "branch",
 };
+
 interface Model {
-  comment_id: string
-  entity_id: string
+  comment_id: number
+  entity_id: number
   entity_type: EntityType
   content: string
   created_at: Date
@@ -21,8 +22,9 @@ const isOptionalString = (val: unknown) =>
 
 function sanitize(comment: Model, hasId: boolean): Model {
   const isString = (val: unknown) => typeof val === 'string' && val.trim() !== '';
+  const isNumber = (value: unknown) => typeof value === 'number' && !isNaN(value);
 
-  if (hasId && !comment.comment_id) {
+  if (hasId && !isNumber(comment.comment_id)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Comment ID is required and must be a valid number.'
@@ -30,10 +32,10 @@ function sanitize(comment: Model, hasId: boolean): Model {
     throw error;
   }
 
-  if (!comment.entity_id || !isString(comment.entity_id)) {
+  if (!isNumber(comment.entity_id)) {
     const error: HttpError.Model = {
       status: 400,
-      message: 'Entity ID is required and must be a non-empty string.'
+      message: 'Entity ID is required and must be a valid number.'
     };
     throw error;
   }
@@ -80,7 +82,7 @@ function sanitize(comment: Model, hasId: boolean): Model {
 
   const newComment: Model = {
     comment_id: comment.comment_id,
-    entity_id: comment.entity_id.trim(),
+    entity_id: comment.entity_id,
     entity_type: comment.entity_type,
     content: comment.content ? comment.content.trim() : "",
     created_at: comment.created_at || new Date(),
