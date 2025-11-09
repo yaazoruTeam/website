@@ -242,7 +242,7 @@ const googleAuth = async (req: Request, res: Response, next: NextFunction): Prom
     user = await db.User.updateUserPartial(user.user_id, { 
       google_uid: verifiedUid,
       photo_url: verifiedPhotoURL || user.photo_url,
-      email_verified: verifiedEmailVerified || user.email_verified
+      email_verified: verifiedEmailVerified ?? user.email_verified
     })
 
     // Runtime safety check – TypeScript should guarantee user is non-null here
