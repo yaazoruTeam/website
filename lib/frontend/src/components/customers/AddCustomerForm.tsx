@@ -32,6 +32,7 @@ interface AddCustomerFormProps {
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
+  onChatOpenChange?: (isOpen: boolean) => void
 }
 
 export interface AddCustomerFormInputs {
@@ -53,6 +54,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
+  onChatOpenChange,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -65,6 +67,13 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
       console.log(`   ${index + 1}. "${comment.content.substring(0, 50)}${comment.content.length > 50 ? '...' : ''}"`);
     });
   }, [localComments]);
+
+  // עדכון הקומפוננטה האב כשהצ'אטבוט נפתח/נסגר
+  useEffect(() => {
+    if (onChatOpenChange) {
+      onChatOpenChange(isChatOpen)
+    }
+  }, [isChatOpen, onChatOpenChange])
 
   // פונקציה לקביעת ההערה האחרונה שתוצג
   const getDisplayLastComment = () => {

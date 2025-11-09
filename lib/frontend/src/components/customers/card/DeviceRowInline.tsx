@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box } from '@mui/system'
 import { Device, CustomerDevice } from '@model'
 import CustomTypography from '../../designComponent/Typography'
@@ -13,6 +13,8 @@ interface DeviceRowInlineProps {
 }
 
 const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onClick }) => {
+  const [isDeviceChatOpen, setIsDeviceChatOpen] = useState(false)
+
   const iconStyle = {
     width: '24px',
     height: '24px',
@@ -25,7 +27,7 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
         border: `1px solid ${colors.neutral75}`,
         borderRadius: '8px',
         marginBottom: '16px',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       {/* כותרת המכשיר - לחיצה */}
@@ -60,8 +62,22 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
 
       {/* תוכן המכשיר - נפתח בלחיצה */}
       {isOpen && (
-        <Box sx={{ padding: '16px' }}>
-          <DeviceCardContent device={device} customerDevice={device.customerDevice} />
+        <Box 
+          sx={{ 
+            padding: '16px',
+            width: isDeviceChatOpen ? 'calc(100vw - 440px)' : '100%',
+            transition: 'width 0.3s ease',
+            overflowX: 'auto',
+            overflowY: 'visible',
+          }}
+        >
+          <Box sx={{ minWidth: 'max-content' }}>
+            <DeviceCardContent 
+              device={device} 
+              customerDevice={device.customerDevice}
+              onChatOpenChange={setIsDeviceChatOpen}
+            />
+          </Box>
         </Box>
       )}
     </Box>

@@ -1,5 +1,5 @@
 import { Box } from '@mui/system'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
@@ -35,6 +35,7 @@ interface DeviceFormProps {
   lastCommentDate?: string
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
+  onChatOpenChange?: (isOpen: boolean) => void
 }
 
 const DeviceForm: React.FC<DeviceFormProps> = ({
@@ -43,9 +44,17 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
+  onChatOpenChange,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+
+  // עדכון הקומפוננטה האב כשהצ'אטבוט נפתח/נסגר
+  useEffect(() => {
+    if (onChatOpenChange) {
+      onChatOpenChange(isChatOpen)
+    }
+  }, [isChatOpen, onChatOpenChange])
 
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
@@ -71,6 +80,10 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         backgroundColor: colors.neutral0,
         direction: 'rtl',
         padding: '28px',
+        marginLeft: isChatOpen ? '400px' : '0',
+        transition: 'margin-left 0.3s ease',
+        maxHeight: '100vh',
+        overflowY: 'auto',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
