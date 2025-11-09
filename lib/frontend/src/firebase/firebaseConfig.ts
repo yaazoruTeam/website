@@ -10,7 +10,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, Analytics } from "firebase/analytics";
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -46,7 +46,7 @@ provider.addScope('profile');
 provider.addScope('email');
 
 // Initialize Analytics (only in production/browser environment)
-let analytics;
+let analytics: Analytics | undefined;
 try {
   if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
     analytics = getAnalytics(app);
