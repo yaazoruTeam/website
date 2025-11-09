@@ -2,13 +2,13 @@
  * CustomerDeviceExcelService - שירות עיבוד קבצי Excel ללקוחות ומכשירים
  * אחראי על כל הלוגיקה הספציפית לעיבוד נתוני לקוחות ומכשירים
  */
-//to do: לטפל בטרנזקציה
+//to
 import { customerRepository } from '@repositories/CustomerRepository'
+import { customerDeviceRepository } from '@repositories/CustomerDeviceRepository'
 import { CustomerDeviceExcel } from '@model'
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
 import { formatErrorMessage } from '@utils/errorHelpers'
-import { Knex } from 'knex'
 import logger from '../../utils/logger'
 import {
   ExcelRowData,
@@ -16,16 +16,13 @@ import {
   ProcessingResult,
   buildProcessingResult,
   createDeviceIfNotExists,
-  createCommentForEntity
 } from './BaseExcelService'
-import { customerDeviceRepository } from '@/src/repositories'
 
 /**
  * עיבוד נתוני Excel ספציפיים ללקוחות ומכשירים
  * פונקציה זו אחראית על פילטור ועיבוד נתונים של לקוחות ומכשירים בלבד
  */
 const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingResult> => {
-  // const knex = getDbConnection()
   const errors: ProcessError[] = []
   let successCount = 0
 
@@ -56,50 +53,31 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 
     if (isCustomer) {
       // עיבוד עם לקוח ומכשיר
-      // const trx = await knex.transaction()
       try {
-        const existCustomer = await processCustomer(sanitized/*, trx*/)
-        const existDevice = await createDeviceIfNotExists(sanitized.device/*, trx*/)
+        const existCustomer = await processCustomer(sanitized)
+        const existDevice = await createDeviceIfNotExists(sanitized.device)
 
-        let existingRelation = await customerDeviceRepository.findExistingCustomerDevice({
-          device_id:existDevice.device_id,
+        // בדיקה אם המכשיר כבר משויך ללקוח אחר
+        const existingRelation = await customerDeviceRepository.findExistingCustomerDevice({
+          device_id: existDevice.device_id,
         })
 
-        // if (!existingRelation) {
-        //   const date: Date = new Date(sanitized.receivedAt)
-        //   const planEndDate = new Date(date)
-        //   planEndDate.setFullYear(planEndDate.getFullYear() + 5)
+        if (!existingRelation) {
+          const date: Date = new Date(sanitized.receivedAt)
+          const planEndDate = new Date(date)
+          planEndDate.setFullYear(planEndDate.getFullYear() + 5)
 
-          await customerDeviceRepository.createCustomerDevice(
-            {
-              customerDevice_id: 0,
-              customer_id: existCustomer.customer_id,
-              device_id: existDevice.device_id!,
-              receivedAt: date,
-              planEndDate: planEndDate,
-            },
-            //trx,
-          )
+          await customerDeviceRepository.createCustomerDevice({
+            customer_id: existCustomer.customer_id,
+            device_id: existDevice.device_id!,
+            receivedAt: date,
+            planEndDate: planEndDate,
+          })
         }
 
-        // יצירת הערה ללקוח בלבד (לא למכשיר) בטבלת לקוחות-מכשירים
-        // await createCommentForEntity(
-        //   String(existCustomer.customer_id),
-        //   'customer',
-        //   item.comment as string,
-        //   trx
-        // )
-
-        // await trx.commit()
         successCount++
         logger.debug(`Row ${rowIndex}: Customer-Device processed successfully`)
       } catch (err: unknown) {
-        try {
-          // await trx.rollback()
-        } catch (rollbackErr) {
-          logger.error(`Row ${rowIndex}: Transaction rollback failed:`, rollbackErr)
-        }
-
         const errorMessage = formatErrorMessage(err)
 
         errors.push({
@@ -142,7 +120,7 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
 /**
  * עיבוד נתוני לקוח - מטפל בכל השגיאות האפשריות
  */
-const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx?: Knex.Transaction) => {
+const processCustomer = async (sanitized: CustomerDeviceExcel.Model): Promise<any> => {
   try {
     if (!sanitized.customer) {
       throw new Error('Customer is undefined in sanitized object.')
@@ -173,7 +151,6 @@ const processCustomer = async (sanitized: CustomerDeviceExcel.Model, trx?: Knex.
     return existCustomer
   } catch (error) {
     logger.error('Error in processCustomer:', error)
-    // זורק השגיאה כדי שהיא תטופל ברמה הגבוהה יותר
     throw error
   }
 }
