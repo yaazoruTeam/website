@@ -31,7 +31,7 @@ export class Comment {
   @Column({ type: 'text' })
   content!: string
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   file_url: string | null = null
 
   @Column({ type: 'varchar', length: 10, nullable: true })
