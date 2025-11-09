@@ -91,21 +91,24 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Get all devices for a specific customer
+   * Get all devices for a specific customer with pagination
    * @param {number} customer_id - The ID of the customer whose devices are to be fetched
-   * @returns {Promise<CustomerDevice[]>} Array of CustomerDevice objects with device relations loaded
+   * @param {number} offset - The number of records to skip for pagination
+   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing array of CustomerDevice objects and total count
    */
-  async getDevicesByCustomerId(customer_id: number): Promise<CustomerDevice[]> {
+  async getCustomerDeviceByCustomerId(customer_id: number, offset: number): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
-      logger.debug('[DB] Fetching devices for customer', { customer_id })
+      logger.debug('[DB] Fetching devices for customer', { customer_id, offset, limit })
 
-      const customerDevices = await this.repository.find({
+      const [customerDevices, total] = await this.repository.findAndCount({
         where: { customer_id },
         relations: ['device'],
         order: { receivedAt: 'DESC' },
+        skip: offset,
+        take: limit,
       })
 
-      return customerDevices
+      return { customerDevices, total }
     } catch (err) {
       logger.error('[DB] Database error fetching devices by customer ID:', err)
       throw err
@@ -113,21 +116,24 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Get all customers for a specific device
+   * Get all customers for a specific device with pagination
    * @param {number} device_id - The ID of the device to fetch customers for
-   * @returns {Promise<CustomerDevice[]>} An array of CustomerDevice entities associated with the device
+   * @param {number} offset - The number of records to skip for pagination
+   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing array of CustomerDevice entities and total count
    */
-  async getCustomersByDeviceId(device_id: number): Promise<CustomerDevice[]> {
+  async getCustomerDeviceByDeviceId(device_id: number, offset: number): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
     try {
-      logger.debug('[DB] Fetching customers for device', { device_id })
+      logger.debug('[DB] Fetching customers for device', { device_id, offset, limit })
 
-      const customerDevices = await this.repository.find({
+      const [customerDevices, total] = await this.repository.findAndCount({
         where: { device_id },
         relations: ['customer'],
         order: { receivedAt: 'DESC' },
+        skip: offset,
+        take: limit,
       })
 
-      return customerDevices
+      return { customerDevices, total }
     } catch (err) {
       logger.error('[DB] Database error fetching customers by device ID:', err)
       throw err
@@ -193,199 +199,86 @@ export class CustomerDeviceRepository {
   }
 
   /**
-   * Find existing customer device by customer_id and device_id
-   * Used to check if a device is already assigned to a customer
-   * @param {number} customer_id - The customer ID to search for
-   * @param {number} device_id - The device ID to search for
-   * @returns {Promise<CustomerDevice | null>} The existing CustomerDevice if found, null otherwise
+   * Find existing customer device - prevents duplicate device assignments
+   * 
+   * 🎯 BUSINESS RULE: One device can only be assigned to ONE customer
+   * �? But one customer CAN have MULTIPLE devices
+   * 
+   * Used to check for duplicates before creating/updating customer-device assignments
+   * 
+   * @param {Object} criteria - Search criteria
+   * @param {number} [criteria.customerDevice_id] - Optional: customerDevice_id to exclude (for updates)
+   * @param {number} [criteria.device_id] - The device ID to check if already assigned
+   * @returns {Promise<CustomerDevice | null>} The existing CustomerDevice if device is already assigned, null otherwise
+   * 
+   * @example
+   * // Check if device is already assigned to any customer (for CREATE)
+   * const exists = await findExistingCustomerDevice({ device_id: 456 })
+   * if (exists) {
+   *   throw new Error(`Device ${456} is already assigned to customer ${exists.customer_id}`)
+   * }
+   * 
+   * @example
+   * // Check if device is assigned to another customer during UPDATE
+   * const exists = await findExistingCustomerDevice({ 
+   *   customerDevice_id: 789,  // Exclude current assignment
+   *   device_id: 456 
+   * })
+   * if (exists) {
+   *   throw new Error(`Device ${456} is already assigned to customer ${exists.customer_id}`)
+   * }
    */
-  async findExistingCustomerDevice(
-    customer_id: number,
-    device_id: number,
-  ): Promise<CustomerDevice | null> {
+  async findExistingCustomerDevice(criteria: {
+    customerDevice_id?: number
+    device_id?: number
+  }): Promise<CustomerDevice | null> {
     try {
-      logger.debug('[DB] Searching for existing customer device', { customer_id, device_id })
+      logger.debug('[DB] Checking if device is already assigned', criteria)
 
+      // Validate input - device_id is required for this check
+      if (!criteria.device_id) {
+        logger.warn('[DB] findExistingCustomerDevice called without device_id')
+        return null
+      }
+
+      // Search for device assignment
       const customerDevice = await this.repository.findOne({
-        where: { customer_id, device_id },
+        where: { device_id: criteria.device_id },
+        relations: ['customer'], // Include customer info for better logging
       })
 
-      if (customerDevice) {
-        logger.debug('[DB] Found existing customer device', {
-          customerDevice_id: customerDevice.customerDevice_id,
+      // If no assignment found, device is available
+      if (!customerDevice) {
+        logger.debug('[DB] Device is available (not assigned to any customer)', {
+          device_id: criteria.device_id,
         })
+        return null
       }
 
-      return customerDevice || null
-    } catch (err) {
-      logger.error('[DB] Database error searching for customer device:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Get all customer devices (without pagination) - use with caution!
-   * @returns {Promise<CustomerDevice[]>} Array of all customer devices with customer and device relations loaded
-   */
-  async getAllCustomerDevices(): Promise<CustomerDevice[]> {
-    try {
-      logger.debug('[DB] Fetching all customer devices')
-      return await this.repository.find({
-        relations: ['customer', 'device'],
-        order: { customerDevice_id: 'ASC' },
-      })
-    } catch (err) {
-      logger.error('[DB] Database error fetching all customer devices:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Counts the total number of customer devices in the database.
-   * @returns {Promise<number>} Promise resolving to the total count of customer devices.
-   */
-  async countCustomerDevices(): Promise<number> {
-    try {
-      return await this.repository.count()
-    } catch (err) {
-      logger.error('[DB] Database error counting customer devices:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Find customer devices by filter criteria with pagination
-   * @param {Partial<CustomerDevice>} [filter] - Optional filter criteria to match customer devices.
-   *   Supported fields: customerDevice_id, customer_id, device_id.
-   *   Note: Date fields and relation objects are not supported in this filter.
-   * @param {number} [offset] - The number of records to skip for pagination (must be >= 0)
-   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing filtered customer devices and total count
-   * @throws {Error} Throws a 400 error if offset is invalid (negative or non-integer)
-   */
-  async find(
-    filter?: Partial<CustomerDevice>,
-    offset?: number,
-  ): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
-    try {
-      if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        throw { status: 400, message: 'Invalid offset parameter' }
+      // If this is an update operation, check if it's the same assignment
+      if (criteria.customerDevice_id && customerDevice.customerDevice_id === criteria.customerDevice_id) {
+        logger.debug('[DB] Found assignment but it is the same record being updated', {
+          customerDevice_id: customerDevice.customerDevice_id,
+          device_id: criteria.device_id,
+        })
+        return null // Not a conflict - it's the same assignment
       }
 
-      // Filter only scalar fields - exclude relations and complex types
-      const where = filter
-        ? Object.fromEntries(
-            Object.entries(filter).filter(([key, v]) => {
-              // Only allow specific scalar fields
-              const allowedFields = ['customerDevice_id', 'customer_id', 'device_id']
-              return allowedFields.includes(key) && v != null
-            })
-          )
-        : undefined
-
-      const [customerDevices, total] = await this.repository.findAndCount({
-        where: where,
-        skip: offset ?? 0,
-        take: limit,
-        relations: ['customer', 'device'],
-        order: { customerDevice_id: 'ASC' },
+      // Device is already assigned to another customer - CONFLICT!
+      logger.warn('[DB] ⚠️ CONFLICT: Device is already assigned to a customer', {
+        device_id: criteria.device_id,
+        assigned_to_customer_id: customerDevice.customer_id,
+        customerDevice_id: customerDevice.customerDevice_id,
+        attempting_to_assign: criteria.customerDevice_id ? 'update' : 'create',
       })
 
-      logger.debug('[DB] Find customer devices completed', { found: customerDevices.length, total })
-      return { customerDevices, total }
+      return customerDevice
     } catch (err) {
-      logger.error('[DB] Database error finding customer devices:', err)
+      logger.error('[DB] Database error checking device assignment:', err)
       throw err
     }
   }
 
-  /**
-   * Find customer devices by date range (receivedAt)
-   * @param {Date} startDate - The start date of the range (inclusive)
-   * @param {Date} endDate - The end date of the range (inclusive)
-   * @param {number} [offset] - The number of records to skip for pagination (must be >= 0)
-   * @returns {Promise<{ customerDevices: CustomerDevice[]; total: number }>} Object containing customer devices within the date range and total count
-   * @throws {Error} Throws a 400 error if offset is invalid or if startDate is after endDate
-   */
-  async findByDate(
-    startDate: Date,
-    endDate: Date,
-    offset?: number,
-  ): Promise<{ customerDevices: CustomerDevice[]; total: number }> {
-    try {
-      if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        throw { status: 400, message: 'Invalid offset parameter' }
-      }
-      if (startDate > endDate) {
-        throw { status: 400, message: 'startDate must be before endDate' }
-      }
-
-      logger.debug('[DB] Finding customer devices by date range', { startDate, endDate })
-
-      const [customerDevices, total] = await this.repository.findAndCount({
-        where: {
-          receivedAt: Between(startDate, endDate),
-        },
-        skip: offset ?? 0,
-        take: limit,
-        relations: ['customer', 'device'],
-        order: { receivedAt: 'DESC' },
-      })
-
-      logger.debug('[DB] Find by date completed', { found: customerDevices.length, total })
-      return { customerDevices, total }
-    } catch (err) {
-      logger.error('[DB] Database error finding customer devices by date:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Finds customer devices with expired plans.
-   * @param {Date} [referenceDate] - The date to compare plan end dates against. Defaults to the current date if not provided.
-   * @returns {Promise<CustomerDevice[]>} Promise resolving to an array of customer devices with expired plans.
-   */
-  async findExpiredPlans(referenceDate?: Date): Promise<CustomerDevice[]> {
-    try {
-      const date = referenceDate || new Date()
-      logger.debug('[DB] Finding customer devices with expired plans', { referenceDate: date })
-
-      const customerDevices = await this.repository
-        .createQueryBuilder('cd')
-        .leftJoinAndSelect('cd.customer', 'customer')
-        .leftJoinAndSelect('cd.device', 'device')
-        .where('cd.planEndDate IS NOT NULL')
-        .andWhere('cd.planEndDate < :date', { date })
-        .orderBy('cd.planEndDate', 'ASC')
-        .getMany()
-
-      logger.debug('[DB] Found expired plans', { count: customerDevices.length })
-      return customerDevices
-    } catch (err) {
-      logger.error('[DB] Database error finding expired plans:', err)
-      throw err
-    }
-  }
-
-  /**
-   * Bulk delete customer devices by IDs
-   * @param {number[]} customerDevice_ids - Array of customer device IDs to delete
-   * @returns {Promise<number>} The count of deleted records
-   */
-  async bulkDelete(customerDevice_ids: number[]): Promise<number> {
-    try {
-      logger.debug('[DB] Bulk deleting customer devices', { count: customerDevice_ids.length })
-
-      const result = await this.repository.delete({
-        customerDevice_id: In(customerDevice_ids),
-      })
-
-      logger.debug('[DB] Bulk delete completed', { affected: result.affected })
-      return result.affected || 0
-    } catch (err) {
-      logger.error('[DB] Database error bulk deleting customer devices:', err)
-      throw err
-    }
-  }
 }
 
 // Export singleton instance

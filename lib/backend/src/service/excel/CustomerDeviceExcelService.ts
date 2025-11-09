@@ -20,6 +20,7 @@ import {
   createDeviceIfNotExists,
   createCommentForEntity
 } from './BaseExcelService'
+import { customerDeviceRepository } from '@/src/repositories'
 
 /**
  * עיבוד נתוני Excel ספציפיים ללקוחות ומכשירים
@@ -62,8 +63,8 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
         const existCustomer = await processCustomer(sanitized, trx)
         const existDevice = await createDeviceIfNotExists(sanitized.device, trx)
 
-        let existingRelation = await db.CustomerDevice.findCustomerDevice({
-          device_id: String(existDevice.device_id),
+        let existingRelation = await customerDeviceRepository.findExistingCustomerDevice({
+          device_id:existDevice.device_id,
         })
 
         if (!existingRelation) {
@@ -71,15 +72,15 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
           const planEndDate = new Date(date)
           planEndDate.setFullYear(planEndDate.getFullYear() + 5)
 
-          await db.CustomerDevice.createCustomerDevice(
+          await customerDeviceRepository.createCustomerDevice(
             {
-              customerDevice_id: '',
-              customer_id: String(existCustomer.customer_id),
-              device_id: String(existDevice.device_id),
+              customerDevice_id: 0,
+              customer_id: existCustomer.customer_id,
+              device_id: existDevice.device_id!,
               receivedAt: date,
               planEndDate: planEndDate,
             },
-            trx,
+            //trx,
           )
         }
 
