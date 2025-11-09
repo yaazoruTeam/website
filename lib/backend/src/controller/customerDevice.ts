@@ -38,10 +38,10 @@ const getCustomersDevices = async (
     const { customerDevices, total } = await customerDeviceRepository.getCustomerDevices(offset)
 
     res.status(200).json({
-      data: customerDevices,
+      data: /*customerDevices*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -94,10 +94,10 @@ const getAllDevicesByCustomerId = async (
     )
     logger.debug(`Devices fetched: ${JSON.stringify(customerDevices)}`)
     res.status(200).json({
-      data: customerDevices,
+      data: /*customerDevices*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -128,10 +128,10 @@ const getCustomerIdByDeviceId = async (
       offset,
     )
     res.status(200).json({
-      data: customerDevices,
+      data: /*customerDevices*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)

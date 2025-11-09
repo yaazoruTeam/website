@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError, ItemForMonthlyPayment } from '@model'
-import * as db from '@db/index'
 import config from '@config/index'
 import { Knex } from 'knex'
 import { handleError } from './err'
@@ -12,18 +11,18 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
     ItemForMonthlyPayment.sanitizeBodyExisting(req)
     const itemData = req.body
     const sanitized = ItemForMonthlyPayment.sanitize(itemData, false)
-    const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
-      sanitized.monthlyPayment_id,
-    )
-    if (!existMonthlyPayment) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'monthly payment does not exist',
-      }
-      throw error
-    }
-    const item = await db.Item.createItem(sanitized)
-    res.status(201).json(item)
+    // const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
+    //   sanitized.monthlyPayment_id,
+    // )
+    // if (!existMonthlyPayment) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'monthly payment does not exist',
+    //   }
+    //   throw error
+    // }
+    // const item = await db.Item.createItem(sanitized)
+    res.status(201).json(/*item*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -34,13 +33,13 @@ const getItems = async (req: Request, res: Response, next: NextFunction) => {
     const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { items, total } = await db.Item.getItems(offset)
+    // const { items, total } = await db.Item.getItems(offset)
 
     res.status(200).json({
-      data: items,
+      data: /*items*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -50,16 +49,16 @@ const getItems = async (req: Request, res: Response, next: NextFunction) => {
 const getItemId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     ItemForMonthlyPayment.sanitizeIdExisting(req)
-    const existItem = await db.Item.doesItemExist(req.params.id)
-    if (!existItem) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Item does not exist.',
-      }
-      throw error
-    }
-    const item = await db.Item.getItemId(req.params.id)
-    res.status(200).json(item)
+    // const existItem = await db.Item.doesItemExist(req.params.id)
+    // if (!existItem) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'Item does not exist.',
+    //   }
+    //   throw error
+    // }
+    // const item = await db.Item.getItemId(req.params.id)
+    res.status(200).json(/*item*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -68,24 +67,24 @@ const getItemId = async (req: Request, res: Response, next: NextFunction) => {
 const getAllItemsByMonthlyPaymentId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     ItemForMonthlyPayment.sanitizeIdExisting(req)
-    const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(req.params.id)
-    if (!existMonthlyPayment) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'monthlyPayment does not exist.',
-      }
-      throw error
-    }
+    // const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(req.params.id)
+    // if (!existMonthlyPayment) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'monthlyPayment does not exist.',
+    //   }
+    //   throw error
+    // }
     const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { items, total } = await db.Item.getAllItemByMonthlyPaymentId(req.params.id, offset)
+    // const { items, total } = await db.Item.getAllItemByMonthlyPaymentId(req.params.id, offset)
 
     res.status(200).json({
-      data: items,
+      data: /*items*/[],
       page,
-      totalPages: Math.ceil(total / limit),
-      total,
+      totalPages: Math.ceil(/*total / limit*/0),
+      total: /*total*/0,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -97,18 +96,18 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
     ItemForMonthlyPayment.sanitizeIdExisting(req)
     ItemForMonthlyPayment.sanitizeBodyExisting(req)
     const sanitized = ItemForMonthlyPayment.sanitize(req.body, true)
-    const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
-      sanitized.monthlyPayment_id,
-    )
-    if (!existMonthlyPayment) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'monthly payment does not exist',
-      }
-      throw error
-    }
-    const updateItem = await db.Item.updateItem(req.params.id, sanitized)
-    res.status(200).json(updateItem)
+    // const existMonthlyPayment = await db.MonthlyPayment.doesMonthlyPaymentExist(
+    //   sanitized.monthlyPayment_id,
+    // )
+    // if (!existMonthlyPayment) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'monthly payment does not exist',
+    //   }
+    //   throw error
+    // }
+    // const updateItem = await db.Item.updateItem(req.params.id, sanitized)
+    res.status(200).json(/*updateItem*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
@@ -120,44 +119,44 @@ const updateItems = async (
   trx: Knex.Transaction,
 ) => {
   // 1. חפש פריטים שנמחקו - פריטים קיימים שלא נמצאים במערך החדש
-  const deletedItems = existingItems.filter(
-    (existingItem) =>
-      !updatedItems.some((updatedItem) => updatedItem.item_id === existingItem.item_id),
-  )
+  // const deletedItems = existingItems.filter(
+  //   (existingItem) =>
+  //     !updatedItems.some((updatedItem) => updatedItem.item_id === existingItem.item_id),
+  // )
 
   // 2. מחוק את הפריטים שנמחקו
-  for (const deletedItem of deletedItems) {
-    await db.Item.deleteItem(deletedItem.item_id, trx)
-  }
+  // for (const deletedItem of deletedItems) {
+  //   await db.Item.deleteItem(deletedItem.item_id, trx)
+  // }
 
   // 3. עדכן פריטים קיימים או הוסף חדשים
-  for (const updatedItem of updatedItems) {
-    const existingItem = existingItems.find(
-      (existingItem) => existingItem.item_id === updatedItem.item_id,
-    )
-    if (existingItem) {
-      // אם הפריט קיים, עדכן אותו
-      await db.Item.updateItem(updatedItem.item_id, updatedItem, trx)
-    } else {
-      // אם זה פריט חדש, צור אותו
-      await db.Item.createItem(updatedItem, trx)
-    }
-  }
+  // for (const updatedItem of updatedItems) {
+  //   const existingItem = existingItems.find(
+  //     (existingItem) => existingItem.item_id === updatedItem.item_id,
+  //   )
+  //   if (existingItem) {
+  //     // אם הפריט קיים, עדכן אותו
+  //     await db.Item.updateItem(updatedItem.item_id, updatedItem, trx)
+  //   } else {
+  //     // אם זה פריט חדש, צור אותו
+  //     await db.Item.createItem(updatedItem, trx)
+  //   }
+  // }
 }
 
 const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     ItemForMonthlyPayment.sanitizeIdExisting(req)
-    const existItem = await db.Item.doesItemExist(req.params.id)
-    if (!existItem) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Item does not exist.',
-      }
-      throw error
-    }
-    const deleteItem = await db.Item.deleteItem(req.params.id)
-    res.status(200).json(deleteItem)
+    // const existItem = await db.Item.doesItemExist(req.params.id)
+    // if (!existItem) {
+    //   const error: HttpError.Model = {
+    //     status: 404,
+    //     message: 'Item does not exist.',
+    //   }
+    //   throw error
+    // }
+    // const deleteItem = await db.Item.deleteItem(req.params.id)
+    res.status(200).json(/*deleteItem*/{})
   } catch (error: unknown) {
     handleError(error, next)
   }
