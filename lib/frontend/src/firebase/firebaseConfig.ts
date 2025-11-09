@@ -24,6 +24,8 @@ const firebaseConfig = {
 };
 
 // Validate that all required environment variables are present
+// Note: These variables are mandatory for Firebase initialization and must be set in .env
+// The Docker build will fail if these are not provided as build arguments in production
 const requiredKeys = [
   'VITE_FIREBASE_API_KEY', 
   'VITE_FIREBASE_AUTH_DOMAIN', 
