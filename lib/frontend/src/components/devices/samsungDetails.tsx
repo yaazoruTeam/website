@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { CustomButton } from "../designComponent/Button"
 import { colors } from "../../styles/theme"
 import { useEffect, useState, useCallback } from "react"
-import { getDeviceInfo } from "../../api/samsung"
+import { getDeviceInfo, syncDevice } from "../../api/samsung"
 import { Samsung } from "@model"
 
 // Component for displaying a single info field
@@ -63,6 +63,8 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
   const [deviceInfo, setDeviceInfo] = useState<Samsung.DeviceInfo | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [syncing, setSyncing] = useState(false)
+  const [syncSuccess, setSyncSuccess] = useState<string | null>(null)
 
   const fetchDeviceInfo = useCallback(async () => {
     setLoading(true)
@@ -78,6 +80,24 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
       setLoading(false)
     }
   }, [serialNumber])
+
+  const handleDeviceRefresh = useCallback(async () => {
+    setSyncing(true)
+    setSyncSuccess(null)
+    setError(null)
+    try {
+      await syncDevice(serialNumber, false)
+      setSyncSuccess(t("deviceSyncedSuccessfully"))
+      // אחרי רענון מוצלח, אנחנו מעדכנים את הנתונים
+      await fetchDeviceInfo()
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : t("errorSyncingDevice")
+      setError(errorMessage)
+      console.error("Error syncing device:", err)
+    } finally {
+      setSyncing(false)
+    }
+  }, [serialNumber, fetchDeviceInfo, t])
 
   useEffect(() => {
     fetchDeviceInfo()
@@ -116,8 +136,8 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             buttonType="third"
             sx={{ backgroundColor: colors.blue100 }}
           />
-          <CustomButton label={t("refreshDevice")} buttonType="third" onClick={fetchDeviceInfo} />
-          <CustomButton label={t("refreshData")} buttonType="second" onClick={fetchDeviceInfo} />
+          <CustomButton label={t("refreshDevice")} buttonType="third" onClick={handleDeviceRefresh} disabled={syncing} />
+          <CustomButton label={t("refreshData")} buttonType="second" onClick={fetchDeviceInfo} disabled={loading} />
         </Box>
       </Box>
 
@@ -128,6 +148,17 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             variant="h4"
             weight="regular"
             color={colors.red500}
+          />
+        </Box>
+      )}
+
+      {syncSuccess && (
+        <Box sx={{ padding: 2, backgroundColor: colors.green100, borderRadius: "8px" }}>
+          <CustomTypography
+            text={syncSuccess}
+            variant="h4"
+            weight="regular"
+            color={colors.green500}
           />
         </Box>
       )}
