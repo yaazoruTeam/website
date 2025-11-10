@@ -103,6 +103,7 @@
   "page": "עמוד",
   "SIM_number": "מספר סים",
   "IMEI_1": "IMEI 1",
+  "IMEI_2": "IMEI 2",
   "mehalcha_number": "מספר במהלכא",
   "model": "דגם",
   "modelDevice": "דגם מכשיר",
@@ -421,5 +422,15 @@
   "loginNotThroughGoogle": "התחברות לא דרך גוגל? לחץ כאן",
   "registerButton": "צריך להירשם? לחץ כאן.",
   "loginThroughGoogle": "חזור להתחברות דרך גוגל",
-  "filterData": "נתוני סינון"
+  "filterData": "נתוני סינון",
+  "clientVersion": "גרסת לקוח",
+  "battery": "סוללה",
+  "absorptionLevel":"רמת קליטה",
+  "networkID":"מזהה רשת",
+  "storageAvailable":"אחסון זמין",
+  "androidVersion":"גרסת אנדרואיד",
+  "dataStatus":"סטטוס נתונים",
+  "refreshDevice": "רענון מכשיר",
+  "deviceRinging": "צלצול מכשיר",
+  "refreshData": "רענון נתונים"
 }
