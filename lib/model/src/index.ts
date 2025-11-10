@@ -26,6 +26,7 @@ import * as Request from './Request'
 import * as Switchboard from './Switchboard'
 import * as GoogleAuth from './GoogleAuth'
 import * as TempComment from './TempComment'
+import * as MapLocation from './MapLocation'
 
 export {
   Customer,
@@ -56,4 +57,5 @@ export {
   Switchboard,
   GoogleAuth,
   TempComment,
+  MapLocation,
 }

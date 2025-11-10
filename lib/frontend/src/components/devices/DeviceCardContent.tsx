@@ -3,6 +3,7 @@ import { Box } from '@mui/system'
 import { Device, CustomerDevice, Comment, EntityType } from '@model'
 import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
+import MapLocationView from '../MapLocationView'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
 
@@ -80,6 +81,17 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
+      </Box>
+      
+      {/* מפת מיקום */}
+      <Box sx={{ marginTop: '20px' }}>
+        <MapLocationView 
+          lat={32.0853} 
+          lng={34.7818} 
+          zoom={15}
+          title={`מיקום מכשיר ${device.device_number}`}
+          className="w-full h-96"
+        />
       </Box>
     </Box>
   )
