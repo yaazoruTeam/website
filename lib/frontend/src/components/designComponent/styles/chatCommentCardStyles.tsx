@@ -107,7 +107,7 @@ export const ChatModalOverlay = styled(FlexBase)({
   top: 0,
   left: 0,
   bottom: 0,
-  width: '400px',
+  width: '26%',
   backgroundColor: 'rgba(0, 0, 0, 0.1)',
   zIndex: 1000,
   justifyContent: 'flex-start',
