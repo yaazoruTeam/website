@@ -3,9 +3,6 @@ import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
-import MapLocationModal from '../Map/MapLocationModal'
-import { MapPinIcon } from '@heroicons/react/24/outline'
-import { DEFAULT_MAP_COORDINATES } from '../../constants/mapDefaults'
 
 // Interface עבור פריט חבילה בודד
 interface PackageItem {
@@ -95,7 +92,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (savedTime) {
             setLastRefreshTime(savedTime);
         }
-        
+
         return () => {
             localStorage.removeItem('sim_last_refresh');
         };
@@ -109,14 +106,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const updateRefreshTime = () => {
         const now = new Date();
-        const dateString = now.toLocaleDateString('he-IL', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric' 
+        const dateString = now.toLocaleDateString('he-IL', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-        const timeString = now.toLocaleTimeString('he-IL', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        const timeString = now.toLocaleTimeString('he-IL', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
         const fullDateTime = `${dateString} ${timeString}`;
         setLastRefreshTime(fullDateTime);
@@ -124,7 +121,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     };
 
     const executeWithRefresh = async <T,>(
-        action: () => Promise<T>, 
+        action: () => Promise<T>,
         shouldFetchDetails: boolean = true
     ): Promise<T | undefined> => {
         startRefreshing();
@@ -136,10 +133,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             updateRefreshTime();
             return result;
         } finally {
-           setRefreshing(false);
+            setRefreshing(false);
         }
     };
-    
+
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = (packages: PackagesData | null) => {
         // לפי המבנה שתיארת: packages.data.items
@@ -201,7 +198,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // עדכון אופטימיסטי - מציג את הבחירה מיידית
         const previousValue = selectedNetworkConnection;
         setSelectedNetworkConnection(network_connection);
-        
+
         try {
             await executeWithRefresh(async () => {
                 await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
@@ -478,18 +475,18 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
             if (isPackagesData(basePackages)) {
                 setBasePackages(basePackages);
-            
+
                 // חיפוש התיאור של החבילה הנוכחית
                 const currentPackage = basePackages.data.items.find(
                     (pkg: PackageItem) => pkg.id.toString() === String(details.package_id)
                 );
-                
+
                 if (currentPackage) {
                     const description = currentPackage.description?.EN || t('noDescriptionAvailable');
-                    
+
                     setValue('replacingPackages', description);
                 } else {
-                     setValue('replacingPackages', t('packageNotFound'));
+                    setValue('replacingPackages', t('packageNotFound'));
                 }
             }
 
@@ -676,7 +673,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </WidelyFormSection>
-            
+
             <ModelPackages
                 packages={getPackageOptions(basePackages)}
                 open={openBasePackagesModel}
@@ -735,44 +732,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     </Fragment>
                 ))}
             </WidelyInfoSection>
-            
-            {/* כפתור מיקום Google Maps */}
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 1,
-                    mt: 2,
-                    cursor: 'pointer',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: colors.blueOverlay200,
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                        backgroundColor: colors.blueOverlay100,
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                    }
-                }}
-                onClick={() => setIsMapModalOpen(true)}
-            >
-                <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
-                <CustomTypography
-                    text={t('googleMapsLocation')}
-                    variant="h4"
-                    weight="medium"
-                    color={colors.blue900}
-                />
-            </Box>
-            
-            {/* Modal עם המפה */}
-            <MapLocationModal
-                open={isMapModalOpen}
-                onClose={() => setIsMapModalOpen(false)}
-                lat={DEFAULT_MAP_COORDINATES.lat}
-                lng={DEFAULT_MAP_COORDINATES.lng}
-                title={`${t('deviceLocation')} - SIM ${simNumber}`}
-            />
         </>
     );
 
