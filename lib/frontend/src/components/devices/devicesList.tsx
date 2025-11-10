@@ -85,7 +85,8 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
     const deviceId = rowData.device_id as string
-    const device = devices.find(d => d.device_id?.toString() === deviceId)
+    const device = devices.find(d => d.device_id == deviceId)
+    console.log(devices, device)
     if (device) {
       onClickDevice(device)
     }
