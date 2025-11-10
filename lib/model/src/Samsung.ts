@@ -26,6 +26,12 @@ export interface DeviceInfo {
   availableStorage: string;
   androidVer: string;
   SdkVer: string;
+  rebootStatus?: 'Ok' | 'Pending' | 'Error' | 'Unknown';
+  installAppStatus?: 'Ok' | 'Pending' | 'Error' | 'Unknown';
+  applyProfileStatus?: 'Ok' | 'Pending' | 'Error' | 'Unknown';
+  caStatus?: 'Ok' | 'Pending' | 'Error' | 'Unknown';
+  apnStatus?: 'Ok' | 'Pending' | 'Error' | 'Unknown';
+  domainFilterStatus?: 'Ok' | 'Pending' | 'Error' | 'Unknown';
 }
 
 export interface MoveGroupRequest {
