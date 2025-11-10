@@ -86,6 +86,7 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
         >
           <Box sx={{ 
             minWidth: isDeviceChatOpen ? 'max-content' : 'auto',
+            maxWidth: isDeviceChatOpen ? 'calc(100vw - 640px)' : '100%',
           }}>
             <DeviceCardContent 
               device={device} 

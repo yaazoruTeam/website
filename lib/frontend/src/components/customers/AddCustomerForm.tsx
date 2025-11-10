@@ -141,6 +141,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({
       >
         <Box sx={{ 
           minWidth: isChatOpen ? 'max-content' : 'auto',
+          maxWidth: isChatOpen ? 'calc(100vw )' : '100%',
         }}>
           <OuterCard>
             <InnerContent>
