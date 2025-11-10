@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, IconButton, Box } from '@mui/material';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { colors } from '../../styles/theme';
+import { useTranslation } from 'react-i18next';
 
 interface MapLocationModalProps {
     open: boolean;
@@ -17,8 +18,10 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
     onClose,
     lat,
     lng,
-    title = 'מיקום במפה'
+    title
 }) => {
+    const { t } = useTranslation();
+    const defaultTitle = title || t('mapLocation');
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
     const markerRef = useRef<google.maps.Marker | null>(null);
@@ -49,7 +52,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
             
                 if (!mapRef.current) {
                     console.error('❌ mapRef.current is still null!');
-                    throw new Error('אלמנט המפה לא נמצא');
+                    throw new Error(t('errorLoadingMap'));
                 }
 
                 console.log('🌍 Checking if google exists:', typeof google);
@@ -57,7 +60,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
                 // Check if google is available
                 if (typeof google === 'undefined' || !google.maps) {
                     console.error('❌ Google Maps API not loaded');
-                    throw new Error('Google Maps API לא נטען. אנא רענן את הדף ונסה שוב.');
+                    throw new Error(t('errorLoadingMap'));
                 }
                 
                 console.log('✅ Google Maps API is loaded');
@@ -80,7 +83,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
                 const marker = new google.maps.Marker({
                     map: map,
                     position: position,
-                    title: title,
+                    title: defaultTitle,
                     animation: google.maps.Animation.DROP,
                 });
 
@@ -91,7 +94,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
                 setLoading(false);
             } catch (error) {
                 console.error('❌ Error initializing map:', error);
-                const errorMessage = error instanceof Error ? error.message : 'שגיאה בטעינת המפה';
+                const errorMessage = error instanceof Error ? error.message : t('errorLoadingMap');
                 setError(errorMessage);
                 setLoading(false);
             }
@@ -110,7 +113,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
             }
             mapInstanceRef.current = null;
         };
-    }, [open, mapReady, lat, lng, title]);
+    }, [open, mapReady, lat, lng, defaultTitle, t]);
 
     // Callback when Dialog is fully rendered
     const handleTransitionEntered = () => {
@@ -142,7 +145,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
                 pb: 2
             }}>
                 <Box sx={{ fontSize: '20px', fontWeight: 600, color: colors.blue900 }}>
-                    {title}
+                    {defaultTitle}
                 </Box>
                 <IconButton onClick={onClose} size="small">
                     <XMarkIcon style={{ width: 24, height: 24 }} />
@@ -175,7 +178,7 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
                     }}>
                         <Box sx={{ textAlign: 'center' }}>
                             <Box sx={{ fontSize: '16px', mb: 1 }}>⏳</Box>
-                            <Box>טוען מפה...</Box>
+                            <Box>{t('loadingMap')}</Box>
                         </Box>
                     </Box>
                 )}
@@ -199,13 +202,13 @@ const MapLocationModal: React.FC<MapLocationModalProps> = ({
                         zIndex: 10
                     }}>
                         <Box sx={{ fontSize: '18px', fontWeight: 600, mb: 1 }}>
-                            ❌ שגיאה בטעינת המפה
+                            ❌ {t('errorLoadingMap')}
                         </Box>
                         <Box sx={{ fontSize: '14px' }}>
                             {error}
                         </Box>
                         <Box sx={{ fontSize: '12px', mt: 2, color: colors.blue700 }}>
-                            בדקי את הקונסול לפרטים נוספים
+                            {t('checkConsoleForDetails')}
                         </Box>
                     </Box>
                 )}

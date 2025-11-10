@@ -443,5 +443,10 @@
   "locationDataNotAvailable": "נתוני מיקום אינם זמינים",
   "deviceSyncedSuccessfully": "המכשיר סונכרן בהצלחה",
   "errorSyncingDevice": "שגיאה בסנכרון המכשיר",
-  "noData": "אין נתונים"
+  "noData": "אין נתונים",
+  "googleMapsLocation": "מיקום Google Maps",
+  "errorLoadingMap": "שגיאה בטעינת המפה",
+  "checkConsoleForDetails": "בדוק את הקונסול לפרטים נוספים",
+  "mapLocation": "מיקום במפה",
+  "loadingMap": "טוען מפה..."
 }

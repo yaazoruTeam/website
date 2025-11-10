@@ -441,5 +441,10 @@
   "locationDataNotAvailable": "Location data not available",
   "deviceSyncedSuccessfully": "Device synced successfully",
   "errorSyncingDevice": "Error syncing device",
-  "noData": "No data"
+  "noData": "No data",
+  "googleMapsLocation": "Google Maps Location",
+  "errorLoadingMap": "Error loading map",
+  "checkConsoleForDetails": "Check console for details",
+  "mapLocation": "Map Location",
+  "loadingMap": "Loading map..."
 }

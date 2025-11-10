@@ -5,6 +5,7 @@ import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 import MapLocationModal from '../Map/MapLocationModal'
 import { MapPinIcon } from '@heroicons/react/24/outline'
+import { DEFAULT_MAP_COORDINATES } from '../../constants/mapDefaults'
 
 // Interface עבור פריט חבילה בודד
 interface PackageItem {
@@ -757,7 +758,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             >
                 <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
                 <CustomTypography
-                    text="מיקום Google Maps"
+                    text={t('googleMapsLocation')}
                     variant="h4"
                     weight="medium"
                     color={colors.blue900}
@@ -768,9 +769,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <MapLocationModal
                 open={isMapModalOpen}
                 onClose={() => setIsMapModalOpen(false)}
-                lat={32.0853}
-                lng={34.7818}
-                title={`מיקום SIM ${simNumber}`}
+                lat={DEFAULT_MAP_COORDINATES.lat}
+                lng={DEFAULT_MAP_COORDINATES.lng}
+                title={`${t('deviceLocation')} - SIM ${simNumber}`}
             />
         </>
     );

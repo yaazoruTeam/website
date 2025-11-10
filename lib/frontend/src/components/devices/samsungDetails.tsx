@@ -91,7 +91,6 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
     try {
       await syncDevice(serialNumber, false)
       setSyncSuccess(t("deviceSyncedSuccessfully"))
-      // אחרי רענון מוצלח, אנחנו מעדכנים את הנתונים
       await fetchDeviceInfo()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t("errorSyncingDevice")
