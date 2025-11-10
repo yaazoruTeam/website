@@ -184,6 +184,8 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             onClick={fetchDeviceInfo} 
             disabled={loading} 
           />
+          <CustomButton label={t("refreshDevice")} buttonType="third" onClick={handleDeviceRefresh} disabled={syncing} />
+          <CustomButton label={t("refreshData")} buttonType="second" onClick={fetchDeviceInfo} disabled={loading} />
         </Box>
       </Box>
 
@@ -285,6 +287,10 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
               />
             </Box>
           </InfoSection>
+
+
+          <InfoField label={t("battery")} value={deviceInfo.batteryLevel} />
+          <InfoField label={t("storageAvailable")} value={deviceInfo.availableStorage} />
 
           {/* Operation Status Information */}
           <InfoSection title={t("dataStatus")}>
