@@ -237,7 +237,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
 
           <InfoField label={t("battery")} value={deviceInfo.batteryLevel+" %"} />
-          <InfoField label={t("storageAvailable")} value={(Math.trunc(deviceInfo.availableStorage/10_000_000))/100 + " GB"} />
+          <InfoField label={t("storageAvailable")} value={(Math.trunc(deviceInfo.availableStorage/100_000_000))/10 + " GB"} />
 
           {/* Location Section with Map Button */}
           <InfoSection title={t("locationInfo")}>
