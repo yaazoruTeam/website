@@ -5,7 +5,7 @@ import { Customer, CustomerDevice, Device } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../../styles/theme'
-import { getDeviceById, getDevices } from '../../../api/device'
+import { getDeviceById, getDevices, updateDevice } from '../../../api/device'
 import DeviceRowInline from './DeviceRowInline'
 import { Autocomplete, TextField, CircularProgress } from '@mui/material'
 import { CustomButton } from '../../designComponent/Button'
@@ -156,6 +156,13 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       }
       
       await createCustomerDevice(customerDeviceData)
+      await updateDevice(
+        {
+          ...selectedDevice,
+          purchaseDate: new Date(Date.now()),
+        },
+        selectedDevice.device_id
+      )
       
       setAssignmentSuccess(t('deviceAssignedSuccessfully'))
       setSelectedDevice(null)
