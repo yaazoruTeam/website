@@ -418,5 +418,6 @@
   "pleaseSelectDevice": "Please select a device",
   "loginNotThroughGoogle": "Not logging in through Google? Click here.",
   "registerButton": "Need to register? Click here.",
-  "loginThroughGoogle": "Log back in via Google"
+  "loginThroughGoogle": "Log back in via Google",
+  "filterData": "Filter Data"
 }
