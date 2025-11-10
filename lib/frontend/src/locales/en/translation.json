@@ -446,6 +446,6 @@
   "errorLoadingMap": "Error loading map",
   "checkConsoleForDetails": "Check console for details",
   "mapLocation": "Map Location",
-  "loadingMap": "Loading map..."
+  "loadingMap": "Loading map...",
   "refreshData": "Refresh Data"
 }

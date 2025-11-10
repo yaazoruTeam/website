@@ -448,6 +448,6 @@
   "errorLoadingMap": "שגיאה בטעינת המפה",
   "checkConsoleForDetails": "בדוק את הקונסול לפרטים נוספים",
   "mapLocation": "מיקום במפה",
-  "loadingMap": "טוען מפה..."
+  "loadingMap": "טוען מפה...",
   "refreshData": "רענון נתונים"
 }
