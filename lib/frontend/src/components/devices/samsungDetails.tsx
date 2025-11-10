@@ -6,6 +6,8 @@ import { colors } from "../../styles/theme"
 import { useEffect, useState, useCallback } from "react"
 import { getDeviceInfo, syncDevice } from "../../api/samsung"
 import { Samsung } from "@model"
+import MapLocationModal from "../Map/MapLocationModal"
+import { MapPinIcon } from "@heroicons/react/24/outline"
 
 // Component for displaying a single info field
 const InfoField = ({ label, value }: { label: string; value: string | number | undefined }) => (
@@ -65,6 +67,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
   const [error, setError] = useState<string | null>(null)
   const [syncing, setSyncing] = useState(false)
   const [syncSuccess, setSyncSuccess] = useState<string | null>(null)
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false)
 
   const fetchDeviceInfo = useCallback(async () => {
     setLoading(true)
@@ -88,7 +91,6 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
     try {
       await syncDevice(serialNumber, false)
       setSyncSuccess(t("deviceSyncedSuccessfully"))
-      // אחרי רענון מוצלח, אנחנו מעדכנים את הנתונים
       await fetchDeviceInfo()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t("errorSyncingDevice")
@@ -99,9 +101,43 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
     }
   }, [serialNumber, fetchDeviceInfo, t])
 
+  const getDeviceLocation = (): { lat: number; lng: number } | null => {
+    if (!deviceInfo?.locationLat || !deviceInfo?.locationLon) {
+      console.warn('Device location data is missing')
+      return null
+    }
+
+    const lat = parseFloat(deviceInfo.locationLat)
+    const lng = parseFloat(deviceInfo.locationLon)
+
+    if (isNaN(lat) || isNaN(lng)) {
+      console.error('Invalid location coordinates:', { lat: deviceInfo.locationLat, lng: deviceInfo.locationLon })
+      return null
+    }
+
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      console.error('Location coordinates out of valid range:', { lat, lng })
+      return null
+    }
+
+    return { lat, lng }
+  }
+  const handleLocationClick = () => {
+    const location = getDeviceLocation()
+    
+    if (!location) {
+      setError(t('locationDataNotAvailable'))
+      return
+    }
+
+    console.log('📍 Opening map with device location:', location)
+    setIsMapModalOpen(true)
+  }
+
   useEffect(() => {
     fetchDeviceInfo()
   }, [serialNumber, fetchDeviceInfo])
+  const deviceLocation = getDeviceLocation() || { lat: 32.0853, lng: 34.7818 }
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -135,6 +171,18 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             label={t("deviceRinging")}
             buttonType="third"
             sx={{ backgroundColor: colors.blue100 }}
+          />
+          <CustomButton 
+            label={t("refreshDevice")} 
+            buttonType="third" 
+            onClick={handleDeviceRefresh} 
+            disabled={syncing} 
+          />
+          <CustomButton 
+            label={t("refreshData")} 
+            buttonType="second" 
+            onClick={fetchDeviceInfo} 
+            disabled={loading} 
           />
           <CustomButton label={t("refreshDevice")} buttonType="third" onClick={handleDeviceRefresh} disabled={syncing} />
           <CustomButton label={t("refreshData")} buttonType="second" onClick={fetchDeviceInfo} disabled={loading} />
@@ -179,14 +227,66 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             <InfoField label={t("modelDevice")} value={deviceInfo.deviceModel} />
             <InfoField label={t("androidVersion")} value={deviceInfo.androidVer} />
           </InfoSection>
+          
           <InfoField label={t("deviceStatus")} value={deviceInfo.deviceStatus} />
-
 
           <InfoField label={t("simCurrent")} value={deviceInfo.currentSim} />
           <InfoField label={t("networkID")} value={deviceInfo.networkID} />
           <InfoField label={t("absorptionLevel")} value={deviceInfo.cellularStrength} />
           <InfoField label={t("IMEI_1")} value={deviceInfo.imei1} />
           <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
+
+          <InfoField label={t("battery")} value={deviceInfo.batteryLevel} />
+          <InfoField label={t("storageAvailable")} value={deviceInfo.availableStorage} />
+
+          {/* Location Section with Map Button */}
+          <InfoSection title={t("locationInfo")}>
+            <InfoField 
+              label={t("latitude")} 
+              value={deviceInfo.locationLat || t("notAvailable")} 
+            />
+            <InfoField 
+              label={t("longitude")} 
+              value={deviceInfo.locationLon || t("notAvailable")} 
+            />
+            <InfoField 
+              label={t("lastLocationUpdate")} 
+              value={deviceInfo.locationTimeStamp 
+                ? new Date(deviceInfo.locationTimeStamp).toLocaleString('he-IL') 
+                : t("notAvailable")
+              } 
+            />
+            
+            {/* כפתור מיקום במפה */}
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1,
+                mt: 1,
+                cursor: getDeviceLocation() ? 'pointer' : 'not-allowed',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                backgroundColor: getDeviceLocation() ? colors.blueOverlay200 : colors.neutral200,
+                transition: 'all 0.2s',
+                opacity: getDeviceLocation() ? 1 : 0.5,
+                '&:hover': getDeviceLocation() ? {
+                  backgroundColor: colors.blueOverlay100,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                } : {}
+              }}
+              onClick={handleLocationClick}
+            >
+              <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
+              <CustomTypography
+                text={t("viewOnMap")}
+                variant="h4"
+                weight="medium"
+                color={colors.blue900}
+              />
+            </Box>
+          </InfoSection>
 
 
           <InfoField label={t("battery")} value={deviceInfo.batteryLevel} />
@@ -210,6 +310,15 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           color={colors.blue600}
         />
       )}
+
+      {/* Modal עם המפה */}
+      <MapLocationModal
+        open={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        lat={deviceLocation.lat}
+        lng={deviceLocation.lng}
+        title={`${t("deviceLocation")} - ${serialNumber}`}
+      />
     </Box>
   )
 }

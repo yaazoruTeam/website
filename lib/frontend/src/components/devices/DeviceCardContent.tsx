@@ -78,6 +78,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         onCommentsRefresh={fetchLastComment}
         onChatOpenChange={onChatOpenChange}
       />
+      
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
