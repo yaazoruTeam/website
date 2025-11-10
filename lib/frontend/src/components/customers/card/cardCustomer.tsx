@@ -162,30 +162,25 @@ const CardCustomer: React.FC = () => {
           my: '28px',
           paddingLeft: '20px',
           paddingRight: '20px',
-          width: isChatOpen ? 'calc(100vw - 440px)' : '100%',
-          transition: 'width 0.3s ease',
-          overflowX: 'auto',
-          overflowY: 'visible',
+          width: '100%',
         }}
       >
-        <Box sx={{ minWidth: 'max-content' }}>
-          <CustomTabs
-            tabs={[
-              {
-                label: t('customerDetails'),
-                content: customer ? <CustomerDetails ref={formRef} customer={customer} onCustomerUpdate={handleCustomerUpdate} onChatOpenChange={setIsChatOpen} /> : '',
-              },
-              {
-                label: t('devicesAndQuestions'),
-                content: customer ? <DeviceDetails customer={customer} /> : '',
-              },
-              {
-                label: t('standingOrders'),
-                content: customer ? <MonthlyPaymentDetails customer={customer} /> : '',
-              },
-            ]}
-          />
-        </Box>
+        <CustomTabs
+          tabs={[
+            {
+              label: t('customerDetails'),
+              content: customer ? <CustomerDetails ref={formRef} customer={customer} onCustomerUpdate={handleCustomerUpdate} onChatOpenChange={setIsChatOpen} /> : '',
+            },
+            {
+              label: t('devicesAndQuestions'),
+              content: customer ? <DeviceDetails customer={customer} /> : '',
+            },
+            {
+              label: t('standingOrders'),
+              content: customer ? <MonthlyPaymentDetails customer={customer} /> : '',
+            },
+          ]}
+        />
       </Box>
       <CustomModal open={openModal} onClose={() => setOpenModal(false)}>
         <Box
