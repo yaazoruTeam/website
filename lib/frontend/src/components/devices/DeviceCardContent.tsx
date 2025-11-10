@@ -5,6 +5,7 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
+import SamsungDetails from './samsungDetails'
 
 interface DeviceCardContentProps {
   device: Device.Model
@@ -81,7 +82,11 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
       </Box>
+      <Box sx={{ marginTop: '20px' }}>
+        <SamsungDetails serialNumber={device.serialNumber} />
+      </Box>
     </Box>
+    
   )
 }
 
