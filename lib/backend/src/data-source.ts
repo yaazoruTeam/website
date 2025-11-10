@@ -4,11 +4,11 @@ import config from './config'
 
 // שימוש בנתיבים שתומכים גם ב-JS (production) וגם ב-TS (development)
 const entitiesPath = process.env.NODE_ENV === 'production' 
-  ? ['dist/entities/**/*.js']
+  ? ['dist/src/entities/**/*.js']
   : ['src/entities/**/*.ts'];
 
 const migrationsPath = process.env.NODE_ENV === 'production'
-  ? ['dist/migrations/**/*.js']
+  ? ['dist/src/migrations/**/*.js']
   : ['src/migrations/**/*.ts'];
 
 export const AppDataSource = new DataSource({

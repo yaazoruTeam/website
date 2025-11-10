@@ -65,13 +65,29 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
         <Box 
           sx={{ 
             padding: '16px',
-            width: isDeviceChatOpen ? 'calc(100vw - 440px)' : '100%',
-            transition: 'width 0.3s ease',
-            overflowX: 'auto',
+            width: '100%',
+            overflowX: isDeviceChatOpen ? 'auto' : 'visible',
             overflowY: 'visible',
+            '&::-webkit-scrollbar': {
+              height: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: colors.neutral100,
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: colors.neutral350,
+              borderRadius: '4px',
+              '&:hover': {
+                backgroundColor: colors.neutral400,
+              },
+            },
           }}
         >
-          <Box sx={{ minWidth: 'max-content' }}>
+          <Box sx={{ 
+            minWidth: isDeviceChatOpen ? 'max-content' : 'auto',
+            maxWidth: isDeviceChatOpen ? 'calc(100vw - 640px)' : '100%',
+          }}>
             <DeviceCardContent 
               device={device} 
               customerDevice={device.customerDevice}

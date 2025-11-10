@@ -34,10 +34,10 @@ export class Comment {
   @Column({ type: 'varchar', length: 500, nullable: true })
   file_url: string | null = null
 
-  @Column({ type: 'varchar', length: 10, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   file_name: string | null = null
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 10, nullable: true })
   file_type: string | null = null
 
   @Index()
