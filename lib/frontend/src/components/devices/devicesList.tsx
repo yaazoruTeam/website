@@ -12,8 +12,6 @@ import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
 import AddDeviceForm from './AddDeviceForm'
 import { formatDateToString } from '../designComponent/FormatDate'
-import MapLocationModal from '../Map/MapLocationModal'
-import { MapPinIcon } from '@heroicons/react/24/outline'
 
 type DeviceFilterType = 
   | { type: 'status'; value: 'active' | 'inactive' }
@@ -38,7 +36,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
-  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   const handleResetFilters = () => {
     onFilterChange(null)
@@ -49,10 +46,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
 
   const columns = [
     { label: t('deviceNumber'), key: 'device_number' },
-    // { label: t('mehalchaNumber'), key: 'mehalcha_number' },
     { label: t('serialNumber'), key: 'serialNumber' },
-    // { label: t('openingDate'), key: 'opening_date' },
-    // { label: t('releaseDate'), key: 'releaseDate' },
     { label: t('purchaseDate'), key: 'purchaseDate' },
     { label: t('plan'), key: 'plan' },
     { label: '', key: 'status' },
@@ -61,12 +55,9 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   const tableData = (devices ?? []).map((device) => ({
     device_id: device.device_id,
     device_number: device.device_number,
-    // mehalcha_number: device.mehalcha_number,
     serialNumber: device.serialNumber || '-',
-    // releaseDate: `${formatDateToString(new Date(device.releaseDate))}`,
     purchaseDate: device.purchaseDate != null ? `${formatDateToString(new Date(device.purchaseDate))}` : '--',
     plan: device.plan,
-    //במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר לבדוק את זה to do
     status:
       device.status === 'active' ? (
         <StatusTag status='active' />
@@ -81,15 +72,12 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
 
   const handleAddDeviceSuccess = () => {
     setShowAddDevice(false)
-    onRefresh() // Refresh the devices list
+    onRefresh()
   }
 
-  // פונקציה מותאמת אישית שמחלצת את ה-ID מנתוני השורה ומעבירה לפונקציה המקורית
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
     const deviceId = rowData.device_id
     const device = devices.find(d => d.device_id == deviceId)
-    console.log(devices, device)
     if (device) {
       onClickDevice(device)
     }
@@ -129,43 +117,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           weight='bold'
           color={colors.blue900}
         />
-            {/* כפתור מיקום Google Maps */}
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 1,
-                    mt: 2,
-                    cursor: 'pointer',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: colors.blueOverlay200,
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                        backgroundColor: colors.blueOverlay100,
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                    }
-                }}
-                onClick={() => setIsMapModalOpen(true)}
-            >
-                <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
-                <CustomTypography
-                    text="מיקום Google Maps"
-                    variant="h4"
-                    weight="medium"
-                    color={colors.blue900}
-                />
-            </Box>
-            
-            {/* Modal עם המפה */}
-            <MapLocationModal
-                open={isMapModalOpen}
-                onClose={() => setIsMapModalOpen(false)}
-                lat={32.0853}
-                lng={34.7818}
-               // title={`מיקום SIM ${simNumber}`}
-            />
         
         <CustomButton
           label={t('addingNewDevice')}
@@ -213,6 +164,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           <FilterResetButton onReset={handleResetFilters} disabled={isResetDisabled} />
         </Box>
       </Box>
+        
       <Box
         sx={{
           width: '100%',
@@ -234,7 +186,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
             limit,
             onPageChange,
           }}
-          alignLastColumnLeft={true}
           dataType="devices"
         />
       </Box>

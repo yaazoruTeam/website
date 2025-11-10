@@ -432,5 +432,16 @@
   "dataStatus":"סטטוס נתונים",
   "refreshDevice": "רענון מכשיר",
   "deviceRinging": "צלצול מכשיר",
-  "refreshData": "רענון נתונים"
+  "refreshData": "רענון נתונים",
+  "locationInfo": "מידע מיקום",
+  "latitude": "קו רוחב",
+  "longitude": "קו אורך",
+  "lastLocationUpdate": "עדכון מיקום אחרון",
+  "viewOnMap": "צפה במפה",
+  "deviceLocation": "מיקום המכשיר",
+  "notAvailable": "לא זמין",
+  "locationDataNotAvailable": "נתוני מיקום אינם זמינים",
+  "deviceSyncedSuccessfully": "המכשיר סונכרן בהצלחה",
+  "errorSyncingDevice": "שגיאה בסנכרון המכשיר",
+  "noData": "אין נתונים"
 }

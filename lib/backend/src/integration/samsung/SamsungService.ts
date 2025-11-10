@@ -105,7 +105,7 @@ class SamsungService {
             logger.info(`Samsung: Getting device info for serial: ${serialNumber}`)
 
             const response = await axios.get<DeviceInfo>(
-                `${this.baseUrl}/devices/${serialNumber}/info`,
+                `${this.baseUrl}devices/${serialNumber}/info`,
                 { 
                     headers: this.getHeaders(),
                     ...this.getAxiosConfig(),
@@ -141,7 +141,7 @@ class SamsungService {
             )
 
             const response = await axios.post<MoveGroupResponse>(
-                `${this.baseUrl}/devices/${serialNumber}/moveToGroup`,
+                `${this.baseUrl}devices/${serialNumber}/moveToGroup`,
                 { groupId: request.groupId },
                 { 
                     headers: this.getHeaders(),
@@ -178,7 +178,7 @@ class SamsungService {
             )
 
             const response = await axios.post<SyncDeviceResponse>(
-                `${this.baseUrl}/devices/${serialNumber}/sync`,
+                `${this.baseUrl}devices/${serialNumber}/sync`,
                 syncRequest,
                 { 
                     headers: this.getHeaders(),
@@ -204,7 +204,7 @@ class SamsungService {
             const params = excludeGroupId ? { exclude: excludeGroupId } : {}
 
             const response = await axios.get<GroupsList>(
-                `${this.baseUrl}/groups`,
+                `${this.baseUrl}groups`,
                 {
                     headers: this.getHeaders(),
                     params,

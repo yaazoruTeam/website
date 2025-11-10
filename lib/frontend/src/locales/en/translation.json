@@ -430,5 +430,16 @@
   "dataStatus":"Data Status",
   "refreshDevice": "Refresh Device",
   "deviceRinging": "Device Ringing",
-  "refreshData": "Refresh Data"
+  "refreshData": "Refresh Data",
+  "locationInfo": "Location Information",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "lastLocationUpdate": "Last Location Update",
+  "viewOnMap": "View on Map",
+  "deviceLocation": "Device Location",
+  "notAvailable": "Not Available",
+  "locationDataNotAvailable": "Location data not available",
+  "deviceSyncedSuccessfully": "Device synced successfully",
+  "errorSyncingDevice": "Error syncing device",
+  "noData": "No data"
 }

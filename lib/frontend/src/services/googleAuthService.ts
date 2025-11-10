@@ -33,6 +33,14 @@ export class GoogleAuthService {
    * Sign in with Google using popup (desktop) or redirect (mobile)
    */
   static async signInWithGoogle(useRedirect = false): Promise<AuthFlowResult> {
+    // Check if Firebase is configured
+    if (!auth || !provider) {
+      return { 
+        type: 'ERROR', 
+        error: new FirebaseAuthError(new Error('Firebase is not configured. Google Auth is disabled.'))
+      };
+    }
+
     let result;
     
     try {
@@ -103,6 +111,12 @@ export class GoogleAuthService {
    * Handle redirect result after page reload (for mobile flow)
    */
   static async handleRedirectResult(): Promise<GoogleSignInResult | null> {
+    // Check if Firebase is configured
+    if (!auth) {
+      console.warn('Firebase is not configured. Skipping redirect result check.');
+      return null;
+    }
+
     const result = await getRedirectResult(auth);
     
     if (!result?.user) {
