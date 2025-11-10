@@ -84,7 +84,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   // פונקציה מותאמת אישית שמחלצת את ה-ID מנתוני השורה ומעבירה לפונקציה המקורית
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
-    const deviceId = rowData.device_id as string
+    const deviceId = rowData.device_id
     const device = devices.find(d => d.device_id == deviceId)
     console.log(devices, device)
     if (device) {
