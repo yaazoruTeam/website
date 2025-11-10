@@ -3,6 +3,8 @@ import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
+import MapLocationModal from '../Map/MapLocationModal'
+import { MapPinIcon } from '@heroicons/react/24/outline'
 
 // Interface עבור פריט חבילה בודד
 interface PackageItem {
@@ -83,6 +85,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const [Refreshing, setRefreshing] = useState<boolean>(false);
     const [lastRefreshTime, setLastRefreshTime] = useState<string | null>(null);
+
+    const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
     // Load last refresh time from localStorage on component mount
     useEffect(() => {
@@ -730,6 +734,44 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     </Fragment>
                 ))}
             </WidelyInfoSection>
+            
+            {/* כפתור מיקום Google Maps */}
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1,
+                    mt: 2,
+                    cursor: 'pointer',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: colors.blueOverlay200,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                        backgroundColor: colors.blueOverlay100,
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                    }
+                }}
+                onClick={() => setIsMapModalOpen(true)}
+            >
+                <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
+                <CustomTypography
+                    text="מיקום Google Maps"
+                    variant="h4"
+                    weight="medium"
+                    color={colors.blue900}
+                />
+            </Box>
+            
+            {/* Modal עם המפה */}
+            <MapLocationModal
+                open={isMapModalOpen}
+                onClose={() => setIsMapModalOpen(false)}
+                lat={32.0853}
+                lng={34.7818}
+                title={`מיקום SIM ${simNumber}`}
+            />
         </>
     );
 

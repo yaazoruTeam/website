@@ -12,6 +12,8 @@ import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import FilterResetButton from '../designComponent/FilterResetButton'
 import AddDeviceForm from './AddDeviceForm'
 import { formatDateToString } from '../designComponent/FormatDate'
+import MapLocationModal from '../Map/MapLocationModal'
+import { MapPinIcon } from '@heroicons/react/24/outline'
 
 type DeviceFilterType = 
   | { type: 'status'; value: 'active' | 'inactive' }
@@ -36,6 +38,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   const isMobile = useMediaQuery('(max-width:600px)')
   const navigate = useNavigate()
   const [resetTrigger, setResetTrigger] = useState(false)
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   const handleResetFilters = () => {
     onFilterChange(null)
@@ -125,6 +128,44 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           weight='bold'
           color={colors.blue900}
         />
+            {/* כפתור מיקום Google Maps */}
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1,
+                    mt: 2,
+                    cursor: 'pointer',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: colors.blueOverlay200,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                        backgroundColor: colors.blueOverlay100,
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                    }
+                }}
+                onClick={() => setIsMapModalOpen(true)}
+            >
+                <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
+                <CustomTypography
+                    text="מיקום Google Maps"
+                    variant="h4"
+                    weight="medium"
+                    color={colors.blue900}
+                />
+            </Box>
+            
+            {/* Modal עם המפה */}
+            <MapLocationModal
+                open={isMapModalOpen}
+                onClose={() => setIsMapModalOpen(false)}
+                lat={32.0853}
+                lng={34.7818}
+               // title={`מיקום SIM ${simNumber}`}
+            />
+        
         <CustomButton
           label={t('addingNewDevice')}
           size={isMobile ? 'small' : 'large'}

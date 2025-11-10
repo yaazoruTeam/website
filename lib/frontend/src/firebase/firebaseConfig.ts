@@ -24,8 +24,6 @@ const firebaseConfig = {
 };
 
 // Validate that all required environment variables are present
-// Note: These variables are mandatory for Firebase initialization and must be set in .env
-// The Docker build will fail if these are not provided as build arguments in production
 const requiredKeys = [
   'VITE_FIREBASE_API_KEY', 
   'VITE_FIREBASE_AUTH_DOMAIN', 
@@ -36,30 +34,35 @@ const requiredKeys = [
 ];
 const missingKeys = requiredKeys.filter(key => !import.meta.env[key]);
 
-if (missingKeys.length > 0) {
-  console.error('❌ Missing Firebase environment variables:', missingKeys);
-  throw new Error(`Missing Firebase configuration: ${missingKeys.join(', ')}`);
+// Only show warning in development mode, not in production console
+if (missingKeys.length > 0 && import.meta.env.DEV) {
+  console.info('ℹ️ Firebase is not configured (missing env variables). Google Auth will be disabled.');
 }
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only if all required keys are present
+const app = missingKeys.length === 0 ? initializeApp(firebaseConfig) : null;
 
 // Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
+export const auth = app ? getAuth(app) : null;
 
 // Initialize Google Auth Provider
-export const provider = new GoogleAuthProvider();
-provider.addScope('profile');
-provider.addScope('email');
+export const provider = app ? (() => {
+  const p = new GoogleAuthProvider();
+  p.addScope('profile');
+  p.addScope('email');
+  return p;
+})() : null;
 
 // Initialize Analytics (only in production/browser environment)
 let analytics: Analytics | undefined;
 try {
-  if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
+  if (app && typeof window !== 'undefined' && firebaseConfig.measurementId) {
     analytics = getAnalytics(app);
   }
 } catch (error) {
-  console.warn('⚠️ Analytics initialization failed:', error);
+  if (import.meta.env.DEV) {
+    console.warn('⚠️ Analytics initialization failed:', error);
+  }
 }
 
 export { analytics };
