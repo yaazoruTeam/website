@@ -11,9 +11,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
 
   useEffect(() => {
     const fetchDeviceInfo = async () => {
-      try {
-        console.log('44777477');
-        
+      try {        
         const deviceInfo = await getDeviceInfo(serialNumber)
         console.log('Device Info:', deviceInfo)
       } catch (error) {

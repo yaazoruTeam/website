@@ -86,7 +86,6 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         <SamsungDetails serialNumber={device.serialNumber} />
       </Box>
     </Box>
-    
   )
 }
 

@@ -7,7 +7,7 @@ import axios, { AxiosError } from 'axios'
 import * as https from 'https'
 import logger from '@/src/utils/logger'
 import config from '@/src/config'
-import { HttpError, HttpErrorWithStatus } from '@model'
+import { HttpErrorWithStatus } from '@model'
 import {
     DeviceInfo,
     MoveGroupRequest,
@@ -16,7 +16,7 @@ import {
     SyncDeviceResponse,
     GroupsList,
     ErrorResponse,
-} from './types'
+} from '@model/Samsung'
 
 class SamsungService {
     private baseUrl: string

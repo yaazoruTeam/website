@@ -16,10 +16,6 @@ const getDeviceInfo = async (req: Request, res: Response, next: NextFunction) =>
     try {
         const { serialNumber } = req.params
 
-        if (!serialNumber) {
-            throw { status: 400, message: 'serialNumber is required' }
-        }
-
         logger.info(`Controller: Getting device info for ${serialNumber}`)
         const deviceInfo = await SamsungService.getDeviceInfo(serialNumber)
 
@@ -38,14 +34,6 @@ const moveDeviceToGroup = async (req: Request, res: Response, next: NextFunction
         const { serialNumber } = req.params
         const { groupId } = req.body
 
-        if (!serialNumber) {
-            throw { status: 400, message: 'serialNumber is required' }
-        }
-
-        if (!groupId) {
-            throw { status: 400, message: 'groupId is required' }
-        }
-
         logger.info(`Controller: Moving device ${serialNumber} to group ${groupId}`)
         const result = await SamsungService.moveDeviceToGroup(serialNumber, { groupId })
 
@@ -63,10 +51,6 @@ const syncDevice = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { serialNumber } = req.params
         const { forceSync } = req.body
-
-        if (!serialNumber) {
-            throw { status: 400, message: 'serialNumber is required' }
-        }
 
         logger.info(`Controller: Syncing device ${serialNumber}`)
         const result = await SamsungService.syncDevice(serialNumber, { forceSync })
