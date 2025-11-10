@@ -103,6 +103,7 @@
   "page": "page",
   "SIM_number": "SIM number",
   "IMEI_1": "IMEI 1",
+  "IMEI_2": "IMEI 2",
   "mehalcha_number": "mehalcha number",
   "model": "model",
   "modelDevice": "model device",
@@ -419,5 +420,15 @@
   "loginNotThroughGoogle": "Not logging in through Google? Click here.",
   "registerButton": "Need to register? Click here.",
   "loginThroughGoogle": "Log back in via Google",
-  "filterData": "Filter Data"
+  "filterData": "Filter Data",
+  "clientVersion": "Client Version",
+  "battery": "Battery",
+  "absorptionLevel":"Absorption Level",
+  "networkID":"Network ID",
+  "storageAvailable":"Storage Available",
+  "androidVersion":"Android Version",
+  "dataStatus":"Data Status",
+  "refreshDevice": "Refresh Device",
+  "deviceRinging": "Device Ringing",
+  "refreshData": "Refresh Data"
 }
