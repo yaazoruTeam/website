@@ -11,22 +11,15 @@ import { MapPinIcon } from "@heroicons/react/24/outline"
 
 // Component for displaying a single info field
 const InfoField = ({ label, value }: { label: string; value: string | number | undefined }) => (
-  <Box sx={{ gap: 20 }}>
-    <CustomTypography
-      text={`${label}`}
-      variant="h4"
-      weight="regular"
-      color={colors.blue600}
-    />
-    <CustomTypography
-      text={`${value ?? "-"}`}
-      variant="h4"
-      weight="bold"
-      color={colors.blue600}
-    />
-  </Box>
+  <CustomTypography
+    text={`${label}: ${value ?? "-"}`}
+    variant="h4"
+    weight="regular"
+    color={colors.blue600}
+  />
 )
 
+const BYTES_TO_GB_DIVISOR = 100_000_000;
 // Component for status fields with visual indicators
 const StatusField = ({ label, status }: { label: string; status?: string }) => {
   const getStatusColor = (status?: string) => {
@@ -244,8 +237,8 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           <InfoField label={t("IMEI_1")} value={deviceInfo.imei1} />
           <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
 
-          <InfoField label={t("battery")} value={deviceInfo.batteryLevel + " %"} />
-          <InfoField label={t("storageAvailable")} value={(Math.trunc(Number(deviceInfo.availableStorage ?? 0) / 100_000_000) / 10) + " GB"} />
+          <InfoField label={t("battery")} value={`${deviceInfo.batteryLevel} %`} />
+          <InfoField label={t("storageAvailable")} value={`${(Math.trunc(parseFloat(deviceInfo.availableStorage)/BYTES_TO_GB_DIVISOR))/10} GB`} />
 
           {/* Location Section with Map Button */}
           <InfoSection title={t("locationInfo")}>
