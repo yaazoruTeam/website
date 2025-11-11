@@ -58,7 +58,7 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
     try {
       const updateData = {
         ...data,
-        device_id: device.device_id!.toString(),
+        device_id: device.device_id,
         status: device.status,
         purchaseDate: device.purchaseDate,
         registrationDate: device.registrationDate,
