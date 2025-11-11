@@ -90,7 +90,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (savedTime) {
             setLastRefreshTime(savedTime);
         }
-        
+
         return () => {
             localStorage.removeItem('sim_last_refresh');
         };
@@ -104,14 +104,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const updateRefreshTime = () => {
         const now = new Date();
-        const dateString = now.toLocaleDateString('he-IL', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric' 
+        const dateString = now.toLocaleDateString('he-IL', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-        const timeString = now.toLocaleTimeString('he-IL', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        const timeString = now.toLocaleTimeString('he-IL', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
         const fullDateTime = `${dateString} ${timeString}`;
         setLastRefreshTime(fullDateTime);
@@ -119,7 +119,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     };
 
     const executeWithRefresh = async <T,>(
-        action: () => Promise<T>, 
+        action: () => Promise<T>,
         shouldFetchDetails: boolean = true
     ): Promise<T | undefined> => {
         startRefreshing();
@@ -131,10 +131,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             updateRefreshTime();
             return result;
         } finally {
-           setRefreshing(false);
+            setRefreshing(false);
         }
     };
-    
+
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = (packages: PackagesData | null) => {
         // לפי המבנה שתיארת: packages.data.items
@@ -196,7 +196,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // עדכון אופטימיסטי - מציג את הבחירה מיידית
         const previousValue = selectedNetworkConnection;
         setSelectedNetworkConnection(network_connection);
-        
+
         try {
             await executeWithRefresh(async () => {
                 await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
@@ -473,18 +473,18 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
             if (isPackagesData(basePackages)) {
                 setBasePackages(basePackages);
-            
+
                 // חיפוש התיאור של החבילה הנוכחית
                 const currentPackage = basePackages.data.items.find(
                     (pkg: PackageItem) => pkg.id.toString() === String(details.package_id)
                 );
-                
+
                 if (currentPackage) {
                     const description = currentPackage.description?.EN || t('noDescriptionAvailable');
-                    
+
                     setValue('replacingPackages', description);
                 } else {
-                     setValue('replacingPackages', t('packageNotFound'));
+                    setValue('replacingPackages', t('packageNotFound'));
                 }
             }
 
@@ -671,7 +671,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </WidelyFormSection>
-            
+
             <ModelPackages
                 packages={getPackageOptions(basePackages)}
                 open={openBasePackagesModel}

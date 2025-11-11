@@ -1,20 +1,23 @@
 import { HttpError, Request } from '.'
 
 interface Model {
-  user_id: string
+  user_id?: number // Optional during creation, TypeORM assigns it
   first_name: string
   last_name: string
   id_number?: string
   phone_number?: string
+  additional_phone?: string
   email: string
+  city?: string
+  address?: string
   password?: string
   user_name: string
   role: 'admin' | 'branch'
   status: string
   // Google OAuth fields
-  google_uid?: string
-  photo_url?: string
-  email_verified?: boolean
+  google_uid?: string //לא חובה , UNIQUE
+  photo_url?: string // לא חובה, 
+  email_verified?: boolean // לא חובה, DEFAULT TO לבדוק מה זה אומר -- ערך ברירת מחדל false  
 }
 
 function sanitize(user: Model, hasId: boolean): Model {
@@ -58,10 +61,31 @@ function sanitize(user: Model, hasId: boolean): Model {
     }
     throw error
   }
+  if (user.additional_phone && !isValidPhoneNumber(user.additional_phone)) {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid "additional_phone". It must be a number between 9 and 15 digits.',
+    }
+    throw error
+  }
   if (!isString(user.email) || !isValidEmail(user.email)) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "email".',
+    }
+    throw error
+  }
+  if (!isString(user.city) || user.city.trim() === '') {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "city".',
+    }
+    throw error
+  }
+  if (!isString(user.address) || user.address.trim() === '') {
+    const error: HttpError.Model = {
+      status: 400,
+      message: 'Invalid or missing "address".',
     }
     throw error
   }
@@ -87,16 +111,12 @@ function sanitize(user: Model, hasId: boolean): Model {
     throw error
   }
   const newUser: Model = {
-    user_id: user.user_id,
-    first_name: user.first_name.trim(),
-    last_name: user.last_name.trim(),
-    id_number: user.id_number,
+   ...user,
     phone_number: user.phone_number?.trim(),
+    additional_phone: user.additional_phone?.trim(),
     email: user.email.trim().toLowerCase(),
-    password: user.password,
-    user_name: user.user_name,
-    role: user.role,
     status: user.status || 'active',
+    email_verified: user.email_verified || false,
   }
   return newUser
 }
@@ -113,13 +133,6 @@ const sanitizeExistingUser = (userExis: Model, user: Model) => {
     const error: HttpError.Model = {
       status: 409,
       message: 'email already exists',
-    }
-    throw error
-  }
-  if (userExis.password === user.password) {
-    const error: HttpError.Model = {
-      status: 409,
-      message: 'password already exists',
     }
     throw error
   }

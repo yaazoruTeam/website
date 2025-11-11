@@ -1,5 +1,6 @@
 import { Device } from '@model'
-import { 
+import {
+  apiDelete,
   apiGet,
   apiPost,
   apiPut,
@@ -20,6 +21,10 @@ export const createDevice = async (deviceData: Omit<Device.Model, 'device_id'>):
   return apiPost<Device.Model>(ENDPOINT, deviceData)
 }
 
-export const updateDevice = async (device_id: string, deviceData: Partial<Device.Model>): Promise<Device.Model> => {
+export const updateDevice = async (deviceData: Device.Model, device_id: number): Promise<Device.Model> => {
   return apiPut<Device.Model>(`${ENDPOINT}/${device_id}`, deviceData)
+}
+
+export const deleteDevice = async (device_id: number): Promise<void> => {
+  return apiDelete<void>(`${ENDPOINT}/${device_id}`)
 }

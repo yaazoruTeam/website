@@ -1,7 +1,7 @@
 import { EntityType } from "./Comment";
 
 interface Model {
-  entity_id: string;
+  entity_id: number;
   entity_type: EntityType;
   content?: string;
   file_url?: string;

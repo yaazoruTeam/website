@@ -4,7 +4,7 @@ import config from '@config/index'
 
 const JWT_SECRET = config.jwt.secret
 
-const generateToken = (userId: string, role: string): string => {
+const generateToken = (userId: number | undefined, role: string): string => {
   const payload = { user_id: userId, role: role }
   const options = { expiresIn: 3600 }
 

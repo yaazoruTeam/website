@@ -10,3 +10,25 @@ body {
   background-color: #f5f6fa;
   direction: rtl;
 }
+
+/* הגבלת השוליים החיצוניים של ה-main ל-50px כשהמסך מוקטן */
+@media (max-width: 1600px) {
+  main {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+  }
+}
+
+@media (max-width: 1300px) {
+  main {
+    padding-left: 30px !important;
+    padding-right: 20px !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  main {
+    padding-left: 20px !important;
+    padding-right: 0px !important;
+  }
+}
