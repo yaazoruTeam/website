@@ -166,7 +166,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const infoItems = widelyDetails ? [
         { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
-        { title: t('IMEI 1'), value: widelyDetails.imei1 },
+        { title: t('IMEI'), value: widelyDetails.imei1 },
         { title: t('status'), value: t(widelyDetails.status) },
         { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
     ] : []
