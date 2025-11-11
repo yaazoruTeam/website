@@ -8,6 +8,7 @@ import { getDeviceInfo, syncDevice } from "../../api/samsung"
 import { Samsung } from "@model"
 import MapLocationModal from "../Map/MapLocationModal"
 import { MapPinIcon } from "@heroicons/react/24/outline"
+import GroupSelector from "./GroupSelector"
 
 // Component for displaying a single info field
 const InfoField = ({ label, value }: { label: string; value: string | number | undefined }) => (
@@ -220,6 +221,29 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
         </Box>
       ) : deviceInfo ? (
         <>
+          {/* Group Selector Section */}
+          <Box 
+            sx={{ 
+              padding: 3, 
+              backgroundColor: colors.blueOverlay50, 
+              borderRadius: "8px",
+            }}
+          >
+            <CustomTypography
+              text={t("changeGroup")}
+              variant="h3"
+              weight="bold"
+              color={colors.blue900}
+              sx={{ marginBottom: 2 }}
+            />
+            <GroupSelector
+              serialNumber={serialNumber}
+              currentGroupId={deviceInfo.groupID}
+              currentGroupName={deviceInfo.groupName}
+              onGroupChanged={fetchDeviceInfo}
+            />
+          </Box>
+
           <InfoSection>
             <InfoField label={t("clientVersion")} value={deviceInfo.clientAppVersion} />
             <InfoField label={t("modelDevice")} value={deviceInfo.deviceModel} />
@@ -237,7 +261,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
 
           <InfoField label={t("battery")} value={deviceInfo.batteryLevel+" %"} />
-          <InfoField label={t("storageAvailable")} value={(Math.trunc(deviceInfo.availableStorage/100_000_000))/10 + " GB"} />
+          <InfoField label={t("storageAvailable")} value={(Math.trunc(Number(deviceInfo.availableStorage)/100_000_000))/10 + " GB"} />
 
           {/* Location Section with Map Button */}
           <InfoSection title={t("locationInfo")}>
