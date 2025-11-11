@@ -93,7 +93,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       for (const device of allDevices) {
         try {
           if (!device.device_id) continue
-          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id.toString())
+          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id.toString())        
           if (!customerDevice) {
             availableList.push(device)
           }
@@ -257,7 +257,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             <Box sx={{ width: '33%' }}> 
               <Autocomplete
                 options={availableDevices}
-                getOptionLabel={(option) => `${option.device_id}${option.model ? ` - ${option.model}` : ''}`}
+                getOptionLabel={(option) => `${option.device_id}${option.device_number ? ` - ${option.device_number}` : ''}`}
                 value={selectedDevice} 
                 onChange={(_event, newValue) => {
                   setSelectedDevice(newValue)
