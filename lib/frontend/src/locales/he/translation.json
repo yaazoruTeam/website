@@ -429,6 +429,8 @@
   "networkID":"מזהה רשת",
   "storageAvailable":"אחסון זמין",
   "androidVersion":"גרסת אנדרואיד",
+  "lastConnected": "התחברות אחרונה",
+  "registeredOn": "נרשם ב",
   "dataStatus":"סטטוס נתונים",
   "refreshDevice": "רענון מכשיר",
   "deviceRinging": "צלצול מכשיר",
@@ -449,5 +451,10 @@
   "checkConsoleForDetails": "בדוק את הקונסול לפרטים נוספים",
   "mapLocation": "מיקום במפה",
   "loadingMap": "טוען מפה...",
-  "refreshData": "רענון נתונים"
+  "rebootStatus": "סטטוס הפעלה מחדש",
+  "installAppStatus": "סטטוס התקנת אפליקציה",
+  "applyProfileStatus": "סטטוס החלת פרופיל",
+  "caStatus": "סטטוס CA",
+  "apnStatus": "סטטוס APN",
+  "domainFilterStatus": "סטטוס מסנן דומיינים"
 }

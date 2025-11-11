@@ -427,6 +427,8 @@
   "networkID":"Network ID",
   "storageAvailable":"Storage Available",
   "androidVersion":"Android Version",
+  "lastConnected": "Last Connected",
+  "registeredOn": "Registered On",
   "dataStatus":"Data Status",
   "refreshDevice": "Refresh Device",
   "deviceRinging": "Device Ringing",
@@ -447,5 +449,10 @@
   "checkConsoleForDetails": "Check console for details",
   "mapLocation": "Map Location",
   "loadingMap": "Loading map...",
-  "refreshData": "Refresh Data"
+  "rebootStatus": "Reboot Status",
+  "installAppStatus": "Install App Status",
+  "applyProfileStatus": "Apply Profile Status",
+  "caStatus": "CA Status",
+  "apnStatus": "APN Status",
+  "domainFilterStatus": "Domain Filter Status"
 }
