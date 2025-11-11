@@ -13,5 +13,6 @@ export {
     addOneTimePackage,
     freezeUnFreezeMobile,
     updateImeiLockStatus,
-    reregisterInHlr
+    reregisterInHlr,
+    cancelAllLocations
 } from './actions'

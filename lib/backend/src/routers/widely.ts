@@ -20,5 +20,6 @@ widelyRouter.post('/add_one_time_package', hasRole('admin'), widelyController.ad
 widelyRouter.post('/freeze_unfreeze_mobile', hasRole('admin'), widelyController.freezeUnFreezeMobile)
 widelyRouter.post('/lock_unlock_imei', hasRole('admin'), widelyController.updateImeiLockStatus)
 widelyRouter.post('/reregister_in_hlr', hasRole('admin'), widelyController.reregisterInHlr)
+widelyRouter.post('/cancel_all_locations', hasRole('admin'), widelyController.cancelAllLocations)
 
 export default widelyRouter
