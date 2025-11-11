@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/system'
-import { useParams } from 'react-router-dom'
-import { getDeviceById } from '../../api/device'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { getDeviceById, deleteDevice } from '../../api/device'
 import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
 import { Device, CustomerDevice } from '@model'
 import DeviceCardContent from './DeviceCardContent'
 import { AxiosError } from 'axios'
+import { CustomButton } from '../designComponent/Button'
+import CustomModal from '../designComponent/Modal'
+import CustomTypography from '../designComponent/Typography'
+import { colors } from '../../styles/theme'
+import { TrashIcon } from '@heroicons/react/24/outline'
+import { useMediaQuery } from '@mui/system'
 
 const DeviceCard: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { t } = useTranslation()
+  const isMobile = useMediaQuery('(max-width:600px)')
   const [device, setDevice] = useState<Device.Model | null>(null)
   const [customerDevice, setCustomerDevice] = useState<CustomerDevice.Model | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     const fetchDeviceData = async () => {
@@ -45,6 +56,13 @@ const DeviceCard: React.FC = () => {
     fetchDeviceData()
   }, [id])
 
+  const deletingDevice = async () => {
+    console.log('delete device: ', device?.device_id)
+    if (device && device.device_id) await deleteDevice(device.device_id)
+    setOpenModal(false)
+    navigate('/devices')
+  }
+
   if (loading) {
     return <Box>Loading device data...</Box>
   }
@@ -60,12 +78,86 @@ const DeviceCard: React.FC = () => {
   return (
     <>
       <Box>
-        {/* תוכן המכשיר */}
+        {/* Header Section with Delete Button */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: 2,
+            marginBottom: '20px',
+            paddingRight: '20px',
+          }}
+        >
+          <CustomButton
+            label={t('deletingDevice')}
+            size={isMobile ? 'small' : 'large'}
+            state='default'
+            buttonType='third'
+            icon={<TrashIcon />}
+            onClick={() => setOpenModal(true)}
+            disabled={device?.status !== 'active'}
+          />
+        </Box>
+
+        {/* Device Content */}
         <DeviceCardContent 
           device={device} 
           customerDevice={customerDevice || undefined} 
         />
       </Box>
+
+      {/* Delete Confirmation Modal */}
+      <CustomModal open={openModal} onClose={() => setOpenModal(false)}>
+        <Box
+          sx={{
+            direction: 'rtl',
+            alignSelf: 'stretch',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            gap: 2,
+          }}
+        >
+          <CustomTypography
+            text={t('deletingDevice')}
+            variant='h1'
+            weight='medium'
+            color={colors.blue900}
+          />
+          <CustomTypography
+            text={t('deviceDeletionWarning')}
+            variant='h3'
+            weight='medium'
+            color={colors.blue900}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            gap: 2,
+            width: '100%',
+          }}
+        >
+          <CustomButton
+            label={t('approval')}
+            size={isMobile ? 'small' : 'large'}
+            buttonType='first'
+            state='default'
+            onClick={deletingDevice}
+          />
+          <CustomButton
+            label={t('cancellation')}
+            size={isMobile ? 'small' : 'large'}
+            buttonType='second'
+            state='hover'
+            onClick={() => setOpenModal(false)}
+          />
+        </Box>
+      </CustomModal>
     </>
   )
 }
