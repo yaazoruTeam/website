@@ -473,6 +473,6 @@
   "caStatus": "סטטוס CA",
   "apnStatus": "סטטוס APN",
   "domainFilterStatus": "סטטוס סינון דומיין",
-  "lastConnected": "התחבר לאחרונה",
-  "registeredOn": "נרשם בתאריך"
+  "Pelephone_and_Partner": "פלאפון ופרטנר",
+  "connectedTo":"מחובר ל"
 }

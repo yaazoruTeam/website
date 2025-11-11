@@ -704,6 +704,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         ]}
                         value={selectedNetworkConnection}
                     />
+                    <CustomTypography text={`${t('connectedTo')}: ${widelyDetails?.network_connection}`} variant='h4' weight='regular'/>
                 </Box>
             </WidelyConnectionSection>
 
