@@ -90,77 +90,77 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         <img style={{ width: 47.19, height: 45.45 }} src={logo2} alt='' />
       </Box>
 
-      {!showLoginForm ? (
-        <>
-          {/* Google Login View - Default */}
-          <Box
+      {/* {!showLoginForm ? ( */}
+      {/* <>
+        {/* Google Login View - Default */}
+      {/*   <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3,
+            alignItems: 'center',
+          }}
+        >
+          <CustomTypography
+            text={t('loginSystem')}
+            variant='h2'
+            weight='bold'
+            color={colors.neutral900}
             sx={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3,
-              alignItems: 'center',
+              marginBottom: 2,
             }}
-          >
-            <CustomTypography
-              text={t('loginSystem')}
-              variant='h2'
-              weight='bold'
-              color={colors.neutral900}
-              sx={{
-                marginBottom: 2,
-              }}
-            />
-            
-            {/* Google Login Button */}
-            <GoogleLoginButton
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useRedirect={isMobile}
-            />
+          />
+          
+          {/* Google Login Button */}
+      {/*   <GoogleLoginButton
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            useRedirect={isMobile}
+          />
 
-            {/* Toggle to Phone/Password Login */}
-            <Box
-              sx={{
-                textAlign: 'center',
-                cursor: 'pointer',
-                marginTop: 2,
-              }}
-              onClick={handleToggleLoginForm}
-            >
-              <CustomTypography
-                text={t('loginNotThroughGoogle')}
-                variant='h3'
-                weight='medium'
-                color={colors.blue900}
-                sx={{
-                  textDecoration: 'underline',
-                }}
-              />
-            </Box>
-          </Box>
-
-          {/* Sign Up Link Outside */}
-          <Box
-            onClick={handleRegisterClick}
+          {/* Toggle to Phone/Password Login */}
+      {/*   <Box
             sx={{
               textAlign: 'center',
               cursor: 'pointer',
-              marginTop: 3,
+              marginTop: 2,
             }}
+            onClick={handleToggleLoginForm}
           >
-            <CustomTypography
-              text={t('registerButton')}
+            {/* <CustomTypography
+              text={t('loginNotThroughGoogle')}
               variant='h3'
               weight='medium'
               color={colors.blue900}
               sx={{
                 textDecoration: 'underline',
               }}
-            />
-          </Box>
-        </>
-      ) : (
+            /> */}
+      {/*   </Box>
+        </Box>
+
+        {/* Sign Up Link Outside */}
+      {/*   <Box
+          onClick={handleRegisterClick}
+          sx={{
+            textAlign: 'center',
+            cursor: 'pointer',
+            marginTop: 3,
+          }}
+        >
+          {/* <CustomTypography
+            text={t('registerButton')}
+            variant='h3'
+            weight='medium'
+            color={colors.blue900}
+            sx={{
+              textDecoration: 'underline',
+            }}
+          /> */}
+      {/*   </Box>
+      </> */}
+      {/* ) : ( */}
         <>
           {/* Phone & Password Login View */}
           <Box
@@ -189,7 +189,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 required: t('requiredField'),
               }}
             />
-            <CustomTypography
+            {/* <CustomTypography
               text={t('forgotPassword?')}
               variant='h3'
               weight='medium'
@@ -199,7 +199,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 textDecoration: 'underline',
                 cursor: 'pointer',
               }}
-            />
+            /> */}
           </Box>
 
           <CustomButton
@@ -211,15 +211,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           />
 
           {/* Toggle back to Google Login */}
-          <Box
+          {/* <Box
             sx={{
               textAlign: 'center',
               cursor: 'pointer',
               marginTop: 2,
             }}
             onClick={handleToggleLoginForm}
-          >
-            <CustomTypography
+          > */}
+            {/* <CustomTypography
               text={t('loginThroughGoogle')}
               variant='h3'
               weight='medium'
@@ -227,10 +227,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
               sx={{
                 textDecoration: 'underline',
               }}
-            />
-          </Box>
+            /> */}
+          {/* </Box> */}
         </>
-      )}
+      {/* )} */}
     </Box>
   )
 }

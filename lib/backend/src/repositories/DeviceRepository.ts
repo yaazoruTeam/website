@@ -197,23 +197,23 @@ export class DeviceRepository {
       const [deviceBySIM, deviceByIMEI, deviceBySerial, deviceByNumber] = await Promise.all([
         criteria.SIM_number
           ? this.repository.findOne({
-              where: { SIM_number: criteria.SIM_number },
-            })
+            where: { SIM_number: criteria.SIM_number },
+          })
           : Promise.resolve(null),
         criteria.IMEI_1
           ? this.repository.findOne({
-              where: { IMEI_1: criteria.IMEI_1 },
-            })
+            where: { IMEI_1: criteria.IMEI_1 },
+          })
           : Promise.resolve(null),
         criteria.serialNumber
           ? this.repository.findOne({
-              where: { serialNumber: criteria.serialNumber },
-            })
+            where: { serialNumber: criteria.serialNumber },
+          })
           : Promise.resolve(null),
         criteria.device_number
           ? this.repository.findOne({
-              where: { device_number: criteria.device_number },
-            })
+            where: { device_number: criteria.device_number },
+          })
           : Promise.resolve(null),
       ])
 
