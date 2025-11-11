@@ -66,7 +66,7 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
         plan: device.plan,
       }
       
-      await updateDevice(device.device_id!.toString(), updateData)
+      await updateDevice(updateData, device.device_id!)
 
       onClose()
       onSuccess()

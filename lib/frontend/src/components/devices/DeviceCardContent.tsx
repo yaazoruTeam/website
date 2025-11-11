@@ -15,7 +15,12 @@ interface DeviceCardContentProps {
   onChatOpenChange?: (isOpen: boolean) => void
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDevice, customerDevice, onChatOpenChange, onDeviceUpdate }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
+  device: initialDevice,
+  customerDevice,
+  onChatOpenChange,
+  onDeviceUpdate,
+}) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
   const [showEditDevice, setShowEditDevice] = useState(false)
   const [device, setDevice] = useState<Device.Model>(initialDevice)
@@ -28,7 +33,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
       const response = await getCommentsByEntityTypeAndEntityId(
         EntityType.DEVICE,
         device.device_id.toString(),
-        1,
+        1
       )
 
       if (response.data && response.data.length > 0) {
@@ -51,7 +56,6 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
 
   const handleEditDeviceSuccess = async () => {
     setShowEditDevice(false)
-    // רענון נתוני המכשיר מהרכיב האב
     if (onDeviceUpdate) {
       onDeviceUpdate()
     }
@@ -64,20 +68,18 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
         key={lastComment?.comment_id || 'no-comment'}
         initialValues={{
           device_number: device.device_number,
-          // SIM_number: device.SIM_number,
           IMEI_1: device.IMEI_1,
           model: device.model,
           serialNumber: device.serialNumber || '',
-          registrationDate: device.registrationDate ? formatDateToString(new Date(device.registrationDate)) : '',
-          received_at: customerDevice?.receivedAt 
+          registrationDate: device.registrationDate
+            ? formatDateToString(new Date(device.registrationDate))
+            : '',
+          received_at: customerDevice?.receivedAt
             ? formatDateToString(new Date(customerDevice.receivedAt))
             : '',
           planEndDate: customerDevice?.planEndDate
             ? formatDateToString(new Date(customerDevice.planEndDate))
             : '',
-          // plan: device?.plan || '',
-          // filterVersion: customerDevice?.filterVersion || '',
-          // deviceProgram: customerDevice?.deviceProgram || '',
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
@@ -105,11 +107,12 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
         />
       )}
 
-      
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
       </Box>
+
+      {/* פרטי Samsung */}
       <Box sx={{ marginTop: '20px' }}>
         <SamsungDetails serialNumber={device.serialNumber} />
       </Box>
