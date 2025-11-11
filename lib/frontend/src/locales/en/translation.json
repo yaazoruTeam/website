@@ -469,9 +469,6 @@
   "installAppStatus": "Install App Status",
   "applyProfileStatus": "Apply Profile Status",
   "domainFilterStatus":" Status Domain Filter",
-  "lastConnected": "Last Connected",
-  "registeredOn": "Registered On"
-}
   "caStatus": "CA Status",
-  "apnStatus": "APN Status",
+  "apnStatus": "APN Status"
 }

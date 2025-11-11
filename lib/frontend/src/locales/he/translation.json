@@ -472,7 +472,5 @@
   "applyProfileStatus": "סטטוס הפעלת פרופיל",
   "caStatus": "סטטוס CA",
   "apnStatus": "סטטוס APN",
-  "domainFilterStatus": "סטטוס סינון דומיין",
-  "lastConnected": "התחבר לאחרונה",
-  "registeredOn": "נרשם בתאריך"
+  "domainFilterStatus": "סטטוס סינון דומיין"
 }
