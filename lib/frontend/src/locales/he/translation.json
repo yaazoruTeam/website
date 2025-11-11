@@ -474,5 +474,6 @@
   "apnStatus": "סטטוס APN",
   "domainFilterStatus": "סטטוס סינון דומיין",
   "lastConnected": "התחבר לאחרונה",
-  "registeredOn": "נרשם בתאריך"
+  "registeredOn": "נרשם בתאריך",
+  "RegisterInLHR": "רישום ב-LHR"
 }

@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert, CircularProgress } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, registerInHlr } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 
@@ -307,6 +307,42 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
             alert(`Error in comprehensive reset: ${errorMsg}`);
             setRefreshing(false);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // פונקציה ל רישום ב-LHR של מכשיר
+    const handleRegisterInLHR = async () => {
+        if (!widelyDetails?.endpoint_id) {
+            setErrorMessage(t('errorNoEndpointId'));
+            return;
+        }
+
+        // בקשת אישור מהמשתמש
+        const confirmed = window.confirm(
+            `${t('areYouSureRegisterInLHR')} ${widelyDetails.endpoint_id}?\n\n${t('RegisterInLHRDescription')}`
+        );
+
+        if (!confirmed) return;
+
+        setLoading(true);
+        try {
+            setErrorMessage(null);
+            setSuccessMessage(null);
+
+            await executeWithRefresh(async () => {
+                const result = await registerInHlr(widelyDetails.endpoint_id);
+                if (result.error_code === 200 || result.error_code === undefined) {
+                    setSuccessMessage(t('RegisterInLHRSuccessful'));
+                } else {
+                    setErrorMessage(`${t('RegisterInLHRFailed')}: ${result.message || t('unknownError')}`);
+                }
+            });
+        } catch (err: unknown) {
+            console.error('Error in register in LHR:', err);
+            const errorMsg = handleErrorUtil('registerInLHR', err, t('RegisterInLHRError'));
+            setErrorMessage(`${t('RegisterInLHRFailed')}: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -769,6 +805,12 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             {/* כפתור איפוס סיסמת תא קולי */}
             <WidelyButtonSection>
+                <CustomButton
+                    label={t('RegisterInLHR')}
+                    onClick={handleRegisterInLHR}
+                    buttonType="fourth"
+                    size="large"
+                />
                 <CustomButton
                     label={t('softReset')}
                     onClick={handleSoftReset}
