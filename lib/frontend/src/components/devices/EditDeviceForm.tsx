@@ -29,7 +29,6 @@ interface DeviceFormData {
 const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSuccess, device }) => {
   const { t } = useTranslation()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null)
   const isMobile = useMediaQuery('(max-width:600px)')
 
   const numericInputProps = {
@@ -77,10 +76,6 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
   }, [device, onClose, onSuccess, t])
 
   useEffect(() => {
-    setSubmitHandler(() => handleSubmit(onSubmit))
-  }, [handleSubmit, onSubmit])
-
-  useEffect(() => {
     if (open) {
       reset({
         device_number: device.device_number || '',
@@ -98,9 +93,7 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
   }
 
   const handleSave = () => {
-    if (submitHandler) {
-      submitHandler()
-    }
+    handleSubmit(onSubmit)()
   }
 
   return (

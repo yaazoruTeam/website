@@ -44,7 +44,6 @@ const DeviceCard: React.FC = () => {
       // ניסיון לשלוף נתוני customerDevice
       const customerDeviceData = await getCustomerDeviceByDeviceId(id)
       setCustomerDevice(customerDeviceData)
-      
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch device data'
       setError(errorMessage)

@@ -4,7 +4,7 @@ import {
   apiGet,
   apiPost,
   apiPut,
-  PaginatedResponse 
+  PaginatedResponse
 } from './core/apiHelpers'
 
 const ENDPOINT = '/device'
