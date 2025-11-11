@@ -24,6 +24,8 @@ const DeviceCard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [openModal, setOpenModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deletionError, setDeletionError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchDeviceData = async () => {
@@ -57,10 +59,23 @@ const DeviceCard: React.FC = () => {
   }, [id])
 
   const deletingDevice = async () => {
-    console.log('delete device: ', device?.device_id)
-    if (device && device.device_id) await deleteDevice(device.device_id)
-    setOpenModal(false)
-    navigate('/devices')
+    setDeleting(true)
+    setDeletionError(null)
+    
+    try {
+      console.log('delete device: ', device?.device_id)
+      if (device && device.device_id) {
+        await deleteDevice(device.device_id)
+        setOpenModal(false)
+        navigate('/devices')
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete device'
+      setDeletionError(errorMessage)
+      console.error('Error deleting device:', err)
+    } finally {
+      setDeleting(false)
+    }
   }
 
   if (loading) {
@@ -132,6 +147,17 @@ const DeviceCard: React.FC = () => {
             weight='medium'
             color={colors.blue900}
           />
+          
+          {deletionError && (
+            <Box sx={{ padding: 2, backgroundColor: colors.red100, borderRadius: "8px", width: '100%' }}>
+              <CustomTypography
+                text={deletionError}
+                variant="h4"
+                weight="regular"
+                color={colors.red500}
+              />
+            </Box>
+          )}
         </Box>
         <Box
           sx={{
@@ -148,6 +174,7 @@ const DeviceCard: React.FC = () => {
             buttonType='first'
             state='default'
             onClick={deletingDevice}
+            disabled={deleting}
           />
           <CustomButton
             label={t('cancellation')}
@@ -155,6 +182,7 @@ const DeviceCard: React.FC = () => {
             buttonType='second'
             state='hover'
             onClick={() => setOpenModal(false)}
+            disabled={deleting}
           />
         </Box>
       </CustomModal>
