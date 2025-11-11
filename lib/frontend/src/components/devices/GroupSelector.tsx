@@ -85,6 +85,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   const handleCancelChange = () => {
     setSelectedGroupId(currentGroupId)
     setShowConfirmDialog(false)
+    setError(null)
   }
 
   const selectedGroup = groups.find(g => g.groupID === selectedGroupId)
