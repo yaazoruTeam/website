@@ -81,6 +81,20 @@ export const config = {
     google: {
         applicationCredentialsJson: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string,
     },
+    pbx: {
+        host: process.env.PBX_HOST || 'localhost',
+        port: parseInt(process.env.PBX_PORT || '8080'),
+        username: process.env.PBX_USERNAME || 'freeswitch',
+        password: process.env.PBX_PASSWORD || 'works',
+        domain: process.env.PBX_DOMAIN || 'localhost',
+        protocol: (process.env.PBX_PROTOCOL as 'http' | 'https') || 'http',
+        timeout: parseInt(process.env.PBX_TIMEOUT || '30000'),
+        retryAttempts: parseInt(process.env.PBX_RETRY_ATTEMPTS || '3'),
+        websocketEnabled: process.env.PBX_WEBSOCKET_ENABLED === 'true',
+        websocketHost: process.env.PBX_WEBSOCKET_HOST || process.env.PBX_HOST || 'localhost',
+        websocketPort: parseInt(process.env.PBX_WEBSOCKET_PORT || '8081'),
+        apiPath: process.env.PBX_API_PATH || '/api/freeswitch'
+    },
 };
 
 export default config

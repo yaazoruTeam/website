@@ -19,6 +19,7 @@ import { errorHandler } from '@middleware/errorHandler'
 import commentRouter from './comments'
 import widelyRouter from './widely'
 import excelRouter from './excel'
+import pbxRouter from './pbx'
 
 const router = Router()
 const ROUTE_PATH = '/controller'
@@ -39,6 +40,7 @@ router.use(`${ROUTE_PATH}/auth`, authRouter)
 router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 router.use(`${ROUTE_PATH}/excel`, excelRouter)
+router.use(`${ROUTE_PATH}/pbx`, pbxRouter)
 
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,

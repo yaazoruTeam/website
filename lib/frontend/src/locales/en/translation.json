@@ -375,5 +375,6 @@
   "uploadFailed": "Error uploading file",
   "errors": "Errors",
   "successRate": "Success rate",
-  "noPreviousComments": "No previous comments"
+  "noPreviousComments": "No previous comments",
+  "PBXTest": "PBX test"
 }

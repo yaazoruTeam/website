@@ -376,5 +376,6 @@
   "uploadFailed": "שגיאה בהעלאת הקובץ",
   "errors": "שגיאות",
   "successRate": "אחוז הצלחה",
-  "No previous comments": "אין הערות קודמות"
+  "No previous comments": "אין הערות קודמות",
+  "PBXTest": "בדיקת PBX"
 }

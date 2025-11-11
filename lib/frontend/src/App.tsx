@@ -42,6 +42,7 @@ import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
 import ExcelUpload from './components/excel/ExcelUpload'
+import PBXTestPageUltraSimple from './components/pbx/PBXTestPageUltraSimple'
 
 function App() {
   const { t } = useTranslation()
@@ -111,6 +112,12 @@ function App() {
                         link: '../permissions',
                         text: t('permissions'),
                       },
+                      {
+                        iconWhite: switchboardIconWhite,
+                        iconBlue: switchboardIconBlue,
+                        link: '../pbx-test',
+                        text: t('PBXTest'),
+                      },
                     ]}
                   />
                   <main
@@ -139,6 +146,7 @@ function App() {
                         <Route path='/switchboard' element={<Switchboard />} />
                         <Route path='/switchboard/callCenter/:id' element={<CallCenter />} />
                         <Route path='/switchboard/callCenter/:id/callLog/:callId' element={<CallLog />} />
+                        <Route path='/pbx-test' element={<PBXTestPageUltraSimple />} />
                       </Routes>
                     </AppLayout>
                   </main>
