@@ -167,11 +167,11 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           />
         </Box>
         <Box sx={{ display: "flex", gap: 2 }}>
-          <CustomButton
+          {/* <CustomButton
             label={t("deviceRinging")}
             buttonType="third"
             sx={{ backgroundColor: colors.blue100 }}
-          />
+          /> */}
           <CustomButton 
             label={t("refreshDevice")} 
             buttonType="third" 
@@ -184,8 +184,6 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             onClick={fetchDeviceInfo} 
             disabled={loading} 
           />
-          <CustomButton label={t("refreshDevice")} buttonType="third" onClick={handleDeviceRefresh} disabled={syncing} />
-          <CustomButton label={t("refreshData")} buttonType="second" onClick={fetchDeviceInfo} disabled={loading} />
         </Box>
       </Box>
 
@@ -228,6 +226,8 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             <InfoField label={t("androidVersion")} value={deviceInfo.androidVer} />
           </InfoSection>
           
+          <InfoField label={t("lastConnected")} value={new Date(deviceInfo.lastConnected).toLocaleString('he-IL')} />
+          <InfoField label={t("registeredOn")} value={new Date(deviceInfo.registeredOn).toLocaleString('he-IL')} />
           <InfoField label={t("deviceStatus")} value={deviceInfo.deviceStatus} />
 
           <InfoField label={t("simCurrent")} value={deviceInfo.currentSim} />
@@ -236,19 +236,11 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           <InfoField label={t("IMEI_1")} value={deviceInfo.imei1} />
           <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
 
-          <InfoField label={t("battery")} value={deviceInfo.batteryLevel} />
-          <InfoField label={t("storageAvailable")} value={deviceInfo.availableStorage} />
+          <InfoField label={t("battery")} value={deviceInfo.batteryLevel+" %"} />
+          <InfoField label={t("storageAvailable")} value={(Math.trunc(deviceInfo.availableStorage/100_000_000))/10 + " GB"} />
 
           {/* Location Section with Map Button */}
           <InfoSection title={t("locationInfo")}>
-            <InfoField 
-              label={t("latitude")} 
-              value={deviceInfo.locationLat || t("notAvailable")} 
-            />
-            <InfoField 
-              label={t("longitude")} 
-              value={deviceInfo.locationLon || t("notAvailable")} 
-            />
             <InfoField 
               label={t("lastLocationUpdate")} 
               value={deviceInfo.locationTimeStamp 
@@ -287,10 +279,6 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
               />
             </Box>
           </InfoSection>
-
-
-          <InfoField label={t("battery")} value={deviceInfo.batteryLevel} />
-          <InfoField label={t("storageAvailable")} value={deviceInfo.availableStorage} />
 
           {/* Operation Status Information */}
           <InfoSection title={t("dataStatus")}>
