@@ -460,5 +460,13 @@
   "errorLoadingMap": "Error loading map",
   "checkConsoleForDetails": "Check console for details",
   "mapLocation": "Map Location",
-  "loadingMap": "Loading map..."
+  "loadingMap": "Loading map...",
+  "rebootStatus": "Reboot Status",
+  "installAppStatus": "Install App Status",
+  "applyProfileStatus": "Apply Profile Status",
+  "caStatus": "Status CA",
+  "apnStatus": "Status APN",
+  "domainFilterStatus":" Status Domain Filter",
+  "lastConnected": "Last Connected",
+  "registeredOn": "Registered On"
 }
