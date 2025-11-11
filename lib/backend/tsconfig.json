@@ -56,8 +56,14 @@
       "@types/*": [
         "src/types/*"
       ],
+      "@repositories": [
+        "src/repositories"
+      ],
       "@repositories/*": [
         "src/repositories/*"
+      ],
+      "@entities/*": [
+        "src/entities/*"
       ]
     }
   },

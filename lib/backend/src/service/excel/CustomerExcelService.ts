@@ -3,8 +3,6 @@
  * אחראי על כל הלוגיקה הספציפית לעיבוד נתוני לקוחות
  */
 //to do: לטפל בטרנזקציה
-import getDbConnection from '@db/connection'
-import * as db from '@db/index'
 import { customerRepository } from '@repositories/CustomerRepository'
 import { Customer } from '@model'
 import { writeErrorsToExcel } from '@utils/excel'
@@ -45,7 +43,7 @@ const convertFlatRowToCustomerModel = (item: ExcelRowData): Customer.Model => {
  * פונקציה זו אחראית על פילטור ועיבוד נתונים של לקוחות בלבד
  */
 const processCustomerExcelData = async (data: ExcelRowData[]): Promise<ProcessingResult> => {
-  const knex = getDbConnection()
+  // const knex = getDbConnection()
   const errors: ProcessError[] = []
   let successCount = 0
 
@@ -103,7 +101,7 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
     }
 
     // עיבוד הלקוח
-    const trx = await knex.transaction()
+    // const trx = await knex.transaction()
     try {
       // בדיקה אם הלקוח כבר קיים במערכת
       //to do: לטפל בטרנזקציה
@@ -115,7 +113,7 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
       if (existingCustomer) {
         // הלקוח כבר קיים - זו שגיאה או עדכון?
         // נבחר להתייחס לזה כשגיאה כדי למנוע כפילויות
-        await trx.rollback()
+        // await trx.rollback()
         
         errors.push({
           row: rowIndex,
@@ -139,20 +137,20 @@ const processCustomerExcelData = async (data: ExcelRowData[]): Promise<Processin
       })
       
       // יצירת הערה ללקוח אם יש תוכן הערה
-      await createCommentForEntity(
-        String(existingCustomer.customer_id),
-        'customer',
-        item.comment as string,
-        trx
-      )
+      // await createCommentForEntity(
+      //   String(existingCustomer.customer_id),
+      //   'customer',
+      //   item.comment as string,
+      //   trx
+      // )
       
-      await trx.commit()
+      // await trx.commit()
       successCount++
       logger.debug(`Row ${rowIndex}: Customer processed successfully (ID: ${existingCustomer.customer_id})`)
       
     } catch (err: unknown) {
       try {
-        await trx.rollback()
+        // await trx.rollback()
       } catch (rollbackErr) {
         logger.error(`Row ${rowIndex}: Transaction rollback failed:`, rollbackErr)
       }

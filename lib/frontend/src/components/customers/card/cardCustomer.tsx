@@ -21,6 +21,7 @@ const CardCustomer: React.FC = () => {
   const [customer, setCustomer] = useState<Customer.Model>()
   const isMobile = useMediaQuery('(max-width:600px)')
   const [openModal, setOpenModal] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const formRef = useRef<CustomerDetailsRef>(null)
   const navigate = useNavigate()
 
@@ -77,19 +78,22 @@ const CardCustomer: React.FC = () => {
       <Box
         sx={{
           direction: 'rtl',
-          width: '100%',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          gap: 2,
+          gap: isChatOpen ? 1 : 2,
           marginTop: '40px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          transition: 'gap 0.3s ease',
         }}
       >
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 2,
+            gap: isChatOpen ? 1 : 2,
+            transition: 'gap 0.3s ease',
           }}
         >
           <CustomTypography
@@ -104,43 +108,68 @@ const CardCustomer: React.FC = () => {
             weight='regular'
             color={colors.blue900}
           />
+          {isChatOpen && (
+            <>
+              <CustomButton
+                label={t('deletingCustomer')}
+                size={isMobile ? 'small' : 'large'}
+                state='default'
+                buttonType='third'
+                icon={<TrashIcon />}
+                onClick={() => setOpenModal(true)}
+                disabled={customer?.status === 'inactive'}
+              />
+              <CustomButton
+                label={t('savingChanges')}
+                size={isMobile ? 'small' : 'large'}
+                state='default'
+                buttonType='first'
+                onClick={savingChanges}
+              />
+            </>
+          )}
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            direction: 'rtl',
-          }}
-        >
-          <CustomButton
-            label={t('deletingCustomer')}
-            size={isMobile ? 'small' : 'large'}
-            state='default'
-            buttonType='third'
-            icon={<TrashIcon />}
-            onClick={() => setOpenModal(true)}
-            disabled={customer?.status === 'inactive'}
-          />
-          <CustomButton
-            label={t('savingChanges')}
-            size={isMobile ? 'small' : 'large'}
-            state='default'
-            buttonType='first'
-            onClick={savingChanges}
-          />
-        </Box>
+        {!isChatOpen && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              direction: 'rtl',
+            }}
+          >
+            <CustomButton
+              label={t('deletingCustomer')}
+              size={isMobile ? 'small' : 'large'}
+              state='default'
+              buttonType='third'
+              icon={<TrashIcon />}
+              onClick={() => setOpenModal(true)}
+              disabled={customer?.status === 'inactive'}
+            />
+            <CustomButton
+              label={t('savingChanges')}
+              size={isMobile ? 'small' : 'large'}
+              state='default'
+              buttonType='first'
+              onClick={savingChanges}
+            />
+          </Box>
+        )}
       </Box>
       <Box
         sx={{
           my: '28px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          width: '100%',
         }}
       >
         <CustomTabs
           tabs={[
             {
               label: t('customerDetails'),
-              content: customer ? <CustomerDetails ref={formRef} customer={customer} onCustomerUpdate={handleCustomerUpdate} /> : '',
+              content: customer ? <CustomerDetails ref={formRef} customer={customer} onCustomerUpdate={handleCustomerUpdate} onChatOpenChange={setIsChatOpen} /> : '',
             },
             {
               label: t('devicesAndQuestions'),

@@ -5,13 +5,15 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
+import SamsungDetails from './samsungDetails'
 
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
+  onChatOpenChange?: (isOpen: boolean) => void
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice, onChatOpenChange }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
 
   // הבאת ההערה האחרונה של המכשיר
@@ -20,7 +22,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
 
     try {
       const response = await getCommentsByEntityTypeAndEntityId(
-        EntityType.Device,
+        EntityType.DEVICE,
         device.device_id.toString(),
         1,
       )
@@ -75,10 +77,15 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        onChatOpenChange={onChatOpenChange}
       />
+      
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
+      </Box>
+      <Box sx={{ marginTop: '20px' }}>
+        <SamsungDetails serialNumber={device.serialNumber} />
       </Box>
     </Box>
   )

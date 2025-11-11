@@ -144,6 +144,7 @@ export const FormContainer = styled(Box)<BoxProps>({
 // כרטיס חיצוני
 export const OuterCard = styled(FlexColumn)(({ theme }) => ({
   height: '100%',
+  width: '100%',
   boxShadow: theme.shadows[1],
   justifyContent: 'flex-end',
 }))
@@ -151,6 +152,7 @@ export const OuterCard = styled(FlexColumn)(({ theme }) => ({
 // תוכן פנימי
 export const InnerContent = styled(FlexColumn)(({ theme }) => ({
   height: '100%',
+  width: '100%',
   padding: theme.spacing(3.5),
   backgroundColor: theme.palette.background.paper,
   borderRadius: 0.75,

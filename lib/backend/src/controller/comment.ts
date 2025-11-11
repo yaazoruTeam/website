@@ -1,11 +1,11 @@
 import { protos, SpeechClient } from "@google-cloud/speech"
 import { NextFunction, Request, Response } from 'express'
-import * as db from '@db/index'
 import { Comment, HttpError } from '@model'
-
 import config from '@config/index'
 import { handleError } from "./err";
 import logger from "../utils/logger"
+import { commentRepository } from "../repositories";
+import { EntityType, Comment as CommentEntity } from "../entities/Comment";
 
 let client: SpeechClient
 
@@ -33,9 +33,9 @@ const createComment = async (
   try {
     logger.debug("createComment called with body:", req.body)
 
-    const sanitized = Comment.sanitize(req.body, false);
-    const comment = await db.Comment.createComment(sanitized);
-    logger.info("Comment created successfully:", comment)
+    const sanitized = Comment.sanitize(req.body, false) as Omit<Comment.Model, 'comment_id'>;
+    const comment = await commentRepository.createComment(sanitized);
+    logger.info("Comment created successfully")
     res.status(201).json(comment);
   } catch (error: unknown) {
     handleError(error, next)
@@ -51,12 +51,12 @@ const getComments = async (
     const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { comments, total } = await db.Comment.getComments(offset)
+    const { comments, total } = await commentRepository.getComments(offset)
     res.status(200).json({
       data: comments,
       page,
       totalPages: Math.ceil(total / limit),
-      total,
+      total: total,
     });
   } catch (error: unknown) {
     handleError(error, next)
@@ -78,7 +78,7 @@ const getCommentById = async (
       }
       throw error
     }
-    const comment = await db.Comment.getCommentById(req.params.id)
+    const comment = await commentRepository.getCommentById(Number(req.params.id))
     if (!comment) {
       const error: HttpError.Model = {
         status: 404,
@@ -110,9 +110,9 @@ const getCommentsByEntity = async (
     const page = parseInt(req.params.page as string, 10) || 1
     const offset = (page - 1) * limit
 
-    const { comments, total } = await db.Comment.getCommentsByEntity(
-      entity_id as string,
-      entity_type as string,
+    const { comments, total } = await commentRepository.getCommentsByEntity(
+      Number(entity_id),
+      entity_type as EntityType,
       offset
     )
 
@@ -120,7 +120,7 @@ const getCommentsByEntity = async (
       data: comments,
       page,
       totalPages: Math.ceil(total / limit),
-      total,
+      total: total,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -136,9 +136,9 @@ const updateComment = async (
     const sanitized = Comment.sanitize(
       { ...req.body, comment_id: req.params.id },
       true
-    )
-    const updatedComment = await db.Comment.updateComment(
-      req.params.id,
+    ) as Partial<Comment.Model>;
+    const updatedComment = await commentRepository.updateComment(
+      Number(req.params.id),
       sanitized
     )
     res.status(200).json(updatedComment)
@@ -153,7 +153,7 @@ const deleteComment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const deletedComment = await db.Comment.deleteComment(req.params.id)
+   const deletedComment = await commentRepository.deleteComment(Number(req.params.id))
     res.status(200).json(deletedComment)
   } catch (error: unknown) {
     handleError(error, next)

@@ -46,10 +46,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
 
   const columns = [
     { label: t('deviceNumber'), key: 'device_number' },
-    // { label: t('mehalchaNumber'), key: 'mehalcha_number' },
     { label: t('serialNumber'), key: 'serialNumber' },
-    // { label: t('openingDate'), key: 'opening_date' },
-    // { label: t('releaseDate'), key: 'releaseDate' },
     { label: t('purchaseDate'), key: 'purchaseDate' },
     { label: t('plan'), key: 'plan' },
     { label: '', key: 'status' },
@@ -58,12 +55,9 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   const tableData = (devices ?? []).map((device) => ({
     device_id: device.device_id,
     device_number: device.device_number,
-    // mehalcha_number: device.mehalcha_number,
     serialNumber: device.serialNumber || '-',
-    // releaseDate: `${formatDateToString(new Date(device.releaseDate))}`,
     purchaseDate: device.purchaseDate != null ? `${formatDateToString(new Date(device.purchaseDate))}` : '--',
     plan: device.plan,
-    //במכשיר יכולים להיות עוד סטטוסים, ויכול להיות גם יותר מסטטוס אחד למכשיר לבדוק את זה to do
     status:
       device.status === 'active' ? (
         <StatusTag status='active' />
@@ -78,14 +72,12 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
 
   const handleAddDeviceSuccess = () => {
     setShowAddDevice(false)
-    onRefresh() // Refresh the devices list
+    onRefresh()
   }
 
-  // פונקציה מותאמת אישית שמחלצת את ה-ID מנתוני השורה ומעבירה לפונקציה המקורית
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
-    const deviceId = rowData.device_id as string
-    const device = devices.find(d => d.device_id === deviceId)
+    const deviceId = rowData.device_id
+    const device = devices.find(d => d.device_id == deviceId)
     if (device) {
       onClickDevice(device)
     }
@@ -125,6 +117,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           weight='bold'
           color={colors.blue900}
         />
+        
         <CustomButton
           label={t('addingNewDevice')}
           size={isMobile ? 'small' : 'large'}
@@ -171,6 +164,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           <FilterResetButton onReset={handleResetFilters} disabled={isResetDisabled} />
         </Box>
       </Box>
+        
       <Box
         sx={{
           width: '100%',
@@ -192,7 +186,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
             limit,
             onPageChange,
           }}
-          alignLastColumnLeft={true}
           dataType="devices"
         />
       </Box>
