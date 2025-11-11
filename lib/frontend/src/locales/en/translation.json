@@ -470,5 +470,6 @@
   "applyProfileStatus": "Apply Profile Status",
   "domainFilterStatus":" Status Domain Filter",
   "caStatus": "CA Status",
-  "apnStatus": "APN Status"
+  "apnStatus": "APN Status",
+  "connectedTo":"Connected to"
 }

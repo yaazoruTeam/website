@@ -472,5 +472,6 @@
   "applyProfileStatus": "סטטוס הפעלת פרופיל",
   "caStatus": "סטטוס CA",
   "apnStatus": "סטטוס APN",
-  "domainFilterStatus": "סטטוס סינון דומיין"
+  "domainFilterStatus": "סטטוס סינון דומיין",
+  "connectedTo":"מחובר ל"
 }

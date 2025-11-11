@@ -4,12 +4,12 @@ import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import logo1 from '../../assets/logo1.svg'
 import logo2 from '../../assets/logo2.svg'
-import CustomTypography from '../designComponent/Typography'
+// import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import GoogleLoginButton from '../google/GoogleLoginButton'
-import { GoogleSignInResult } from '../../services/googleAuthService'
+// import { useNavigate } from 'react-router-dom'
+// import GoogleLoginButton from '../google/GoogleLoginButton'
+// import { GoogleSignInResult } from '../../services/googleAuthService'
 import { validatePhoneNumber } from '../../utils/phoneValidate'
 import React from 'react'
 
@@ -26,41 +26,41 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation()
   const { control, handleSubmit } = useForm<LoginFormInputs>()
   const isMobile = useMediaQuery('(max-width:600px)')
-  const navigate = useNavigate()
-  const [showLoginForm, setShowLoginForm] = React.useState(false)
+  // const navigate = useNavigate()
+  // const [showLoginForm, setShowLoginForm] = React.useState(false)
 
-  const handleRegisterClick = () => {
-    navigate('/register')
-  }
+  // const handleRegisterClick = () => {
+  //   navigate('/register')
+  // }
 
-  const handleToggleLoginForm = () => {
-    setShowLoginForm(!showLoginForm)
-  }
+  // const handleToggleLoginForm = () => {
+  //   setShowLoginForm(!showLoginForm)
+  // }
 
-  const handleGoogleSuccess = (result: GoogleSignInResult) => {
-    const { firebaseUser, backendResult, backendError } = result
+  // const handleGoogleSuccess = (result: GoogleSignInResult) => {
+  //   const { firebaseUser, backendResult, backendError } = result
     
-    console.log('🎉 Google Login successful!', firebaseUser.displayName)
-    console.log('Backend result:', backendResult)
+  //   console.log('🎉 Google Login successful!', firebaseUser.displayName)
+  //   console.log('Backend result:', backendResult)
     
-    if (backendResult?.token) {
-      // Store the JWT token from backend - using single 'token' key for consistency
-      localStorage.setItem('token', backendResult.token)
+  //   if (backendResult?.token) {
+  //     // Store the JWT token from backend - using single 'token' key for consistency
+  //     localStorage.setItem('token', backendResult.token)
       
-      // Navigate to dashboard
-      navigate('/dashboard')
-    } else if (firebaseUser) {
-      // Fallback: use Firebase user info even if backend failed
-      console.warn('Google auth succeeded but backend sync failed:', backendError)
-      // You could create a temporary token or handle this case differently
-      navigate('/dashboard')
-    }
-  }
+  //     // Navigate to dashboard
+  //     navigate('/dashboard')
+  //   } else if (firebaseUser) {
+  //     // Fallback: use Firebase user info even if backend failed
+  //     console.warn('Google auth succeeded but backend sync failed:', backendError)
+  //     // You could create a temporary token or handle this case differently
+  //     navigate('/dashboard')
+  //   }
+  // }
 
-  const handleGoogleError = (error: Error & { code?: string; userMessage?: string }) => {
-    console.error('❌ Google Login failed:', error)
-    alert(`Google login failed: ${error.userMessage || error.message}`)
-  }
+  // const handleGoogleError = (error: Error & { code?: string; userMessage?: string }) => {
+  //   console.error('❌ Google Login failed:', error)
+  //   alert(`Google login failed: ${error.userMessage || error.message}`)
+  // }
 
   return (
     <Box
