@@ -2,6 +2,15 @@ import 'reflect-metadata'
 import { DataSource } from 'typeorm'
 import config from './config'
 
+// שימוש בנתיבים שתומכים גם ב-JS (production) וגם ב-TS (development)
+const entitiesPath = process.env.NODE_ENV === 'production' 
+  ? ['dist/src/entities/**/*.js']
+  : ['src/entities/**/*.ts'];
+
+const migrationsPath = process.env.NODE_ENV === 'production'
+  ? ['dist/src/migrations/**/*.js']
+  : ['src/migrations/**/*.ts'];
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: config.database.host,
@@ -13,8 +22,8 @@ export const AppDataSource = new DataSource({
   // כל הטבלאות האחרות יהיו בyaazoru schema (מוגדר בEntity)
   synchronize: false, // כבוי - משתמשים רק במיגרציות
   logging: process.env.NODE_ENV === 'development',
-  entities: ['src/entities/**/*.ts'],
-  migrations: ['src/migrations/**/*.ts'],
+  entities: entitiesPath,
+  migrations: migrationsPath,
   migrationsRun: true, // הרצת מיגרציות אוטומטית בהתחלת האפליקציה
 })
 

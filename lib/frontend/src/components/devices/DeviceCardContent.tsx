@@ -6,15 +6,16 @@ import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
 import EditDeviceForm from './EditDeviceForm'
-import { getDeviceById } from '../../api/device'
+import SamsungDetails from './samsungDetails'
 
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
   onDeviceUpdate?: () => void
+  onChatOpenChange?: (isOpen: boolean) => void
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDevice, customerDevice, onDeviceUpdate }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDevice, customerDevice, onChatOpenChange, onDeviceUpdate }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
   const [showEditDevice, setShowEditDevice] = useState(false)
   const [device, setDevice] = useState<Device.Model>(initialDevice)
@@ -25,7 +26,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
 
     try {
       const response = await getCommentsByEntityTypeAndEntityId(
-        EntityType.Device,
+        EntityType.DEVICE,
         device.device_id.toString(),
         1,
       )
@@ -91,6 +92,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        onChatOpenChange={onChatOpenChange}
         onEditClick={() => setShowEditDevice(true)}
       />
 
@@ -103,9 +105,13 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device: initialDe
         />
       )}
 
+      
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
+      </Box>
+      <Box sx={{ marginTop: '20px' }}>
+        <SamsungDetails serialNumber={device.serialNumber} />
       </Box>
     </Box>
   )

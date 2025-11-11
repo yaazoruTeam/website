@@ -1,4 +1,4 @@
-import { Repository, ILike, Between, In, MoreThan, Not, IsNull, LessThan } from 'typeorm'
+import { Repository, ILike, Between, In } from 'typeorm'
 import { AppDataSource } from '../data-source'
 import { Customer, CustomerStatus } from '../entities/Customer'
 import logger from '../utils/logger'
@@ -142,18 +142,18 @@ export class CustomerRepository {
       const [customerByEmail, customerByIdNumber, customerByPhoneNumber] = await Promise.all([
         criteria.email
           ? this.repository.findOne({
-              where: { email: criteria.email },
-            })
+            where: { email: criteria.email },
+          })
           : Promise.resolve(null),
         criteria.id_number
           ? this.repository.findOne({
-              where: { id_number: criteria.id_number },
-            })
+            where: { id_number: criteria.id_number },
+          })
           : Promise.resolve(null),
         criteria.phone_number
           ? this.repository.findOne({
-              where: { phone_number: criteria.phone_number },
-            })
+            where: { phone_number: criteria.phone_number },
+          })
           : Promise.resolve(null),
       ])
 
@@ -311,16 +311,16 @@ export class CustomerRepository {
       if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
         throw { status: 400, message: 'Invalid offset parameter' }
       }
-      
+
       // Remove null/undefined values from filter
       const where = filter ? Object.fromEntries(
         Object.entries(filter).filter(([_, v]) => v != null)
       ) : undefined
 
-      const [customers, total] = await this.repository.findAndCount({ 
-        where: where, 
+      const [customers, total] = await this.repository.findAndCount({
+        where: where,
         skip: offset || 0,  // ✅ תקן: default to 0 אם undefined
-        take: limit 
+        take: limit
       })
       return { customers, total }
     } catch (err) {

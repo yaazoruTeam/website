@@ -1,18 +1,23 @@
 import { HttpError, Request } from '.'
 
+export enum DeviceStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  BLOCKED = 'blocked',
+  LOCKED_IMEI = 'lock_in_imei'
+}
+
 interface Model {
-  device_id: string
+  device_id?: number // Optional - auto-generated on create
   device_number: string
   SIM_number: string
   IMEI_1: string
-  // mehalcha_number: string
   model: string
-  status: string // active, inactive, blocked, lock in imei
+  status?: DeviceStatus // active, inactive, blocked, lock_in_imei - default is 'active'
   serialNumber: string //במסונג?
-  registrationDate: Date  //תאריך רישום
-  purchaseDate: Date | null //תאריך רכישה
-  plan: string //מסלול
-  //תאריך רישום המכשיר?? כאן או בטבלה של customerDevice
+  registrationDate?: Date  //תאריך רישום - default is today
+  purchaseDate?: Date | null //תאריך רכישה - optional
+  plan?: string | null //מסלול - optional
 }
 
 function sanitize(device: Model, hasId: boolean): Model {
@@ -79,7 +84,7 @@ function sanitize(device: Model, hasId: boolean): Model {
     SIM_number: device.SIM_number,
     IMEI_1: device.IMEI_1,
     model: device.model,
-    status: device.status || 'active',
+    status: device.status || DeviceStatus.ACTIVE,
     serialNumber: device.serialNumber,
     purchaseDate: device.purchaseDate || null,
     registrationDate: device.registrationDate || new Date(Date.now()),

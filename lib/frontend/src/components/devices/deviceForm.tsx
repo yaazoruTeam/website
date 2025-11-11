@@ -1,5 +1,5 @@
 import { Box } from '@mui/system'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
@@ -37,6 +37,7 @@ interface DeviceFormProps {
   lastComment?: string
   onCommentsRefresh?: () => Promise<void>
   onEditClick?: () => void
+  onChatOpenChange?: (isOpen: boolean) => void
 }
 
 const DeviceForm: React.FC<DeviceFormProps> = ({
@@ -46,9 +47,17 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
   lastComment,
   onCommentsRefresh,
   onEditClick,
+  onChatOpenChange,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
+
+  // עדכון הקומפוננטה האב כשהצ'אטבוט נפתח/נסגר
+  useEffect(() => {
+    if (onChatOpenChange) {
+      onChatOpenChange(isChatOpen)
+    }
+  }, [isChatOpen, onChatOpenChange])
 
   const { control } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
@@ -74,20 +83,40 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         backgroundColor: colors.neutral0,
         direction: 'rtl',
         padding: '28px',
+        width: '100%',
+        overflowX: isChatOpen ? 'auto' : 'visible',
+        overflowY: 'visible',
+        '&::-webkit-scrollbar': {
+          height: '8px',
+        },
+        '&::-webkit-scrollbar-track': {
+          backgroundColor: colors.neutral100,
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: colors.neutral350,
+          borderRadius: '4px',
+          '&:hover': {
+            backgroundColor: colors.neutral400,
+          },
+        },
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb:'40px' }}>
+      <Box sx={{ 
+        minWidth: isChatOpen ? 'max-content' : 'auto',
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb:'40px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CustomTypography
-            text={t('deviceData')}
-            variant='h3'
-            weight='medium'
-          />
-          <CustomTypography
-            text={initialValues ? initialValues.device_number : ''}
-            variant='h4'
-            weight='regular'
-          />
+            <CustomTypography
+              text={t('deviceData')}
+              variant='h3'
+              weight='medium'
+            />
+            <CustomTypography
+              text={initialValues ? initialValues.device_number : ''}
+              variant='h4'
+              weight='regular'
+            />
         </Box>
         {onEditClick && (
           <CustomButton
@@ -98,67 +127,59 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
             onClick={onEditClick}
           />
         )}
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '28px',
-          paddingBottom: '24px',
-        }}
-      >
-        {/* <CustomTextField control={control} name='device_number' label={t('device_number')} /> */}
-        {/* <CustomTextField control={control} name='SIM_number' label={t('SIM_number')}
-         /> */}
-        <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
-        <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
-        <CustomTextField control={control} name='model' label={t('modelDevice')} />
-        {/* <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} /> */}
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '28px',
-          paddingBottom: '24px',
-        }}
-      >
-        {/* <CustomTextField control={control} name='model' label={t('model')} /> */}
-        {/* <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} /> */}
-        <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} />
-        <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} />
-        <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '28px',
+            paddingBottom: '24px',
+          }}
+        >
+          {/* <CustomTextField control={control} name='device_number' label={t('device_number')} /> */}
+          {/* <CustomTextField control={control} name='SIM_number' label={t('SIM_number')}
+          /> */}
+          <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
+          <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
+          <CustomTextField control={control} name='model' label={t('modelDevice')} />
+          {/* <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} /> */}
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '28px',
+            paddingBottom: '24px',
+          }}
+        >
+          {/* <CustomTextField control={control} name='model' label={t('model')} /> */}
+          {/* <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} /> */}
+          <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} />
+          <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} />
+          <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} />
 
-      </Box>
-      {/* <Box
-        sx={{
-          display: 'flex',
-          gap: '28px',
-          paddingBottom: '24px',
-        }}
-      > */}
-        {/* <CustomTextField control={control} name='Plan' label={t('plan')} /> */}
-      {/* </Box> */}
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '28px',
-        }}
-      ></Box>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '28px',
+          }}
+        ></Box>
 
-      {/* Device Comments Section with Chat Button */}
-      <CustomerCommentsSection>
-        <ChatCommentCard
-          commentsType={t('deviceComments')}
-          lastCommentDate={lastCommentDate || ''}
-          lastComment={lastComment || 'אין הערות קודמות עבור המכשיר'}
-          chatButton={
-            <ArrowToChatComments
-              onClick={() => {
-                setIsChatOpen(true)
-              }}
-            />
-          }
-        />
-      </CustomerCommentsSection>
+        {/* Device Comments Section with Chat Button */}
+        <CustomerCommentsSection>
+          <ChatCommentCard
+            commentsType={t('deviceComments')}
+            lastCommentDate={lastCommentDate || ''}
+            lastComment={lastComment || 'אין הערות קודמות עבור המכשיר'}
+            chatButton={
+              <ArrowToChatComments
+                onClick={() => {
+                  setIsChatOpen(true)
+                }}
+              />
+            }
+          />
+        </CustomerCommentsSection>
+      </Box>
 
       {/* Chat Modal */}
       {isChatOpen && deviceId && (
@@ -175,7 +196,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         >
           <ChatModalContainer>
             <ChatBot
-              entityType={EntityType.Device}
+              entityType={EntityType.DEVICE}
               entityId={deviceId}
               onClose={() => {
                 setIsChatOpen(false)

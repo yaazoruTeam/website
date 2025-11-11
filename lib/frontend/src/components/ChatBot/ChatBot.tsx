@@ -37,7 +37,8 @@ interface ChatBotProps {
   onLocalCommentsChange?: (comments: { content: string; created_at: Date; file_url?: string; file_name?: string; file_type?: string }[]) => void;
 }
 
-interface ClientComment extends Comment.Model {
+interface ClientComment extends Omit<Comment.Model, 'comment_id'> {
+  comment_id: string | number;
   isPending?: boolean;
   isAudio?: boolean;
   audioDuration?: number;
@@ -90,8 +91,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
   const addCommentsToList = (newComments: ClientComment[], isLoadMore: boolean) => {
     if (isLoadMore) {
       setComments(prev => {
-        const existingIds = new Set(prev.map(c => c.comment_id));
-        const filtered = newComments.filter(c => !existingIds.has(c.comment_id));
+        const existingIds = new Set(prev.map(c => String(c.comment_id)));
+        const filtered = newComments.filter(c => !existingIds.has(String(c.comment_id)));
         const allComments = [...filtered, ...prev];
         const sortedComments = allComments.sort((a, b) => 
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -161,12 +162,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     }
   }, [comments, entityId, onLocalCommentsChange]);
 
-  const updateComment = (tempId: string, updatedComment: ClientComment) => {
-    setComments(prev => prev.map(c => c.comment_id === tempId ? updatedComment : c));
+  const updateComment = (tempId: string | number, updatedComment: ClientComment) => {
+    setComments(prev => prev.map(c => String(c.comment_id) === String(tempId) ? updatedComment : c));
   };
 
-  const removeComment = (commentId: string) => {
-    setComments(prev => prev.filter(c => c.comment_id !== commentId));
+  const removeComment = (commentId: string | number) => {
+    setComments(prev => prev.filter(c => String(c.comment_id) !== String(commentId)));
   };
 
   const sendComment = async () => {
@@ -176,7 +177,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     const tempComment: ClientComment = {
       comment_id: tempCommentId,
       entity_type: entityType,
-      entity_id: entityId,
+      entity_id: entityId === 'temp-new-customer' ? 0 : parseInt(entityId),
       content: inputText,
       created_at: new Date(),
       isAudio: false,
@@ -195,7 +196,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
       // שליחה רגילה לשרת
       const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
-        entity_id: entityId,
+        entity_id: parseInt(entityId),
         content: tempComment.content,
         created_at: tempComment.created_at.toISOString(),
       };
@@ -217,7 +218,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     const tempAudioComment: ClientComment = {
       comment_id: tempId,
       entity_type: entityType,
-      entity_id: entityId,
+      entity_id: entityId === 'temp-new-customer' ? 0 : parseInt(entityId),
       content: isRecordingState ? t("recordingInProgress") : t("transcriptionPending"),
       created_at: new Date(),
       isPending: true,
@@ -238,7 +239,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
       // שליחה רגילה לשרת
       const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
-        entity_id: entityId,
+        entity_id: parseInt(entityId),
         content: transcription,
         created_at: new Date().toISOString(),
       };
@@ -265,7 +266,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
 
     const { scrollTop } = messagesContainerRef.current;
     
-    // בדיקה אם המשתמש גלל למעלה לטעינת הודעות נוספות
+    // בדיקה אם המשתמש גלל למעלה לטעינת הודעות נוסxxx
     if (scrollTop <= 50) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
