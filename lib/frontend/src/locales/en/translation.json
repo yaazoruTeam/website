@@ -435,6 +435,20 @@
   "refreshDevice": "Refresh Device",
   "deviceRinging": "Device Ringing",
   "refreshData": "Refresh Data",
+  "changeGroup": "Change Group",
+  "currentGroup": "Current Group",
+  "selectNewGroup": "Select New Group",
+  "groupDetails": "Group Details",
+  "groupCapacity": "Group Capacity",
+  "groupDescription": "Description",
+  "groupCreated": "Created",
+  "changeGroupSuccess": "Group changed successfully",
+  "errorChangingGroup": "Error changing group",
+  "confirmGroupChange": "Confirm Group Change",
+  "areYouSureChangeGroup": "Are you sure you want to move this device to",
+  "groupChangeWarning": "This action will move the device to a different group",
+  "movingDevice": "Moving device...",
+  "groupInfo": "Group Information",
   "locationInfo": "Location Information",
   "latitude": "Latitude",
   "longitude": "Longitude",
@@ -454,7 +468,10 @@
   "rebootStatus": "Reboot Status",
   "installAppStatus": "Install App Status",
   "applyProfileStatus": "Apply Profile Status",
+  "domainFilterStatus":" Status Domain Filter",
+  "lastConnected": "Last Connected",
+  "registeredOn": "Registered On"
+}
   "caStatus": "CA Status",
   "apnStatus": "APN Status",
-  "domainFilterStatus": "Domain Filter Status"
 }
