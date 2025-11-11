@@ -11,12 +11,20 @@ import { MapPinIcon } from "@heroicons/react/24/outline"
 
 // Component for displaying a single info field
 const InfoField = ({ label, value }: { label: string; value: string | number | undefined }) => (
-  <CustomTypography
-    text={`${label}: ${value ?? "-"}`}
-    variant="h4"
-    weight="regular"
-    color={colors.blue600}
-  />
+  <Box sx={{ gap: 20 }}>
+    <CustomTypography
+      text={`${label}`}
+      variant="h4"
+      weight="regular"
+      color={colors.blue600}
+    />
+    <CustomTypography
+      text={`${value ?? "-"}`}
+      variant="h4"
+      weight="bold"
+      color={colors.blue600}
+    />
+  </Box>
 )
 
 // Component for status fields with visual indicators
@@ -124,7 +132,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
   }
   const handleLocationClick = () => {
     const location = getDeviceLocation()
-    
+
     if (!location) {
       setError(t('locationDataNotAvailable'))
       return
@@ -172,17 +180,17 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             buttonType="third"
             sx={{ backgroundColor: colors.blue100 }}
           /> */}
-          <CustomButton 
-            label={t("refreshDevice")} 
-            buttonType="third" 
-            onClick={handleDeviceRefresh} 
-            disabled={syncing} 
+          <CustomButton
+            label={t("refreshDevice")}
+            buttonType="third"
+            onClick={handleDeviceRefresh}
+            disabled={syncing}
           />
-          <CustomButton 
-            label={t("refreshData")} 
-            buttonType="second" 
-            onClick={fetchDeviceInfo} 
-            disabled={loading} 
+          <CustomButton
+            label={t("refreshData")}
+            buttonType="second"
+            onClick={fetchDeviceInfo}
+            disabled={loading}
           />
         </Box>
       </Box>
@@ -225,7 +233,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             <InfoField label={t("modelDevice")} value={deviceInfo.deviceModel} />
             <InfoField label={t("androidVersion")} value={deviceInfo.androidVer} />
           </InfoSection>
-          
+
           <InfoField label={t("lastConnected")} value={new Date(deviceInfo.lastConnected).toLocaleString('he-IL')} />
           <InfoField label={t("registeredOn")} value={new Date(deviceInfo.registeredOn).toLocaleString('he-IL')} />
           <InfoField label={t("deviceStatus")} value={deviceInfo.deviceStatus} />
@@ -236,24 +244,24 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
           <InfoField label={t("IMEI_1")} value={deviceInfo.imei1} />
           <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
 
-          <InfoField label={t("battery")} value={deviceInfo.batteryLevel+" %"} />
+          <InfoField label={t("battery")} value={deviceInfo.batteryLevel + " %"} />
           <InfoField label={t("storageAvailable")} value={(Math.trunc(Number(deviceInfo.availableStorage ?? 0) / 100_000_000) / 10) + " GB"} />
 
           {/* Location Section with Map Button */}
           <InfoSection title={t("locationInfo")}>
-            <InfoField 
-              label={t("lastLocationUpdate")} 
-              value={deviceInfo.locationTimeStamp 
-                ? new Date(deviceInfo.locationTimeStamp).toLocaleString('he-IL') 
+            <InfoField
+              label={t("lastLocationUpdate")}
+              value={deviceInfo.locationTimeStamp
+                ? new Date(deviceInfo.locationTimeStamp).toLocaleString('he-IL')
                 : t("notAvailable")
-              } 
+              }
             />
-            
+
             {/* כפתור מיקום במפה */}
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
                 gap: 1,
                 mt: 1,
                 cursor: getDeviceLocation() ? 'pointer' : 'not-allowed',
