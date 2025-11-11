@@ -3,63 +3,89 @@ import CustomTypography from "../designComponent/Typography"
 import { useTranslation } from "react-i18next"
 import { CustomButton } from "../designComponent/Button"
 import { colors } from "../../styles/theme"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, ReactNode } from "react"
 import { getDeviceInfo, syncDevice } from "../../api/samsung"
 import { Samsung } from "@model"
 import MapLocationModal from "../Map/MapLocationModal"
 import { MapPinIcon } from "@heroicons/react/24/outline"
 
 // Component for displaying a single info field
-const InfoField = ({ label, value }: { label: string; value: string | number | undefined }) => (
-  <CustomTypography
-    text={`${label}: ${value ?? "-"}`}
-    variant="h4"
-    weight="regular"
-    color={colors.blue600}
-  />
-)
-
-const BYTES_TO_GB_DIVISOR = 100_000_000;
-// Component for status fields with visual indicators
-const StatusField = ({ label, status }: { label: string; status?: string }) => {
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "Ok":
-        return colors.green500
-      case "Pending":
-        return colors.orange500
-      case "Error":
-        return colors.red500
-      default:
-        return colors.blue600
-    }
-  }
+const InfoField = ({ label, value }: { label: string; value: string | number | ReactNode | undefined }) => {
+  const isReactNode = typeof value === 'object' && value !== null;
 
   return (
-    <CustomTypography
-      text={`${label}: ${status ?? "-"}`}
-      variant="h4"
-      weight="regular"
-      color={getStatusColor(status)}
-    />
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box>
+        <CustomTypography
+          text={`${label}`}
+          variant="h4"
+          weight="regular"
+          color={colors.blue600}
+          sx={{ mb: 1 }}
+        />
+        {isReactNode ? (
+          <Box>{value}</Box>
+        ) : (
+          <CustomTypography
+            text={`${value ?? "-"}`}
+            variant="h4"
+            weight="bold"
+            color={colors.blue600}
+          />
+        )}
+      </Box>
+      <Box
+        sx={{
+          backgroundColor: colors.blueOverlay700,
+          width: '1px',
+          height: '26px',
+          mx: '40px'
+        }} />
+    </Box>
   )
 }
 
+const BYTES_TO_GB_DIVISOR = 100_000_000;
+// Component for status fields with visual indicators
+// const StatusField = ({ label, status }: { label: string; status?: string }) => {
+//   const getStatusColor = (status?: string) => {
+//     switch (status) {
+//       case "Ok":
+//         return colors.green500
+//       case "Pending":
+//         return colors.orange500
+//       case "Error":
+//         return colors.red500
+//       default:
+//         return colors.blue600
+//     }
+//   }
+
+// return (
+//   <CustomTypography
+//     text={`${label}: ${status ?? "-"}`}
+//     variant="h4"
+//     weight="regular"
+//     color={getStatusColor(status)}
+//   />
+// )
+// }
+
 // Section component for grouping related information
-const InfoSection = ({ title, children }: { title?: string; children: React.ReactNode }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-    {title && (
-      <CustomTypography
-        text={title}
-        variant="h3"
-        weight="medium"
-        color={colors.blue900}
-        sx={{ marginBottom: 1 }}
-      />
-    )}
-    {children}
-  </Box>
-)
+// const InfoSection = ({ title, children }: { title?: string; children: React.ReactNode }) => (
+//   <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+//     {title && (
+//       <CustomTypography
+//         text={title}
+//         variant="h3"
+//         weight="medium"
+//         color={colors.blue900}
+//         sx={{ marginBottom: 1 }}
+//       />
+//     )}
+//     {children}
+//   </Box>
+// )
 
 const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
   const { t } = useTranslation()
@@ -125,7 +151,7 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
   }
   const handleLocationClick = () => {
     const location = getDeviceLocation()
-    
+
     if (!location) {
       setError(t('locationDataNotAvailable'))
       return
@@ -173,17 +199,17 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
             buttonType="third"
             sx={{ backgroundColor: colors.blue100 }}
           /> */}
-          <CustomButton 
-            label={t("refreshDevice")} 
-            buttonType="third" 
-            onClick={handleDeviceRefresh} 
-            disabled={syncing} 
+          <CustomButton
+            label={t("refreshDevice")}
+            buttonType="third"
+            onClick={handleDeviceRefresh}
+            disabled={syncing}
           />
-          <CustomButton 
-            label={t("refreshData")} 
-            buttonType="second" 
-            onClick={fetchDeviceInfo} 
-            disabled={loading} 
+          <CustomButton
+            label={t("refreshData")}
+            buttonType="second"
+            onClick={fetchDeviceInfo}
+            disabled={loading}
           />
         </Box>
       </Box>
@@ -221,75 +247,73 @@ const SamsungDetails = ({ serialNumber }: { serialNumber: string }) => {
         </Box>
       ) : deviceInfo ? (
         <>
-          <InfoSection>
+          <Box sx={{ display: 'flex' }}>
             <InfoField label={t("clientVersion")} value={deviceInfo.clientAppVersion} />
             <InfoField label={t("modelDevice")} value={deviceInfo.deviceModel} />
+            <InfoField label={t("battery")} value={`${deviceInfo.batteryLevel} %`} />
+            <InfoField label={t("absorptionLevel")} value={deviceInfo.cellularStrength} />
+            <InfoField label={t("networkID")} value={deviceInfo.networkID} />
+            <InfoField label={t("storageAvailable")} value={`${(Math.trunc(parseFloat(deviceInfo.availableStorage) / BYTES_TO_GB_DIVISOR)) / 10} GB`} />
+
+
             <InfoField label={t("androidVersion")} value={deviceInfo.androidVer} />
-          </InfoSection>
-          
-          <InfoField label={t("lastConnected")} value={new Date(deviceInfo.lastConnected).toLocaleString('he-IL')} />
-          <InfoField label={t("registeredOn")} value={new Date(deviceInfo.registeredOn).toLocaleString('he-IL')} />
-          <InfoField label={t("deviceStatus")} value={deviceInfo.deviceStatus} />
 
-          <InfoField label={t("simCurrent")} value={deviceInfo.currentSim} />
-          <InfoField label={t("networkID")} value={deviceInfo.networkID} />
-          <InfoField label={t("absorptionLevel")} value={deviceInfo.cellularStrength} />
-          <InfoField label={t("IMEI_1")} value={deviceInfo.imei1} />
-          <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <InfoField label={t("IMEI_1")} value={deviceInfo.imei1} />
+            <InfoField label={t("IMEI_2")} value={deviceInfo.imei2} />
+            <InfoField label={t("simCurrent")} value={deviceInfo.currentSim} />
+            <InfoField label={t("deviceStatus")} value={deviceInfo.deviceStatus} />
+            <InfoField label={t("dataStatus")} value={<Box>
+              <CustomTypography text={`${t("rebootStatus")}: ${deviceInfo.rebootStatus}`} variant="h4" weight="bold" />
+              <CustomTypography text={`${t("installAppStatus")}: ${deviceInfo.installAppStatus}`} variant="h4" weight="bold" />
+              <CustomTypography text={`${t("applyProfileStatus")}: ${deviceInfo.applyProfileStatus}`} variant="h4" weight="bold" />
+              <CustomTypography text={`${t("caStatus")}: ${deviceInfo.caStatus}`} variant="h4" weight="bold" />
+              <CustomTypography text={`${t("apnStatus")}: ${deviceInfo.apnStatus}`} variant="h4" weight="bold" />
+              <CustomTypography text={`${t("domainFilterStatus")}: ${deviceInfo.domainFilterStatus}`} variant="h4" weight="bold" />
+            </Box>} />
 
-          <InfoField label={t("battery")} value={`${deviceInfo.batteryLevel} %`} />
-          <InfoField label={t("storageAvailable")} value={`${(Math.trunc(parseFloat(deviceInfo.availableStorage)/BYTES_TO_GB_DIVISOR))/10} GB`} />
-
-          {/* Location Section with Map Button */}
-          <InfoSection title={t("locationInfo")}>
-            <InfoField 
-              label={t("lastLocationUpdate")} 
-              value={deviceInfo.locationTimeStamp 
-                ? new Date(deviceInfo.locationTimeStamp).toLocaleString('he-IL') 
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <InfoField label={t("registeredOn")} value={new Date(deviceInfo.registeredOn).toLocaleString('he-IL')} />
+            <InfoField label={t("lastConnected")} value={new Date(deviceInfo.lastConnected).toLocaleString('he-IL')} />
+            <InfoField
+              label={`${<Box sx={{}}><MapPinIcon /></Box>} ${t("GoogleMapsUpdateUpdatedToDate")}`}
+              value={deviceInfo.locationTimeStamp
+                ? new Date(deviceInfo.locationTimeStamp).toLocaleString('he-IL')
                 : t("notAvailable")
-              } 
+              }
             />
-            
-            {/* כפתור מיקום במפה */}
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1,
-                mt: 1,
-                cursor: getDeviceLocation() ? 'pointer' : 'not-allowed',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                backgroundColor: getDeviceLocation() ? colors.blueOverlay200 : colors.neutral200,
-                transition: 'all 0.2s',
-                opacity: getDeviceLocation() ? 1 : 0.5,
-                '&:hover': getDeviceLocation() ? {
-                  backgroundColor: colors.blueOverlay100,
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                } : {}
-              }}
-              onClick={handleLocationClick}
-            >
-              <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
-              <CustomTypography
-                text={t("viewOnMap")}
-                variant="h4"
-                weight="medium"
-                color={colors.blue900}
-              />
-            </Box>
-          </InfoSection>
-
-          {/* Operation Status Information */}
-          <InfoSection title={t("dataStatus")}>
-            <StatusField label={t("rebootStatus")} status={deviceInfo.rebootStatus} />
-            <StatusField label={t("installAppStatus")} status={deviceInfo.installAppStatus} />
-            <StatusField label={t("applyProfileStatus")} status={deviceInfo.applyProfileStatus} />
-            <StatusField label={t("caStatus")} status={deviceInfo.caStatus} />
-            <StatusField label={t("apnStatus")} status={deviceInfo.apnStatus} />
-            <StatusField label={t("domainFilterStatus")} status={deviceInfo.domainFilterStatus} />
-          </InfoSection>
+          </Box>
+          {/* כפתור מיקום במפה */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              mt: 1,
+              cursor: getDeviceLocation() ? 'pointer' : 'not-allowed',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              backgroundColor: getDeviceLocation() ? colors.blueOverlay200 : colors.neutral200,
+              transition: 'all 0.2s',
+              opacity: getDeviceLocation() ? 1 : 0.5,
+              '&:hover': getDeviceLocation() ? {
+                backgroundColor: colors.blueOverlay100,
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+              } : {}
+            }}
+            onClick={handleLocationClick}
+          >
+            <MapPinIcon style={{ width: 24, height: 24, color: colors.blue900 }} />
+            <CustomTypography
+              text={t("viewOnMap")}
+              variant="h4"
+              weight="medium"
+              color={colors.blue900}
+            />
+          </Box>
         </>
       ) : (
         <CustomTypography

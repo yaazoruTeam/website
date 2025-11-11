@@ -438,7 +438,7 @@
   "locationInfo": "Location Information",
   "latitude": "Latitude",
   "longitude": "Longitude",
-  "lastLocationUpdate": "Last Location Update",
+  "GoogleMapsUpdateUpdatedToDate": "Google Maps update updated to date",
   "viewOnMap": "View on Map",
   "deviceLocation": "Device Location",
   "notAvailable": "Not Available",
