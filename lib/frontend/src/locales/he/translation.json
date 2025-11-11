@@ -431,6 +431,8 @@
   "networkID":"מזהה רשת",
   "storageAvailable":"אחסון זמין",
   "androidVersion":"גרסת אנדרואיד",
+  "lastConnected": "התחברות אחרונה",
+  "registeredOn": "נרשם ב",
   "dataStatus":"סטטוס נתונים",
   "refreshDevice": "רענון מכשיר",
   "deviceRinging": "צלצול מכשיר",

@@ -429,6 +429,8 @@
   "networkID":"Network ID",
   "storageAvailable":"Storage Available",
   "androidVersion":"Android Version",
+  "lastConnected": "Last Connected",
+  "registeredOn": "Registered On",
   "dataStatus":"Data Status",
   "refreshDevice": "Refresh Device",
   "deviceRinging": "Device Ringing",
