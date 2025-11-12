@@ -471,5 +471,5 @@
   "apnStatus": "APN Status",
   "RegisterInLHR": "Register in LHR",
   "areYouSureRegisterInLHR": "Are you sure you want to re-register the device in the LHR?",
-  "RegisterInLHRDescription": "This action will attempt to re-register the device in the Home Location Register (LHR) to resolve connectivity issues."
+  "RegisterInLHRDescription": "This action will attempt to re-register the device in the Home Location Register (HLR) to resolve connectivity issues."
 }
