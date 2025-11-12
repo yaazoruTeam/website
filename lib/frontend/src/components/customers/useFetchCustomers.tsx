@@ -57,9 +57,6 @@ export const useFetchCustomers = ({ page, filterType }: UseFetchCustomersProps) 
           data = res.data
           total = res.total
         }
-        
-        // No client-side sorting needed - data is already sorted by the backend
-        // Backend sorting order: active status first, then by last_name and first_name alphabetically
         setCustomers(data ?? [])
         setTotal(total ?? 0)
         setError(null) // Clear any previous errors
