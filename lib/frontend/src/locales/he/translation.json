@@ -476,5 +476,6 @@
   "lastConnected": "התחבר לאחרונה",
   "registeredOn": "נרשם בתאריך",
   "RegisterInLHR": "רישום ב-LHR",
-  "areYouSureRegisterInLHR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?"
+  "areYouSureRegisterInLHR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
+  "RegisterInLHRSuccessful": "הרשמה ב-HLR הושלמה בהצלחה"
 }
