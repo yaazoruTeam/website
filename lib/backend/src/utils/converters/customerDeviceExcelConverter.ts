@@ -1,9 +1,10 @@
+import { DeviceStatus } from '@/src/entities'
 import { CustomerDeviceExcel } from '@model'
 
 const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExcel.Model => {
   return {
     customer: {
-      customer_id: '',
+      customer_id: 0,
       first_name: (row.first_name as string) || '',
       last_name: (row.last_name as string) || '',
       id_number: (row.id_number as string) || '',
@@ -11,20 +12,17 @@ const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExce
       additional_phone: '',
       email: (row.email as string) || '',
       city: (row.city as string) || '',
-      address1: (row.address1 as string) || '',
-      address2: '',
-      zipCode: '',
+      address: (row.address as string) || '',
       status: 'active',
       created_at: new Date(),
       updated_at: new Date(),
     },
     device: {
-      device_id: '',
       device_number: (row.device_number as string) || '',
       SIM_number: (row.SIM_number as string) || '',
       IMEI_1: (row.IMEI_1 as string) || '',
       model: (row.model as string) || '',
-      status: 'active',
+      status: (row.status as DeviceStatus) || DeviceStatus.ACTIVE,
       serialNumber: (row.serialNumber as string) || '',
       purchaseDate: null,
       registrationDate: (row.registrationDate as Date) || new Date(),

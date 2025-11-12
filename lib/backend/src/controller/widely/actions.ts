@@ -255,6 +255,20 @@ const reregisterInHlr = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
+const cancelAllLocations = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParams({ endpoint_id })
+
+    const result: Widely.Model = await sendMobileAction(endpoint_id, 'cancel_all_locations')
+
+    validateWidelyResult(result, 'Failed to cancel all locations', false)
+    res.status(200).json(result)
+  } catch (error: unknown) {
+    handleError(error, next)
+  }
+}
+
 const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, iccid, action } = req.body
@@ -296,5 +310,6 @@ export {
   addOneTimePackage,
   freezeUnFreezeMobile,
   updateImeiLockStatus,
-  reregisterInHlr
+  reregisterInHlr,
+  cancelAllLocations
 }

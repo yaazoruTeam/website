@@ -1,8 +1,6 @@
 import { Router } from 'express'
-import * as excelController from '@controller/excel'
 import * as ApiTranzila from '@controller/ApiTranzila'
 import * as MonthlyPaymentManagementController from '@controller/MonthlyPaymentManagement'
-import { uploadExcel, handleUploadError } from '@middleware/fileUpload'
 
 import customerRouter from './customer'
 import deviceRouter from './device'
@@ -18,10 +16,10 @@ import itemRouter from './item'
 import paymentCreditLinkRouter from './paymentCreditLink'
 import authRouter from './auth'
 import { errorHandler } from '@middleware/errorHandler'
-import { hasRole } from '@middleware/auth'
 import commentRouter from './comments'
 import widelyRouter from './widely'
 import excelRouter from './excel'
+import samsungRouter from './samsung'
 
 const router = Router()
 const ROUTE_PATH = '/controller'
@@ -42,6 +40,7 @@ router.use(`${ROUTE_PATH}/auth`, authRouter)
 router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 router.use(`${ROUTE_PATH}/excel`, excelRouter)
+router.use(`${ROUTE_PATH}/samsung`, samsungRouter)
 
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,

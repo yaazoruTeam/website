@@ -431,7 +431,7 @@ const ExcelUpload: React.FC = () => {
                   <li><code>first_name</code> - {t('firstName')}</li>
                   <li><code>last_name</code> - {t('lastName')}</li>
                   <li><code>city</code> - {t('city')}</li>
-                  <li><code>address1</code> - {t('address')}</li>
+                  <li><code>address</code> - {t('address')}</li>
                   <li><code>phone_number</code> - {t('phone')}</li>
                   <li><code>email</code> - {t('email')}</li>
                   <li><code>id_number</code> - {t('idNumber')}</li>
@@ -444,6 +444,7 @@ const ExcelUpload: React.FC = () => {
                 />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>additional_phone</code> - {t('additionalPhone')}</li>
+                  <li><code>comment</code> - {t('comment')} ({t('addedToCustomer')})</li>
                 </Box>
               </Alert>
             </Box>
@@ -477,6 +478,7 @@ const ExcelUpload: React.FC = () => {
                 />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>model</code> - {t('model')} ({t('recommended')})</li>
+                  <li><code>comment</code> - {t('comment')} ({t('addedToDevice')})</li>
                 </Box>
               </Alert>
             </Box>
@@ -500,7 +502,7 @@ const ExcelUpload: React.FC = () => {
                   <li><code>first_name</code> - {t('firstName')}</li>
                   <li><code>last_name</code> - {t('lastName')}</li>
                   <li><code>city</code> - {t('city')}</li>
-                  <li><code>address1</code> - {t('address')}</li>
+                  <li><code>address</code> - {t('address')}</li>
                   <li><code>phone_number</code> - {t('phone')}</li>
                   <li><code>email</code> - {t('email')}</li>
                   <li><code>id_number</code> - {t('idNumber')}</li>
@@ -513,6 +515,7 @@ const ExcelUpload: React.FC = () => {
                 />
                 <Box component="ul" sx={{ margin: 0, paddingLeft: 2 }}>
                   <li><code>additional_phone</code> - {t('additionalPhone')}</li>
+                  <li><code>comment</code> - {t('comment')} ({t('addedToCustomer')})</li>
                 </Box>
               </Alert>
             </Box>
@@ -552,6 +555,12 @@ const ExcelUpload: React.FC = () => {
             />
             <CustomTypography
               text={`• ${t('dateFormats')}`}
+              variant="h5"
+              weight="regular"
+              sx={{ display: 'block', mb: 0.5 }}
+            />
+            <CustomTypography
+              text={`• ${t('commentFieldOptional')}`}
               variant="h5"
               weight="regular"
               sx={{ display: 'block' }}

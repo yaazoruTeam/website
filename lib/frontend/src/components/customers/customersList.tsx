@@ -29,7 +29,7 @@ type FilterType =
   | { type: 'search'; value: string }
 
 type CustomerTableRow = {
-  customer_id: string
+  customer_id: number
   customer_name: string
   registration_date: string
   city: string
