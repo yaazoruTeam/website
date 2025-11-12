@@ -474,10 +474,8 @@
   "apnStatus": "סטטוס APN",
   "domainFilterStatus": "סטטוס סינון דומיין",
   "connectedTo":"מחובר ל",
-  "noAvailableDevices": "אין מכשירים זמינים לשיוך",
-  "pleaseSelectDevice": "נא לבחור מכשיר",
   "imeiDetails": "פרטי IMEI",
   "imeiFromDatabase": "IMEI ממסד הנתונים",
   "imeiFromSim": "IMEI מהסים (Widely)",
-  "imeiFromSamsung": "מספר סידורי (סמסונג)"
+  "imeiFromSamsung": "IMEI מסמסונג"
 }

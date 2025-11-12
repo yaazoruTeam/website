@@ -17,6 +17,7 @@ import CustomTypography from '../designComponent/Typography'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import ImeiDetailsModal from './ImeiDetailsModal'
 import { getWidelyDetails } from '../../api/widely'
+import { getDeviceInfo as getSamsungDeviceInfo } from '../../api/samsung'
 import { WidelyDeviceDetails } from '@model'
 
 export interface deviceFormInputs {
@@ -56,6 +57,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isImeiModalOpen, setIsImeiModalOpen] = useState(false)
   const [widelyImei, setWidelyImei] = useState<string | undefined>(undefined)
+  const [samsungImei, setSamsungImei] = useState<string | undefined>(undefined)
 
   // עדכון הקומפוננטה האב כשהצ'אטבוט נפתח/נסגר
   useEffect(() => {
@@ -100,6 +102,24 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
       fetchWidelyImei()
     }
   }, [fetchWidelyImei, simNumber])
+
+  // Fetch Samsung IMEI when serialNumber exists
+  const fetchSamsungImei = useCallback(async () => {
+    if (!initialValues?.serialNumber) return
+    try {
+      const deviceInfo = await getSamsungDeviceInfo(initialValues.serialNumber)
+      setSamsungImei(deviceInfo.imei1)
+    } catch (error) {
+      console.error('Error fetching Samsung IMEI:', error)
+      setSamsungImei(undefined)
+    }
+  }, [initialValues?.serialNumber])
+
+  useEffect(() => {
+    if (initialValues?.serialNumber) {
+      fetchSamsungImei()
+    }
+  }, [fetchSamsungImei, initialValues?.serialNumber])
 
   return (
     <Box
@@ -263,7 +283,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         onClose={() => setIsImeiModalOpen(false)}
         imeiFromDatabase={initialValues?.IMEI_1 || ''}
         imeiFromSim={widelyImei}
-        serialNumber={initialValues?.serialNumber}
+        serialNumber={samsungImei}
       />
     </Box>
   )
