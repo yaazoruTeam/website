@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert, CircularProgress } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, reprovisionDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, registerInHlr } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, resetVoicemailPincode, changePackages, sendApn, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, terminateLine, registerInHlr, reprovisionDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 
@@ -166,7 +166,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const infoItems = widelyDetails ? [
         { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
-        { title: t('IMEI 1'), value: widelyDetails.imei1 },
+        { title: t('IMEI'), value: widelyDetails.imei1 },
         { title: t('status'), value: t(widelyDetails.status) },
         { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
     ] : []
@@ -243,18 +243,21 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         return result as Widely.Model;
     }
 
-    // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
-        setIsTerminating(true);
         try {
-            await executeWithRefresh(async () => {
-                await terminateLine(widelyDetails.endpoint_id);
-                setIsTerminateModalOpen(false);
-            });
+            setIsTerminating(true);
+            await terminateLine(widelyDetails.endpoint_id);
+            setSuccessMessage(t('lineCancelledSuccessfully'));
+            setIsTerminateModalOpen(false);
+            
+            // רענון הנתונים לאחר השינוי
+            await fetchWidelyDetails();
         } catch (err) {
-            console.error('Error terminating line:', err);
+            console.error('Error cancelling line:', err);
+            setErrorMessage(t('errorCancellingLine'));
+            setIsTerminateModalOpen(false);
         } finally {
             setIsTerminating(false);
         }
@@ -359,14 +362,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setErrorMessage(null);
             setSuccessMessage(null);
 
-            await executeWithRefresh(async () => {
-                const result = await softResetDevice(widelyDetails.endpoint_id);
-                if (result.error_code === 200 || result.error_code === undefined) {
-                    setSuccessMessage(t('softResetSuccessful'));
-                } else {
-                    setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
-                }
-            });
+            const result = await softResetDevice(widelyDetails.endpoint_id);
+
+            if (result.error_code === 200 || result.error_code === undefined) {
+                setSuccessMessage(t('softResetSuccessful'));
+                // רענון הנתונים לאחר האיפוס הקל
+                await fetchWidelyDetails();
+            } else {
+                setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
+            }
         } catch (err: unknown) {
             console.error('Error in soft reset:', err);
             const errorMsg = handleErrorUtil('softReset', err, t('softResetError'));
@@ -616,7 +620,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                     <CustomButton
-                        label={t('cancelLine')}
+                        label={widelyDetails?.active ? t('cancelLine') : t('activateLine')}
                         buttonType="first"
                         size="small"
                         onClick={() => setIsTerminateModalOpen(true)}
@@ -732,6 +736,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         ]}
                         value={selectedNetworkConnection}
                     />
+                    <CustomTypography text={`${t('connectedTo')}: ${widelyDetails?.network_connection}`} variant='h4' weight='regular'/>
                 </Box>
             </WidelyConnectionSection>
 
@@ -871,7 +876,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             >
                 {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
                 <CustomTypography
-                    text={t('cancelLine')}
+                    text={widelyDetails?.active ? t('cancelLine') : t('activateLine')}
                     variant="h1"
                     weight="medium"
                     color={colors.blue900}
@@ -879,7 +884,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
 
                 <CustomTypography
-                    text={t('areYouSureYouWantToCancelTheLine')}
+                    text={widelyDetails?.active ? t('areYouSureYouWantToCancelTheLine') : t('areYouSureYouWantToActivateTheLine')}
                     variant="h3"
                     weight="regular"
                     color={colors.blue900}
