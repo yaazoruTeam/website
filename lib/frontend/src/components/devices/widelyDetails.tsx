@@ -243,7 +243,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         return result as Widely.Model;
     }
 
-    const handleToggleLine = async () => {
+    const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
         try {
@@ -869,7 +869,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         label={t('confirm')}
                         buttonType="third"
                         size="small"
-                        onClick={handleToggleLine}
+                        onClick={handleTerminateLine}
                         disabled={isTerminating}
                     />
                 </Box>
