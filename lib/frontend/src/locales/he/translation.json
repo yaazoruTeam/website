@@ -475,5 +475,6 @@
   "domainFilterStatus": "סטטוס סינון דומיין",
   "lastConnected": "התחבר לאחרונה",
   "registeredOn": "נרשם בתאריך",
-  "RegisterInLHR": "רישום ב-LHR"
+  "RegisterInLHR": "רישום ב-LHR",
+  "areYouSureRegisterInLHR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?"
 }
