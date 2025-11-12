@@ -11,7 +11,7 @@ import {
   ForeignKey
 } from 'typeorm'
 import { Device } from './Device'
-import { User } from './User'
+import { Customer } from './Customer'
 
 @Entity('sim_cards', { schema: 'yaazoru' })
 export class SimCards {
@@ -23,20 +23,20 @@ export class SimCards {
   simNumber!: string
 
   @Index()
-  @Column({ type: 'int' })
-  user_id!: number
+  @Column({ type: 'int', nullable: true })
+  customer_id?: number
 
-  @ManyToOne(() => User, (user) => user.simCards)
-  @JoinColumn({ name: 'user_id' })
-  user!: User
+  @ManyToOne(() => Customer, (customer) => customer.simCards, { nullable: true })
+  @JoinColumn({ name: 'customer_id' })
+  customer?: Customer
 
   @Index()
-  @Column({ type: 'int', unique: true })
-  device_id!: number
+  @Column({ type: 'int', nullable: true, unique: true })
+  device_id?: number
 
-  @OneToOne(() => Device)
+  @OneToOne(() => Device, { nullable: true })
   @JoinColumn({ name: 'device_id' })
-  device!: Device
+  device?: Device
 
   @Column({ type: 'timestamp' })
   receivedAt!: Date

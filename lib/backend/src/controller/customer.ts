@@ -267,13 +267,10 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
     email: customer.email,
     id_number: customer.id_number,
     phone_number: customer.phone_number,
-    customer_id: hasId ? customer.customer_id : 0
   });
 
   let customerEx
   if (hasId) {
-    // ✅ UPDATE: משדרים את customer_id כדי לא להזריק שגיאה על אותו ה-row
-    // ✅ בודקים את כל ה-UNIQUE fields: email, id_number, phone_number
     customerEx = await customerRepository.findExistingCustomer({
       customer_id: customer.customer_id,
       email: customer.email,
@@ -281,8 +278,6 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       phone_number: customer.phone_number,
     })
   } else {
-    // ✅ CREATE: לא משדרים customer_id (עדיין אין)
-    // ✅ בודקים את כל ה-UNIQUE fields: email, id_number, phone_number
     customerEx = await customerRepository.findExistingCustomer({
       email: customer.email,
       id_number: customer.id_number,
@@ -295,10 +290,9 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       existing_id: customerEx.customer_id,
       conflict_field: customerEx.email === customer.email ? 'email' : 'id_number'
     });
-    // Convert TypeORM entity to Customer.Model interface
     const customerExModel: Customer.Model = {
       ...customerEx,
-      customer_id: (customerEx.customer_id),
+      simCards: customerEx.simCards.map((card) => card.toString()),
       additional_phone: customerEx.additional_phone || '',
     }
     Customer.sanitizeExistingCustomer(customerExModel, customer)

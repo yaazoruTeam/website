@@ -7,7 +7,7 @@ import * as HttpErrorWithStatus from './HttpErrorWithStatus'
 import * as CreateCommentDto from './Dtos'
 import * as CustomerDevice from './CustomerDevice'
 import * as User from './User'
-import * as SimCards from './SimCards'
+import * as SimCard from './SimCard'
 import * as JwtPayload from './JwtPayload'
 import * as Branch from './Branch'
 import * as BranchCustomer from './BranchCustomer'
@@ -38,7 +38,7 @@ export {
   HttpErrorWithStatus,
   CustomerDevice,
   User,
-  SimCards,
+  SimCard,
   JwtPayload,
   Branch,
   BranchCustomer,

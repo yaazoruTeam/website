@@ -8,7 +8,7 @@ const limit = config.database.limit
 
 /**
  * SimCardRepository - Handles all database operations for SIM cards
- * TypeORM-based repository for managing SIM card records with user and device relationships
+ * TypeORM-based repository for managing SIM card records with customer and device relationships
  */
 export class SimCardRepository {
   private repository: Repository<SimCards>
@@ -27,7 +27,7 @@ export class SimCardRepository {
     try {
       logger.debug('[DB] Creating SIM card in database', {
         simNumber: simCardData.simNumber,
-        user_id: simCardData.user_id,
+        customer_id: simCardData.customer_id,
         device_id: simCardData.device_id,
       })
 
@@ -53,7 +53,7 @@ export class SimCardRepository {
   /**
    * Get all SIM cards with pagination
    * @param offset - Offset for pagination
-   * @param relations - Optional relations to load (user, device)
+   * @param relations - Optional relations to load (customer, device)
    * @returns Paginated SIM cards list with total count
    */
   async getSimCards(
@@ -81,7 +81,7 @@ export class SimCardRepository {
   /**
    * Get SIM card by ID
    * @param simCard_id - SIM card ID (UUID)
-   * @param relations - Optional relations to load (user, device)
+   * @param relations - Optional relations to load (customer, device)
    * @returns SIM card entity or null if not found
    */
   async getSimCardById(
@@ -110,7 +110,7 @@ export class SimCardRepository {
   /**
    * Get SIM card by SIM number
    * @param simNumber - SIM card number
-   * @param relations - Optional relations to load (user, device)
+   * @param relations - Optional relations to load (customer, device)
    * @returns SIM card entity or null if not found
    */
   async getSimCardByNumber(
@@ -137,37 +137,37 @@ export class SimCardRepository {
   }
 
   /**
-   * Get all SIM cards for a specific user
-   * @param user_id - User ID
+   * Get all SIM cards for a specific customer
+   * @param customer_id - Customer ID
    * @param offset - Offset for pagination (optional)
    * @param relations - Optional relations to load (device)
    * @returns SIM cards list with total count
    */
-  async getSimCardsByUserId(
-    user_id: number,
+  async getSimCardsByCustomerId(
+    customer_id: number,
     offset?: number,
     relations?: FindOptionsRelations<SimCards>,
   ): Promise<{ simCards: SimCards[]; total: number }> {
     try {
-      logger.debug('[DB] Fetching SIM cards by user ID', { user_id, offset, limit })
+      logger.debug('[DB] Fetching SIM cards by customer ID', { customer_id, offset, limit })
 
       const [simCards, total] = await this.repository.findAndCount({
-        where: { user_id },
+        where: { customer_id },
         skip: offset || 0,
         take: limit,
         order: { created_at: 'DESC' },
         relations: relations || {},
       })
 
-      logger.debug('[DB] SIM cards fetched for user', {
-        user_id,
+      logger.debug('[DB] SIM cards fetched for customer', {
+        customer_id,
         count: simCards.length,
         total,
       })
 
       return { simCards, total }
     } catch (err) {
-      logger.error('[DB] Database error fetching SIM cards by user ID:', err)
+      logger.error('[DB] Database error fetching SIM cards by customer ID:', err)
       throw err
     }
   }
@@ -175,7 +175,7 @@ export class SimCardRepository {
   /**
    * Get SIM card by device ID (one-to-one relationship)
    * @param device_id - Device ID
-   * @param relations - Optional relations to load (user)
+   * @param relations - Optional relations to load (customer)
    * @returns SIM card entity or null if not found
    */
   async getSimCardByDeviceId(
@@ -216,7 +216,7 @@ export class SimCardRepository {
       logger.debug('[DB] Updating SIM card in database', { simCard_id })
 
       // Prevent updating critical fields
-      const { simCard_id: id, user_id, device_id, simNumber, ...safeData } = updateData
+      const { simCard_id: id, customer_id, device_id, simNumber, ...safeData } = updateData
 
       // Update with new updated_at timestamp
       await this.repository.update(simCard_id, {
@@ -360,7 +360,7 @@ export class SimCardRepository {
     simCard_id?: string
     simNumber?: string
     device_id?: string
-    user_id?: number
+    customer_id?: number
   }): Promise<SimCards | null> {
     try {
       logger.debug('[DB] Searching for existing SIM card', { criteria })
@@ -454,19 +454,19 @@ export class SimCardRepository {
   }
 
   /**
-   * Count SIM cards for a specific user
-   * @param user_id - User ID
-   * @returns Total SIM cards count for user
+   * Count SIM cards for a specific customer
+   * @param customer_id - Customer ID
+   * @returns Total SIM cards count for customer
    */
-  async countSimCardsByUserId(user_id: number): Promise<number> {
+  async countSimCardsByCustomerId(customer_id: number): Promise<number> {
     try {
-      logger.debug('[DB] Counting SIM cards for user', { user_id })
+      logger.debug('[DB] Counting SIM cards for customer', { customer_id })
 
       return await this.repository.count({
-        where: { user_id },
+        where: { customer_id },
       })
     } catch (err) {
-      logger.error('[DB] Database error counting SIM cards for user:', err)
+      logger.error('[DB] Database error counting SIM cards for customer:', err)
       throw err
     }
   }

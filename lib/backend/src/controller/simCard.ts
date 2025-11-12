@@ -1,24 +1,25 @@
 import { NextFunction, Request, Response } from 'express'
-import { simCardRepository } from '@repositories'
-import { SimCards, HttpError } from '@model'
+import { simCardRepository, deviceRepository } from '@repositories'
+import { SimCard, Device, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
 import logger from '@/src/utils/logger'
+import { AppDataSource } from '@/src/data-source'
 
 const limit = config.database.limit
 
 /**
  * Create a new SIM card
  * POST /sim-cards
- * Body: {simNumber, user_id, device_id, receivedAt, planEndDate}
+ * Body: {simNumber, customer_id, device_id, receivedAt, planEndDate}
  */
 const createSimCard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     logger.info('[Controller] Creating a new SIM card')
-    SimCards.sanitizeBodyExisting(req)
+    SimCard.sanitizeBodyExisting(req)
 
     const simCardData = req.body
-    const sanitized = SimCards.sanitize(simCardData, false)
+    const sanitized = SimCard.sanitize(simCardData, false)
 
     // Check for existing SIM card with duplicate unique fields
     await checkExistingSimCard(sanitized, false)
@@ -49,7 +50,7 @@ const getSimCards = async (req: Request, res: Response, next: NextFunction): Pro
 
     const offset = (page - 1) * limit
     const { simCards, total } = await simCardRepository.getSimCards(offset, {
-      user: true,
+      customer: true,
       device: true,
     })
 
@@ -72,7 +73,7 @@ const getSimCardById = async (req: Request, res: Response, next: NextFunction): 
   try {
     logger.debug('[Controller] Fetching SIM card by ID', { simCard_id: req.params.id })
 
-    SimCards.sanitizeIdExisting(req)
+    SimCard.sanitizeIdExisting(req)
 
     const simCard_id = req.params.id as string
 
@@ -86,7 +87,7 @@ const getSimCardById = async (req: Request, res: Response, next: NextFunction): 
     }
 
     const simCard = await simCardRepository.getSimCardById(simCard_id, {
-      user: true,
+      customer: true,
       device: true,
     })
 
@@ -111,7 +112,7 @@ const getSimCardByNumber = async (req: Request, res: Response, next: NextFunctio
     }
 
     const simCard = await simCardRepository.getSimCardByNumber(simNumber, {
-      user: true,
+      customer: true,
       device: true,
     })
 
@@ -130,22 +131,22 @@ const getSimCardByNumber = async (req: Request, res: Response, next: NextFunctio
 }
 
 /**
- * Get all SIM cards for a specific user
- * GET /sim-cards/user/:user_id?page=1
+ * Get all SIM cards for a specific customer
+ * GET /sim-cards/customer/:customer_id?page=1
  */
-const getSimCardsByUserId = async (
+const getSimCardsByCustomerId = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    logger.debug('[Controller] Fetching SIM cards by user ID', { user_id: req.params.user_id })
+    logger.debug('[Controller] Fetching SIM cards by customer ID', { customer_id: req.params.customer_id })
 
-    const user_id = parseInt(req.params.user_id as string, 10)
+    const customer_id = parseInt(req.params.customer_id as string, 10)
     const page = parseInt(req.params.page as string, 10) || 1
 
-    if (isNaN(user_id)) {
-      throw { status: 400, message: 'User ID must be a valid number' }
+    if (isNaN(customer_id)) {
+      throw { status: 400, message: 'Customer ID must be a valid number' }
     }
 
     if (page < 1) {
@@ -153,7 +154,7 @@ const getSimCardsByUserId = async (
     }
 
     const offset = (page - 1) * limit
-    const { simCards, total } = await simCardRepository.getSimCardsByUserId(user_id, offset, {
+    const { simCards, total } = await simCardRepository.getSimCardsByCustomerId(customer_id, offset, {
       device: true,
     })
 
@@ -162,7 +163,7 @@ const getSimCardsByUserId = async (
       page,
       totalPages: Math.ceil(total / limit),
       total,
-      user_id,
+      customer_id,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -188,7 +189,7 @@ const getSimCardByDeviceId = async (
     }
 
     const simCard = await simCardRepository.getSimCardByDeviceId(device_id, {
-      user: true,
+      customer: true,
     })
 
     if (!simCard) {
@@ -213,11 +214,11 @@ const updateSimCard = async (req: Request, res: Response, next: NextFunction): P
   try {
     logger.debug('[Controller] Updating SIM card', { simCard_id: req.params.id })
 
-    SimCards.sanitizeIdExisting(req)
-    SimCards.sanitizeBodyExisting(req)
+    SimCard.sanitizeIdExisting(req)
+    SimCard.sanitizeBodyExisting(req)
 
     const simCard_id = req.params.id as string
-    const sanitized = SimCards.sanitize(req.body, true)
+    const sanitized = SimCard.sanitize(req.body, true)
 
     // Check for existing SIM card with duplicate unique fields
     await checkExistingSimCard({ ...sanitized, simCard_id }, true)
@@ -244,7 +245,7 @@ const updatePlanEndDate = async (
       simCard_id: req.params.id,
     })
 
-    SimCards.sanitizeIdExisting(req)
+    SimCard.sanitizeIdExisting(req)
 
     const simCard_id = req.params.id as string
     const { planEndDate } = req.body
@@ -273,7 +274,7 @@ const deleteSimCard = async (req: Request, res: Response, next: NextFunction): P
   try {
     logger.debug('[Controller] Deleting SIM card', { simCard_id: req.params.id })
 
-    SimCards.sanitizeIdExisting(req)
+    SimCard.sanitizeIdExisting(req)
 
     const simCard_id = req.params.id as string
 
@@ -320,7 +321,7 @@ const getExpiringSimCards = async (
     const { simCards, total } = await simCardRepository.getExpiringSimCards(
       daysFromNow,
       offset,
-      { user: true, device: true },
+      { customer: true, device: true },
     )
 
     res.status(200).json({
@@ -370,7 +371,7 @@ const getSimCardsByDateRange = async (
       start,
       end,
       offset,
-      { user: true, device: true },
+      { customer: true, device: true },
     )
 
     res.status(200).json({
@@ -409,28 +410,28 @@ const getSimCardsCount = async (
 }
 
 /**
- * Get SIM cards count for a specific user
- * GET /sim-cards/user/:user_id/count
+ * Get SIM cards count for a specific customer
+ * GET /sim-cards/customer/:customer_id/count
  */
-const getSimCardsCountByUserId = async (
+const getSimCardsCountByCustomerId = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    logger.debug('[Controller] Fetching SIM cards count for user', { user_id: req.params.user_id })
+    logger.debug('[Controller] Fetching SIM cards count for customer', { customer_id: req.params.customer_id })
 
-    const user_id = parseInt(req.params.user_id as string, 10)
+    const customer_id = parseInt(req.params.customer_id as string, 10)
 
-    if (isNaN(user_id)) {
-      throw { status: 400, message: 'User ID must be a valid number' }
+    if (isNaN(customer_id)) {
+      throw { status: 400, message: 'Customer ID must be a valid number' }
     }
 
-    const total = await simCardRepository.countSimCardsByUserId(user_id)
+    const total = await simCardRepository.countSimCardsByCustomerId(customer_id)
 
     res.status(200).json({
       total,
-      user_id,
+      customer_id,
     })
   } catch (error: unknown) {
     handleError(error, next)
@@ -438,10 +439,44 @@ const getSimCardsCountByUserId = async (
 }
 
 /**
+ * Check if device with same unique fields already exists
+ * Used before create/update to prevent duplicate constraint violations
+ */
+const checkExistingDevice = async (device: Device.Model, isUpdate: boolean) => {
+  try {
+    logger.debug('[Controller] Checking for existing device with duplicate fields', {
+      isUpdate,
+      IMEI_1: device.IMEI_1,
+    })
+
+    const existingDevice = await deviceRepository.findExistingDevice({
+      device_id: isUpdate ? device.device_id : undefined,
+      IMEI_1: device.IMEI_1,
+      device_number: device.device_number,
+      serialNumber: device.serialNumber,
+    })
+
+    if (existingDevice) {
+      logger.warn('[Controller] Found existing device with duplicate unique fields', {
+        existing_id: existingDevice.device_id,
+      })
+
+      try {
+        Device.sanitizeExistingDevice(existingDevice, device)
+      } catch (err) {
+        throw err
+      }
+    }
+  } catch (err) {
+    throw err
+  }
+}
+
+/**
  * Check if SIM card with same unique fields already exists
  * Used before create/update to prevent duplicate constraint violations
  */
-const checkExistingSimCard = async (simCard: SimCards.Model, isUpdate: boolean) => {
+const checkExistingSimCard = async (simCard: SimCard.Model, isUpdate: boolean) => {
   try {
     logger.debug('[Controller] Checking for existing SIM card with duplicate fields', {
       isUpdate,
@@ -452,7 +487,7 @@ const checkExistingSimCard = async (simCard: SimCards.Model, isUpdate: boolean) 
     const existingSimCard = await simCardRepository.findExistingSimCard({
       simCard_id: isUpdate ? simCard.simCard_id : undefined,
       simNumber: simCard.simNumber,
-      device_id: simCard.device_id.toString(),
+      device_id: simCard.device_id ? simCard.device_id.toString() : undefined,
     })
 
     if (existingSimCard) {
@@ -462,7 +497,7 @@ const checkExistingSimCard = async (simCard: SimCards.Model, isUpdate: boolean) 
 
       // Use the SimCards model validation function
       try {
-        SimCards.sanitizeExistingSimCard(existingSimCard, simCard)
+        SimCard.sanitizeExistingSimCard(existingSimCard as any, simCard)
       } catch (err) {
         throw err
       }
@@ -472,12 +507,111 @@ const checkExistingSimCard = async (simCard: SimCards.Model, isUpdate: boolean) 
   }
 }
 
+/**
+ * Create Device with SIM Card in a single transaction
+ * POST /sim-cards/device-with-sim
+ * Body: {
+ *   device?: {device_number, IMEI_1, model, serialNumber, plan?, purchaseDate?},
+ *   simCard: {simNumber, customer_id, receivedAt?, planEndDate?}
+ * }
+ * 
+ * If device data is provided: creates both device and simCard and links them
+ * If device data is not provided: creates only simCard
+ * 
+ * Uses transaction to ensure data consistency
+ */
+const createDeviceWithSimCard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  const queryRunner = AppDataSource.createQueryRunner()
+  
+  try {
+    logger.info('[Controller] Creating device with SIM card in transaction')
+    SimCard.sanitizeBodyExisting(req)
+
+    const { device: deviceData, simCard: simCardData } = req.body
+
+    // Validate that at least simCard data is provided
+    if (!simCardData) {
+      throw { status: 400, message: 'SIM card data is required' }
+    }
+
+    // Start transaction
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
+
+    try {
+      let createdDevice: any = null
+      let device_id = 0
+
+      // If device data is provided, create it
+      if (deviceData && Object.keys(deviceData).length > 0) {
+        logger.debug('[Controller] Device data provided, creating device')
+        
+        // Sanitize device data
+        const sanitizedDevice = Device.sanitize(deviceData, false)
+        await checkExistingDevice(sanitizedDevice, false)
+
+        // Create device using the transaction query runner
+        const deviceRepository = queryRunner.manager.getRepository('Device')
+        createdDevice = deviceRepository.create(sanitizedDevice as any)
+        const savedDevice = await queryRunner.manager.save(createdDevice)
+        device_id = savedDevice.device_id
+        
+        logger.debug('[Controller] Device created successfully', { device_id })
+      }
+
+      // Create simCard
+      logger.debug('[Controller] Creating SIM card')
+      const sanitizedSimCard = SimCard.sanitize(simCardData, false)
+      
+      // Update device_id if device was created
+      sanitizedSimCard.device_id = device_id
+
+      // Check for existing simCard only if it will be used
+      await checkExistingSimCard(sanitizedSimCard, false)
+
+      const simCardRepository = queryRunner.manager.getRepository('SimCards')
+      const simCard = simCardRepository.create(sanitizedSimCard as any)
+      const savedSimCard = await queryRunner.manager.save(simCard)
+
+      logger.debug('[Controller] SIM card created successfully', {
+        simCard_id: (savedSimCard as any).simCard_id,
+        simNumber: (savedSimCard as any).simNumber,
+      })
+
+      // Commit transaction
+      await queryRunner.commitTransaction()
+
+      const response = {
+        device: createdDevice,
+        simCard: savedSimCard,
+      }
+
+      logger.info('[Controller] Device and SIM card created successfully in transaction')
+      res.status(201).json(response)
+    } catch (err) {
+      // Rollback transaction on error
+      await queryRunner.rollbackTransaction()
+      logger.error('[Controller] Transaction rolled back due to error:', err)
+      throw err
+    }
+  } catch (error: unknown) {
+    handleError(error, next)
+  } finally {
+    // Release the query runner
+    await queryRunner.release()
+  }
+}
+
 export {
   createSimCard,
   getSimCards,
   getSimCardById,
   getSimCardByNumber,
-  getSimCardsByUserId,
+  getSimCardsByCustomerId,
   getSimCardByDeviceId,
   updateSimCard,
   updatePlanEndDate,
@@ -485,5 +619,6 @@ export {
   getExpiringSimCards,
   getSimCardsByDateRange,
   getSimCardsCount,
-  getSimCardsCountByUserId,
+  getSimCardsCountByCustomerId,
+  createDeviceWithSimCard,
 }

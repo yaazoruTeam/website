@@ -19,6 +19,23 @@ const simCardRouter = Router()
 simCardRouter.post('/', hasRole('admin', 'branch'), simCardController.createSimCard)
 
 /**
+ * POST /sim-cards/device-with-sim
+ * Create Device with SIM Card in a transaction
+ * Body: {
+ *   device?: {device_number, IMEI_1, model, serialNumber, plan?, purchaseDate?},
+ *   simCard: {simNumber, user_id, receivedAt?, planEndDate?}
+ * }
+ * If device data: creates device + simcard and links them
+ * If no device data: creates only simcard
+ * Access: admin, branch
+ */
+simCardRouter.post(
+  '/device-with-sim',
+  hasRole('admin', 'branch'),
+  simCardController.createDeviceWithSimCard,
+)
+
+/**
  * GET /sim-cards/page/:page
  * Get all SIM cards with pagination
  * Access: admin, branch
@@ -65,9 +82,9 @@ simCardRouter.get('/number/:simNumber', hasRole('admin', 'branch'), simCardContr
  * Access: admin, branch
  */
 simCardRouter.get(
-  '/user/:user_id/page/:page',
+  '/customer/:customer_id/page/:page',
   hasRole('admin', 'branch'),
-  simCardController.getSimCardsByUserId,
+  simCardController.getSimCardsByCustomerId,
 )
 
 /**
@@ -130,9 +147,9 @@ simCardRouter.get('/count', hasRole('admin', 'branch'), simCardController.getSim
  * Access: admin, branch
  */
 simCardRouter.get(
-  '/user/:user_id/count',
+  '/customer/:customer_id/count',
   hasRole('admin', 'branch'),
-  simCardController.getSimCardsCountByUserId,
+  simCardController.getSimCardsCountByCustomerId,
 )
 
 /**

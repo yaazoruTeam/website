@@ -19,7 +19,6 @@ interface Model {
   photo_url?: string // לא חובה, 
   email_verified?: boolean // לא חובה, DEFAULT TO לבדוק מה זה אומר -- ערך ברירת מחדל false  
   // Relationships
-  simCards?: string[] // array של sim_card_ids או מספרי סימים
 }
 
 function sanitize(user: Model, hasId: boolean): Model {

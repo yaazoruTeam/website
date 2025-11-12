@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  Unique
+  Unique,
+  OneToMany
 } from 'typeorm'
+import { SimCards } from './SimCards'
 
 export enum CustomerStatus {
   ACTIVE = 'active',
@@ -60,4 +62,7 @@ export class Customer {
 
   @UpdateDateColumn()
   updated_at!: Date
+
+  @OneToMany(() => SimCards, (simCard) => simCard.customer)
+  simCards!: SimCards[]
 }

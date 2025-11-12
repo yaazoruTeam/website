@@ -3,7 +3,7 @@ import { HttpError } from "."
 interface Model {
     simCard_id: string
     simNumber: string
-    user_id: number
+    customer_id: number
     device_id: number
     receivedAt: Date
     planEndDate?: Date
@@ -24,20 +24,20 @@ function sanitize(simCard: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!simCard.user_id) {    
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "user_id".',
-    }
-    throw error
-  }
-  if (!simCard.device_id) {    
-    const error: HttpError.Model = {
-      status: 400,
-      message: 'Invalid or missing "device_id".',
-    }
-    throw error
-  }
+  // if (!simCard.user_id) {    
+  //   const error: HttpError.Model = {
+  //     status: 400,
+  //     message: 'Invalid or missing "user_id".',
+  //   }
+  //   throw error
+  // }
+  // if (!simCard.device_id) {    
+  //   const error: HttpError.Model = {
+  //     status: 400,
+  //     message: 'Invalid or missing "device_id".',
+  //   }
+  //   throw error
+  // }
   const newSimCard: Model = {
     ...simCard,
     receivedAt: simCard.receivedAt || new Date(Date.now()),
