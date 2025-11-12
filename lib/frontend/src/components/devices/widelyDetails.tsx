@@ -312,8 +312,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
-    // פונקציה ל רישום ב-LHR של מכשיר
-    const handleRegisterInLHR = async () => {
+    // פונקציה ל רישום ב-HLR של מכשיר
+    const handleRegisterInHLR = async () => {
         if (!widelyDetails?.endpoint_id) {
             setErrorMessage(t('errorNoEndpointId'));
             return;
@@ -321,7 +321,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
         // בקשת אישור מהמשתמש
         const confirmed = window.confirm(
-            `${t('areYouSureRegisterInLHR')} ${widelyDetails.endpoint_id}?\n\n${t('RegisterInLHRDescription')}`
+            `${t('areYouSureRegisterInHLR')} ${widelyDetails.endpoint_id}?\n\n${t('RegisterInHLRDescription')}`
         );
 
         if (!confirmed) return;
@@ -334,15 +334,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             await executeWithRefresh(async () => {
                 const result = await registerInHlr(widelyDetails.endpoint_id);
                 if (result.error_code === 200 || result.error_code === undefined) {
-                    setSuccessMessage(t('RegisterInLHRSuccessful'));
+                    setSuccessMessage(t('RegisterInHLRSuccessful'));
                 } else {
-                    setErrorMessage(`${t('RegisterInLHRFailed')}: ${result.message || t('unknownError')}`);
+                    setErrorMessage(`${t('RegisterInHLRFailed')}: ${result.message || t('unknownError')}`);
                 }
             });
         } catch (err: unknown) {
-            console.error('Error in register in LHR:', err);
-            const errorMsg = handleErrorUtil('registerInLHR', err, t('RegisterInLHRError'));
-            setErrorMessage(`${t('RegisterInLHRFailed')}: ${errorMsg}`);
+            console.error('Error in register in HLR:', err);
+            const errorMsg = handleErrorUtil('registerInHLR', err, t('RegisterInHLRError'));
+            setErrorMessage(`${t('RegisterInHLRFailed')}: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -806,8 +806,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             {/* כפתור איפוס סיסמת תא קולי */}
             <WidelyButtonSection>
                 <CustomButton
-                    label={t('RegisterInLHR')}
-                    onClick={handleRegisterInLHR}
+                    label={t('RegisterInHLR')}
+                    onClick={handleRegisterInHLR}
                     buttonType="fourth"
                     size="large"
                 />
