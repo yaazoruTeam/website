@@ -243,7 +243,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         return result as Widely.Model;
     }
 
-    // פונקציה לטיפול בביטול/הפעלת קו
     const handleToggleLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
