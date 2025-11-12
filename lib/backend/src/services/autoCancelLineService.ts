@@ -123,30 +123,27 @@ async function processExpiredLines(): Promise<void> {
 
 /**
  * התחלת תזמון המשימה
- * רץ כל יום בשעה 13:55
  */
 export function startAutoCancelLineScheduler(): void {
   logger.info('📅 Initializing automatic line cancellation scheduler...')
-
-  // תזמון המשימה לשעה 13:55 כל יום
+  logger.info('📍 Registering cron job now...')
   // פורמט cron: דקה שעה יום חודש יום_בשבוע
-  // '55 13 * * *' = בדקה 55 של שעה 13:00, כל יום
-  cron.schedule('55 13 * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
     logger.info('⏰ Scheduled task triggered: Auto-cancel expired lines')
     await processExpiredLines()
   }, {
     timezone: "Asia/Jerusalem"
   })
+  logger.info('📍 Cron job successfully registered')
 
   logger.info('✅ Automatic line cancellation scheduler started successfully')
-  logger.info('   Schedule: Every day at 13:55 (Israel Time)')
+  logger.info('   Schedule: Every day at 15:20 (Israel Time)')
   logger.info('   ⚠️  Note: Only cancels in Widely - does NOT update database')
 }
-
 /**
  * פונקציה לביצוע ידני של תהליך הביטול (לצורכי בדיקה)
  */
-export async function manualProcessExpiredLines(): Promise<void> {
+export async function manualProcessExpדiredLines(): Promise<void> {
   logger.info('🔧 Manual trigger: Processing expired lines')
   await processExpiredLines()
 }

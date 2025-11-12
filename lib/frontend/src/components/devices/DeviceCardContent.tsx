@@ -5,7 +5,7 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
-import { updateCustomerDevice } from '../../api/customerDevice'
+import { getLineCancellationStatus } from '../../api/widely'
 
 interface DeviceCardContentProps {
   device: Device.Model
@@ -14,6 +14,7 @@ interface DeviceCardContentProps {
 
 const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
+  const [cancellationStatus, setCancellationStatus] = useState<{ isCancelled: boolean; cancellationDate?: string; cancellationReason?: string } | null>(null)
 
   // Debug: הדפסת ה-customerDevice כדי לראות מה יש בו
   useEffect(() => {
@@ -42,15 +43,29 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     }
   }, [device.device_id])
 
-  const handleSavePlanEndDate = async (planEndDate: string) => {
-    if (!customerDevice?.customerDevice_id) {
-      throw new Error('Customer device ID is missing')
-    }
 
-    await updateCustomerDevice(customerDevice.customerDevice_id, {
-      planEndDate: planEndDate ? new Date(planEndDate) : undefined,
-    })
-  }
+  // בדיקת סטטוס ביטול קו ושמירה ב-localStorage
+  useEffect(() => {
+    const fetchCancellationStatus = async () => {
+      if (!device.SIM_number) return
+      try {
+        const status = await getLineCancellationStatus(device.SIM_number)
+        setCancellationStatus(status)
+        // שמירה ב-localStorage
+        localStorage.setItem(
+          `cancellationStatus_${device.SIM_number}`,
+          JSON.stringify(status)
+        )
+      } catch (e) {
+        // אם יש שגיאה, ננסה לקרוא מה-localStorage
+        const local = localStorage.getItem(`cancellationStatus_${device.SIM_number}`)
+        if (local) {
+          setCancellationStatus(JSON.parse(local))
+        }
+      }
+    }
+    fetchCancellationStatus()
+  }, [device.SIM_number])
 
   useEffect(() => {
     fetchLastComment()
@@ -70,9 +85,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
           received_at: customerDevice?.receivedAt 
             ? formatDateToString(new Date(customerDevice.receivedAt))
             : '',
-          planEndDate: customerDevice?.planEndDate
-            ? formatDateToString(new Date(customerDevice.planEndDate))
-            : '',
+          planEndDate: '', // הוספת planEndDate כערך ריק כדי למנוע שגיאת קומפילציה
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
@@ -88,11 +101,30 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
-        onSave={handleSavePlanEndDate}
       />
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
+        {/* הצגת סטטוס ביטול קו */}
+        {cancellationStatus?.isCancelled && (
+          <Box sx={{ color: 'red', fontSize: '0.9em', mt: 1 }}>
+            {cancellationStatus.cancellationReason ? (
+              <>
+                <div>{cancellationStatus.cancellationReason}</div>
+                {cancellationStatus.cancellationDate && (
+                  <div>{`(בוטל בתאריך: ${cancellationStatus.cancellationDate})`}</div>
+                )}
+              </>
+            ) : (
+              <div>הקו בוטל</div>
+            )}
+          </Box>
+        )}
+        {/* דוגמה לשינוי כפתור ביטול קו */}
+        {/* הכפתור לא יוצג אם הקו בוטל */}
+        {!cancellationStatus?.isCancelled && (
+          <button style={{ marginTop: 8 }}>ביטול קו</button>
+        )}
       </Box>
     </Box>
   )
