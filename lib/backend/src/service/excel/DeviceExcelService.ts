@@ -142,7 +142,7 @@ const processDeviceExcelData = async (data: ExcelRowData[]): Promise<ProcessingR
       const deviceModel: Device.Model = convertFlatRowToDeviceModel(item)
       logger.info(`📝 Row ${rowIndex} converted to device model:`, {
         device_number: deviceModel.device_number,
-        SIM_number: deviceModel.SIM_number,
+        // SIM_number: deviceModel.SIM_number,
         IMEI_1: deviceModel.IMEI_1,
         serialNumber: deviceModel.serialNumber
       })

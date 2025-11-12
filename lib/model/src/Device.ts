@@ -10,7 +10,6 @@ export enum DeviceStatus {
 interface Model {
   device_id?: number // Optional - auto-generated on create
   device_number: string
-  // SIM_number: string
   IMEI_1: string
   model: string
   status?: DeviceStatus // active, inactive, blocked, lock_in_imei - default is 'active'
@@ -81,7 +80,6 @@ function sanitize(device: Model, hasId: boolean): Model {
   const newDevice: Model = {
     device_id: device.device_id,
     device_number: device.device_number,
-    // SIM_number: device.SIM_number,
     IMEI_1: device.IMEI_1,
     model: device.model,
     status: device.status || DeviceStatus.ACTIVE,

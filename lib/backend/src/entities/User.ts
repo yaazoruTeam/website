@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  Unique
+  Unique,
+  OneToMany
 } from 'typeorm'
+import { SimCards } from './SimCards'
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -90,4 +92,8 @@ export class User {
 
   @UpdateDateColumn()
   updated_at!: Date
+
+    @OneToMany(() => SimCards, (simCard) => simCard.user)
+    simCards!: SimCards[]
+  
 }

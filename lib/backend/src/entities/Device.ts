@@ -16,7 +16,6 @@ export enum DeviceStatus {
 }
 
 @Entity('devices', { schema: 'yaazoru' })
-@Unique(['SIM_number'])
 @Unique(['IMEI_1'])
 @Unique(['serialNumber'])
 export class Device {
@@ -26,9 +25,6 @@ export class Device {
   @Index()
   @Column({ type: 'varchar', length: 50 })
   device_number!: string
-
-  @Column({ type: 'varchar', length: 20, unique: true })
-  SIM_number!: string
 
   @Column({ type: 'varchar', length: 20, unique: true })
   IMEI_1!: string

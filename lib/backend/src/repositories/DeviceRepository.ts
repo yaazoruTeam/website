@@ -174,7 +174,7 @@ export class DeviceRepository {
   }
 
   /**
-   * Find existing device by unique fields (SIM_number, IMEI_1, serialNumber, device_number)
+   * Find existing device by unique fields (IMEI_1, serialNumber, device_number)
    * Used to check for duplicates before creating/updating
    * Executes queries in parallel for better performance
    * 
@@ -185,7 +185,6 @@ export class DeviceRepository {
    */
   async findExistingDevice(criteria: {
     device_id?: number | string | undefined
-    SIM_number?: string
     IMEI_1?: string
     serialNumber?: string
     device_number?: string
@@ -194,12 +193,7 @@ export class DeviceRepository {
       logger.debug('[DB] Searching for existing device', { criteria })
 
       // Execute all unique field queries in parallel
-      const [deviceBySIM, deviceByIMEI, deviceBySerial, deviceByNumber] = await Promise.all([
-        criteria.SIM_number
-          ? this.repository.findOne({
-            where: { SIM_number: criteria.SIM_number },
-          })
-          : Promise.resolve(null),
+      const [deviceByIMEI, deviceBySerial, deviceByNumber] = await Promise.all([
         criteria.IMEI_1
           ? this.repository.findOne({
             where: { IMEI_1: criteria.IMEI_1 },
@@ -217,8 +211,8 @@ export class DeviceRepository {
           : Promise.resolve(null),
       ])
 
-      // Get first match (SIM_number, IMEI_1, serialNumber, or device_number - in priority order)
-      const device = deviceBySIM || deviceByIMEI || deviceBySerial || deviceByNumber
+      // Get first match (IMEI_1, serialNumber, or device_number - in priority order)
+      const device = deviceByIMEI || deviceBySerial || deviceByNumber
 
       // Filter out if it's the same device being updated
       if (device && criteria.device_id && device.device_id === Number(criteria.device_id)) {
@@ -228,13 +222,11 @@ export class DeviceRepository {
       if (device) {
         logger.debug('[DB] Found existing device with matching criteria', {
           found_id: device.device_id,
-          matchedBy: deviceBySIM
-            ? 'SIM_number'
-            : deviceByIMEI
-              ? 'IMEI_1'
-              : deviceBySerial
-                ? 'serialNumber'
-                : 'device_number',
+          matchedBy: deviceByIMEI
+            ? 'IMEI_1'
+            : deviceBySerial
+              ? 'serialNumber'
+              : 'device_number',
         })
       }
 

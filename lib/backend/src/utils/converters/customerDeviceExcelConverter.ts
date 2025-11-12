@@ -19,7 +19,7 @@ const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExce
     },
     device: {
       device_number: (row.device_number as string) || '',
-      SIM_number: (row.SIM_number as string) || '',
+      // SIM_number: (row.SIM_number as string) || '',
       IMEI_1: (row.IMEI_1 as string) || '',
       model: (row.model as string) || '',
       status: (row.status as DeviceStatus) || DeviceStatus.ACTIVE,

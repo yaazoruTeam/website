@@ -208,7 +208,6 @@ const checkExistingDevice = async (device: Device.Model, isUpdate: boolean) => {
 
     const existingDevice = await deviceRepository.findExistingDevice({
       device_id: isUpdate ? device.device_id : undefined,
-      SIM_number: device.SIM_number,
       IMEI_1: device.IMEI_1,
       device_number: device.device_number,
       serialNumber: device.serialNumber,
