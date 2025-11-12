@@ -5,16 +5,25 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
+import EditDeviceForm from './EditDeviceForm'
 import SamsungDetails from './samsungDetails'
 
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
+  onDeviceUpdate?: () => void
   onChatOpenChange?: (isOpen: boolean) => void
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice, onChatOpenChange }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
+  device: initialDevice,
+  customerDevice,
+  onChatOpenChange,
+  onDeviceUpdate,
+}) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
+  const [showEditDevice, setShowEditDevice] = useState(false)
+  const [device, setDevice] = useState<Device.Model>(initialDevice)
 
   // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
@@ -24,7 +33,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
       const response = await getCommentsByEntityTypeAndEntityId(
         EntityType.DEVICE,
         device.device_id.toString(),
-        1,
+        1
       )
 
       if (response.data && response.data.length > 0) {
@@ -41,6 +50,17 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     fetchLastComment()
   }, [fetchLastComment])
 
+  useEffect(() => {
+    setDevice(initialDevice)
+  }, [initialDevice])
+
+  const handleEditDeviceSuccess = async () => {
+    setShowEditDevice(false)
+    if (onDeviceUpdate) {
+      onDeviceUpdate()
+    }
+  }
+
   return (
     <Box>
       {/* טופס פרטי המכשיר */}
@@ -48,23 +68,22 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         key={lastComment?.comment_id || 'no-comment'}
         initialValues={{
           device_number: device.device_number,
-          // SIM_number: device.SIM_number,
           IMEI_1: device.IMEI_1,
           model: device.model,
           serialNumber: device.serialNumber || '',
-          registrationDate: device.registrationDate ? formatDateToString(new Date(device.registrationDate)) : '',
-          received_at: customerDevice?.receivedAt 
+          registrationDate: device.registrationDate
+            ? formatDateToString(new Date(device.registrationDate))
+            : '',
+          received_at: customerDevice?.receivedAt
             ? formatDateToString(new Date(customerDevice.receivedAt))
             : '',
           planEndDate: customerDevice?.planEndDate
             ? formatDateToString(new Date(customerDevice.planEndDate))
             : '',
-          // plan: device?.plan || '',
-          // filterVersion: customerDevice?.filterVersion || '',
-          // deviceProgram: customerDevice?.deviceProgram || '',
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
+        simNumber={device.SIM_number}
         lastCommentDate={
           lastComment
             ? new Date(lastComment.created_at).toLocaleDateString('he-IL', {
@@ -77,12 +96,24 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
         onChatOpenChange={onChatOpenChange}
+        onEditClick={() => setShowEditDevice(true)}
       />
-      
+
+      {showEditDevice && (
+        <EditDeviceForm
+          open={showEditDevice}
+          onClose={() => setShowEditDevice(false)}
+          onSuccess={handleEditDeviceSuccess}
+          device={device}
+        />
+      )}
+
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
       </Box>
+
+      {/* פרטי Samsung */}
       <Box sx={{ marginTop: '20px' }}>
         <SamsungDetails serialNumber={device.serialNumber} />
       </Box>

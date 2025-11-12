@@ -45,7 +45,7 @@ import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
 import ExcelUpload from './components/excel/ExcelUpload'
-import SimReset from './components/devices/SimReset'
+import ReprovisionDevice from './components/devices/ReprovisionDevice'
 
 function App() {
   const { t } = useTranslation()
@@ -88,7 +88,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/sim-reset' element={<SimReset />} />
+        <Route path='/reprovision-device' element={<ReprovisionDevice />} />
         
         {/* עמודים מוגנים עם Header ו-SideNav */}
         <Route

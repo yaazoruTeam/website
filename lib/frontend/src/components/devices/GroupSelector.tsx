@@ -16,7 +16,7 @@ interface GroupSelectorProps {
 }
 
 // קבוצות מותרות להחלפה - רק 4 ו-5
-const ALLOWED_GROUP_IDS = [4, 5]
+const ALLOWED_GROUP_IDS = [4, 5, 19]
 
 const GroupSelector: React.FC<GroupSelectorProps> = ({ 
   serialNumber, 
