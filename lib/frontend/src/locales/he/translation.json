@@ -475,10 +475,10 @@
   "domainFilterStatus": "סטטוס סינון דומיין",
   "lastConnected": "התחבר לאחרונה",
   "registeredOn": "נרשם בתאריך",
-  "RegisterInLHR": "רישום ב-LHR",
-  "areYouSureRegisterInLHR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
-  "RegisterInLHRDescription": "הרישום ל-LHR יאפשר למכשיר שלך להתחבר לרשת LHR וליהנות מהשירותים שלה.",
-  "RegisterInLHRSuccessful": "הרשמה ב-HLR הושלמה בהצלחה",
-  "RegisterInLHRFailed": "הרשמה ב-HLR נכשלה",
-  "RegisterInLHRError": "שגיאה בהרשמה ל-HLR"
+  "RegisterInHLR": "רישום ב-HLR",
+  "areYouSureRegisterInHLR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
+  "RegisterInHLRDescription": "הרישום ל-HLR יאפשר למכשיר שלך להתחבר לרשת HLR וליהנות מהשירותים שלה.",
+  "RegisterInHLRSuccessful": "המכשיר נרשם מחדש ב-HLR בהצלחה",
+  "RegisterInHLRFailed": "נכשל ברישום מחדש של המכשיר ב-HLR",
+  "RegisterInHLRError": "שגיאה במהלך רישום מחדש ב-HLR"
 }
