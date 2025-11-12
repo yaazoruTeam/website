@@ -477,5 +477,6 @@
   "registeredOn": "נרשם בתאריך",
   "RegisterInLHR": "רישום ב-LHR",
   "areYouSureRegisterInLHR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
-  "RegisterInLHRSuccessful": "הרשמה ב-HLR הושלמה בהצלחה"
+  "RegisterInLHRSuccessful": "הרשמה ב-HLR הושלמה בהצלחה",
+  "RegisterInLHRFailed": "הרשמה ב-HLR נכשלה"
 }
