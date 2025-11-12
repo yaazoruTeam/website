@@ -1,6 +1,7 @@
 import { CustomerDevice } from '@model'
 import { 
   apiGet,
+  apiPost,
   safeGetPaginated,
   // safeApiGet,
   PaginatedResponse 
@@ -17,10 +18,13 @@ export const getAllCustomerDevicesByCustomerId = async (
 
 export const getCustomerDeviceByDeviceId = async (device_id: string): Promise<CustomerDevice.Model | null> => {
   try {
-    const response = await apiGet<PaginatedResponse<CustomerDevice.Model>>(`${ENDPOINT}/device/${device_id}`)
+    const response = await apiGet<PaginatedResponse<CustomerDevice.Model>>(`${ENDPOINT}/device/${device_id}/page/1`)
     return response.data.length > 0 ? response.data[0] : null
   } catch (error) {
     console.error('Error fetching customer device by device id', error)
     return null
   }
+}
+export const createCustomerDevice = async (customerDeviceData: Omit<CustomerDevice.Model, 'customerDevice_id'>): Promise<CustomerDevice.Model> => {
+  return apiPost<CustomerDevice.Model>(ENDPOINT, customerDeviceData)
 }

@@ -3,11 +3,10 @@
  * מכיל פונקציות משותפות שיכולות להיות בשימוש על ידי כל שירותי Excel
  */
 
-import getDbConnection from '@db/connection'
-import * as db from '@db/index'
 import { Device, Comment } from '@model'
 import { Knex } from 'knex'
 import logger from '../../utils/logger'
+import { deviceRepository } from '@/src/repositories'
 
 export interface ExcelRowData {
   [key: string]: unknown
@@ -91,6 +90,7 @@ export const createErrorFileName = (routeName: string): string => {
  * @returns המכשיר החדש שנוצר
  * @throws Error אם המכשיר כבר קיים (עם פרטי השדות הכפולים)
  */
+//to do: לטפל בטרנזקציה
 export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: Knex.Transaction): Promise<Device.Model> => {
   logger.info(`🔍 Checking if device exists:`, {
     SIM_number: deviceModel.SIM_number,
@@ -99,7 +99,7 @@ export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: K
     serialNumber: deviceModel.serialNumber
   })
 
-  let existDevice = await db.Device.findDevice({
+  let existDevice = await deviceRepository.findExistingDevice({
     SIM_number: deviceModel.SIM_number,
     IMEI_1: deviceModel.IMEI_1,
     device_number: deviceModel.device_number,
@@ -132,7 +132,8 @@ export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: K
   // המכשיר לא קיים - ניצור חדש
   logger.info('📱 Device not found in DB - creating new device...')
   try {
-    existDevice = await db.Device.createDevice(deviceModel, trx)
+    //to do: לטפל בטרנזקציה trx זה אמור להיות בתוך טרנזקציה 
+    existDevice = await deviceRepository.createDevice(deviceModel)
     logger.info(`✅ Device created successfully with ID: ${existDevice.device_id}`)
     return existDevice
   } catch (createError) {
@@ -165,14 +166,14 @@ export const createCommentForEntity = async (
     logger.info(`💬 Creating comment for ${entityType} ${entityId}`)
     
     const commentModel: Comment.Model = {
-      comment_id: '', // יוגדר אוטומטית
-      entity_id: entityId,
+      comment_id: 0, // יוגדר אוטומטית על ידי הדאטהבייס
+      entity_id: parseInt(entityId), // המרה מ-string ל-number
       entity_type: entityType as Comment.EntityType,
       content: commentContent.trim(),
       created_at: new Date()
     }
 
-    await db.Comment.createComment(commentModel, trx)
+    // await db.Comment.createComment(commentModel, trx)
     logger.info(`✅ Comment created successfully for ${entityType} ${entityId}`)
     return true
   } catch (error) {

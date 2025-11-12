@@ -17,9 +17,7 @@ import CommentInput from "./CommentInput";
 import DateSeparator from "./DateSeparator";
 
 // Models and types
-import { Comment } from "@model";
-import { EntityType } from "@model";
-import { CreateCommentDto } from "@model";
+import { Comment, EntityType, CreateCommentDto } from "@model";
 
 // API
 import {
@@ -36,9 +34,11 @@ interface ChatBotProps {
   entityId: string;
   onClose?: () => void;
   commentType?: string;
+  onLocalCommentsChange?: (comments: { content: string; created_at: Date; file_url?: string; file_name?: string; file_type?: string }[]) => void;
 }
 
-interface ClientComment extends Comment.Model {
+interface ClientComment extends Omit<Comment.Model, 'comment_id'> {
+  comment_id: string | number;
   isPending?: boolean;
   isAudio?: boolean;
   audioDuration?: number;
@@ -51,7 +51,7 @@ const generateTempId = (): string => {
   return `temp-${Date.now()}-${tempIdCounter}`;
 };
 
-const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commentType }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commentType, onLocalCommentsChange }) => {
   const [comments, setComments] = useState<ClientComment[]>([]);
   const [inputText, setInputText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -91,8 +91,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
   const addCommentsToList = (newComments: ClientComment[], isLoadMore: boolean) => {
     if (isLoadMore) {
       setComments(prev => {
-        const existingIds = new Set(prev.map(c => c.comment_id));
-        const filtered = newComments.filter(c => !existingIds.has(c.comment_id));
+        const existingIds = new Set(prev.map(c => String(c.comment_id)));
+        const filtered = newComments.filter(c => !existingIds.has(String(c.comment_id)));
         const allComments = [...filtered, ...prev];
         const sortedComments = allComments.sort((a, b) => 
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -114,9 +114,22 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     try {
       if (loadMore) setIsLoadingMore(true);
       
+      // אם זה ישות זמנית, לא נטען הערות מהשרת
+      if (entityId === 'temp-new-customer') {
+        setComments([]);
+        setHasMore(false);
+        return;
+      }
+      
       const response = await getCommentsByEntityTypeAndEntityId(entityType, entityId, page);
       
-      addCommentsToList(response.data, loadMore);
+      // אם זה הטעינה הראשונה עבור לקוח זמני, לא נטען הערות כלל
+      if (page === 1 && !loadMore && entityId === 'temp-new-customer') {
+        addCommentsToList([], false);
+      } else {
+        addCommentsToList(response.data, loadMore);
+      }
+      
       setHasMore(page < response.totalPages);
     } catch (err) {
       console.error("Failed to fetch comments:", err);
@@ -135,12 +148,26 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     setShouldScrollToBottom(true);
   };
 
-  const updateComment = (tempId: string, updatedComment: ClientComment) => {
-    setComments(prev => prev.map(c => c.comment_id === tempId ? updatedComment : c));
+  // נודיע להורה על שינויים בהערות המקומיות של לקוח חדש
+  useEffect(() => {
+    if (entityId === 'temp-new-customer' && typeof onLocalCommentsChange === 'function') {
+      const local = comments.map(c => ({
+        content: c.content,
+        created_at: c.created_at,
+        file_url: c.file_url,
+        file_name: c.file_name,
+        file_type: c.file_type,
+      }));
+      onLocalCommentsChange(local);
+    }
+  }, [comments, entityId, onLocalCommentsChange]);
+
+  const updateComment = (tempId: string | number, updatedComment: ClientComment) => {
+    setComments(prev => prev.map(c => String(c.comment_id) === String(tempId) ? updatedComment : c));
   };
 
-  const removeComment = (commentId: string) => {
-    setComments(prev => prev.filter(c => c.comment_id !== commentId));
+  const removeComment = (commentId: string | number) => {
+    setComments(prev => prev.filter(c => String(c.comment_id) !== String(commentId)));
   };
 
   const sendComment = async () => {
@@ -150,7 +177,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     const tempComment: ClientComment = {
       comment_id: tempCommentId,
       entity_type: entityType,
-      entity_id: entityId,
+      entity_id: entityId === 'temp-new-customer' ? 0 : parseInt(entityId),
       content: inputText,
       created_at: new Date(),
       isAudio: false,
@@ -160,9 +187,16 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     setInputText("");
 
     try {
+      // אם מדובר בלקוח זמני - נשאיר את ההערה מקומית ונעדכן את ההורה
+      if (entityId === 'temp-new-customer') {
+        // אין שליחה לשרת עדיין - ההורה יקבל את ההערות דרך onLocalCommentsChange
+        return;
+      }
+
+      // שליחה רגילה לשרת
       const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
-        entity_id: entityId,
+        entity_id: parseInt(entityId),
         content: tempComment.content,
         created_at: tempComment.created_at.toISOString(),
       };
@@ -172,6 +206,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     } catch (err) {
       console.error("Error sending comment:", err);
       setError(t("FailedToSendComment.PleaseTryAgain."));
+      // אם נכשלנו בשליחה לשרת - נמחק את ההערה המקומית (או נשאיר לפי העדפת UX)
       removeComment(tempCommentId);
     }
   };
@@ -183,7 +218,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     const tempAudioComment: ClientComment = {
       comment_id: tempId,
       entity_type: entityType,
-      entity_id: entityId,
+      entity_id: entityId === 'temp-new-customer' ? 0 : parseInt(entityId),
       content: isRecordingState ? t("recordingInProgress") : t("transcriptionPending"),
       created_at: new Date(),
       isPending: true,
@@ -195,9 +230,16 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     addTempComment(tempAudioComment);
 
     try {
+      // אם זה לקוח זמני - נשאיר את ההערה המקומית (ולא נשלח לשרת)
+      if (entityId === 'temp-new-customer') {
+        // עדכון ההורה יתקיים דרך ה-effect שמאזין ל-comments
+        return;
+      }
+
+      // שליחה רגילה לשרת
       const commentData: CreateCommentDto.Model = {
         entity_type: entityType,
-        entity_id: entityId,
+        entity_id: parseInt(entityId),
         content: transcription,
         created_at: new Date().toISOString(),
       };
@@ -224,7 +266,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
 
     const { scrollTop } = messagesContainerRef.current;
     
-    // בדיקה אם המשתמש גלל למעלה לטעינת הודעות נוספות
+    // בדיקה אם המשתמש גלל למעלה לטעינת הודעות נוסxxx
     if (scrollTop <= 50) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
@@ -246,9 +288,16 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  // useEffect לטעינת הערות כשה-entityId משתנה (למשל מלקוח זמני ללקוח אמיתי)
   useEffect(() => {
+    // איפוס המצב
+    setComments([]);
+    setCurrentPage(1);
+    setHasMore(true);
+    
+    // טעינת הערות מהשרת
     fetchComments(1);
-  }, [fetchComments]);
+  }, [entityId, entityType, fetchComments]);
 
   // useEffect לגלילה חכמה
   useEffect(() => {
@@ -268,7 +317,11 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
   }, [handleScroll]);
 
   return (
-    <Box sx={chatStyles.container}>
+    <Box sx={{
+      ...chatStyles.container,
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
       <IconButton 
         title={t('closed')} 
         disableRipple 
@@ -291,9 +344,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ entityType, entityId, onClose, commen
         ref={messagesContainerRef} 
         sx={{
           ...chatStyles.messagesContainer,
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
         {isLoadingMore && (
