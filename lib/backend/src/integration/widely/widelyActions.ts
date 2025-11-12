@@ -56,7 +56,7 @@ const provCreateMobile = async (
     return result
 }
 
-const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Promise<{
+const reprovisionDevice = async (endpoint_id: string, name: string): Promise<{
     originalInfo: Widely.WidelyMobileData
     terminationResult: Widely.Model
     creationResult: Widely.Model
@@ -130,4 +130,4 @@ const ComprehensiveResetDevice = async (endpoint_id: string, name: string): Prom
     }
 }
 
-export { sendMobileAction, terminateMobile, provCreateMobile, ComprehensiveResetDevice }
+export { sendMobileAction, terminateMobile, provCreateMobile, reprovisionDevice }

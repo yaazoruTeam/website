@@ -7,7 +7,7 @@ export {
     provResetVmPincode,
     getPackagesWithInfo,
     changePackages,
-    ComprehensiveResetDeviceController,
+    reprovisionDeviceController,
     sendApn,
     changeNetwork,
     addOneTimePackage,
