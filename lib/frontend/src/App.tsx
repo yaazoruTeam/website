@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import './App.css'
 import SideNav from './components/layout/SideNav'
 import { GoogleAuthService } from './services/googleAuthService'
+import { loadGoogleMapsAPI } from './utils/googleMapsLoader'
 
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
@@ -58,6 +59,11 @@ function App() {
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
+    
+    // Load Google Maps API
+    loadGoogleMapsAPI().catch((error) => {
+      console.error('Failed to load Google Maps API:', error)
+    })
     
     // Handle Google Auth redirect result when app loads
     const handleAuthRedirect = async () => {

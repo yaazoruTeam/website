@@ -4,12 +4,12 @@ import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import logo1 from '../../assets/logo1.svg'
 import logo2 from '../../assets/logo2.svg'
-import CustomTypography from '../designComponent/Typography'
+// import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import GoogleLoginButton from '../google/GoogleLoginButton'
-import { GoogleSignInResult } from '../../services/googleAuthService'
+// import { useNavigate } from 'react-router-dom'
+// import GoogleLoginButton from '../google/GoogleLoginButton'
+// import { GoogleSignInResult } from '../../services/googleAuthService'
 import { validatePhoneNumber } from '../../utils/phoneValidate'
 import React from 'react'
 
@@ -26,41 +26,41 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation()
   const { control, handleSubmit } = useForm<LoginFormInputs>()
   const isMobile = useMediaQuery('(max-width:600px)')
-  const navigate = useNavigate()
-  const [showLoginForm, setShowLoginForm] = React.useState(false)
+  // const navigate = useNavigate()
+  // const [showLoginForm, setShowLoginForm] = React.useState(false)
 
-  const handleRegisterClick = () => {
-    navigate('/register')
-  }
+  // const handleRegisterClick = () => {
+  //   navigate('/register')
+  // }
 
-  const handleToggleLoginForm = () => {
-    setShowLoginForm(!showLoginForm)
-  }
+  // const handleToggleLoginForm = () => {
+  //   setShowLoginForm(!showLoginForm)
+  // }
 
-  const handleGoogleSuccess = (result: GoogleSignInResult) => {
-    const { firebaseUser, backendResult, backendError } = result
+  // const handleGoogleSuccess = (result: GoogleSignInResult) => {
+  //   const { firebaseUser, backendResult, backendError } = result
     
-    console.log('🎉 Google Login successful!', firebaseUser.displayName)
-    console.log('Backend result:', backendResult)
+  //   console.log('🎉 Google Login successful!', firebaseUser.displayName)
+  //   console.log('Backend result:', backendResult)
     
-    if (backendResult?.token) {
-      // Store the JWT token from backend - using single 'token' key for consistency
-      localStorage.setItem('token', backendResult.token)
+  //   if (backendResult?.token) {
+  //     // Store the JWT token from backend - using single 'token' key for consistency
+  //     localStorage.setItem('token', backendResult.token)
       
-      // Navigate to dashboard
-      navigate('/dashboard')
-    } else if (firebaseUser) {
-      // Fallback: use Firebase user info even if backend failed
-      console.warn('Google auth succeeded but backend sync failed:', backendError)
-      // You could create a temporary token or handle this case differently
-      navigate('/dashboard')
-    }
-  }
+  //     // Navigate to dashboard
+  //     navigate('/dashboard')
+  //   } else if (firebaseUser) {
+  //     // Fallback: use Firebase user info even if backend failed
+  //     console.warn('Google auth succeeded but backend sync failed:', backendError)
+  //     // You could create a temporary token or handle this case differently
+  //     navigate('/dashboard')
+  //   }
+  // }
 
-  const handleGoogleError = (error: Error & { code?: string; userMessage?: string }) => {
-    console.error('❌ Google Login failed:', error)
-    alert(`Google login failed: ${error.userMessage || error.message}`)
-  }
+  // const handleGoogleError = (error: Error & { code?: string; userMessage?: string }) => {
+  //   console.error('❌ Google Login failed:', error)
+  //   alert(`Google login failed: ${error.userMessage || error.message}`)
+  // }
 
   return (
     <Box
@@ -90,77 +90,77 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         <img style={{ width: 47.19, height: 45.45 }} src={logo2} alt='' />
       </Box>
 
-      {!showLoginForm ? (
-        <>
-          {/* Google Login View - Default */}
-          <Box
+      {/* {!showLoginForm ? ( */}
+      {/* <>
+        {/* Google Login View - Default */}
+      {/*   <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3,
+            alignItems: 'center',
+          }}
+        >
+          <CustomTypography
+            text={t('loginSystem')}
+            variant='h2'
+            weight='bold'
+            color={colors.neutral900}
             sx={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3,
-              alignItems: 'center',
+              marginBottom: 2,
             }}
-          >
-            <CustomTypography
-              text={t('loginSystem')}
-              variant='h2'
-              weight='bold'
-              color={colors.neutral900}
-              sx={{
-                marginBottom: 2,
-              }}
-            />
-            
-            {/* Google Login Button */}
-            <GoogleLoginButton
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useRedirect={isMobile}
-            />
+          />
+          
+          {/* Google Login Button */}
+      {/*   <GoogleLoginButton
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            useRedirect={isMobile}
+          />
 
-            {/* Toggle to Phone/Password Login */}
-            <Box
-              sx={{
-                textAlign: 'center',
-                cursor: 'pointer',
-                marginTop: 2,
-              }}
-              onClick={handleToggleLoginForm}
-            >
-              <CustomTypography
-                text={t('loginNotThroughGoogle')}
-                variant='h3'
-                weight='medium'
-                color={colors.blue900}
-                sx={{
-                  textDecoration: 'underline',
-                }}
-              />
-            </Box>
-          </Box>
-
-          {/* Sign Up Link Outside */}
-          <Box
-            onClick={handleRegisterClick}
+          {/* Toggle to Phone/Password Login */}
+      {/*   <Box
             sx={{
               textAlign: 'center',
               cursor: 'pointer',
-              marginTop: 3,
+              marginTop: 2,
             }}
+            onClick={handleToggleLoginForm}
           >
-            <CustomTypography
-              text={t('registerButton')}
+            {/* <CustomTypography
+              text={t('loginNotThroughGoogle')}
               variant='h3'
               weight='medium'
               color={colors.blue900}
               sx={{
                 textDecoration: 'underline',
               }}
-            />
-          </Box>
-        </>
-      ) : (
+            /> */}
+      {/*   </Box>
+        </Box>
+
+        {/* Sign Up Link Outside */}
+      {/*   <Box
+          onClick={handleRegisterClick}
+          sx={{
+            textAlign: 'center',
+            cursor: 'pointer',
+            marginTop: 3,
+          }}
+        >
+          {/* <CustomTypography
+            text={t('registerButton')}
+            variant='h3'
+            weight='medium'
+            color={colors.blue900}
+            sx={{
+              textDecoration: 'underline',
+            }}
+          /> */}
+      {/*   </Box>
+      </> */}
+      {/* ) : ( */}
         <>
           {/* Phone & Password Login View */}
           <Box
@@ -189,7 +189,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 required: t('requiredField'),
               }}
             />
-            <CustomTypography
+            {/* <CustomTypography
               text={t('forgotPassword?')}
               variant='h3'
               weight='medium'
@@ -199,7 +199,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                 textDecoration: 'underline',
                 cursor: 'pointer',
               }}
-            />
+            /> */}
           </Box>
 
           <CustomButton
@@ -211,15 +211,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           />
 
           {/* Toggle back to Google Login */}
-          <Box
+          {/* <Box
             sx={{
               textAlign: 'center',
               cursor: 'pointer',
               marginTop: 2,
             }}
             onClick={handleToggleLoginForm}
-          >
-            <CustomTypography
+          > */}
+            {/* <CustomTypography
               text={t('loginThroughGoogle')}
               variant='h3'
               weight='medium'
@@ -227,10 +227,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
               sx={{
                 textDecoration: 'underline',
               }}
-            />
-          </Box>
+            /> */}
+          {/* </Box> */}
         </>
-      )}
+      {/* )} */}
     </Box>
   )
 }

@@ -5,7 +5,7 @@ import { Customer, CustomerDevice, Device } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../../styles/theme'
-import { getDeviceById, getDevices } from '../../../api/device'
+import { getDeviceById, getDevices, updateDevice } from '../../../api/device'
 import DeviceRowInline from './DeviceRowInline'
 import { Autocomplete, TextField, CircularProgress } from '@mui/material'
 import { CustomButton } from '../../designComponent/Button'
@@ -42,9 +42,9 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         const devicesData = await Promise.all(
           customerDevicesResponse.data.map(async (customerDevice: CustomerDevice.Model) => {
             try {
-              const device = await getDeviceById(customerDevice.device_id)
+              const device = await getDeviceById(customerDevice.device_id.toString())
               return { ...device, customerDevice }
-            } catch (error: unknown) {
+            } catch {
               return null
             }
           }),
@@ -54,13 +54,13 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             d !== null && d !== undefined,
         )
         setDevices(filteredDevices)
-      } catch (error: unknown) {
+      } catch {
         setDevices([])
       } finally {
         setIsLoading(false)
       }
     },
-    [t], 
+    [], 
   )
 
   const fetchAvailableDevices = useCallback(async () => {
@@ -93,23 +93,22 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       for (const device of allDevices) {
         try {
           if (!device.device_id) continue
-          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id.toString())
+          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id.toString())        
           if (!customerDevice) {
             availableList.push(device)
           }
-        } catch (error: unknown) {
+        } catch {
           availableList.push(device)
         }
       }
       
       setAvailableDevices(availableList)
-    } catch (error: unknown) {
+    } catch {
       setAvailableDevices([])
     } finally {
       setIsLoadingAvailableDevices(false)
     }
   }, [])
-
 
   useEffect(() => {
     // שליפת המכשירים של הלקוח
@@ -144,19 +143,26 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         setAssigning(false)
         return
       }
-      let DEVICE_ALLOCATION_YEARS = 5
+      const DEVICE_ALLOCATION_YEARS = 5
       const today = new Date()
       const endDate = new Date()
       endDate.setFullYear(endDate.getFullYear() + DEVICE_ALLOCATION_YEARS)
 
       const customerDeviceData: Omit<CustomerDevice.Model, 'customerDevice_id'> = {
-        customer_id: String(customer.customer_id),
-        device_id: String(selectedDevice.device_id),
+        customer_id: customer.customer_id,
+        device_id: selectedDevice.device_id,
         receivedAt: today,
         planEndDate: endDate,
       }
       
       await createCustomerDevice(customerDeviceData)
+      await updateDevice(
+        {
+          ...selectedDevice,
+          purchaseDate: new Date(Date.now()),
+        },
+        selectedDevice.device_id
+      )
       
       setAssignmentSuccess(t('deviceAssignedSuccessfully'))
       setSelectedDevice(null)
@@ -171,7 +177,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { 
           response?: { 
-            data?: any;
+            data?: unknown;
             status?: number;
             statusText?: string;
           };
@@ -185,10 +191,10 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
           
           if (typeof responseData === 'string') {
             errorMessage = responseData
-          } else if (responseData.message) {
-            errorMessage = responseData.message
-          } else if (responseData.error) {
-            errorMessage = responseData.error
+          } else if (responseData && typeof responseData === 'object' && 'message' in responseData) {
+            errorMessage = (responseData as { message: string }).message
+          } else if (responseData && typeof responseData === 'object' && 'error' in responseData) {
+            errorMessage = (responseData as { error: string }).error
           }
         }
         
@@ -251,7 +257,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             <Box sx={{ width: '33%' }}> 
               <Autocomplete
                 options={availableDevices}
-                getOptionLabel={(option) => `${option.device_id}${option.model ? ` - ${option.model}` : ''}`}
+                getOptionLabel={(option) => `${option.device_id}${option.device_number ? ` - ${option.device_number}` : ''}`}
                 value={selectedDevice} 
                 onChange={(_event, newValue) => {
                   setSelectedDevice(newValue)

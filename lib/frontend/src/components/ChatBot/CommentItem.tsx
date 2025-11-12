@@ -7,7 +7,9 @@ import profilePicture from '../../assets/profilePicture.svg';
 import { commentStyles } from './styles';
 import { Comment } from '@model';
 
-interface ClientComment extends Comment.Model {
+interface ClientComment extends Omit<Comment.Model, 'comment_id' | 'entity_id'> {
+  comment_id: string | number;
+  entity_id: string | number;
   isPending?: boolean;
   isAudio?: boolean;
   audioDuration?: number;
@@ -50,7 +52,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             <MicrophoneIcon style={commentStyles.microphoneIcon} />
             <CustomTypography
               text={
-                isRecordingState && comment.comment_id === currentTempAudioCommentId
+                isRecordingState && String(comment.comment_id) === String(currentTempAudioCommentId)
                   ? "🔴 מקליט..."
                   : comment.isPending
                   ? "⌛ תמלול בהמתנה..."
