@@ -3,6 +3,7 @@ import { useEffect, useState, Fragment, useCallback } from 'react'
 import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
+import { EyeIcon } from '@heroicons/react/24/outline'
 
 // Interface עבור פריט חבילה בודד
 interface PackageItem {
@@ -166,7 +167,25 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const infoItems = widelyDetails ? [
         { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
-        { title: t('IMEI 1'), value: widelyDetails.imei1 },
+        {
+            title: t('IMEI 1'),
+            value: (
+                <Box display="flex" alignItems="center" gap={1}>
+                    <span>{widelyDetails.imei1}</span>
+                    {widelyDetails.imei1 && (
+                        <EyeIcon
+                            style={{ width: 20, height: 20, cursor: 'pointer', color: colors.blue700 }}
+                            onClick={() => {
+                                if (widelyDetails?.imei1) {
+                                    window.open(`https://www.imei.info/?imei=${widelyDetails.imei1}`, '_blank');
+                                }
+                            }}
+                            title={t('viewImeiInfo')}
+                        />
+                    )}
+                </Box>
+            )
+        },
         { title: t('status'), value: t(widelyDetails.status) },
         { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
     ] : []
@@ -718,7 +737,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                                 color={colors.blue900}
                             />
                             <CustomTypography
-                                text={item.value}
+                                text={item.value as string }
                                 variant="h3"
                                 weight="bold"
                                 color={colors.blue900}
