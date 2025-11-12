@@ -283,7 +283,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         onClose={() => setIsImeiModalOpen(false)}
         imeiFromDatabase={initialValues?.IMEI_1 || ''}
         imeiFromSim={widelyImei}
-        serialNumber={samsungImei}
+        imeisamsung={samsungImei}
       />
     </Box>
   )

@@ -10,7 +10,7 @@ interface ImeiDetailsModalProps {
   onClose: () => void
   imeiFromDatabase: string
   imeiFromSim?: string
-  serialNumber?: string
+  imeisamsung?: string
 }
 
 const ImeiDetailsModal: React.FC<ImeiDetailsModalProps> = ({
@@ -18,7 +18,7 @@ const ImeiDetailsModal: React.FC<ImeiDetailsModalProps> = ({
   onClose,
   imeiFromDatabase,
   imeiFromSim,
-  serialNumber,
+  imeisamsung,
 }) => {
   const { t } = useTranslation()
 
@@ -77,7 +77,7 @@ const ImeiDetailsModal: React.FC<ImeiDetailsModalProps> = ({
             sx={{ marginBottom: 1 }}
           />
           <CustomTypography
-            text={serialNumber || t('dataNotAvailable')}
+            text={imeisamsung || t('dataNotAvailable')}
             variant="h3"
             weight="bold"
             color={colors.blue900}
