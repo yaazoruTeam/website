@@ -2,30 +2,30 @@ import React, { useState } from 'react'
 import { Snackbar, Alert } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { ComprehensiveResetDevice, getWidelyDetailsPublic } from '../../api/widely'
+import { reprovisionDevice, getWidelyDetailsPublic } from '../../api/widely'
 import { WidelyDeviceDetails } from '@model'
 import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import {
-  SimResetContainer,
-  SimResetCard,
-  SimResetCardContent,
-  SimResetHeader,
-  SimResetFormSection,
-  SimResetDeviceInfoBox,
-  SimResetDeviceInfoContent,
-  SimResetErrorBox,
-  SimResetSuccessBox,
-  SimResetButtonContainer
-} from '../designComponent/styles/simResetStyles'
+  ReprovisionDeviceContainer,
+  ReprovisionDeviceCard,
+  ReprovisionDeviceCardContent,
+  ReprovisionDeviceHeader,
+  ReprovisionDeviceFormSection,
+  ReprovisionDeviceDeviceInfoBox,
+  ReprovisionDeviceDeviceInfoContent,
+  ReprovisionDeviceErrorBox,
+  ReprovisionDeviceSuccessBox,
+  ReprovisionDeviceButtonContainer
+} from '../designComponent/styles/reprovisionDeviceStyles'
 
-interface SimResetFormData {
+interface ReprovisionDeviceFormData {
   simLastSixDigits: string
 }
 
-const SimReset: React.FC = () => {
+const ReprovisionDevice: React.FC = () => {
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
@@ -33,7 +33,7 @@ const SimReset: React.FC = () => {
   const [deviceInfo, setDeviceInfo] = useState<WidelyDeviceDetails.Model | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<SimResetFormData>({
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<ReprovisionDeviceFormData>({
     defaultValues: {
       simLastSixDigits: ''
     }
@@ -44,7 +44,7 @@ const SimReset: React.FC = () => {
     return input.length > 6 ? input : `8997212330000${input}`
   }
 
-  const checkDeviceStatus = async (data: SimResetFormData) => {
+  const checkDeviceStatus = async (data: ReprovisionDeviceFormData) => {
     if (!data.simLastSixDigits.trim()) {
       setErrorMessage(t('allFieldsRequired'))
       return
@@ -81,7 +81,7 @@ const SimReset: React.FC = () => {
     }
   }
 
-  const handleResetSim = async (data: SimResetFormData) => {
+  const handleReprovisionSim = async (data: ReprovisionDeviceFormData) => {
     if (!data.simLastSixDigits.trim()) {
       setErrorMessage(t('allFieldsRequired'))
       return
@@ -129,31 +129,31 @@ const SimReset: React.FC = () => {
 
       if (!confirmed) return
 
-      // ביצוע איפוס מקיף
-      console.log('[SimReset] Starting comprehensive reset with parameters:', {
+      // ביצוע הפעלה מחדש של המכשיר
+      console.log('[ReprovisionDevice] Starting reprovision device with parameters:', {
         endpoint_id: deviceDetails.endpoint_id,
         device_name: deviceDetails.device_info.name,
         sim_number: fullSimNumber,
         device_status: deviceDetails.status
       })
       
-      const resetResult = await ComprehensiveResetDevice(deviceDetails.endpoint_id, deviceDetails.device_info.name)
+      const reprovisionResult = await reprovisionDevice(deviceDetails.endpoint_id, deviceDetails.device_info.name)
       
-      console.log('[SimReset] Comprehensive reset completed:', resetResult)
+      console.log('[ReprovisionDevice] reprovision device completed:', reprovisionResult)
       
-      // בדיקה אם האיפוס הצליח באמת
-      if (resetResult.success && resetResult.data?.newEndpointId) {
-        console.log('[SimReset] Reset successful, new endpoint ID:', resetResult.data.newEndpointId)
-        setSuccessMessage(`${t('simResetSuccess')} - Endpoint ID חדש: ${resetResult.data.newEndpointId}`)
+      // בדיקה אם ההפעלה מחדש הצליחה באמת
+      if (reprovisionResult.success && reprovisionResult.data?.newEndpointId) {
+        console.log('[ReprovisionDevice] Reprovision successful, new endpoint ID:', reprovisionResult.data.newEndpointId)
+        setSuccessMessage(`${t('reprovisionDeviceSuccess')} - Endpoint ID חדש: ${reprovisionResult.data.newEndpointId}`)
       } else {
-        console.warn('[SimReset] Reset may have failed:', resetResult)
-        setSuccessMessage(t('simResetSuccess'))
+        console.warn('[ReprovisionDevice] Reprovision device may have failed:', reprovisionResult)
+        setSuccessMessage(t('reprovisionDeviceSuccess'))
       }
       
       reset() // איפוס הטופס לאחר הצלחה
     } catch (error: unknown) {
       console.error('Error resetting SIM:', error)
-      let errorMsg = t('simResetError')
+      let errorMsg = t('reprovisionDeviceError')
       
       if (error && typeof error === 'object') {
         if ('response' in error && error.response && typeof error.response === 'object' && 
@@ -176,7 +176,7 @@ const SimReset: React.FC = () => {
         }
       }
       
-      setErrorMessage(`${t('simResetFailed')}: ${errorMsg}`)
+      setErrorMessage(`${t('reprovisionDeviceError')}: ${errorMsg}`)
     } finally {
       setIsLoading(false)
     }
@@ -184,19 +184,19 @@ const SimReset: React.FC = () => {
 
   return (
     <>
-      <SimResetContainer maxWidth="md">
-        <SimResetCard>
-          <SimResetCardContent>
-            <SimResetHeader>
+      <ReprovisionDeviceContainer maxWidth="md">
+        <ReprovisionDeviceCard>
+          <ReprovisionDeviceCardContent>
+            <ReprovisionDeviceHeader>
               <CustomTypography 
                 text={t('simReset')} 
                 variant="h1" 
                 weight="medium" 
                 color={colors.blue600} 
               />
-            </SimResetHeader>
+            </ReprovisionDeviceHeader>
 
-            <SimResetFormSection>
+            <ReprovisionDeviceFormSection>
 
         <CustomTextField
           control={control}
@@ -222,57 +222,57 @@ const SimReset: React.FC = () => {
         />
 
         {deviceInfo && (
-              <SimResetDeviceInfoBox>
+              <ReprovisionDeviceDeviceInfoBox>
             <CustomTypography 
               text={t('deviceInformation')} 
               variant="h4" 
               color={colors.blue700}
               weight="medium"
             />
-                <SimResetDeviceInfoContent>
+                <ReprovisionDeviceDeviceInfoContent>
               <CustomTypography text={`${t('deviceName')}: ${deviceInfo.device_info.name}`} variant="h5" weight="regular" />
               <CustomTypography text={`${t('deviceModel')}: ${deviceInfo.device_info.brand} ${deviceInfo.device_info.model}`} variant="h5" weight="regular" />
               <CustomTypography text={`${t('deviceStatus')}: ${deviceInfo.status}`} variant="h5" weight="regular" />
               <CustomTypography text={`Endpoint ID: ${deviceInfo.endpoint_id}`} variant="h5" weight="regular" />
               <CustomTypography text={`${t('activeStatus')}: ${deviceInfo.active ? t('active') : t('inactive')}`} variant="h5" weight="regular" />
-                </SimResetDeviceInfoContent>
-              </SimResetDeviceInfoBox>
+                </ReprovisionDeviceDeviceInfoContent>
+              </ReprovisionDeviceDeviceInfoBox>
         )}
 
         {errorMessage && (
-              <SimResetErrorBox>
+              <ReprovisionDeviceErrorBox>
             <CustomTypography 
               text={errorMessage} 
               variant="h5" 
               color={colors.red500}
               weight="medium"
             />
-              </SimResetErrorBox>
+              </ReprovisionDeviceErrorBox>
         )}
 
         {successMessage && (
-              <SimResetSuccessBox>
+              <ReprovisionDeviceSuccessBox>
             <CustomTypography 
               text={successMessage} 
               variant="h5" 
               color={colors.green500}
               weight="medium"
             />
-              </SimResetSuccessBox>
+              </ReprovisionDeviceSuccessBox>
         )}
-              <SimResetButtonContainer>
+              <ReprovisionDeviceButtonContainer>
         <CustomButton
           label={isLoading ? t('processing') : t('resetSim')}
-          onClick={handleSubmit(handleResetSim)}
+          onClick={handleSubmit(handleReprovisionSim)}
           buttonType="first"
           size="large"
           disabled={isLoading}
         />
-              </SimResetButtonContainer>
-            </SimResetFormSection>
-          </SimResetCardContent>
-        </SimResetCard>
-      </SimResetContainer>
+              </ReprovisionDeviceButtonContainer>
+            </ReprovisionDeviceFormSection>
+          </ReprovisionDeviceCardContent>
+        </ReprovisionDeviceCard>
+      </ReprovisionDeviceContainer>
 
       {/* Snackbar for notifications */}
       <Snackbar
@@ -300,4 +300,4 @@ const SimReset: React.FC = () => {
   )
 }
 
-export default SimReset
+export default ReprovisionDevice

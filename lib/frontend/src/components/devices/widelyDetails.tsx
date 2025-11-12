@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert, CircularProgress } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, registerInHlr } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, reprovisionDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, registerInHlr } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 
@@ -260,8 +260,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         }
     }
 
-    // פונקציה לאיפוס מקיף של מכשיר
-    const handleComprehensiveReset = async () => {
+    // פונקציה לביטול והפעלה מחדש של מכשיר
+    const handlereprovisionDevice = async () => {
         if (!widelyDetails?.endpoint_id) {
             setErrorMessage(t('errorNoEndpointId'));
             return;
@@ -269,27 +269,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
         // בקשת אישור מהמשתמש
         const confirmed = window.confirm(
-            `${t('areYouSureComprehensiveReset')} ${widelyDetails.endpoint_id}?\n\n${t('warningComprehensiveReset')}`
+            `${t('areYouSurereprovisionDevice')} ${widelyDetails.endpoint_id}?\n\n${t('warningreprovisionDevice')}`
         );
 
         if (!confirmed) return;
 
-        // בקשת שם למכשיר החדש
-        const deviceName = window.prompt(t('enterNewDeviceName'), `Reset_${widelyDetails.endpoint_id}_${new Date().toISOString().split('T')[0]}`);
-
-        if (!deviceName) {
-            setErrorMessage(t('deviceNameRequired'));
-            return;
-        }
-
         startRefreshing();
         try {
             setLoading(true);
-            const result = await ComprehensiveResetDevice(widelyDetails.endpoint_id, deviceName);
+            const result = await reprovisionDevice(widelyDetails.endpoint_id, widelyDetails.device_info.name);
 
             if (result.success) {
                 setSuccessMessage(
-                    `${t('comprehensiveResetSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
+                    `${t('reprovisionDeviceSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
                 );
                 // רענון הנתונים לאחר איפוס מוצלח
                 setTimeout(async () => {
@@ -298,14 +290,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setRefreshing(false);
                 }, 2000);
             } else {
-                setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
+                setErrorMessage(`${t('reprovisionDeviceFailed')}: ${result.message}`);
                 setRefreshing(false);
             }
         } catch (err: unknown) {
-            console.error('Error in comprehensive reset:', err);
-            const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
-            setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
-            alert(`Error in comprehensive reset: ${errorMsg}`);
+            console.error('Error in reprovision device:', err);
+            const errorMsg = handleErrorUtil('reprovisionDevice', err, t('reprovisionDeviceError'));
+            setErrorMessage(`${t('reprovisionDeviceFailed')}: ${errorMsg}`);
+            alert(`Error in reprovision device: ${errorMsg}`);
             setRefreshing(false);
         } finally {
             setLoading(false);
@@ -803,7 +795,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <HeaderSection />
             {renderContent()}
 
-            {/* כפתור איפוס סיסמת תא קולי */}
             <WidelyButtonSection>
                 <CustomButton
                     label={t('RegisterInLHR')}
@@ -818,8 +809,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     size="large"
                 />
                 <CustomButton
-                    label={t('comprehensiveReset')}
-                    onClick={handleComprehensiveReset}
+                    label={t('reprovisionDevice')}
+                    onClick={handlereprovisionDevice}
                     buttonType="fourth"
                     size="large"
                 />

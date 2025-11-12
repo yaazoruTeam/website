@@ -1,4 +1,4 @@
-import { Widely, WidelyDeviceDetails, ComprehensiveResetResponse } from '@model'
+import { Widely, WidelyDeviceDetails, ReprovisionDeviceResponse } from '@model'
 import {
   apiPost,
   apiPostPublic,
@@ -44,12 +44,9 @@ export const resetVoicemailPincode = async (endpoint_id: number): Promise<Widely
   return apiPost<Widely.Model>(`${ENDPOINT}/prov_reset_vm_pincode`, { endpoint_id })
 }
 
-// איפוס מקיף של מכשיר כטרנזקציה
-export const ComprehensiveResetDevice = async (endpoint_id: number | string, name: string): Promise<ComprehensiveResetResponse.Model> => {
-  return apiPostPublic<ComprehensiveResetResponse.Model>(`${ENDPOINT}/reset_device`, {
-    endpoint_id,
-    name
-  })
+// ביטול והפעלה מחדש של המכשיר הנייד
+export const reprovisionDevice = async (endpoint_id: number, name: string): Promise<ReprovisionDeviceResponse.Model> => {
+  return apiPostPublic<ReprovisionDeviceResponse.Model>(`${ENDPOINT}/reset_device`, { endpoint_id, name })
 }
 
 // קבלת מידע על מכשיר נייד

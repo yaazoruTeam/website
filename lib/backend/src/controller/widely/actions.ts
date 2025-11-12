@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
-import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
+import { sendMobileAction, reprovisionDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 import { handleError } from '../err'
 
@@ -121,14 +121,14 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-// איפוס מקיף של מכשיר כטרנזקציה
-const ComprehensiveResetDeviceController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// הפעלה מחדש של מכשיר כטרנזקציה
+const reprovisionDeviceController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, name } = req.body
 
     validateRequiredParams({ endpoint_id, name })
 
-    const result = await ComprehensiveResetDevice(endpoint_id, name)
+    const result = await reprovisionDevice(endpoint_id, name)
 
     const terminationSuccess = result.terminationResult.error_code === 200 || result.terminationResult.error_code === undefined
     const creationSuccess = result.creationResult.error_code === 200 || result.creationResult.error_code === undefined
@@ -304,7 +304,7 @@ export {
   provResetVmPincode,
   getPackagesWithInfo,
   changePackages,
-  ComprehensiveResetDeviceController,
+  reprovisionDeviceController,
   sendApn,
   changeNetwork,
   addOneTimePackage,
