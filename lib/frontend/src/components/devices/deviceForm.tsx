@@ -4,7 +4,6 @@ import { colors } from '../../styles/theme'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CustomButton } from '../designComponent/Button'
 import { Snackbar, Alert } from '@mui/material'
 import {
   ChatModalContainer,
@@ -49,17 +48,14 @@ interface DeviceFormProps {
 const DeviceForm: React.FC<DeviceFormProps> = ({
   initialValues,
   deviceId,
-  customerDeviceId,
   simNumber,
   lastCommentDate,
   lastComment,
   onCommentsRefresh,
-  onSave,
   onChatOpenChange,
 }) => {
   const { t } = useTranslation()
   const [isChatOpen, setIsChatOpen] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isImeiModalOpen, setIsImeiModalOpen] = useState(false)
@@ -73,8 +69,6 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
 
   const {
     control,
-    getValues,
-    formState: { isDirty },
   } = useForm<deviceFormInputs>({
     defaultValues: initialValues || {
       IMEI_1: '',
@@ -88,25 +82,6 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
     },
   })
 
-  const handleSave = async () => {
-    if (!customerDeviceId) {
-      setErrorMessage(t('errorSavingData'))
-      return
-    }
-
-    setIsSaving(true)
-    try {
-      const values = getValues()
-      console.log('Saving planEndDate:', values.planEndDate)
-      if (onSave) await onSave(values.planEndDate)
-      setSuccessMessage(t('dataSavedSuccessfully'))
-    } catch (error) {
-      console.error('Error saving plan end date:', error)
-      setErrorMessage(t('errorSavingData'))
-    } finally {
-      setIsSaving(false)
-    }
-  }
 
   // Fetch Widely IMEI
   const fetchWidelyImei = useCallback(async () => {
@@ -169,15 +144,6 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
               weight='regular'
             />
           </Box>
-          {isDirty && (
-            <CustomButton
-              label={isSaving ? t('saving') : t('save')}
-              buttonType='third'
-              size='small'
-              onClick={handleSave}
-              disabled={isSaving}
-            />
-          )}
         </Box>
 
         {/* שדות פרטי מכשיר */}
@@ -214,9 +180,9 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
           <CustomTextField control={control} name='model' label={t('modelDevice')} />
         </Box>
         <Box sx={{ display: 'flex', gap: '28px', paddingBottom: '24px' }}>
-          <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} disabled />
+          <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} /> 
           <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} disabled />
-          <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} type='date' />
+          <CustomTextField control={control} name='planEndDate' label={t('programEndDate')}  disabled/>
         </Box>
 
         {/* הערות וצ'אט */}
