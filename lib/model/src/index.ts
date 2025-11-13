@@ -5,7 +5,6 @@ import { DeviceStatus } from './SimCard'
 import * as HttpError from './HttpError'
 import * as HttpErrorWithStatus from './HttpErrorWithStatus'
 import * as CreateCommentDto from './Dtos'
-import * as CustomerDevice from './CustomerDevice'
 import * as User from './User'
 import * as SimCard from './SimCard'
 import * as JwtPayload from './JwtPayload'
@@ -36,7 +35,6 @@ export {
   DeviceStatus,
   HttpError,
   HttpErrorWithStatus,
-  CustomerDevice,
   User,
   SimCard,
   JwtPayload,
