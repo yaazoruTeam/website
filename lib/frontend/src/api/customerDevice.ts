@@ -2,8 +2,8 @@ import { CustomerDevice } from '@model'
 import { 
   apiGet,
   apiPost,
+  apiPut,
   safeGetPaginated,
-  // safeApiGet,
   PaginatedResponse 
 } from './core/apiHelpers'
 
@@ -25,6 +25,14 @@ export const getCustomerDeviceByDeviceId = async (device_id: string): Promise<Cu
     return null
   }
 }
+
 export const createCustomerDevice = async (customerDeviceData: Omit<CustomerDevice.Model, 'customerDevice_id'>): Promise<CustomerDevice.Model> => {
   return apiPost<CustomerDevice.Model>(ENDPOINT, customerDeviceData)
+}
+
+export const updateCustomerDevice = async (
+  customerDevice_id: string, 
+  customerDeviceData: Partial<CustomerDevice.Model>
+): Promise<CustomerDevice.Model> => {
+  return apiPut<CustomerDevice.Model>(`${ENDPOINT}/${customerDevice_id}`, customerDeviceData)
 }

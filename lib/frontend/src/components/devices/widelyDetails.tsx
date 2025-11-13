@@ -84,7 +84,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const [Refreshing, setRefreshing] = useState<boolean>(false);
     const [lastRefreshTime, setLastRefreshTime] = useState<string | null>(null);
-
+    
     // Load last refresh time from localStorage on component mount
     useEffect(() => {
         const savedTime = localStorage.getItem('sim_last_refresh');
@@ -799,7 +799,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     };
 
     useEffect(() => {
-        // קוראים ל-fetchWidelyDetails רק בטעינה הראשונה, לא כאשר open משתנה
+        // קוראים ל-fetchWidelyDetails רק בטעינה הראשונה
         fetchWidelyDetails();
     }, [fetchWidelyDetails]);
 

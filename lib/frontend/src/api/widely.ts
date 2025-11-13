@@ -84,6 +84,18 @@ export const registerInHlr = async (endpoint_id: number): Promise<Widely.Model> 
   return apiPost<Widely.Model>(`${ENDPOINT}/reregister_in_hlr`, { endpoint_id })
 }
 
+export const getLineCancellationStatus = async (simNumber: string): Promise<{
+  isCancelled: boolean;
+  cancellationDate?: string;
+  cancellationReason?: string;
+}> => {
+  return apiPost<{
+    isCancelled: boolean;
+    cancellationDate?: string;
+    cancellationReason?: string;
+  }>(`/customerDevice/cancellation-status`, { simNumber })
+}
+
 export const softResetDevice = async (endpoint_id: number): Promise<Widely.Model> => {
   return apiPost<Widely.Model>(`${ENDPOINT}/cancel_all_locations`, { endpoint_id })
 }

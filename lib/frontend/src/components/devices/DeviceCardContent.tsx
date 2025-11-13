@@ -5,6 +5,7 @@ import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
+import { getLineCancellationStatus } from '../../api/widely'
 import EditDeviceForm from './EditDeviceForm'
 import SamsungDetails from './samsungDetails'
 
@@ -46,6 +47,27 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
     }
   }, [device.device_id])
 
+  // בדיקת סטטוס ביטול קו (ללא שימוש ישיר, אך משמרים ב-localStorage)
+  useEffect(() => {
+    const fetchCancellationStatus = async () => {
+      if (!device.SIM_number) return
+      try {
+        const status = await getLineCancellationStatus(device.SIM_number)
+        localStorage.setItem(
+          `cancellationStatus_${device.SIM_number}`,
+          JSON.stringify(status)
+        )
+      } catch {
+        // אם יש שגיאה, ננסה לקרוא מה-localStorage
+        const local = localStorage.getItem(`cancellationStatus_${device.SIM_number}`)
+        if (local) {
+          JSON.parse(local)
+        }
+      }
+    }
+    fetchCancellationStatus()
+  }, [device.SIM_number])
+
   useEffect(() => {
     fetchLastComment()
   }, [fetchLastComment])
@@ -83,6 +105,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
+        customerDeviceId={customerDevice?.customerDevice_id?.toString()}
         simNumber={device.SIM_number}
         lastCommentDate={
           lastComment

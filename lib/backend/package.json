@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@google-cloud/speech": "^7.2.0",
+        "@types/node-cron": "^3.0.11",
         "@types/xlsx": "^0.0.36",
         "axios": "^1.7.9",
         "bcryptjs": "^2.4.3",
@@ -31,6 +32,7 @@
         "media-typer": "^1.1.0",
         "model": "file:../model",
         "multer": "^2.0.1",
+        "node-cron": "^4.2.1",
         "nodemon": "^3.1.10",
         "pg": "^8.13.3",
         "pg-hstore": "^2.3.4",

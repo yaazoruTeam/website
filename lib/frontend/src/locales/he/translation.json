@@ -401,7 +401,7 @@
   "errorDuplicateIdOrEmail": "שגיאה: מספר ת.ז או אימייל כבר קיימים",
   "error": "שגיאה",
   "No previous comments": "אין הערות קודמות",
-  "simReset": "הפעלה מחדש של מכשיר",
+  "simReset": "איפוס מכשיר",
   "enterSimLastSixDigits": "הזינו את 6 הספרות האחרונות של הסים או מספר סים מלא",
   "simNumberSixDigitsOnly": "יש להזין בדיוק 6 ספרות",
   "simNumberMinSixDigits": "יש להזין לפחות 6 ספרות",
@@ -500,5 +500,12 @@
   "imeiFromDatabase": "IMEI ממסד הנתונים",
   "imeiFromSim": "IMEI מהסים (Widely)",
   "imeiFromSamsung": "IMEI מסמסונג",
+  "lineCancelled": "קו בוטל",
+  "lineCancelledAutomatically": "תוקף התוכנית פג - ביטול אוטומטי",
+  "cancellationDate": "תאריך ביטול",
+  "packageNotFound": "חבילה לא נמצאה",
+  "dataSavedSuccessfully": "הנתונים נשמרו בהצלחה",
+  "errorSavingData": "שגיאה בשמירת הנתונים",
+  "simReset": "איפוס מכשיר"
   "networkName": "שם רשת"
 }

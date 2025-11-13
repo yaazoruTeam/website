@@ -495,5 +495,13 @@
   "imeiFromDatabase": "IMEI from Database",
   "imeiFromSim": "IMEI from SIM (Widely)",
   "imeiFromSamsung": "IMEI from Samsung",
+  "lineCancelled": "line cancelled",
+  "lineCancelledAutomatically": "line cancelled automatically due to inactivity",
+  "cancellationDate": "cancellation date",
+  "packageNotFound": "package not found",
+  "dataSavedSuccessfully": "data saved successfully",
+  "errorSavingData": "error saving data",
+  "simReset": "Device Reprovision"
+}
   "networkName": "Network Name"
   }
