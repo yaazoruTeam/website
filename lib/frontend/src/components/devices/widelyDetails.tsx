@@ -336,7 +336,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
         // בקשת אישור מהמשתמש
         const confirmed = window.confirm(
-            `${t('areYouSureRegisterInHLR')} ${widelyDetails.endpoint_id}?\n\n${t('RegisterInHLRDescription')}`
+            `${t('areYouSureComprehensiveReset')} ${widelyDetails.endpoint_id}?\n\n${t('ComprehensiveResetDescription')}`
         );
 
         if (!confirmed) return;
@@ -821,7 +821,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
             <WidelyButtonSection>
                 <CustomButton
-                    label={t('RegisterInHLR')}
+                    label={t('ComprehensiveReset')}
                     onClick={handleRegisterInHLR}
                     buttonType="fourth"
                     size="large"
