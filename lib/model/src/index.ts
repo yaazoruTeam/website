@@ -21,7 +21,7 @@ import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
-import * as ComprehensiveResetResponse from './ComprehensiveResetResponse'
+import * as ReprovisionDeviceResponse from './ReprovisionDevice'
 import * as Request from './Request'
 import * as Switchboard from './Switchboard'
 import * as GoogleAuth from './GoogleAuth'
@@ -53,7 +53,7 @@ export {
   EntityType,
   Widely,
   WidelyDeviceDetails,
-  ComprehensiveResetResponse,
+  ReprovisionDeviceResponse,
   Request,
   Switchboard,
   GoogleAuth,

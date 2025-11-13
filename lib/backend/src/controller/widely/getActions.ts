@@ -317,22 +317,22 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
     const maxDataAllowance = (mobileInfo?.data_limit as number) || 0
     const networkConnection = mobileInfo?.registration_info?.plmn_name || 'Not available'
     const imei = mobileInfo?.sim_data?.locked_imei || mobileInfo?.registration_info?.imei || 'Not available'
-   let status = mobileInfo?.registration_info?.status
+    let status = mobileInfo?.registration_info?.status
     if (!status) {
      status = (mobileInfo as any)?.active ? 'Active' : 'Inactive'
     }
 
-  logger.debug('getAllUserData extracted data fields', {
-    dataUsage,
-    maxDataAllowance,
-    networkConnection,
-    imei,
-    status,
-    subscriptions: mobileInfo?.subscriptions,
-    data_used: mobileInfo?.data_used,
-    data_limit: mobileInfo?.data_limit,
-    registration_info: mobileInfo?.registration_info,
-  })
+    logger.debug('getAllUserData extracted data fields', {
+      dataUsage,
+      maxDataAllowance,
+      networkConnection,
+      imei,
+      status,
+      subscriptions: mobileInfo?.subscriptions,
+      data_used: mobileInfo?.data_used,
+      data_limit: mobileInfo?.data_limit,
+      registration_info: mobileInfo?.registration_info,
+    })
 
     const responseData: WidelyDeviceDetails.Model = {
       simNumber,
@@ -355,16 +355,16 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
       active: mobileInfo?.active ?? false,
     }
 
-    logger.debug('getAllUserData Step 4 completed - response data formatted', { 
-      responseData,
-      responseDataKeys: Object.keys(responseData)
-    })
-    logger.debug('getAllUserData sending successful response')
     res.status(200).json(responseData)
   } catch (error: unknown) {
-    logger.debug('getAllUserData caught error', { error })
     handleError(error, next)
   }
 }
 
-export { searchUsers, getMobiles, getMobileInfo, getAllUserData, getMobileInfoData }
+export {
+  searchUsers,
+  getMobiles,
+  getMobileInfo,
+  getAllUserData,
+  getMobileInfoData
+}

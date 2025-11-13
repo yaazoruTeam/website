@@ -80,6 +80,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
           notes: '',
         }}
         deviceId={simCardState.device?.device_id?.toString()}//check this
+        simNumber={simCardState.simNumber}
         lastCommentDate={
           lastComment
             ? new Date(lastComment.created_at).toLocaleDateString('he-IL', {
