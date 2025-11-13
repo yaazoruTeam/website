@@ -322,14 +322,12 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
      status = (mobileInfo as any)?.active ? 'Active' : 'Inactive'
     }
 
-    const network_name =mobileInfo?.registration_info?.plmn_name 
     logger.debug('getAllUserData extracted data fields', {
       dataUsage,
       maxDataAllowance,
       networkConnection,
       imei,
       status,
-      network_name,
       subscriptions: mobileInfo?.subscriptions,
       data_used: mobileInfo?.data_used,
       data_limit: mobileInfo?.data_limit,
@@ -341,7 +339,6 @@ const getAllUserData = async (req: Request, res: Response, next: NextFunction): 
       endpoint_id: endpoint_id,
       domain_user_id: mobileInfo?.domain_user_id || 0,
       network_connection: networkConnection,
-      network_name: networkConnection,
       data_usage_gb: parseFloat(dataUsage.toFixed(3)),
       max_data_gb: parseFloat(maxDataAllowance.toFixed(3)),
       imei1: imei,

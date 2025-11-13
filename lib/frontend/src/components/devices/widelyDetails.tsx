@@ -169,7 +169,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         { title: t('IMEI'), value: widelyDetails.imei1 },
         { title: t('status'), value: t(widelyDetails.status) },
         { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) },
-        { title: t('networkName'), value: widelyDetails.network_name|| '-' }
+        { title: t('networkName'), value: widelyDetails.network_connection|| '-' }
     ] : []
 
     // עיצוב החוצץ בין הפריטים
