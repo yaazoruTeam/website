@@ -4,7 +4,7 @@
  */
 //to
 import { customerRepository } from '@repositories/CustomerRepository'
-import { customerDeviceRepository } from '@repositories/CustomerDeviceRepository'
+// import { customerDeviceRepository } from '@repositories/CustomerDeviceRepository'
 import { CustomerDeviceExcel } from '@model'
 import { convertFlatRowToModel } from '@utils/converters/customerDeviceExcelConverter'
 import { writeErrorsToExcel } from '@utils/excel'
@@ -58,22 +58,22 @@ const processCustomerDeviceExcelData = async (data: ExcelRowData[]): Promise<Pro
         const existDevice = await createDeviceIfNotExists(sanitized.device)
 
         // בדיקה אם המכשיר כבר משויך ללקוח אחר
-        const existingRelation = await customerDeviceRepository.findExistingCustomerDevice({
-          device_id: existDevice.device_id,
-        })
+        // const existingRelation = await customerDeviceRepository.findExistingCustomerDevice({
+        //   device_id: existDevice.device_id,
+        // })
 
-        if (!existingRelation) {
-          const date: Date = new Date(sanitized.receivedAt)
-          const planEndDate = new Date(date)
-          planEndDate.setFullYear(planEndDate.getFullYear() + 5)
+        // if (!existingRelation) {
+        //   const date: Date = new Date(sanitized.receivedAt)
+        //   const planEndDate = new Date(date)
+        //   planEndDate.setFullYear(planEndDate.getFullYear() + 5)
 
-          await customerDeviceRepository.createCustomerDevice({
-            customer_id: existCustomer.customer_id,
-            device_id: existDevice.device_id!,
-            receivedAt: date,
-            planEndDate: planEndDate,
-          })
-        }
+        //   await customerDeviceRepository.createCustomerDevice({
+        //     customer_id: existCustomer.customer_id,
+        //     device_id: existDevice.device_id!,
+        //     receivedAt: date,
+        //     planEndDate: planEndDate,
+        //   })
+        // }
 
         successCount++
         logger.debug(`Row ${rowIndex}: Customer-Device processed successfully`)

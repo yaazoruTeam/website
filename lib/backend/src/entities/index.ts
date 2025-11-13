@@ -1,4 +1,4 @@
 export { Customer, CustomerStatus } from './Customer'
-export { Device, DeviceStatus } from './Device'
+export { Device } from './Device'
+export { SimCards, DeviceStatus } from './SimCard'
 export { Comment, EntityType } from './Comment'
-export { CustomerDevice } from './CustomerDevice'

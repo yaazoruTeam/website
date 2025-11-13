@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  Unique
+  Unique,
 } from 'typeorm'
 
 export enum UserRole {

@@ -20,7 +20,6 @@ interface EditDeviceFormProps {
 
 interface DeviceFormData {
   device_number: string
-  SIM_number: string
   IMEI_1: string
   serialNumber: string
   model: string
@@ -47,7 +46,6 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
   const { control, handleSubmit, reset } = useForm<DeviceFormData>({
     defaultValues: {
       device_number: device.device_number || '',
-      SIM_number: device.SIM_number || '',
       IMEI_1: device.IMEI_1 || '',
       serialNumber: device.serialNumber || '',
       model: device.model || '',
@@ -59,14 +57,8 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
       const updateData = {
         ...data,
         device_id: device.device_id,
-        status: device.status,
-        purchaseDate: device.purchaseDate,
-        registrationDate: device.registrationDate,
-        plan: device.plan,
       }
-      
       await updateDevice(updateData, device.device_id!)
-
       onClose()
       onSuccess()
     } catch (error: unknown) {
@@ -79,7 +71,6 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
     if (open) {
       reset({
         device_number: device.device_number || '',
-        SIM_number: device.SIM_number || '',
         IMEI_1: device.IMEI_1 || '',
         serialNumber: device.serialNumber || '',
         model: device.model || '',
@@ -143,13 +134,6 @@ const EditDeviceForm: React.FC<EditDeviceFormProps> = ({ open, onClose, onSucces
           control={control}
           name="device_number"
           label={t('deviceNumber')}
-          inputProps={numericInputProps}
-          rules={getNumericFieldRules()}
-        />
-        <CustomTextField
-          control={control}
-          name="SIM_number"
-          label={t('simNumber')}
           inputProps={numericInputProps}
           rules={getNumericFieldRules()}
         />

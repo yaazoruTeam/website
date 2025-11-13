@@ -93,14 +93,14 @@ export const createErrorFileName = (routeName: string): string => {
 //to do: לטפל בטרנזקציה
 export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: Knex.Transaction): Promise<Device.Model> => {
   logger.info(`🔍 Checking if device exists:`, {
-    SIM_number: deviceModel.SIM_number,
+    // SIM_number: deviceModel.SIM_number,
     IMEI_1: deviceModel.IMEI_1,
     device_number: deviceModel.device_number,
     serialNumber: deviceModel.serialNumber
   })
 
   let existDevice = await deviceRepository.findExistingDevice({
-    SIM_number: deviceModel.SIM_number,
+    // SIM_number: deviceModel.SIM_number,
     IMEI_1: deviceModel.IMEI_1,
     device_number: deviceModel.device_number,
     serialNumber: deviceModel.serialNumber,
@@ -113,9 +113,9 @@ export const createDeviceIfNotExists = async (deviceModel: Device.Model, trx?: K
     
     // בדיקה איזה שדה גורם לכפילות
     let conflictFields = []
-    if (existDevice.SIM_number === deviceModel.SIM_number) {
-      conflictFields.push(`SIM_number: ${deviceModel.SIM_number}`)
-    }
+    // if (existDevice.SIM_number === deviceModel.SIM_number) {
+    //   conflictFields.push(`SIM_number: ${deviceModel.SIM_number}`)
+    // }
     if (existDevice.IMEI_1 === deviceModel.IMEI_1) {
       conflictFields.push(`IMEI_1: ${deviceModel.IMEI_1}`)
     }

@@ -18,6 +18,7 @@ interface Model {
   google_uid?: string //לא חובה , UNIQUE
   photo_url?: string // לא חובה, 
   email_verified?: boolean // לא חובה, DEFAULT TO לבדוק מה זה אומר -- ערך ברירת מחדל false  
+  // Relationships
 }
 
 function sanitize(user: Model, hasId: boolean): Model {

@@ -1,81 +1,69 @@
 import { Box } from '@mui/system'
 import React, { useCallback, useEffect, useState } from 'react'
-import { getAllCustomerDevicesByCustomerId, getCustomerDeviceByDeviceId, createCustomerDevice } from '../../../api/customerDevice'
-import { Customer, CustomerDevice, Device } from '@model'
+import { getSimCardsByCustomerId, getSimCardsWithoutCustomerButWithDevice, updateSimCard } from '../../../api/simCard'
+import { Customer, SimCard } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
 import { colors } from '../../../styles/theme'
-import { getDeviceById, getDevices, updateDevice } from '../../../api/device'
 import DeviceRowInline from './DeviceRowInline'
 import { Autocomplete, TextField, CircularProgress } from '@mui/material'
 import { CustomButton } from '../../designComponent/Button'
 
 const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => {
   const { t } = useTranslation()
- const [devices, setDevices] = useState<
-    (Device.Model & { customerDevice: CustomerDevice.Model })[]
-  >([])
+  const [devices, setDevices] = useState<SimCard.Model[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [openedDeviceId, setOpenedDeviceId] = useState<string | null>(null)
-  const [selectedDevice, setSelectedDevice] = useState<Device.Model | null>(null) // המכשיר שנבחר לשיוך
-  const [availableDevices, setAvailableDevices] = useState<Device.Model[]>([]) // רשימת המכשירים הפנויים
-  const [isLoadingAvailableDevices, setIsLoadingAvailableDevices] = useState<boolean>(false) // מצב טעינת המכשירים הפנויים
-  const [assignmentError, setAssignmentError] = useState<string | null>(null) // הודעת שגיאה בשיוך
-  const [assignmentSuccess, setAssignmentSuccess] = useState<string | null>(null) // הודעת הצלחה בשיוך
-  const [Assigning, setAssigning] = useState<boolean>(false) // האם מתבצע שיוך כרגע
+  const [selectedSimCard, setSelectedSimCard] = useState<SimCard.Model | null>(null)
+  const [availableSimCards, setAvailableSimCards] = useState<SimCard.Model[]>([])
+  const [isLoadingAvailableDevices, setIsLoadingAvailableDevices] = useState<boolean>(false)
+  const [assignmentError, setAssignmentError] = useState<string | null>(null)
+  const [assignmentSuccess, setAssignmentSuccess] = useState<string | null>(null)
+  const [Assigning, setAssigning] = useState<boolean>(false)
 
-  const fetchDevicesByCustomerId = useCallback(
+  // Fetch SIM cards for this customer
+  const fetchSimCardsByCustomerId = useCallback(
     async (customerId: number) => {
       try {
         setIsLoading(true)
         setError(null)
 
-        const customerDevicesResponse = await getAllCustomerDevicesByCustomerId(customerId.toString(), 1)
+        const simCardsResponse = await getSimCardsByCustomerId(customerId, 1)
 
-        if (!customerDevicesResponse.data || customerDevicesResponse.data.length === 0) {
+        if (!simCardsResponse.data || simCardsResponse.data.length === 0) {
           setDevices([])
           setIsLoading(false)
           return
         }
 
-        const devicesData = await Promise.all(
-          customerDevicesResponse.data.map(async (customerDevice: CustomerDevice.Model) => {
-            try {
-              const device = await getDeviceById(customerDevice.device_id.toString())
-              return { ...device, customerDevice }
-            } catch {
-              return null
-            }
-          }),
-        )
-        const filteredDevices = devicesData.filter(
-          (d: Device.Model | null | undefined): d is Device.Model & { customerDevice: CustomerDevice.Model } =>
-            d !== null && d !== undefined,
-        )
-        setDevices(filteredDevices)
-      } catch {
+        setDevices(simCardsResponse.data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch SIM cards')
         setDevices([])
       } finally {
         setIsLoading(false)
       }
     },
-    [], 
+    [],
   )
 
+  // Fetch available SIM cards without customer but with device
   const fetchAvailableDevices = useCallback(async () => {
     try {
       setIsLoadingAvailableDevices(true)
       
-      let allDevices: Device.Model[] = []
+      let allSimCards: SimCard.Model[] = []
       let currentPage = 1
       let hasMorePages = true
       
+      // Fetch all pages of SIM cards without customer but with device
+      //TODO מה עם המספרי סים שלא מקושרים לשום מכשיר?
       while (hasMorePages) {
-        const pageResponse = await getDevices(currentPage)
+        const pageResponse = await getSimCardsWithoutCustomerButWithDevice(currentPage)
         
         if (pageResponse.data && pageResponse.data.length > 0) {
-          allDevices = [...allDevices, ...pageResponse.data]
+          allSimCards = [...allSimCards, ...pageResponse.data]
           hasMorePages = currentPage < pageResponse.totalPages
           currentPage++
         } else {
@@ -83,45 +71,31 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         }
       }
       
-      if (allDevices.length === 0) {
-        setAvailableDevices([])
+      if (allSimCards.length === 0) {
+        setAvailableSimCards([])
         return
       }
-
-      const availableList: Device.Model[] = []
       
-      for (const device of allDevices) {
-        try {
-          if (!device.device_id) continue
-          const customerDevice = await getCustomerDeviceByDeviceId(device.device_id.toString())        
-          if (!customerDevice) {
-            availableList.push(device)
-          }
-        } catch {
-          availableList.push(device)
-        }
-      }
-      
-      setAvailableDevices(availableList)
-    } catch {
-      setAvailableDevices([])
+      setAvailableSimCards(allSimCards)
+    } catch (err) {
+      console.error('Error fetching available devices:', err)
+      setAvailableSimCards([])
     } finally {
       setIsLoadingAvailableDevices(false)
     }
   }, [])
 
   useEffect(() => {
-    // שליפת המכשירים של הלקוח
-    fetchDevicesByCustomerId(customer.customer_id)
+    fetchSimCardsByCustomerId(customer.customer_id)
     fetchAvailableDevices()
-  }, [customer.customer_id, fetchDevicesByCustomerId, fetchAvailableDevices])
+  }, [customer.customer_id, fetchSimCardsByCustomerId, fetchAvailableDevices])
 
   const handleRowClick = (deviceId: string) => {
     setOpenedDeviceId((prev) => (prev === deviceId ? null : deviceId))
   }
 
   const handleAssignDevice = async () => {
-    if (!selectedDevice) {
+    if (!selectedSimCard) {
       setAssignmentError(t('pleaseSelectDevice'))
       return
     }
@@ -131,45 +105,35 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       setAssignmentError(null)
       setAssignmentSuccess(null)
 
-      if (!selectedDevice.device_id) {
+      if (!selectedSimCard.simCard_id) {
         setAssignmentError(t('pleaseSelectDevice'))
         setAssigning(false)
         return
       }
 
-      const existingAssignment = await getCustomerDeviceByDeviceId(selectedDevice.device_id.toString())
-      if (existingAssignment) {
-        setAssignmentError(t('deviceAlreadyAssigned'))
-        setAssigning(false)
-        return
-      }
-      const DEVICE_ALLOCATION_YEARS = 5
-      const today = new Date()
-      const endDate = new Date()
-      endDate.setFullYear(endDate.getFullYear() + DEVICE_ALLOCATION_YEARS)
-
-      const customerDeviceData: Omit<CustomerDevice.Model, 'customerDevice_id'> = {
+      // 1️⃣ קריאת שרת לעדכון ה-SIM card עם customer_id ו-receivedAt
+      // זה העדכון הכי חשוב - אנחנו קושרים את ה-SIM card ללקוח
+      const futureDate = new Date()
+      futureDate.setFullYear(futureDate.getFullYear() + 5)
+      
+      await updateSimCard(selectedSimCard.simCard_id, {
+        ...selectedSimCard,
         customer_id: customer.customer_id,
-        device_id: selectedDevice.device_id,
-        receivedAt: today,
-        planEndDate: endDate,
-      }
-      
-      await createCustomerDevice(customerDeviceData)
-      await updateDevice(
-        {
-          ...selectedDevice,
-          purchaseDate: new Date(Date.now()),
-        },
-        selectedDevice.device_id
-      )
-      
+        receivedAt: new Date(),
+        planEndDate: futureDate,
+      })
+
+      // 2️⃣ אם ההעדכון הצליח, אנחנו מראים הודעת הצלחה
       setAssignmentSuccess(t('deviceAssignedSuccessfully'))
-      setSelectedDevice(null)
+      setSelectedSimCard(null)
       
-      await fetchDevicesByCustomerId(customer.customer_id)
+      // 3️⃣ רענון הנתונים - שליפה מחדש של:
+      // - ה-SIM cards של הלקוח הזה (כדי להציג את ה-SIM card החדש שהוקצה)
+      // - ה-SIM cards הזמינים (כדי להסיר את זה שהוקצה מהרשימה)
+      await fetchSimCardsByCustomerId(customer.customer_id)
       await fetchAvailableDevices()
       
+      // 4️⃣ הסרת הודעת ההצלחה אחרי 3 שניות
       setTimeout(() => {
         setAssignmentSuccess(null)
       }, 3000)
@@ -199,6 +163,8 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
         }
         
         setAssignmentError(errorMessage)
+      } else if (error instanceof Error) {
+        setAssignmentError(error.message)
       } else {
         setAssignmentError(t('errorAssigningDevice'))
       }
@@ -220,7 +186,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
           {devices.map((device) => (
             <DeviceRowInline
               key={device.device_id}
-              device={device}
+              simCard={device}
               isOpen={openedDeviceId === device.device_id?.toString()}
               onClick={() => device.device_id !== undefined && handleRowClick(device.device_id.toString())}
             />
@@ -256,11 +222,11 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
           }}>
             <Box sx={{ width: '33%' }}> 
               <Autocomplete
-                options={availableDevices}
-                getOptionLabel={(option) => `${option.device_id}${option.device_number ? ` - ${option.device_number}` : ''}`}
-                value={selectedDevice} 
+                options={availableSimCards}
+                getOptionLabel={(option) => `${option.simNumber}${option.device?.device_number ? ` - ${option.device.device_number}` : ''}`}
+                value={selectedSimCard} 
                 onChange={(_event, newValue) => {
-                  setSelectedDevice(newValue)
+                  setSelectedSimCard(newValue)
                   setAssignmentError(null) 
                   setAssignmentSuccess(null) 
                 }}
@@ -300,11 +266,11 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
                         borderRadius: '6px', 
                         paddingRight: '14px',
                         '& fieldset': {
-                          borderColor: !selectedDevice ? colors.neutral300 : colors.blueOverlay700,
+                          borderColor: !selectedSimCard ? colors.neutral300 : colors.blueOverlay700,
                           textAlign: 'right', 
                         },
                         '&:hover fieldset': {
-                          borderColor: !selectedDevice ? colors.neutral400 : colors.blue600,
+                          borderColor: !selectedSimCard ? colors.neutral400 : colors.blue600,
                         },
                         '& input': {
                           textAlign: 'right', 
@@ -334,15 +300,15 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
             <CustomButton
               label={Assigning ? (t('assigning')) : (t('assignDevice'))} 
               size='small'
-              state={!selectedDevice || Assigning ? 'active' : 'default'}
+              state={!selectedSimCard || Assigning ? 'active' : 'default'}
               buttonType='first'
               onClick={handleAssignDevice} 
-              disabled={!selectedDevice || Assigning}
+              disabled={!selectedSimCard || Assigning}
               sx={{
                 minWidth: '100px',
                 height: '40px',
                 fontSize: '14px', 
-                ...((!selectedDevice || Assigning) && {
+                ...((!selectedSimCard || Assigning) && {
                   borderColor: `${colors.neutral300} !important`,
                 }),
               }}

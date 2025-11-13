@@ -16,14 +16,14 @@ const convertFlatRowToDeviceModel = (row: Record<string, unknown>): Device.Model
 
   return {
     device_number: toSafeString(row.device_number),
-    SIM_number: toSafeString(row.SIM_number),
+    // SIM_number: toSafeString(row.SIM_number),
     IMEI_1: toSafeString(row.IMEI_1),
     model: toSafeString(row.model),
-    status: (row.status as DeviceStatus) || DeviceStatus.ACTIVE,
+    // status: (row.status as DeviceStatus) || DeviceStatus.ACTIVE,
     serialNumber: toSafeString(row.serialNumber),
-    purchaseDate: null,
-    registrationDate: new Date(),
-    plan: toSafeString(row.plan),
+    // purchaseDate: null,
+    // registrationDate: new Date(),
+    // plan: toSafeString(row.plan),
   }
 }
 
