@@ -483,17 +483,17 @@
   "registeredOn": "Registered On",
   "caStatus": "CA Status",
   "apnStatus": "APN Status",
-  "RegisterInHLR": "Register in HLR",
-  "areYouSureRegisterInHLR": "Are you sure you want to re-register the device in the HLR?",
-  "RegisterInHLRDescription": "This action will attempt to re-register the device in the Home Location Register (HLR) to resolve connectivity issues.",
   "RegisterInHLRSuccessful": "Device successfully re-registered in HLR",
   "RegisterInHLRFailed": "Failed to re-register device in HLR",
   "RegisterInHLRError": "Error during HLR re-registration",
+  "areYouSureComprehensiveReset": "Are you sure you want to perform a comprehensive reset on device",
+  "ComprehensiveResetDescription": "This action will perform a comprehensive reset of the device, including re-registration in HLR and network settings restoration.",
   "connectedTo":"Connected to",
   "pleaseSelectDevice": "Please select a device",
   "imeiDetails": " IMEI Details",
   "imeiFromDatabase": "IMEI from Database",
   "imeiFromSim": "IMEI from SIM (Widely)",
   "imeiFromSamsung": "IMEI from Samsung",
-  "networkName": "Network Name"
+  "networkName": "Network Name",
+  "ComprehensiveReset": "Comprehensive Reset"
   }

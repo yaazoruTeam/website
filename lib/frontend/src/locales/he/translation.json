@@ -490,15 +490,15 @@
   "domainFilterStatus": "סטטוס סינון דומיין",
   "lastConnected": "התחברות אחרונה",
   "registeredOn": "נרשם בתאריך",
-  "RegisterInHLR": "רישום ב-HLR",
-  "areYouSureRegisterInHLR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
-  "RegisterInHLRDescription": "הרישום ל-HLR יאפשר למכשיר שלך להתחבר לרשת HLR וליהנות מהשירותים שלה.",
   "RegisterInHLRSuccessful": "המכשיר נרשם מחדש ב-HLR בהצלחה",
   "RegisterInHLRFailed": "נכשל ברישום מחדש של המכשיר ב-HLR",
   "RegisterInHLRError": "שגיאה במהלך רישום מחדש ב-HLR",
+  "areYouSureComprehensiveReset": "האם אתה בטוח שברצונך לבצע איפוס מקיף למכשיר",
+  "ComprehensiveResetDescription": "פעולה זו תבצע איפוס מקיף של המכשיר, כולל רישום מחדש ב-HLR ושחזור הגדרות רשת.",
   "imeiDetails": "פרטי IMEI",
   "imeiFromDatabase": "IMEI ממסד הנתונים",
   "imeiFromSim": "IMEI מהסים (Widely)",
   "imeiFromSamsung": "IMEI מסמסונג",
-  "networkName": "שם רשת"
+  "networkName": "שם רשת",
+  "ComprehensiveReset": "איפוס מקיף"
 }
