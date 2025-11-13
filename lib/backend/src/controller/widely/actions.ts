@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { HttpError, Widely } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
-import { sendMobileAction, ComprehensiveResetDevice } from '@integration/widely/widelyActions'
+import { sendMobileAction, reprovisionDevice } from '@integration/widely/widelyActions'
 import { config } from '@config/index'
 import { handleError } from '../err'
 
@@ -121,14 +121,14 @@ const changePackages = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-// איפוס מקיף של מכשיר כטרנזקציה
-const ComprehensiveResetDeviceController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// הפעלה מחדש של מכשיר כטרנזקציה
+const reprovisionDeviceController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, name } = req.body
 
     validateRequiredParams({ endpoint_id, name })
 
-    const result = await ComprehensiveResetDevice(endpoint_id, name)
+    const result = await reprovisionDevice(endpoint_id, name)
 
     const terminationSuccess = result.terminationResult.error_code === 200 || result.terminationResult.error_code === undefined
     const creationSuccess = result.creationResult.error_code === 200 || result.creationResult.error_code === undefined
@@ -255,6 +255,20 @@ const reregisterInHlr = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
+const cancelAllLocations = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { endpoint_id } = req.body
+    validateRequiredParams({ endpoint_id })
+
+    const result: Widely.Model = await sendMobileAction(endpoint_id, 'cancel_all_locations')
+
+    validateWidelyResult(result, 'Failed to cancel all locations', false)
+    res.status(200).json(result)
+  } catch (error: unknown) {
+    handleError(error, next)
+  }
+}
+
 const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, iccid, action } = req.body
@@ -290,11 +304,12 @@ export {
   provResetVmPincode,
   getPackagesWithInfo,
   changePackages,
-  ComprehensiveResetDeviceController,
+  reprovisionDeviceController,
   sendApn,
   changeNetwork,
   addOneTimePackage,
   freezeUnFreezeMobile,
   updateImeiLockStatus,
-  reregisterInHlr
+  reregisterInHlr,
+  cancelAllLocations
 }

@@ -14,11 +14,12 @@ widelyRouter.post('/get_packages_with_info', hasRole('admin'), widelyController.
 widelyRouter.post('/prov_reset_vm_pincode', hasRole('admin'), widelyController.provResetVmPincode)
 widelyRouter.post('/send_apn', hasRole('admin'), widelyController.sendApn)
 widelyRouter.post('/update_mobile_subscription', hasRole('admin'), widelyController.changePackages)
-widelyRouter.post('/reset_device', widelyController.ComprehensiveResetDeviceController)
+widelyRouter.post('/reset_device', widelyController.reprovisionDeviceController)
 widelyRouter.post('/changeNetwork', hasRole('admin'), widelyController.changeNetwork)
 widelyRouter.post('/add_one_time_package', hasRole('admin'), widelyController.addOneTimePackage)
 widelyRouter.post('/freeze_unfreeze_mobile', hasRole('admin'), widelyController.freezeUnFreezeMobile)
 widelyRouter.post('/lock_unlock_imei', hasRole('admin'), widelyController.updateImeiLockStatus)
 widelyRouter.post('/reregister_in_hlr', hasRole('admin'), widelyController.reregisterInHlr)
+widelyRouter.post('/cancel_all_locations', hasRole('admin'), widelyController.cancelAllLocations)
 
 export default widelyRouter

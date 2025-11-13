@@ -6,13 +6,22 @@ import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
 import { getCommentsByEntityTypeAndEntityId } from '../../api/comment'
 import { getLineCancellationStatus } from '../../api/widely'
+import EditDeviceForm from './EditDeviceForm'
+import SamsungDetails from './samsungDetails'
 
 interface DeviceCardContentProps {
   device: Device.Model
   customerDevice?: CustomerDevice.Model
+  onDeviceUpdate?: () => void
+  onChatOpenChange?: (isOpen: boolean) => void
 }
 
-const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerDevice }) => {
+const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
+  device: initialDevice,
+  customerDevice,
+  onChatOpenChange,
+  onDeviceUpdate,
+}) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
   const [cancellationStatus, setCancellationStatus] = useState<{ isCancelled: boolean; cancellationDate?: string; cancellationReason?: string } | null>(null)
 
@@ -21,6 +30,8 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     console.log('CustomerDevice:', customerDevice)
     console.log('CustomerDevice ID:', customerDevice?.customerDevice_id)
   }, [customerDevice])
+  const [showEditDevice, setShowEditDevice] = useState(false)
+  const [device, setDevice] = useState<Device.Model>(initialDevice)
 
   // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
@@ -28,9 +39,9 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
 
     try {
       const response = await getCommentsByEntityTypeAndEntityId(
-        EntityType.Device,
+        EntityType.DEVICE,
         device.device_id.toString(),
-        1,
+        1
       )
 
       if (response.data && response.data.length > 0) {
@@ -71,6 +82,17 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
     fetchLastComment()
   }, [fetchLastComment])
 
+  useEffect(() => {
+    setDevice(initialDevice)
+  }, [initialDevice])
+
+  const handleEditDeviceSuccess = async () => {
+    setShowEditDevice(false)
+    if (onDeviceUpdate) {
+      onDeviceUpdate()
+    }
+  }
+
   return (
     <Box>
       {/* טופס פרטי המכשיר */}
@@ -81,15 +103,20 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
           IMEI_1: device.IMEI_1,
           model: device.model,
           serialNumber: device.serialNumber || '',
-          registrationDate: device.registrationDate ? formatDateToString(new Date(device.registrationDate)) : '',
-          received_at: customerDevice?.receivedAt 
+          registrationDate: device.registrationDate
+            ? formatDateToString(new Date(device.registrationDate))
+            : '',
+          received_at: customerDevice?.receivedAt
             ? formatDateToString(new Date(customerDevice.receivedAt))
             : '',
-          planEndDate: '', // הוספת planEndDate כערך ריק כדי למנוע שגיאת קומפילציה
+          planEndDate: customerDevice?.planEndDate
+            ? formatDateToString(new Date(customerDevice.planEndDate))
+            : '',
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
         customerDeviceId={customerDevice?.customerDevice_id}
+        simNumber={device.SIM_number}
         lastCommentDate={
           lastComment
             ? new Date(lastComment.created_at).toLocaleDateString('he-IL', {
@@ -101,30 +128,27 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({ device, customerD
         }
         lastComment={lastComment ? lastComment.content : undefined}
         onCommentsRefresh={fetchLastComment}
+        onChatOpenChange={onChatOpenChange}
+        onEditClick={() => setShowEditDevice(true)}
       />
+
+      {showEditDevice && (
+        <EditDeviceForm
+          open={showEditDevice}
+          onClose={() => setShowEditDevice(false)}
+          onSuccess={handleEditDeviceSuccess}
+          device={device}
+        />
+      )}
+
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
         <WidelyDetails simNumber={device.SIM_number} />
-        {/* הצגת סטטוס ביטול קו */}
-        {cancellationStatus?.isCancelled && (
-          <Box sx={{ color: 'red', fontSize: '0.9em', mt: 1 }}>
-            {cancellationStatus.cancellationReason ? (
-              <>
-                <div>{cancellationStatus.cancellationReason}</div>
-                {cancellationStatus.cancellationDate && (
-                  <div>{`(בוטל בתאריך: ${cancellationStatus.cancellationDate})`}</div>
-                )}
-              </>
-            ) : (
-              <div>הקו בוטל</div>
-            )}
-          </Box>
-        )}
-        {/* דוגמה לשינוי כפתור ביטול קו */}
-        {/* הכפתור לא יוצג אם הקו בוטל */}
-        {!cancellationStatus?.isCancelled && (
-          <button style={{ marginTop: 8 }}>ביטול קו</button>
-        )}
+      </Box>
+
+      {/* פרטי Samsung */}
+      <Box sx={{ marginTop: '20px' }}>
+        <SamsungDetails serialNumber={device.serialNumber} />
       </Box>
     </Box>
   )

@@ -7,11 +7,12 @@ export {
     provResetVmPincode,
     getPackagesWithInfo,
     changePackages,
-    ComprehensiveResetDeviceController,
+    reprovisionDeviceController,
     sendApn,
     changeNetwork,
     addOneTimePackage,
     freezeUnFreezeMobile,
     updateImeiLockStatus,
-    reregisterInHlr
+    reregisterInHlr,
+    cancelAllLocations
 } from './actions'

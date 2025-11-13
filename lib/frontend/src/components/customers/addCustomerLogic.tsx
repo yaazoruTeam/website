@@ -27,8 +27,8 @@ export const addCustomer = async (data: AddCustomerFormInputs, localComments?: T
     if (localComments && localComments.length > 0) {
       for (const tempComment of localComments) {
         const commentData: CreateCommentDto.Model = {
-          entity_id: String(newCustomer.customer_id),
-          entity_type: EntityType.Customer,
+          entity_id: newCustomer.customer_id,
+          entity_type: EntityType.CUSTOMER,
           content: tempComment.content,
           created_at: tempComment.created_at.toISOString(),
         }

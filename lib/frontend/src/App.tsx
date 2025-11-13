@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import './App.css'
 import SideNav from './components/layout/SideNav'
 import { GoogleAuthService } from './services/googleAuthService'
+import { loadGoogleMapsAPI } from './utils/googleMapsLoader'
 
 import Dashboard from './components/dashboard/dashboard'
 import Customers from './components/customers/customers'
@@ -44,7 +45,7 @@ import { AppLayout } from './components/designComponent/AppLayout'
 import DeviceCard from './components/devices/deviceCard'
 import AddCustomer from './components/customers/AddCustomer'
 import ExcelUpload from './components/excel/ExcelUpload'
-import SimReset from './components/devices/SimReset'
+import ReprovisionDevice from './components/devices/ReprovisionDevice'
 
 function App() {
   const { t } = useTranslation()
@@ -58,6 +59,11 @@ function App() {
 
   useEffect(() => {
     setupAxiosInterceptors(navigate)
+    
+    // Load Google Maps API
+    loadGoogleMapsAPI().catch((error) => {
+      console.error('Failed to load Google Maps API:', error)
+    })
     
     // Handle Google Auth redirect result when app loads
     const handleAuthRedirect = async () => {
@@ -82,7 +88,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/sim-reset' element={<SimReset />} />
+        <Route path='/reprovision-device' element={<ReprovisionDevice />} />
         
         {/* עמודים מוגנים עם Header ו-SideNav */}
         <Route

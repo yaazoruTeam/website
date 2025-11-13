@@ -1,6 +1,6 @@
 import { Box, Snackbar, Alert, CircularProgress } from '@mui/material'
 import { useEffect, useState, Fragment, useCallback } from 'react'
-import { getPackagesWithInfo, getWidelyDetails, terminateLine, resetVoicemailPincode, changePackages, sendApn, ComprehensiveResetDevice, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice } from '../../api/widely'
+import { getPackagesWithInfo, getWidelyDetails, resetVoicemailPincode, changePackages, sendApn, setPreferredNetwork, addOneTimePackage, freezeUnfreezeMobile, lockUnlockImei, softResetDevice, terminateLine, registerInHlr, reprovisionDevice } from '../../api/widely'
 import { Widely, WidelyDeviceDetails } from '@model'
 import CustomTypography from '../designComponent/Typography'
 
@@ -90,7 +90,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         if (savedTime) {
             setLastRefreshTime(savedTime);
         }
-        
+
         return () => {
             localStorage.removeItem('sim_last_refresh');
         };
@@ -104,14 +104,14 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
     const updateRefreshTime = () => {
         const now = new Date();
-        const dateString = now.toLocaleDateString('he-IL', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric' 
+        const dateString = now.toLocaleDateString('he-IL', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-        const timeString = now.toLocaleTimeString('he-IL', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        const timeString = now.toLocaleTimeString('he-IL', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
         const fullDateTime = `${dateString} ${timeString}`;
         setLastRefreshTime(fullDateTime);
@@ -119,7 +119,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     };
 
     const executeWithRefresh = async <T,>(
-        action: () => Promise<T>, 
+        action: () => Promise<T>,
         shouldFetchDetails: boolean = true
     ): Promise<T | undefined> => {
         startRefreshing();
@@ -131,10 +131,10 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             updateRefreshTime();
             return result;
         } finally {
-           setRefreshing(false);
+            setRefreshing(false);
         }
     };
-    
+
     // פונקציה לעיבוד אפשרויות החבילות
     const getPackageOptions = (packages: PackagesData | null) => {
         // לפי המבנה שתיארת: packages.data.items
@@ -166,7 +166,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
     const infoItems = widelyDetails ? [
         { title: t('gigaUsed'), value: `${widelyDetails.data_usage_gb}GB` },
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
-        { title: t('IMEI 1'), value: widelyDetails.imei1 },
+        { title: t('IMEI'), value: widelyDetails.imei1 },
         { title: t('status'), value: t(widelyDetails.status) },
         { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
     ] : []
@@ -196,7 +196,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // עדכון אופטימיסטי - מציג את הבחירה מיידית
         const previousValue = selectedNetworkConnection;
         setSelectedNetworkConnection(network_connection);
-        
+
         try {
             await executeWithRefresh(async () => {
                 await setPreferredNetwork(widelyDetails?.endpoint_id || 0, network_connection);
@@ -243,25 +243,28 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         return result as Widely.Model;
     }
 
-    // פונקציה לטיפול בביטול קו
     const handleTerminateLine = async () => {
         if (!widelyDetails?.endpoint_id) return;
 
-        setIsTerminating(true);
         try {
-            await executeWithRefresh(async () => {
-                await terminateLine(widelyDetails.endpoint_id);
-                setIsTerminateModalOpen(false);
-            });
+            setIsTerminating(true);
+            await terminateLine(widelyDetails.endpoint_id);
+            setSuccessMessage(t('lineCancelledSuccessfully'));
+            setIsTerminateModalOpen(false);
+            
+            // רענון הנתונים לאחר השינוי
+            await fetchWidelyDetails();
         } catch (err) {
-            console.error('Error terminating line:', err);
+            console.error('Error cancelling line:', err);
+            setErrorMessage(t('errorCancellingLine'));
+            setIsTerminateModalOpen(false);
         } finally {
             setIsTerminating(false);
         }
     }
 
-    // פונקציה לאיפוס מקיף של מכשיר
-    const handleComprehensiveReset = async () => {
+    // פונקציה לביטול והפעלה מחדש של מכשיר
+    const handlereprovisionDevice = async () => {
         if (!widelyDetails?.endpoint_id) {
             setErrorMessage(t('errorNoEndpointId'));
             return;
@@ -269,27 +272,19 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
 
         // בקשת אישור מהמשתמש
         const confirmed = window.confirm(
-            `${t('areYouSureComprehensiveReset')} ${widelyDetails.endpoint_id}?\n\n${t('warningComprehensiveReset')}`
+            `${t('areYouSurereprovisionDevice')} ${widelyDetails.endpoint_id}?\n\n${t('warningreprovisionDevice')}`
         );
 
         if (!confirmed) return;
 
-        // בקשת שם למכשיר החדש
-        const deviceName = window.prompt(t('enterNewDeviceName'), `Reset_${widelyDetails.endpoint_id}_${new Date().toISOString().split('T')[0]}`);
-
-        if (!deviceName) {
-            setErrorMessage(t('deviceNameRequired'));
-            return;
-        }
-
         startRefreshing();
         try {
             setLoading(true);
-            const result = await ComprehensiveResetDevice(widelyDetails.endpoint_id, deviceName);
+            const result = await reprovisionDevice(widelyDetails.endpoint_id, widelyDetails.device_info.name);
 
             if (result.success) {
                 setSuccessMessage(
-                    `${t('comprehensiveResetSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
+                    `${t('reprovisionDeviceSuccess')}\n${t('newEndpointId')}: ${result.data.newEndpointId}`
                 );
                 // רענון הנתונים לאחר איפוס מוצלח
                 setTimeout(async () => {
@@ -298,15 +293,51 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setRefreshing(false);
                 }, 2000);
             } else {
-                setErrorMessage(`${t('comprehensiveResetFailed')}: ${result.message}`);
+                setErrorMessage(`${t('reprovisionDeviceFailed')}: ${result.message}`);
                 setRefreshing(false);
             }
         } catch (err: unknown) {
-            console.error('Error in comprehensive reset:', err);
-            const errorMsg = handleErrorUtil('comprehensiveReset', err, t('comprehensiveResetError'));
-            setErrorMessage(`${t('comprehensiveResetFailed')}: ${errorMsg}`);
-            alert(`Error in comprehensive reset: ${errorMsg}`);
+            console.error('Error in reprovision device:', err);
+            const errorMsg = handleErrorUtil('reprovisionDevice', err, t('reprovisionDeviceError'));
+            setErrorMessage(`${t('reprovisionDeviceFailed')}: ${errorMsg}`);
+            alert(`Error in reprovision device: ${errorMsg}`);
             setRefreshing(false);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // פונקציה ל רישום ב-HLR של מכשיר
+    const handleRegisterInHLR = async () => {
+        if (!widelyDetails?.endpoint_id) {
+            setErrorMessage(t('errorNoEndpointId'));
+            return;
+        }
+
+        // בקשת אישור מהמשתמש
+        const confirmed = window.confirm(
+            `${t('areYouSureRegisterInHLR')} ${widelyDetails.endpoint_id}?\n\n${t('RegisterInHLRDescription')}`
+        );
+
+        if (!confirmed) return;
+
+        setLoading(true);
+        try {
+            setErrorMessage(null);
+            setSuccessMessage(null);
+
+            await executeWithRefresh(async () => {
+                const result = await registerInHlr(widelyDetails.endpoint_id);
+                if (result.error_code === 200 || result.error_code === undefined) {
+                    setSuccessMessage(t('RegisterInHLRSuccessful'));
+                } else {
+                    setErrorMessage(`${t('RegisterInHLRFailed')}: ${result.message || t('unknownError')}`);
+                }
+            });
+        } catch (err: unknown) {
+            console.error('Error in register in HLR:', err);
+            const errorMsg = handleErrorUtil('registerInHLR', err, t('RegisterInHLRError'));
+            setErrorMessage(`${t('RegisterInHLRFailed')}: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -331,14 +362,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setErrorMessage(null);
             setSuccessMessage(null);
 
-            await executeWithRefresh(async () => {
-                const result = await softResetDevice(widelyDetails.endpoint_id);
-                if (result.error_code === 200 || result.error_code === undefined) {
-                    setSuccessMessage(t('softResetSuccessful'));
-                } else {
-                    setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
-                }
-            });
+            const result = await softResetDevice(widelyDetails.endpoint_id);
+
+            if (result.error_code === 200 || result.error_code === undefined) {
+                setSuccessMessage(t('softResetSuccessful'));
+                // רענון הנתונים לאחר האיפוס הקל
+                await fetchWidelyDetails();
+            } else {
+                setErrorMessage(`${t('softResetFailed')}: ${result.message || t('unknownError')}`);
+            }
         } catch (err: unknown) {
             console.error('Error in soft reset:', err);
             const errorMsg = handleErrorUtil('softReset', err, t('softResetError'));
@@ -473,18 +505,18 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             }
             if (isPackagesData(basePackages)) {
                 setBasePackages(basePackages);
-            
+
                 // חיפוש התיאור של החבילה הנוכחית
                 const currentPackage = basePackages.data.items.find(
                     (pkg: PackageItem) => pkg.id.toString() === String(details.package_id)
                 );
-                
+
                 if (currentPackage) {
                     const description = currentPackage.description?.EN || t('noDescriptionAvailable');
-                    
+
                     setValue('replacingPackages', description);
                 } else {
-                     setValue('replacingPackages', t('packageNotFound'));
+                    setValue('replacingPackages', t('packageNotFound'));
                 }
             }
 
@@ -588,7 +620,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                     <CustomButton
-                        label={t('cancelLine')}
+                        label={widelyDetails?.active ? t('cancelLine') : t('activateLine')}
                         buttonType="first"
                         size="small"
                         onClick={() => setIsTerminateModalOpen(true)}
@@ -671,7 +703,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     />
                 </Box>
             </WidelyFormSection>
-            
+
             <ModelPackages
                 packages={getPackageOptions(basePackages)}
                 open={openBasePackagesModel}
@@ -704,6 +736,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         ]}
                         value={selectedNetworkConnection}
                     />
+                    <CustomTypography text={`${t('connectedTo')}: ${widelyDetails?.network_connection}`} variant='h4' weight='regular'/>
                 </Box>
             </WidelyConnectionSection>
 
@@ -767,8 +800,13 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             <HeaderSection />
             {renderContent()}
 
-            {/* כפתור איפוס סיסמת תא קולי */}
             <WidelyButtonSection>
+                <CustomButton
+                    label={t('RegisterInHLR')}
+                    onClick={handleRegisterInHLR}
+                    buttonType="fourth"
+                    size="large"
+                />
                 <CustomButton
                     label={t('softReset')}
                     onClick={handleSoftReset}
@@ -776,8 +814,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     size="large"
                 />
                 <CustomButton
-                    label={t('comprehensiveReset')}
-                    onClick={handleComprehensiveReset}
+                    label={t('reprovisionDevice')}
+                    onClick={handlereprovisionDevice}
                     buttonType="fourth"
                     size="large"
                 />
@@ -838,7 +876,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             >
                 {/* <Box sx={{ textAlign: 'center', padding: 2 }}> */}
                 <CustomTypography
-                    text={t('cancelLine')}
+                    text={widelyDetails?.active ? t('cancelLine') : t('activateLine')}
                     variant="h1"
                     weight="medium"
                     color={colors.blue900}
@@ -846,7 +884,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                 />
 
                 <CustomTypography
-                    text={t('areYouSureYouWantToCancelTheLine')}
+                    text={widelyDetails?.active ? t('areYouSureYouWantToCancelTheLine') : t('areYouSureYouWantToActivateTheLine')}
                     variant="h3"
                     weight="regular"
                     color={colors.blue900}

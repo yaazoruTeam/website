@@ -50,7 +50,7 @@ export const ChatCommentCardCommentSection = styled(FlexRowSpaceBetween)({
 
 // Comment box with blue border
 export const ChatCommentCardCommentBox = styled(FlexBase)({
-//   width: '40%',
+  //   width: '40%',
   padding: '10px',
   borderRadius: '5px',
   border: `1px solid ${colors.blue300}`,
@@ -107,14 +107,11 @@ export const ChatModalOverlay = styled(FlexBase)({
   top: 0,
   left: 0,
   bottom: 0,
-  width: '400px',
-  backgroundColor: 'transparent',
+  width: '26%',
+  backgroundColor: 'rgba(0, 0, 0, 0.1)',
   zIndex: 1000,
   justifyContent: 'flex-start',
-  pointerEvents: 'none', 
-  '& > *': {
-    pointerEvents: 'auto',
-  },
+  pointerEvents: 'auto',
 })
 
 export const ChatModalContainer = styled(FlexColumn)({
@@ -122,5 +119,6 @@ export const ChatModalContainer = styled(FlexColumn)({
   width: '100%',
   backgroundColor: colors.neutral0,
   boxShadow: `2px 0 15px ${colors.neutralShadow}`,
-  overflowY: 'auto',
+  overflowY: 'hidden',
+  position: 'relative',
 })

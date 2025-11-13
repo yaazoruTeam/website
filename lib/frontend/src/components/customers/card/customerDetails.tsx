@@ -12,8 +12,9 @@ export interface CustomerDetailsRef {
 const CustomerDetails = forwardRef<CustomerDetailsRef, { 
   customer: Customer.Model,
   onCustomerUpdate?: (customerData: Partial<Customer.Model>) => Promise<void>,
+  onChatOpenChange?: (isOpen: boolean) => void,
 }>(
-  ({ customer, onCustomerUpdate }, ref) => {
+  ({ customer, onCustomerUpdate, onChatOpenChange }, ref) => {
     const formValuesRef = useRef<Partial<Customer.Model>>({})
     const formSubmitRef = useRef<() => void>(() => {})
     const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
@@ -35,7 +36,7 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, {
       
       try {
         const response = await getCommentsByEntityTypeAndEntityId(
-          EntityType.Customer,
+          EntityType.CUSTOMER,
           customer.customer_id.toString(),
           1
         )
@@ -66,6 +67,7 @@ const CustomerDetails = forwardRef<CustomerDetailsRef, {
           }) : undefined}
           lastComment={lastComment ? lastComment.content : undefined}
           onCommentsRefresh={fetchLastComment}
+          onChatOpenChange={onChatOpenChange}
           onSubmit={async (data) => {
             formValuesRef.current = data
             if (onCustomerUpdate) {

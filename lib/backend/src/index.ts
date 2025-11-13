@@ -5,7 +5,6 @@ import { errorHandler } from '@middleware/errorHandler'
 import config from '@config/index'
 import logger from '@utils/logger'
 import { initializeDatabase, closeDatabase } from './data-source'
-import { createSchema } from './db/schema'
 import { startAutoCancelLineScheduler } from './services/autoCancelLineService'
 
 // Import express type extensions globally
@@ -44,9 +43,7 @@ const startServer = async () => {
     // Initialize TypeORM database connection
     // זה בעצמו מריץ מיגרציות אוטומטית!
     logger.info('🗄️  Initializing database...')
-    //to do: change back
-    // await initializeDatabase()
-    await createSchema();
+    await initializeDatabase()
     logger.info('✅ Database initialized successfully')
 
     // הפעלת שירות ביטול קווים אוטומטי
