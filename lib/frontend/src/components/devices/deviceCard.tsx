@@ -110,7 +110,6 @@ const DeviceCard: React.FC = () => {
         {/* Device Content */}
         <DeviceCardContent 
           simCard={simCard} 
-          // customerDevice={customerDevice || undefined}
           onDeviceUpdate={fetchDeviceData}
         />
       </Box>

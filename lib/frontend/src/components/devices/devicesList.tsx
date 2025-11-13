@@ -56,10 +56,6 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   ]
 
   const tableData = (devices ?? []).map((item: SimCard.Model) => {
-    // Main entity is always SimCard
-    // const isSimCard = 'simNumber' in item
-    // const simCard = isSimCard ? item as SimCard.Model : item as any
-    // const device = (item as any).device as Device.Model | undefined
 
     return {
       simCard_id: item.simCard_id,
@@ -77,8 +73,8 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   })
 
   const onClickDevice = (item: SimCard.Model) => {
-    // If it's a Device (has device_number property), navigate to device card
-      navigate(`/device/card/${item.simCard_id}`)
+    // Navigate to device card using the SIM card ID
+    navigate(`/device/card/${item.simCard_id}`)
   }
 
   const handleAddDeviceSuccess = () => {

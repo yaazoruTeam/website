@@ -1,4 +1,4 @@
-import { HttpError, Request } from '.'
+import { HttpError, Request, SimCard } from '.'
 
 interface Model {
   customer_id: number
@@ -13,7 +13,7 @@ interface Model {
   status: string
   created_at: Date
   updated_at: Date
-  simCards?: string[] // array של sim_card_ids או מספרי סימים
+  simCards?: SimCard.Model[] // array של sim_card_ids או מספרי סימים
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
@@ -178,4 +178,5 @@ const sanitizeBodyExisting = (req: Request.RequestWithBody) => {
   }
 }
 
-export { Model, sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }
+export type { Model }
+export { sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }

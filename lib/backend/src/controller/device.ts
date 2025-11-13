@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { deviceRepository } from '@repositories'
-import { Device, HttpError, DeviceStatus } from '@model'
+import { Device, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
 import logger from '@/src/utils/logger'
@@ -230,4 +230,4 @@ const checkExistingDevice = async (device: Device.Model, isUpdate: boolean) => {
   }
 }
 
-export { createDevice, getDevices, getDeviceById, /*getDevicesByStatus,*/ updateDevice /*, deleteDevice */ }
+export { createDevice, getDevices, getDeviceById, updateDevice }

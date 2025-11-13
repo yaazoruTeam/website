@@ -79,7 +79,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
             : '',
           notes: '',
         }}
-        deviceId={simCardState.device?.device_id?.toString()}//check this
+        deviceId={simCardState.device?.device_id?.toString()}//TODO: להוסיף ההערות לסים
         simNumber={simCardState.simNumber}
         lastCommentDate={
           lastComment
@@ -111,11 +111,10 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
       </Box>
 
       {simCardState.device &&
-        < Box sx={{ marginTop: '20px' }}>
+        <Box sx={{ marginTop: '20px' }}>
           <SamsungDetails serialNumber={simCardState.device?.serialNumber} />
         </Box>
       }
-
     </Box >
   )
 }

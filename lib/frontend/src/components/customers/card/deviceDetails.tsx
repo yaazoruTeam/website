@@ -58,6 +58,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       let hasMorePages = true
       
       // Fetch all pages of SIM cards without customer but with device
+      //TODO מה עם המספרי סים שלא מקושרים לשום מכשיר?
       while (hasMorePages) {
         const pageResponse = await getSimCardsWithoutCustomerButWithDevice(currentPage)
         
@@ -114,14 +115,7 @@ const DeviceDetails: React.FC<{ customer: Customer.Model }> = ({ customer }) => 
       // זה העדכון הכי חשוב - אנחנו קושרים את ה-SIM card ללקוח
       const futureDate = new Date()
       futureDate.setFullYear(futureDate.getFullYear() + 5)
-console.log('--------------------------------------------');
-console.log(selectedSimCard);
-console.log(customer.customer_id);
-console.log(futureDate);
-
-
-
-
+      
       await updateSimCard(selectedSimCard.simCard_id, {
         ...selectedSimCard,
         customer_id: customer.customer_id,

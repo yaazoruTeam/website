@@ -290,10 +290,20 @@ const existingCustomer = async (customer: Customer.Model, hasId: boolean) => {
       existing_id: customerEx.customer_id,
       conflict_field: customerEx.email === customer.email ? 'email' : 'id_number'
     });
+    // Create a minimal model object for validation (only needs id_number and email)
     const customerExModel: Customer.Model = {
-      ...customerEx,
-      simCards: customerEx.simCards.map((card) => card.toString()),
+      customer_id: customerEx.customer_id,
+      first_name: customerEx.first_name,
+      last_name: customerEx.last_name,
+      id_number: customerEx.id_number,
+      phone_number: customerEx.phone_number,
       additional_phone: customerEx.additional_phone || '',
+      email: customerEx.email,
+      city: customerEx.city,
+      address: customerEx.address,
+      status: customerEx.status,
+      created_at: customerEx.created_at,
+      updated_at: customerEx.updated_at,
     }
     Customer.sanitizeExistingCustomer(customerExModel, customer)
   } else {

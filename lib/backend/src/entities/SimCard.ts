@@ -8,7 +8,6 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
-  ForeignKey
 } from 'typeorm'
 import { Device } from './Device'
 import { Customer } from './Customer'

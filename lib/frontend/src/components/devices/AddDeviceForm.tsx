@@ -87,10 +87,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           IMEI_1: data.IMEI_1,
           model: data.model,
           serialNumber: data.serialNumber,
-          // status: DeviceStatus.ACTIVE,
-          // purchaseDate: null,
-          // registrationDate: new Date(),
-          // plan: '',
         }
 
         const simCardData: Partial<Omit<SimCard.Model, 'simCard_id'>> = {

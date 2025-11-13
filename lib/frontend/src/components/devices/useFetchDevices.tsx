@@ -36,9 +36,6 @@ export const useFetchDevices = ({ page, filterType }: UseFetchDevicesProps): Use
       try {
         // Get SIM cards with joined devices instead of devices directly
         const response = await getSimCardsWithDevices(page)
-        console.log("------------------ABC--------------------");
-
-        console.log(response);
 
         // Use SIM cards directly - they already include device and customer data
         let devices: SimCard.Model[] = response.data
