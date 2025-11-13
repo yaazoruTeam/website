@@ -22,7 +22,7 @@ interface Model {
   status?: DeviceStatus,
 }
 
-function sanitize(simCard: Model, hasId: boolean): Model {
+function sanitize(simCard: Partial<Model>, hasId: boolean): Partial<Model> {
   if (hasId && !simCard.simCard_id) {
     const error: HttpError.Model = {
       status: 400,
@@ -37,22 +37,16 @@ function sanitize(simCard: Model, hasId: boolean): Model {
     }
     throw error
   }
-  // if (!simCard.user_id) {    
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "user_id".',
-  //   }
-  //   throw error
-  // }
-  // if (!simCard.device_id) {    
-  //   const error: HttpError.Model = {
-  //     status: 400,
-  //     message: 'Invalid or missing "device_id".',
-  //   }
-  //   throw error
-  // }
-  const newSimCard: Model = {
-    ...simCard,
+
+  const newSimCard: Partial<Model> = {
+    simCard_id: simCard.simCard_id,
+    simNumber: simCard.simNumber,
+    customer_id: simCard.customer_id,
+    device_id: simCard.device_id,
+    receivedAt: simCard.receivedAt,
+    planEndDate: simCard.planEndDate,
+    plan: simCard.plan,
+    status: simCard.status,
   }
 
   return newSimCard

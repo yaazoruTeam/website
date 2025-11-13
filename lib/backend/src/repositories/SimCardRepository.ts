@@ -219,7 +219,7 @@ export class SimCardRepository {
 
       // Prevent updating critical fields
       const { simCard_id: id, customer_id, device_id, simNumber, ...safeData } = updateData
-      
+
       // Update with new updated_at timestamp
       await this.repository.update(simCard_id, {
         ...safeData,

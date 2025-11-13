@@ -19,15 +19,26 @@ const createSimCard = async (req: Request, res: Response, next: NextFunction): P
     logger.info('[Controller] Creating a new SIM card')
     SimCard.sanitizeBodyExisting(req)
 
-    const simCardData = req.body
+    const simCardData = req.body as Partial<SimCard.Model>
     const sanitized = SimCard.sanitize(simCardData, false)
 
     // Check for existing SIM card with duplicate unique fields
     await checkExistingSimCard(sanitized, false)
 
     logger.debug('[Controller] Sanitized SIM card data:', sanitized)
-logger.debug('Sanitized SIM card data:', sanitized);
-    const simCard = await simCardRepository.createSimCard(sanitized as any)
+    
+    // Create repository-compatible object (exclude nested objects like customer and device)
+    const createData: Partial<SimCard.Model> = {
+      simNumber: sanitized.simNumber,
+      customer_id: sanitized.customer_id,
+      device_id: sanitized.device_id,
+      receivedAt: sanitized.receivedAt,
+      planEndDate: sanitized.planEndDate,
+      plan: sanitized.plan,
+      status: sanitized.status,
+    }
+    
+    const simCard = await simCardRepository.createSimCard(createData as any)
 
     logger.info(`[Controller] SIM card created with ID: ${simCard.simCard_id}`)
     res.status(201).json(simCard)
@@ -241,6 +252,8 @@ const getSimCardByDeviceId = async (
 /**
  * Update SIM card
  * PATCH /sim-cards/:id
+ * Body: {customer_id?, device_id?, receivedAt?, planEndDate?, plan?, status?}
+ * Note: This is a partial update, so simCard_id and simNumber cannot be changed
  */
 const updateSimCard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -250,14 +263,19 @@ const updateSimCard = async (req: Request, res: Response, next: NextFunction): P
     SimCard.sanitizeBodyExisting(req)
 
     const simCard_id = Number(req.params.id)
-    // Add simCard_id to body for sanitization
-    const bodyWithId = { ...req.body, simCard_id }
-    const sanitized: SimCard.Model = SimCard.sanitize(bodyWithId, true)
+    const updates = req.body as Partial<Record<keyof SimCard.Model, any>>
 
-    // Check for existing SIM card with duplicate unique fields
-    await checkExistingSimCard({ ...sanitized, simCard_id }, true)
+    // For PATCH, only validate unique fields if they are being updated
+    if (updates.simNumber || updates.device_id) {
+      const partialData: Partial<SimCard.Model> = {
+        simCard_id,
+        simNumber: updates.simNumber,
+        device_id: updates.device_id,
+      }
+      await checkExistingSimCard(partialData as SimCard.Model, true)
+    }
 
-    const updatedSimCard = await simCardRepository.updateSimCard(simCard_id, sanitized as any)
+    const updatedSimCard = await simCardRepository.updateSimCard(simCard_id, updates)
     res.status(200).json(updatedSimCard)
   } catch (error: unknown) {
     handleError(error, next)
@@ -547,7 +565,7 @@ const checkExistingDevice = async (device: Device.Model, isUpdate: boolean) => {
  * Check if SIM card with same unique fields already exists
  * Used before create/update to prevent duplicate constraint violations
  */
-const checkExistingSimCard = async (simCard: SimCard.Model, isUpdate: boolean) => {
+const checkExistingSimCard = async (simCard: Partial<SimCard.Model>, isUpdate: boolean) => {
   try {
     logger.debug('[Controller] Checking for existing SIM card with duplicate fields', {
       isUpdate,
@@ -568,7 +586,7 @@ const checkExistingSimCard = async (simCard: SimCard.Model, isUpdate: boolean) =
 
       // Use the SimCards model validation function
       try {
-        SimCard.sanitizeExistingSimCard(existingSimCard as any, simCard)
+        SimCard.sanitizeExistingSimCard(existingSimCard as any, simCard as SimCard.Model)
       } catch (err) {
         throw err
       }
@@ -636,7 +654,7 @@ const createDeviceWithSimCard = async (
 
       // Create simCard
       logger.debug('[Controller] Creating SIM card')
-      const sanitizedSimCard = SimCard.sanitize(simCardData, false)
+      const sanitizedSimCard = SimCard.sanitize(simCardData as Partial<SimCard.Model>, false)
       
       // Update device_id if device was created
       sanitizedSimCard.device_id = device_id
@@ -644,8 +662,19 @@ const createDeviceWithSimCard = async (
       // Check for existing simCard only if it will be used
       await checkExistingSimCard(sanitizedSimCard, false)
 
+      // Create repository-compatible object
+      const createData: Partial<SimCard.Model> = {
+        simNumber: sanitizedSimCard.simNumber,
+        customer_id: sanitizedSimCard.customer_id,
+        device_id: sanitizedSimCard.device_id,
+        receivedAt: sanitizedSimCard.receivedAt,
+        planEndDate: sanitizedSimCard.planEndDate,
+        plan: sanitizedSimCard.plan,
+        status: sanitizedSimCard.status,
+      }
+
       const simCardRepository = queryRunner.manager.getRepository('SimCards')
-      const simCard = simCardRepository.create(sanitizedSimCard as any)
+      const simCard = simCardRepository.create(createData as any)
       const savedSimCard = await queryRunner.manager.save(simCard)
 
       logger.debug('[Controller] SIM card created successfully', {
