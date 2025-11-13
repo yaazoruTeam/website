@@ -579,7 +579,6 @@ describe('Widely Controllers Tests', () => {
                     data: [{
                         endpoint_id: '67890',
                         device_name: 'Test Device',
-                        network_name: ''
                     }]
                 };
 
@@ -624,7 +623,7 @@ describe('Widely Controllers Tests', () => {
                         endpoint_id: '12345',
                         device_name: 'Test Device',
                         status: 'active',
-                        network_name: ''
+
                     }
                 };
 
@@ -645,7 +644,7 @@ describe('Widely Controllers Tests', () => {
                     endpoint_id: '12345',
                     device_name: 'Test Device',
                     status: 'active',
-                    network_name: ''
+
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
@@ -736,7 +735,6 @@ describe('Widely Controllers Tests', () => {
                     error_code: 200,
                     data: [{
                         endpoint_id: '67890',
-                        network_name: ''
                     }]
                 };
 
@@ -770,7 +768,6 @@ describe('Widely Controllers Tests', () => {
                         },
                         package_id: 100,
                         active: true,
-                        network_name: 'Hot Mobile Ltd'
                     }
                 };
 
