@@ -5,7 +5,6 @@ import {
     provResetVmPincode,
     getPackagesWithInfo,
     changePackages,
-    ComprehensiveResetDeviceController,
     sendApn,
     changeNetwork,
     addOneTimePackage,
@@ -17,7 +16,7 @@ import {
     getAllUserData
 } from '../../controller/widely';
 import { callingWidely } from '../../integration/widely/callingWidely';
-import { sendMobileAction, ComprehensiveResetDevice } from '../../integration/widely/widelyActions';
+import { sendMobileAction } from '../../integration/widely/widelyActions';
 import { validateRequiredParams, validateWidelyResult } from '../../utils/widelyValidation';
 import { config } from '../../config/index';
 
@@ -304,65 +303,6 @@ describe('Widely Controllers Tests', () => {
             });
         });
 
-        describe('ComprehensiveResetDeviceController', () => {
-            it('should reset device comprehensively', async () => {
-                req.body = { endpoint_id: '12345', name: 'Test Device' };
-                const mockResult = {
-                    originalInfo: { device_name: 'Test Device' },
-                    terminationResult: { error_code: 200 },
-                    creationResult: { error_code: 200, data: [{ endpoint_id: '67890' }] }
-                };
-
-                (validateRequiredParams as jest.Mock).mockImplementation(() => {});
-                (ComprehensiveResetDevice as jest.Mock).mockResolvedValue(mockResult);
-
-                await ComprehensiveResetDeviceController(req as Request, res as Response, next);
-
-                expect(validateRequiredParams).toHaveBeenCalledWith({ endpoint_id: '12345', name: 'Test Device' });
-                expect(ComprehensiveResetDevice).toHaveBeenCalledWith('12345', 'Test Device');
-                expect(res.status).toHaveBeenCalledWith(200);
-                expect(res.json).toHaveBeenCalledWith({
-                    success: true,
-                    message: 'Device reset completed successfully',
-                    data: {
-                        originalInfo: { device_name: 'Test Device' },
-                        terminationSuccess: true,
-                        creationSuccess: true,
-                        newEndpointId: '67890',
-                        terminationResult: { error_code: 200 },
-                        creationResult: { error_code: 200, data: [{ endpoint_id: '67890' }] }
-                    }
-                });
-            });
-
-            it('should handle reset with undefined error codes', async () => {
-                req.body = { endpoint_id: '12345', name: 'Test Device' };
-                const mockResult = {
-                    originalInfo: { device_name: 'Test Device' },
-                    terminationResult: { error_code: undefined },
-                    creationResult: { error_code: undefined, data: [] }
-                };
-
-                (validateRequiredParams as jest.Mock).mockImplementation(() => {});
-                (ComprehensiveResetDevice as jest.Mock).mockResolvedValue(mockResult);
-
-                await ComprehensiveResetDeviceController(req as Request, res as Response, next);
-
-                expect(res.json).toHaveBeenCalledWith({
-                    success: true,
-                    message: 'Device reset completed successfully',
-                    data: {
-                        originalInfo: { device_name: 'Test Device' },
-                        terminationSuccess: true,
-                        creationSuccess: true,
-                        newEndpointId: null,
-                        terminationResult: { error_code: undefined },
-                        creationResult: { error_code: undefined, data: [] }
-                    }
-                });
-            });
-        });
-
         describe('sendApn', () => {
             it('should send APN successfully', async () => {
                 req.body = { endpoint_id: '12345' };
@@ -638,7 +578,8 @@ describe('Widely Controllers Tests', () => {
                     error_code: 200,
                     data: [{
                         endpoint_id: '67890',
-                        device_name: 'Test Device'
+                        device_name: 'Test Device',
+                        network_name: ''
                     }]
                 };
 
@@ -658,7 +599,7 @@ describe('Widely Controllers Tests', () => {
                 req.body = { domain_user_id: '99999' };
                 const mockResult = {
                     error_code: 200,
-                    data: []
+                    data: [{ network_name: '' }]
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
@@ -682,7 +623,8 @@ describe('Widely Controllers Tests', () => {
                     data: {
                         endpoint_id: '12345',
                         device_name: 'Test Device',
-                        status: 'active'
+                        status: 'active',
+                        network_name: ''
                     }
                 };
 
@@ -702,7 +644,8 @@ describe('Widely Controllers Tests', () => {
                 const mockResult = {
                     endpoint_id: '12345',
                     device_name: 'Test Device',
-                    status: 'active'
+                    status: 'active',
+                    network_name: ''
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
@@ -743,7 +686,7 @@ describe('Widely Controllers Tests', () => {
                 req.body = { endpoint_id: '12345' };
                 const mockResult = {
                     error_code: 200,
-                    data: {}
+                    data: { network_name: '' }
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
@@ -760,7 +703,7 @@ describe('Widely Controllers Tests', () => {
 
             it('should handle empty direct object response', async () => {
                 req.body = { endpoint_id: '12345' };
-                const mockResult = {};
+                const mockResult = { network_name: '' };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});
                 (validateWidelyResult as jest.Mock).mockImplementation(() => {});
@@ -792,7 +735,8 @@ describe('Widely Controllers Tests', () => {
                 const mobileResult = {
                     error_code: 200,
                     data: [{
-                        endpoint_id: '67890'
+                        endpoint_id: '67890',
+                        network_name: ''
                     }]
                 };
 
@@ -825,7 +769,8 @@ describe('Widely Controllers Tests', () => {
                             name: 'Test Device'
                         },
                         package_id: 100,
-                        active: true
+                        active: true,
+                        network_name: 'Hot Mobile Ltd'
                     }
                 };
 
@@ -942,7 +887,7 @@ describe('Widely Controllers Tests', () => {
 
                 const mobileResult = {
                     error_code: 200,
-                    data: [{}] // Empty mobile object without endpoint_id
+                    data: [{ network_name: '' }] // Empty mobile object without endpoint_id
                 };
 
                 (validateRequiredParams as jest.Mock).mockImplementation(() => {});

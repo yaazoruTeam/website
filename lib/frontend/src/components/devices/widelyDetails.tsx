@@ -168,7 +168,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         { title: t('maximumGigabytePerMonth'), value: `${widelyDetails.max_data_gb}GB` },
         { title: t('IMEI'), value: widelyDetails.imei1 },
         { title: t('status'), value: t(widelyDetails.status) },
-        { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) }
+        { title: t('IMEI_lock'), value: t(widelyDetails.imei_lock) },
+        { title: t('networkName'), value: widelyDetails.network_name|| '-' }
     ] : []
 
     // עיצוב החוצץ בין הפריטים
@@ -736,7 +737,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                         ]}
                         value={selectedNetworkConnection}
                     />
-                    <CustomTypography text={`${t('connectedTo')}: ${widelyDetails?.network_connection}`} variant='h4' weight='regular'/>
                 </Box>
             </WidelyConnectionSection>
 
