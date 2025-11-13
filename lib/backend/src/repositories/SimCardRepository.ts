@@ -1,8 +1,9 @@
-import { Repository, In, Between, FindOptionsRelations } from 'typeorm'
+import { Repository, In, Between, FindOptionsRelations, IsNull, Not } from 'typeorm'
 import { AppDataSource } from '../data-source'
-import { SimCards } from '../entities/SimCards'
+import { SimCards } from '../entities/SimCard'
+import { DeviceStatus } from '../entities/SimCard'
 import logger from '../utils/logger'
-import config from '../config/index'
+import config from '@config/index'
 
 const limit = config.database.limit
 
@@ -33,7 +34,8 @@ export class SimCardRepository {
 
       const simCard = this.repository.create({
         ...simCardData,
-        receivedAt: simCardData.receivedAt || new Date(),
+        // receivedAt will be set only when linking device to customer
+        // Do not auto-set to current date
       })
 
       const savedSimCard = await this.repository.save(simCard)
@@ -85,7 +87,7 @@ export class SimCardRepository {
    * @returns SIM card entity or null if not found
    */
   async getSimCardById(
-    simCard_id: string,
+    simCard_id: number,
     relations?: FindOptionsRelations<SimCards>,
   ): Promise<SimCards | null> {
     try {
@@ -209,7 +211,7 @@ export class SimCardRepository {
    * @throws Error if SIM card not found (404)
    */
   async updateSimCard(
-    simCard_id: string,
+    simCard_id: number,
     updateData: Partial<SimCards>,
   ): Promise<SimCards> {
     try {
@@ -217,15 +219,17 @@ export class SimCardRepository {
 
       // Prevent updating critical fields
       const { simCard_id: id, customer_id, device_id, simNumber, ...safeData } = updateData
-
+      
       // Update with new updated_at timestamp
       await this.repository.update(simCard_id, {
         ...safeData,
+        device_id: device_id,
+        customer_id: customer_id,
         updated_at: new Date(),
       })
 
       const updatedSimCard = await this.getSimCardById(simCard_id)
-
+logger.debug('[DB] SIM card updated successfully', { updatedSimCard })
       if (!updatedSimCard) {
         logger.warn('[DB] SIM card not found for update', { simCard_id })
         throw { status: 404, message: 'SIM card not found' }
@@ -245,7 +249,7 @@ export class SimCardRepository {
    * @param planEndDate - New plan end date
    * @returns Updated SIM card entity
    */
-  async updatePlanEndDate(simCard_id: string, planEndDate: Date): Promise<SimCards> {
+  async updatePlanEndDate(simCard_id: number, planEndDate: Date): Promise<SimCards> {
     try {
       logger.debug('[DB] Updating plan end date for SIM card', {
         simCard_id,
@@ -272,27 +276,39 @@ export class SimCardRepository {
   }
 
   /**
-   * Delete (hard delete) SIM card
-   * @param simCard_id - SIM card ID to delete
-   * @returns Deleted SIM card entity
+   * Soft delete - Mark SIM card as inactive (status: INACTIVE)
+   * Does not remove the record from database, only changes status
+   * @param simCard_id - SIM card ID to deactivate
+   * @returns Updated SIM card entity with status INACTIVE
    * @throws Error if SIM card not found (404)
    */
-  async deleteSimCard(simCard_id: string): Promise<SimCards> {
+  async deleteSimCard(simCard_id: number): Promise<SimCards> {
     try {
-      logger.debug('[DB] Deleting SIM card from database', { simCard_id })
+      logger.debug('[DB] Deactivating SIM card (soft delete)', { simCard_id })
 
       const simCard = await this.getSimCardById(simCard_id)
       if (!simCard) {
-        logger.warn('[DB] SIM card not found for deletion', { simCard_id })
+        logger.warn('[DB] SIM card not found for deactivation', { simCard_id })
         throw { status: 404, message: 'SIM card not found' }
       }
 
-      await this.repository.remove(simCard)
+      // Update status to INACTIVE instead of hard delete
+      await this.repository.update(simCard_id, {
+        status: DeviceStatus.INACTIVE,
+        updated_at: new Date(),
+      })
 
-      logger.debug('[DB] SIM card deleted successfully', { simCard_id })
-      return simCard
+      const deactivatedSimCard = await this.getSimCardById(simCard_id)
+
+      if (!deactivatedSimCard) {
+        logger.warn('[DB] SIM card not found after deactivation', { simCard_id })
+        throw { status: 404, message: 'SIM card not found' }
+      }
+
+      logger.debug('[DB] SIM card deactivated successfully', { simCard_id })
+      return deactivatedSimCard
     } catch (err) {
-      logger.error('[DB] Database error deleting SIM card:', err)
+      logger.error('[DB] Database error deactivating SIM card:', err)
       throw err
     }
   }
@@ -302,7 +318,7 @@ export class SimCardRepository {
    * @param simCard_id - SIM card ID
    * @returns true if SIM card exists, false otherwise
    */
-  async doesSimCardExist(simCard_id: string): Promise<boolean> {
+  async doesSimCardExist(simCard_id: number): Promise<boolean> {
     try {
       const result = await this.repository.findOne({
         where: { simCard_id },
@@ -323,7 +339,7 @@ export class SimCardRepository {
    */
   async isSimNumberUnique(
     simNumber: string,
-    excludeSimCardId?: string,
+    excludeSimCardId?: number,
   ): Promise<boolean> {
     try {
       logger.debug('[DB] Checking if SIM number is unique', { simNumber })
@@ -357,7 +373,7 @@ export class SimCardRepository {
    * @returns SIM card if found, null otherwise
    */
   async findExistingSimCard(criteria: {
-    simCard_id?: string
+    simCard_id?: number
     simNumber?: string
     device_id?: string
     customer_id?: number
@@ -594,6 +610,74 @@ export class SimCardRepository {
       return { simCards, total }
     } catch (err) {
       logger.error('[DB] Database error finding SIM cards:', err)
+      throw err
+    }
+  }
+
+  /**
+   * Get all SIM cards with joined device information
+   * @param offset - Offset for pagination
+   * @returns Paginated list of SIM cards with their associated devices
+   */
+  async getSimCardsWithDevices(
+    offset: number,
+  ): Promise<{ simCards: (SimCards & { device?: any })[]; total: number }> {
+    try {
+      logger.debug('[DB] Fetching SIM cards with joined devices', { offset, limit })
+
+      const [simCards, total] = await this.repository.findAndCount({
+        skip: offset,
+        take: limit,
+        order: { simCard_id: 'ASC' },
+        relations: { device: true, customer: true },
+      })
+
+      logger.debug('[DB] SIM cards with devices fetched successfully', {
+        count: simCards.length,
+        total,
+      })
+
+      return { simCards, total }
+    } catch (err) {
+      logger.error('[DB] Database error fetching SIM cards with devices:', err)
+      throw err
+    }
+  }
+
+  /**
+   * Get SIM cards without customer but with device
+   * Fetches SIM cards that have NO customer linked but DO have a device assigned
+   * Useful for finding devices awaiting customer assignment
+   * @param offset - Offset for pagination
+   * @param relations - Optional relations to load
+   * @returns Paginated list of SIM cards with device but without customer, with total count
+   */
+  async getSimCardsWithoutCustomerButWithDevice(
+    offset: number,
+    relations?: FindOptionsRelations<SimCards>,
+  ): Promise<{ simCards: SimCards[]; total: number }> {
+    try {
+      logger.debug('[DB] Fetching SIM cards without customer but with device', { offset, limit })
+
+      const [simCards, total] = await this.repository.findAndCount({
+        where: {
+          customer_id: IsNull(), // customer_id IS NULL
+          device_id: Not(IsNull()), // device_id IS NOT NULL
+        },
+        skip: offset || 0,
+        take: limit,
+        order: { created_at: 'DESC' },
+        relations: relations || { device: true },
+      })
+
+      logger.debug('[DB] SIM cards without customer but with device fetched successfully', {
+        count: simCards.length,
+        total,
+      })
+
+      return { simCards, total }
+    } catch (err) {
+      logger.error('[DB] Database error fetching SIM cards without customer but with device:', err)
       throw err
     }
   }

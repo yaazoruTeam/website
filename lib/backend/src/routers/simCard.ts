@@ -36,6 +36,12 @@ simCardRouter.post(
 )
 
 /**
+ * ===============================
+ * Special Queries (צריך להיות לפני ה-/:id)
+ * ===============================
+ */
+
+/**
  * GET /sim-cards/page/:page
  * Get all SIM cards with pagination
  * Access: admin, branch
@@ -43,31 +49,28 @@ simCardRouter.post(
 simCardRouter.get('/page/:page', hasRole('admin', 'branch'), simCardController.getSimCards)
 
 /**
- * GET /sim-cards/:id
- * Get SIM card by ID
+ * GET /sim-cards/with-devices/page/:page
+ * Get all SIM cards with joined device information and pagination
  * Access: admin, branch
  */
-simCardRouter.get('/:id', hasRole('admin', 'branch'), simCardController.getSimCardById)
+simCardRouter.get(
+  '/with-devices/page/:page',
+  hasRole('admin', 'branch'),
+  simCardController.getSimCardsWithDevices,
+)
 
 /**
- * PATCH /sim-cards/:id
- * Update SIM card
+ * GET /sim-cards/without-customer/page/:page
+ * Get SIM cards without customer but with device
+ * Fetches SIM cards that have a device assigned but no customer linked
+ * Useful for finding devices awaiting customer assignment
  * Access: admin, branch
  */
-simCardRouter.patch('/:id', hasRole('admin', 'branch'), simCardController.updateSimCard)
-
-/**
- * DELETE /sim-cards/:id
- * Delete SIM card
- * Access: admin
- */
-simCardRouter.delete('/:id', hasRole('admin'), simCardController.deleteSimCard)
-
-/**
- * ===============================
- * Special Queries
- * ===============================
- */
+simCardRouter.get(
+  '/without-customer/page/:page',
+  hasRole('admin', 'branch'),
+  simCardController.getSimCardsWithoutCustomerButWithDevice,
+)
 
 /**
  * GET /sim-cards/number/:simNumber
@@ -77,14 +80,25 @@ simCardRouter.delete('/:id', hasRole('admin'), simCardController.deleteSimCard)
 simCardRouter.get('/number/:simNumber', hasRole('admin', 'branch'), simCardController.getSimCardByNumber)
 
 /**
- * GET /sim-cards/user/:user_id/page/:page
- * Get all SIM cards for a specific user
+ * GET /sim-cards/customer/:customer_id/page/:page
+ * Get all SIM cards for a specific customer
  * Access: admin, branch
  */
 simCardRouter.get(
   '/customer/:customer_id/page/:page',
   hasRole('admin', 'branch'),
   simCardController.getSimCardsByCustomerId,
+)
+
+/**
+ * GET /sim-cards/customer/:customer_id/count
+ * Get count of SIM cards for a specific customer
+ * Access: admin, branch
+ */
+simCardRouter.get(
+  '/customer/:customer_id/count',
+  hasRole('admin', 'branch'),
+  simCardController.getSimCardsCountByCustomerId,
 )
 
 /**
@@ -97,12 +111,6 @@ simCardRouter.get(
   hasRole('admin', 'branch'),
   simCardController.getSimCardByDeviceId,
 )
-
-/**
- * ===============================
- * Advanced Features
- * ===============================
- */
 
 /**
  * GET /sim-cards/expiring/page/:page?days=30
@@ -129,34 +137,11 @@ simCardRouter.get(
 )
 
 /**
- * ===============================
- * Statistics
- * ===============================
- */
-
-/**
  * GET /sim-cards/count
  * Get total count of SIM cards
  * Access: admin, branch
  */
 simCardRouter.get('/count', hasRole('admin', 'branch'), simCardController.getSimCardsCount)
-
-/**
- * GET /sim-cards/user/:user_id/count
- * Get count of SIM cards for a specific user
- * Access: admin, branch
- */
-simCardRouter.get(
-  '/customer/:customer_id/count',
-  hasRole('admin', 'branch'),
-  simCardController.getSimCardsCountByCustomerId,
-)
-
-/**
- * ===============================
- * Plan Management
- * ===============================
- */
 
 /**
  * PATCH /sim-cards/:id/plan-end-date
@@ -170,4 +155,32 @@ simCardRouter.patch(
   simCardController.updatePlanEndDate,
 )
 
+/**
+ * ===============================
+ * Generic CRUD Routes (צריך להיות בסוף!)
+ * ===============================
+ */
+
+/**
+ * GET /sim-cards/:id
+ * Get SIM card by ID
+ * Access: admin, branch
+ */
+simCardRouter.get('/:id', hasRole('admin', 'branch'), simCardController.getSimCardById)
+
+/**
+ * PATCH /sim-cards/:id
+ * Update SIM card
+ * Access: admin, branch
+ */
+simCardRouter.put('/:id', hasRole('admin', 'branch'), simCardController.updateSimCard)
+
+/**
+ * DELETE /sim-cards/:id
+ * Delete SIM card
+ * Access: admin
+ */
+simCardRouter.delete('/:id', hasRole('admin'), simCardController.deleteSimCard)
+
 export default simCardRouter
+

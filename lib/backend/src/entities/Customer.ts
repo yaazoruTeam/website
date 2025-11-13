@@ -8,7 +8,7 @@ import {
   Unique,
   OneToMany
 } from 'typeorm'
-import { SimCards } from './SimCards'
+import { SimCards } from './SimCard'
 
 export enum CustomerStatus {
   ACTIVE = 'active',

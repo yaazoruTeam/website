@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Box } from '@mui/system'
-import { Device, CustomerDevice, Comment, EntityType } from '@model'
+import { Comment, EntityType, SimCard } from '@model'
 import DeviceForm from './deviceForm'
 import WidelyDetails from './widelyDetails'
 import { formatDateToString } from '../designComponent/FormatDate'
@@ -9,30 +9,27 @@ import EditDeviceForm from './EditDeviceForm'
 import SamsungDetails from './samsungDetails'
 
 interface DeviceCardContentProps {
-  device: Device.Model
-  customerDevice?: CustomerDevice.Model
+  simCard: SimCard.Model
   onDeviceUpdate?: () => void
   onChatOpenChange?: (isOpen: boolean) => void
 }
 
 const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
-  device: initialDevice,
-  customerDevice,
+  simCard,
   onChatOpenChange,
   onDeviceUpdate,
 }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
   const [showEditDevice, setShowEditDevice] = useState(false)
-  const [device, setDevice] = useState<Device.Model>(initialDevice)
+  const [simCardState, setSimCardState] = useState<SimCard.Model>(simCard)
 
   // הבאת ההערה האחרונה של המכשיר
   const fetchLastComment = useCallback(async () => {
-    if (!device.device_id) return
-
+    if (!simCardState.device?.device_id) return
     try {
       const response = await getCommentsByEntityTypeAndEntityId(
         EntityType.DEVICE,
-        device.device_id.toString(),
+        simCardState.device.device_id.toString(),
         1
       )
 
@@ -44,15 +41,15 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
     } catch (error) {
       console.error('Error fetching comments:', error)
     }
-  }, [device.device_id])
+  }, [simCardState.device?.device_id])
 
   useEffect(() => {
     fetchLastComment()
   }, [fetchLastComment])
 
   useEffect(() => {
-    setDevice(initialDevice)
-  }, [initialDevice])
+    setSimCardState(simCard)
+  }, [simCard])
 
   const handleEditDeviceSuccess = async () => {
     setShowEditDevice(false)
@@ -67,29 +64,29 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
       <DeviceForm
         key={lastComment?.comment_id || 'no-comment'}
         initialValues={{
-          device_number: device.device_number,
-          IMEI_1: device.IMEI_1,
-          model: device.model,
-          serialNumber: device.serialNumber || '',
-          registrationDate: device.registrationDate
-            ? formatDateToString(new Date(device.registrationDate))
+          device_number: simCardState.device?.device_number || '',
+          IMEI_1: simCardState.device?.IMEI_1 || '',
+          model: simCardState.device?.model || '',
+          serialNumber: simCardState.device?.serialNumber || '',
+          registrationDate: simCardState.created_at
+            ? formatDateToString(new Date(simCardState.created_at))
             : '',
-          received_at: customerDevice?.receivedAt
-            ? formatDateToString(new Date(customerDevice.receivedAt))
+          received_at: simCardState.receivedAt
+            ? formatDateToString(new Date(simCardState.receivedAt))
             : '',
-          planEndDate: customerDevice?.planEndDate
-            ? formatDateToString(new Date(customerDevice.planEndDate))
+          planEndDate: simCardState.planEndDate
+            ? formatDateToString(new Date(simCardState.planEndDate))
             : '',
           notes: '',
         }}
-        deviceId={device.device_id?.toString()}
+        deviceId={simCardState.device?.device_id?.toString()}//check this
         lastCommentDate={
           lastComment
             ? new Date(lastComment.created_at).toLocaleDateString('he-IL', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })
             : undefined
         }
         lastComment={lastComment ? lastComment.content : undefined}
@@ -98,25 +95,27 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
         onEditClick={() => setShowEditDevice(true)}
       />
 
-      {showEditDevice && (
+      {showEditDevice && simCardState.device && (
         <EditDeviceForm
           open={showEditDevice}
           onClose={() => setShowEditDevice(false)}
           onSuccess={handleEditDeviceSuccess}
-          device={device}
+          device={simCardState.device}
         />
       )}
 
       {/* פרטי Widely */}
       <Box sx={{ marginTop: '20px' }}>
-        <WidelyDetails simNumber={device.SIM_number} />
+        <WidelyDetails simNumber={simCardState.simNumber} />
       </Box>
 
-      {/* פרטי Samsung */}
-      <Box sx={{ marginTop: '20px' }}>
-        <SamsungDetails serialNumber={device.serialNumber} />
-      </Box>
-    </Box>
+      {simCardState.device &&
+        < Box sx={{ marginTop: '20px' }}>
+          <SamsungDetails serialNumber={simCardState.device?.serialNumber} />
+        </Box>
+      }
+
+    </Box >
   )
 }
 

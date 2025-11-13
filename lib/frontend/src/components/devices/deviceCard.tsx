@@ -2,9 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { Box } from '@mui/system'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getDeviceById, deleteDevice } from '../../api/device'
-import { getCustomerDeviceByDeviceId } from '../../api/customerDevice'
-import { Device, CustomerDevice } from '@model'
+import { SimCard } from '@model'
 import DeviceCardContent from './DeviceCardContent'
 import { CustomButton } from '../designComponent/Button'
 import CustomModal from '../designComponent/Modal'
@@ -12,14 +10,14 @@ import CustomTypography from '../designComponent/Typography'
 import { colors } from '../../styles/theme'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { useMediaQuery } from '@mui/system'
+import { deleteSimCard, getSimCardById } from '../../api/simCard'
 
 const DeviceCard: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation()
   const isMobile = useMediaQuery('(max-width:600px)')
-  const [device, setDevice] = useState<Device.Model | null>(null)
-  const [customerDevice, setCustomerDevice] = useState<CustomerDevice.Model | null>(null)
+  const [simCard, setSimCard] = useState<SimCard.Model | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [openModal, setOpenModal] = useState(false)
@@ -37,12 +35,8 @@ const DeviceCard: React.FC = () => {
 
     try {
       // שליפת נתוני המכשיר
-      const deviceData = await getDeviceById(id)
-      setDevice(deviceData)
-
-      // ניסיון לשלוף נתוני customerDevice
-      const customerDeviceData = await getCustomerDeviceByDeviceId(id)
-      setCustomerDevice(customerDeviceData)
+      const simCardData = await getSimCardById(Number(id))
+      setSimCard(simCardData)
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch device data'
       setError(errorMessage)
@@ -61,9 +55,9 @@ const DeviceCard: React.FC = () => {
     setDeletionError(null)
     
     try {
-      console.log('delete device: ', device?.device_id)
-      if (device && device.device_id) {
-        await deleteDevice(device.device_id)
+      console.log('delete device: ', simCard?.simCard_id)
+      if (simCard && simCard.simCard_id) {
+        await deleteSimCard(simCard.simCard_id)
         setOpenModal(false)
         navigate('/devices')
       }
@@ -84,8 +78,8 @@ const DeviceCard: React.FC = () => {
     return <Box>Error: {error}</Box>
   }
 
-  if (!device) {
-    return <Box>Device not found</Box>
+  if (!simCard) {
+    return <Box>Sim card not found</Box>
   }
 
   return (
@@ -109,14 +103,14 @@ const DeviceCard: React.FC = () => {
             buttonType='third'
             icon={<TrashIcon />}
             onClick={() => setOpenModal(true)}
-            disabled={device?.status !== 'active'}
+            disabled={simCard?.status !== 'active'}
           />
         </Box>
 
         {/* Device Content */}
         <DeviceCardContent 
-          device={device} 
-          customerDevice={customerDevice || undefined}
+          simCard={simCard} 
+          // customerDevice={customerDevice || undefined}
           onDeviceUpdate={fetchDeviceData}
         />
       </Box>

@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import { Box } from '@mui/system'
-import { Device, CustomerDevice } from '@model'
+import { SimCard } from '@model'
 import CustomTypography from '../../designComponent/Typography'
 import { colors } from '../../../styles/theme'
 import DeviceCardContent from '../../devices/DeviceCardContent'
 import { ChevronLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 
 interface DeviceRowInlineProps {
-  device: Device.Model & { customerDevice: CustomerDevice.Model }
+  simCard: SimCard.Model 
   isOpen: boolean
   onClick: () => void
 }
 
-const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onClick }) => {
+const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ simCard, isOpen, onClick }) => {
   const [isDeviceChatOpen, setIsDeviceChatOpen] = useState(false)
 
   const iconStyle = {
@@ -47,7 +47,7 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
       >
         <Box>
           <CustomTypography
-            text={device.device_number}
+            text={simCard.simNumber}
             variant='h1'
             weight='medium'
             color={colors.blue500}
@@ -89,8 +89,7 @@ const DeviceRowInline: React.FC<DeviceRowInlineProps> = ({ device, isOpen, onCli
             maxWidth: isDeviceChatOpen ? 'calc(100vw - 640px)' : '100%',
           }}>
             <DeviceCardContent 
-              device={device} 
-              customerDevice={device.customerDevice}
+              simCard={simCard}
               onChatOpenChange={setIsDeviceChatOpen}
             />
           </Box>

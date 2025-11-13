@@ -23,7 +23,7 @@ export interface ApiConfig<TFallback = unknown> extends AxiosRequestConfig {
 
 // פונקציה מרכזית לכל הבקשות
 const makeRequest = async <T>(
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   url: string,
   data?: unknown,
   config: ApiConfig<T> = {}
@@ -59,6 +59,9 @@ const makeRequest = async <T>(
       case 'PUT':
         response = await axios.put(`${baseURL}${url}`, data, requestConfig)
         break
+      case 'PATCH':
+        response = await axios.patch(`${baseURL}${url}`, data, requestConfig)
+        break
       case 'DELETE':
         response = await axios.delete(`${baseURL}${url}`, requestConfig)
         break
@@ -88,6 +91,10 @@ export const apiPost = async <T>(url: string, data?: unknown, config: ApiConfig<
 
 export const apiPut = async <T>(url: string, data?: unknown, config: ApiConfig<T> = {}): Promise<T> => {
   return makeRequest<T>('PUT', url, data, config)
+}
+
+export const apiPatch = async <T>(url: string, data?: unknown, config: ApiConfig<T> = {}): Promise<T> => {
+  return makeRequest<T>('PATCH', url, data, config)
 }
 
 export const apiDelete = async <T>(url: string, config: ApiConfig<T> = {}): Promise<T> => {

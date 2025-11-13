@@ -1,12 +1,25 @@
-import { HttpError } from "."
+import { Customer, Device, HttpError } from "."
+
+export enum DeviceStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  BLOCKED = 'blocked',
+  LOCKED_IMEI = 'lock_in_imei'
+}
 
 interface Model {
-    simCard_id: string
-    simNumber: string
-    customer_id: number
-    device_id: number
-    receivedAt: Date
-    planEndDate?: Date
+  simCard_id: number,
+  simNumber: string,
+  customer_id?: number,
+  customer?: Customer.Model,
+  device_id?: number,
+  device?: Device.Model,
+  receivedAt?: Date, // Set only when linking device to customer
+  planEndDate?: Date,
+  plan: string | null,
+  created_at: Date,
+  updated_at: Date,
+  status?: DeviceStatus,
 }
 
 function sanitize(simCard: Model, hasId: boolean): Model {
@@ -17,7 +30,7 @@ function sanitize(simCard: Model, hasId: boolean): Model {
     }
     throw error
   }
-  if (!simCard.simNumber) {    
+  if (!simCard.simNumber) {
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "simNumber".',
@@ -40,8 +53,6 @@ function sanitize(simCard: Model, hasId: boolean): Model {
   // }
   const newSimCard: Model = {
     ...simCard,
-    receivedAt: simCard.receivedAt || new Date(Date.now()),
-    planEndDate: simCard.planEndDate, //to do: send to function that adds 5 years from receivedAt
   }
 
   return newSimCard

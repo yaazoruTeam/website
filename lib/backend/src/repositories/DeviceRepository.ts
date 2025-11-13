@@ -1,6 +1,6 @@
 import { Repository, In, Between } from 'typeorm'
 import { AppDataSource } from '../data-source'
-import { Device, DeviceStatus } from '../entities/Device'
+import { Device } from '../entities/Device'
 import logger from '../utils/logger'
 import config from '../config/index'
 
@@ -92,26 +92,26 @@ export class DeviceRepository {
    * @param offset - Offset for pagination
    * @returns Paginated devices list with total count
    */
-  async getDevicesByStatus(
-    status: DeviceStatus,
-    offset: number,
-  ): Promise<{ devices: Device[]; total: number }> {
-    try {
-      logger.debug('[DB] Fetching devices by status', { status, offset, limit })
+  // async getDevicesByStatus(
+  //   status: DeviceStatus,
+  //   offset: number,
+  // ): Promise<{ devices: Device[]; total: number }> {
+  //   try {
+  //     logger.debug('[DB] Fetching devices by status', { status, offset, limit })
 
-      const [devices, total] = await this.repository.findAndCount({
-        where: { status },
-        skip: offset,
-        take: limit,
-        order: { device_id: 'ASC' },
-      })
+  //     const [devices, total] = await this.repository.findAndCount({
+  //       where: { status },
+  //       skip: offset,
+  //       take: limit,
+  //       order: { device_id: 'ASC' },
+  //     })
 
-      return { devices, total }
-    } catch (err) {
-      logger.error('[DB] Database error fetching devices by status:', err)
-      throw err
-    }
-  }
+  //     return { devices, total }
+  //   } catch (err) {
+  //     logger.error('[DB] Database error fetching devices by status:', err)
+  //     throw err
+  //   }
+  // }
 
   /**
    * Update device
@@ -151,27 +151,27 @@ export class DeviceRepository {
    * @returns Updated device with inactive status
    * @throws Error if device not found (404)
    */
-  async deleteDevice(device_id: number): Promise<Device> {
-    try {
-      logger.debug('[DB] Soft deleting device (marking inactive)', { device_id })
+  // async deleteDevice(device_id: number): Promise<Device> {
+  //   try {
+  //     logger.debug('[DB] Soft deleting device (marking inactive)', { device_id })
 
-      const device: Device | null = await this.getDeviceById(device_id)
-      if (!device) {
-        logger.warn('[DB] Device not found for deletion', { device_id })
-        throw { status: 404, message: 'Device not found' }
-      }
+  //     const device: Device | null = await this.getDeviceById(device_id)
+  //     if (!device) {
+  //       logger.warn('[DB] Device not found for deletion', { device_id })
+  //       throw { status: 404, message: 'Device not found' }
+  //     }
 
-      // Soft delete - just mark as inactive
-      device.status = DeviceStatus.INACTIVE
-      const deletedDevice = await this.repository.save(device)
+  //     // Soft delete - just mark as inactive
+  //     device.status = DeviceStatus.INACTIVE
+  //     const deletedDevice = await this.repository.save(device)
 
-      logger.debug('[DB] Device soft deleted successfully', { device_id })
-      return deletedDevice
-    } catch (err) {
-      logger.error('[DB] Database error deleting device:', err)
-      throw err
-    }
-  }
+  //     logger.debug('[DB] Device soft deleted successfully', { device_id })
+  //     return deletedDevice
+  //   } catch (err) {
+  //     logger.error('[DB] Database error deleting device:', err)
+  //     throw err
+  //   }
+  // }
 
   /**
    * Find existing device by unique fields (IMEI_1, serialNumber, device_number)
@@ -277,25 +277,25 @@ export class DeviceRepository {
    * @param status - Status to set
    * @returns Number of affected devices
    */
-  async updateDevicesStatus(device_ids: number[], status: DeviceStatus): Promise<number> {
-    try {
-      logger.debug('[DB] Bulk updating devices status', {
-        count: device_ids.length,
-        status,
-      })
+  // async updateDevicesStatus(device_ids: number[], status: DeviceStatus): Promise<number> {
+  //   try {
+  //     logger.debug('[DB] Bulk updating devices status', {
+  //       count: device_ids.length,
+  //       status,
+  //     })
 
-      const result = await this.repository.update(
-        { device_id: In(device_ids) },
-        { status },
-      )
+  //     const result = await this.repository.update(
+  //       { device_id: In(device_ids) },
+  //       { status },
+  //     )
 
-      logger.debug('[DB] Bulk update completed', { affected: result.affected })
-      return result.affected || 0
-    } catch (err) {
-      logger.error('[DB] Database error bulk updating devices:', err)
-      throw err
-    }
-  }
+  //     logger.debug('[DB] Bulk update completed', { affected: result.affected })
+  //     return result.affected || 0
+  //   } catch (err) {
+  //     logger.error('[DB] Database error bulk updating devices:', err)
+  //     throw err
+  //   }
+  // }
 
   /**
    * Count total devices
@@ -352,37 +352,37 @@ export class DeviceRepository {
    * @param offset - Pagination offset
    * @returns Devices created within date range with total count
    */
-  async findByDate(
-    startDate: Date,
-    endDate: Date,
-    offset?: number,
-  ): Promise<{ devices: Device[]; total: number }> {
-    try {
-      if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
-        throw { status: 400, message: 'Invalid offset parameter' }
-      }
-      if (startDate > endDate) {
-        throw { status: 400, message: 'startDate must be before endDate' }
-      }
+//   async findByDate(
+//     startDate: Date,
+//     endDate: Date,
+//     offset?: number,
+//   ): Promise<{ devices: Device[]; total: number }> {
+//     try {
+//       if (offset !== undefined && (offset < 0 || !Number.isInteger(offset))) {
+//         throw { status: 400, message: 'Invalid offset parameter' }
+//       }
+//       if (startDate > endDate) {
+//         throw { status: 400, message: 'startDate must be before endDate' }
+//       }
 
-      logger.debug('[DB] Finding devices by date range', { startDate, endDate })
+//       logger.debug('[DB] Finding devices by date range', { startDate, endDate })
 
-      const [devices, total] = await this.repository.findAndCount({
-        where: {
-          registrationDate: Between(startDate, endDate),
-        },
-        skip: offset || 0,
-        take: limit,
-        order: { device_id: 'ASC' },
-      })
+//       const [devices, total] = await this.repository.findAndCount({
+//         where: {
+//           registrationDate: Between(startDate, endDate),
+//         },
+//         skip: offset || 0,
+//         take: limit,
+//         order: { device_id: 'ASC' },
+//       })
 
-      logger.debug('[DB] Find by date completed', { found: devices.length, total })
-      return { devices, total }
-    } catch (err) {
-      logger.error('[DB] Database error finding devices by date:', err)
-      throw err
-    }
-  }
+//       logger.debug('[DB] Find by date completed', { found: devices.length, total })
+//       return { devices, total }
+//     } catch (err) {
+//       logger.error('[DB] Database error finding devices by date:', err)
+//       throw err
+//     }
+//   }
 }
 
 // Export singleton instance

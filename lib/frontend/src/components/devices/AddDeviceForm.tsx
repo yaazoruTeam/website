@@ -7,7 +7,7 @@ import CustomTypography from '../designComponent/Typography'
 import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
-import { Device, DeviceStatus, SimCard } from '@model'
+import { Device, SimCard } from '@model'
 import { extractErrorMessage } from '../../utils/errorHelpers'
 import { createDeviceWithSimCard, createSimCard } from '../../api/simCard'
 
@@ -87,15 +87,14 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           IMEI_1: data.IMEI_1,
           model: data.model,
           serialNumber: data.serialNumber,
-          status: DeviceStatus.ACTIVE,
-          purchaseDate: null,
-          registrationDate: new Date(),
-          plan: '',
+          // status: DeviceStatus.ACTIVE,
+          // purchaseDate: null,
+          // registrationDate: new Date(),
+          // plan: '',
         }
 
         const simCardData: Partial<Omit<SimCard.Model, 'simCard_id'>> = {
           simNumber: data.simNumber,
-          receivedAt: new Date(),
         }
 
         await createDeviceWithSimCard({
@@ -108,7 +107,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
         // Minimal mode: Create only simCard
         const simCardData: Partial<Omit<SimCard.Model, 'simCard_id'>> = {
           simNumber: data.simNumber,
-          receivedAt: new Date(),
         }
 
         await createSimCard(simCardData as Omit<SimCard.Model, 'simCard_id'>)
