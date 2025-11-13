@@ -10,7 +10,7 @@ import {
   CustomerCommentsSection,
 } from '../designComponent/styles/chatCommentCardStyles'
 import ChatBot from '../ChatBot/ChatBot'
-import { EntityType } from '@model'
+import { EntityType, WidelyDeviceDetails } from '@model'
 import ChatCommentCard from '../designComponent/ChatCommentCard'
 import ArrowToChatComments from '../designComponent/ArrowToChatComments'
 import CustomTypography from '../designComponent/Typography'
@@ -18,7 +18,6 @@ import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import ImeiDetailsModal from './ImeiDetailsModal'
 import { getWidelyDetails } from '../../api/widely'
 import { getDeviceInfo as getSamsungDeviceInfo } from '../../api/samsung'
-import { WidelyDeviceDetails } from '@model'
 import { CustomButton } from '../designComponent/Button'
 
 export interface deviceFormInputs {
@@ -144,18 +143,32 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
       <Box sx={{ 
         minWidth: isChatOpen ? 'max-content' : 'auto',
       }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb:'40px',gap:1 }}>
-          <CustomTypography
-            text={t('deviceData')}
-            variant='h3'
-            weight='medium'
-          />
-          <CustomTypography
-            text={initialValues ? initialValues.device_number : ''}
-            variant='h4'
-            weight='regular'
-          />
+        {/* Header Section */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: '40px' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <CustomTypography
+              text={t('deviceData')}
+              variant='h3'
+              weight='medium'
+            />
+            <CustomTypography
+              text={initialValues ? initialValues.device_number : ''}
+              variant='h4'
+              weight='regular'
+            />
+          </Box>
+          {onEditClick && (
+            <CustomButton
+              label={t('editDevice')}
+              state='default'
+              size='large'
+              buttonType='first'
+              onClick={onEditClick}
+            />
+          )}
         </Box>
+
+        {/* Device Details Form Fields */}
         <Box
           sx={{
             display: 'flex',
@@ -163,83 +176,44 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
             paddingBottom: '24px',
           }}
         >
-          {/* <CustomTextField control={control} name='device_number' label={t('device_number')} /> */}
-          {/* <CustomTextField control={control} name='SIM_number' label={t('SIM_number')}
-          /> */}
           <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
           <CustomTextField 
-          control={control} 
-          name='IMEI_1' 
-          label={t('IMEI_1')}
-          icon={
-            <Box
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsImeiModalOpen(true)
-              }}
-              sx={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '32px',
-                height: '32px',
-                borderRadius: '6px',
-                backgroundColor: colors.blueOverlay100,
-                transition: 'all 0.2s',
-                '&:hover': {
-                  backgroundColor: colors.blueOverlay200,
-                },
-              }}
-            >
-              <InformationCircleIcon
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  color: colors.blue700,
+            control={control} 
+            name='IMEI_1' 
+            label={t('IMEI_1')}
+            icon={
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsImeiModalOpen(true)
                 }}
-              />
-            </Box>
-          }
-        />
+                sx={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '6px',
+                  backgroundColor: colors.blueOverlay100,
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    backgroundColor: colors.blueOverlay200,
+                  },
+                }}
+              >
+                <InformationCircleIcon
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    color: colors.blue700,
+                  }}
+                />
+              </Box>
+            }
+          />
           <CustomTextField control={control} name='model' label={t('modelDevice')} />
-          {/* <CustomTextField control={control} name='mehalcha_number' label={t('mehalcha_number')} /> */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: '40px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box sx={{ minWidth: isChatOpen ? 'max-content' : 'auto' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: '40px', gap: 1 }}>
-              <CustomTypography text={t('deviceData')} variant='h3' weight='medium' />
-              <CustomTypography
-                text={initialValues ? initialValues.device_number : ''}
-                variant='h4'
-                weight='regular'
-              />
-            </Box>
-            {onEditClick && (
-              <CustomButton
-                label={t('editDevice')}
-                state='default'
-                size='large'
-                buttonType='first'
-                onClick={onEditClick}
-              />
-            )}
-          </Box>
         </Box>
-      </Box>
-
-      {/* שדות פרטי מכשיר */}
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '28px',
-          paddingBottom: '24px',
-        }}
-      >
-        <CustomTextField control={control} name='serialNumber' label={t('serialNumber')} />
-        <CustomTextField control={control} name='IMEI_1' label={t('IMEI_1')} />
-        <CustomTextField control={control} name='model' label={t('modelDevice')} />
-      </Box>
 
       <Box
         sx={{
@@ -300,6 +274,7 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         imeiFromSim={widelyImei}
         imeisamsung={samsungImei}
       />
+      </Box>
     </Box>
   )
 }
