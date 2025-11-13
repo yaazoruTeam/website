@@ -212,6 +212,8 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
             }
           />
           <CustomTextField control={control} name='model' label={t('modelDevice')} />
+        </Box>
+        <Box sx={{ display: 'flex', gap: '28px', paddingBottom: '24px' }}>
           <CustomTextField control={control} name='registrationDate' label={t('registrationDateDevice')} disabled />
           <CustomTextField control={control} name='received_at' label={t('dateReceiptDevice')} disabled />
           <CustomTextField control={control} name='planEndDate' label={t('programEndDate')} type='date' />

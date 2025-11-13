@@ -18,8 +18,9 @@ export const AppDataSource = new DataSource({
   username: config.database.user,
   password: config.database.password,
   database: config.database.name,
-  schema: 'yaazoru',
-  synchronize: false, 
+  // ה-migrations table יהיה בpublic schema
+  // כל הטבלאות האחרות יהיו בyaazoru schema (מוגדר בEntity)
+  synchronize: false, // כבוי - משתמשים רק במיגרציות
   logging: process.env.NODE_ENV === 'development',
   entities: entitiesPath,
   migrations: migrationsPath,
