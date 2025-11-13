@@ -1,15 +1,13 @@
 import cron from 'node-cron'
 import logger from '@utils/logger'
-import { getExpiredPlanDevices } from '@db/CustomerDevice'
-import { getDeviceById } from '@db/Device'
 import { terminateMobile } from '@integration/widely/widelyActions'
 import { CustomerDevice } from '@model'
+import { customerDeviceRepository } from '../repositories/CustomerDeviceRepository'
+import { deviceRepository } from '../repositories/DeviceRepository'
 
 /**
  * שירות לביטול אוטומטי של קווים כאשר מגיע תאריך סיום התוכנית
- * השירות רץ כל יום בשעה 2:00 בלילה
- * 
- * ⚠️ חשוב: השירות לא נוגע במסד נתונים - רק קורא ממנו ומבטל ב-Widely
+ * רץ לפי תזמון קבוע (cron)
  */
 
 interface CancellationResult {
@@ -20,130 +18,92 @@ interface CancellationResult {
 }
 
 /**
- * פונקציה שמבטלת קו בודד במערכת Widely
- * לא מעדכנת את מסד הנתונים!
+ * ביטול יחיד במערכת Widely בלבד
  */
 async function cancelSingleLineInWidely(customerDevice: CustomerDevice.Model): Promise<CancellationResult> {
   try {
-    // שלב 1: קבלת פרטי המכשיר
-    const device = await getDeviceById(customerDevice.device_id)
+    const device = await deviceRepository.getDeviceById(customerDevice.device_id)
     if (!device) {
       logger.warn(`Device not found for customerDevice_id: ${customerDevice.customerDevice_id}`)
       return {
         success: false,
-        customerDevice_id: customerDevice.customerDevice_id,
-        error: 'Device not found'
+        customerDevice_id: String(customerDevice.customerDevice_id),
+        error: 'Device not found',
       }
     }
 
     logger.info(`Starting line cancellation for device: ${device.device_number}`)
 
-    // שלב 2: ביטול הקו במערכת Widely בלבד
-    const endpoint_id = device.device_number
+    const endpoint_id = String(device.device_number) // ✅ המרה למחרוזת
+    await terminateMobile(endpoint_id)
 
-    try {
-      await terminateMobile(endpoint_id)
-      logger.info(`✅ Successfully terminated mobile in Widely for device: ${device.device_number}`)
-      
-      return {
-        success: true,
-        customerDevice_id: customerDevice.customerDevice_id,
-        device_number: device.device_number
-      }
-    } catch (widelyError) {
-      logger.error(`❌ Failed to terminate mobile in Widely for device: ${device.device_number}`, widelyError)
-      return {
-        success: false,
-        customerDevice_id: customerDevice.customerDevice_id,
-        device_number: device.device_number,
-        error: widelyError instanceof Error ? widelyError.message : 'Unknown error in Widely'
-      }
+    logger.info(`✅ Successfully terminated mobile in Widely for device: ${device.device_number}`)
+    return {
+      success: true,
+      customerDevice_id: String(customerDevice.customerDevice_id),
+      device_number: String(device.device_number),
     }
   } catch (error) {
-    logger.error(`Error cancelling line for customerDevice_id: ${customerDevice.customerDevice_id}`, error)
+    logger.error(`❌ Failed to terminate mobile for ${customerDevice.customerDevice_id}`, error)
     return {
       success: false,
-      customerDevice_id: customerDevice.customerDevice_id,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      customerDevice_id: String(customerDevice.customerDevice_id),
+      error: error instanceof Error ? error.message : 'Unknown error',
     }
   }
 }
 
 /**
- * פונקציה ראשית שבודקת ומבטלת את כל הקווים שתוקפם פג
- * רק קוראת מהמסד נתונים ומבטלת ב-Widely - לא מעדכנת כלום במסד נתונים
+ * טיפול בכל הקווים שתוקפם פג
  */
 async function processExpiredLines(): Promise<void> {
   logger.info('🔄 Starting automatic line cancellation process...')
 
   try {
-    // שלב 1: קבלת כל הקווים שתוקפם פג (קריאה בלבד מהמסד נתונים)
-    const expiredDevices = await getExpiredPlanDevices()
-
-    if (expiredDevices.length === 0) {
-      logger.info('✅ No expired lines found. Process completed.')
+    const expiredDevices = await customerDeviceRepository.getExpiredPlanDevices()
+    if (!expiredDevices || expiredDevices.length === 0) {
+      logger.info('✅ No expired lines found.')
       return
     }
 
     logger.info(`📋 Found ${expiredDevices.length} expired lines to process`)
-
-    // שלב 2: ביטול כל הקווים ב-Widely בלבד
     const results: CancellationResult[] = []
 
     for (const customerDevice of expiredDevices) {
       const result = await cancelSingleLineInWidely(customerDevice)
       results.push(result)
-
-      // המתנה קצרה בין כל ביטול כדי לא להעמיס על מערכת Widely
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise(resolve => setTimeout(resolve, 2000)) // השהיה
     }
 
-    // שלב 3: סיכום התוצאות
     const successCount = results.filter(r => r.success).length
-    const failureCount = results.filter(r => !r.success).length
+    const failureCount = results.length - successCount
+    logger.info(`📊 Done: Success=${successCount}, Failed=${failureCount}`)
 
-    logger.info('📊 Line cancellation process completed:')
-    logger.info(`   ✅ Successful cancellations in Widely: ${successCount}`)
-    logger.info(`   ❌ Failed cancellations: ${failureCount}`)
-
-    if (failureCount > 0) {
-      logger.warn('Failed cancellations:', results.filter(r => !r.success))
-    }
-
-    // הצגת רשימת הקווים שבוטלו בהצלחה
-    const successfulCancellations = results.filter(r => r.success)
-    if (successfulCancellations.length > 0) {
-      logger.info('Successfully cancelled device numbers:', 
-        successfulCancellations.map(r => r.device_number).join(', '))
-    }
   } catch (error) {
     logger.error('❌ Error in automatic line cancellation process:', error)
   }
 }
 
 /**
- * התחלת תזמון המשימה
+ * הפעלת Cron
  */
 export function startAutoCancelLineScheduler(): void {
   logger.info('📅 Initializing automatic line cancellation scheduler...')
-  logger.info('📍 Registering cron job now...')
-  // פורמט cron: דקה שעה יום חודש יום_בשבוע
-  cron.schedule('*/1 * * * *', async () => {
-    logger.info('⏰ Scheduled task triggered: Auto-cancel expired lines')
-    await processExpiredLines()
-  }, {
-    timezone: "Asia/Jerusalem"
-  })
-  logger.info('📍 Cron job successfully registered')
-
-  logger.info('✅ Automatic line cancellation scheduler started successfully')
-  logger.info('   Schedule: Every day at 15:20 (Israel Time)')
-  logger.info('   ⚠️  Note: Only cancels in Widely - does NOT update database')
+  cron.schedule(
+    '0 2 * * *', // כל יום בשעה 2:00 בלילה
+    async () => {
+      logger.info('⏰ Triggered automatic cancellation task')
+      await processExpiredLines()
+    },
+    { timezone: 'Asia/Jerusalem' }
+  )
+  logger.info('✅ Scheduler started successfully.')
 }
+
 /**
- * פונקציה לביצוע ידני של תהליך הביטול (לצורכי בדיקה)
+ * הרצה ידנית לבדיקה
  */
-export async function manualProcessExpדiredLines(): Promise<void> {
+export async function manualProcessExpiredLines(): Promise<void> {
   logger.info('🔧 Manual trigger: Processing expired lines')
   await processExpiredLines()
 }

@@ -23,13 +23,6 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
   onDeviceUpdate,
 }) => {
   const [lastComment, setLastComment] = useState<Comment.Model | null>(null)
-  const [cancellationStatus, setCancellationStatus] = useState<{ isCancelled: boolean; cancellationDate?: string; cancellationReason?: string } | null>(null)
-
-  // Debug: הדפסת ה-customerDevice כדי לראות מה יש בו
-  useEffect(() => {
-    console.log('CustomerDevice:', customerDevice)
-    console.log('CustomerDevice ID:', customerDevice?.customerDevice_id)
-  }, [customerDevice])
   const [showEditDevice, setShowEditDevice] = useState(false)
   const [device, setDevice] = useState<Device.Model>(initialDevice)
 
@@ -54,24 +47,21 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
     }
   }, [device.device_id])
 
-
-  // בדיקת סטטוס ביטול קו ושמירה ב-localStorage
+  // בדיקת סטטוס ביטול קו (ללא שימוש ישיר, אך משמרים ב-localStorage)
   useEffect(() => {
     const fetchCancellationStatus = async () => {
       if (!device.SIM_number) return
       try {
         const status = await getLineCancellationStatus(device.SIM_number)
-        setCancellationStatus(status)
-        // שמירה ב-localStorage
         localStorage.setItem(
           `cancellationStatus_${device.SIM_number}`,
           JSON.stringify(status)
         )
-      } catch (e) {
+      } catch {
         // אם יש שגיאה, ננסה לקרוא מה-localStorage
         const local = localStorage.getItem(`cancellationStatus_${device.SIM_number}`)
         if (local) {
-          setCancellationStatus(JSON.parse(local))
+          JSON.parse(local)
         }
       }
     }
@@ -115,7 +105,7 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
           notes: '',
         }}
         deviceId={device.device_id?.toString()}
-        customerDeviceId={customerDevice?.customerDevice_id}
+        customerDeviceId={customerDevice?.customerDevice_id?.toString()}
         simNumber={device.SIM_number}
         lastCommentDate={
           lastComment
