@@ -242,6 +242,8 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         />
       </Box>
     </Box>
+    </Box>
+    </Box>
   )
 }
 
