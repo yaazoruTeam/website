@@ -496,9 +496,9 @@
   "RegisterInHLRSuccessful": "המכשיר נרשם מחדש ב-HLR בהצלחה",
   "RegisterInHLRFailed": "נכשל ברישום מחדש של המכשיר ב-HLR",
   "RegisterInHLRError": "שגיאה במהלך רישום מחדש ב-HLR",
-  "connectedTo":"מחובר ל",
   "imeiDetails": "פרטי IMEI",
   "imeiFromDatabase": "IMEI ממסד הנתונים",
   "imeiFromSim": "IMEI מהסים (Widely)",
-  "imeiFromSamsung": "IMEI מסמסונג"
+  "imeiFromSamsung": "IMEI מסמסונג",
+  "networkName": "שם רשת"
 }

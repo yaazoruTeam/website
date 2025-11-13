@@ -494,5 +494,6 @@
   "imeiDetails": " IMEI Details",
   "imeiFromDatabase": "IMEI from Database",
   "imeiFromSim": "IMEI from SIM (Widely)",
-  "imeiFromSamsung": "IMEI from Samsung"
-}
+  "imeiFromSamsung": "IMEI from Samsung",
+  "networkName": "Network Name"
+  }

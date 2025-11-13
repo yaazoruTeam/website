@@ -301,6 +301,8 @@ const DeviceForm: React.FC<DeviceFormProps> = ({
         imeisamsung={samsungImei}
       />
     </Box>
+    </Box>
+    </Box>
   )
 }
 
