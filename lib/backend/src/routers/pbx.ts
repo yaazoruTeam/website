@@ -11,22 +11,21 @@ const router = Router()
 
 // Health and Status Routes
 router.get('/health', pbxController.healthCheck)
-router.get('/status', pbxController.getStatus)
 router.post('/initialize', pbxController.initializePBX)
 
 // Call Management Routes
 router.post('/route', pbxController.routeCall)
-router.post('/route-enhanced', pbxController.routeCallEnhanced)
-router.post('/originate', pbxController.originateCall)
-router.post('/hangup', pbxController.hangupCall)
-router.post('/transfer', pbxController.transferCall)
 
 // DID Validation Routes
 router.post('/validate-did', pbxController.validateDID)
 
 // Call Information Routes
-router.get('/active-calls', pbxController.getActiveCalls)
-router.get('/call/:callId', pbxController.getCallSession)
 router.get('/call-logs', pbxController.getCallLogs)
+
+// Routing Rule Management Routes
+router.post('/routing-rules', pbxController.createRoutingRule)
+router.get('/routing-rules/:customerId', pbxController.getCustomerRoutingRules)
+router.put('/routing-rules/:ruleId', pbxController.updateRoutingRule)
+router.delete('/routing-rules/:ruleId', pbxController.deleteRoutingRule)
 
 export default router

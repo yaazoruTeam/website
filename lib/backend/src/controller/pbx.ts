@@ -10,11 +10,10 @@ import { pbxService } from '../services/pbxService'
 import logger from '@utils/logger'
 import {
   RouteRequest,
-  OriginateRequest,
-  HangupRequest,
-  TransferRequest,
   DIDValidationRequest,
   CallLogFilter,
+  CreateRoutingRuleRequest,
+  UpdateRoutingRuleRequest,
 } from '@model'
 
 /**
@@ -211,186 +210,6 @@ export const validateDID = async (req: Request, res: Response): Promise<void> =>
   }
 }
 
-/**
- * Originate a new call
- * POST /controller/pbx/originate
- * Body: { callerNumber: string, calledNumber: string, timeout?: number, variables?: Record<string, string>, earlyMedia?: boolean }
- */
-export const originateCall = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { callerNumber, calledNumber, timeout, variables, earlyMedia } = req.body
-    
-    // Validation
-    if (!callerNumber || !calledNumber) {
-      res.status(400).json({
-        success: false,
-        error: {
-          code: 'INVALID_REQUEST',
-          message: 'Missing required fields: callerNumber and calledNumber are required'
-        },
-        timestamp: new Date()
-      })
-      return
-    }
-
-    logger.info(`PBX originate call requested: ${callerNumber} -> ${calledNumber}`)
-    
-    const request: OriginateRequest = {
-      callerNumber,
-      calledNumber,
-      destinationNumber: calledNumber, // Use calledNumber as destinationNumber
-      direction: 'outbound', // Default to outbound for originate calls
-      timeout,
-      variables,
-      earlyMedia
-    }
-    
-    const result = await pbxService.originateCall(request)
-    
-    if (result.success) {
-      res.status(201).json({
-        success: true,
-        data: result.data,
-        timestamp: result.timestamp
-      })
-    } else {
-      res.status(500).json({
-        success: false,
-        error: result.error,
-        timestamp: result.timestamp
-      })
-    }
-  } catch (error) {
-    logger.error('Originate call error:', error)
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Call origination failed',
-        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
-      },
-      timestamp: new Date()
-    })
-  }
-}
-
-/**
- * Hangup a call
- * POST /controller/pbx/hangup
- * Body: { callId?: string, sessionId?: string, cause?: string }
- */
-export const hangupCall = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { callId, sessionId, cause } = req.body
-    
-    // Validation
-    if (!callId && !sessionId) {
-      res.status(400).json({
-        success: false,
-        error: {
-          code: 'INVALID_REQUEST',
-          message: 'Either callId or sessionId is required'
-        },
-        timestamp: new Date()
-      })
-      return
-    }
-
-    logger.info(`PBX hangup call requested: ${callId || sessionId}`)
-    
-    const request: HangupRequest = {
-      callId,
-      sessionId,
-      cause
-    }
-    
-    const result = await pbxService.hangupCall(request)
-    
-    if (result.success) {
-      res.status(200).json({
-        success: true,
-        message: 'Call hung up successfully',
-        timestamp: result.timestamp
-      })
-    } else {
-      res.status(404).json({
-        success: false,
-        error: result.error,
-        timestamp: result.timestamp
-      })
-    }
-  } catch (error) {
-    logger.error('Hangup call error:', error)
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Call hangup failed',
-        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
-      },
-      timestamp: new Date()
-    })
-  }
-}
-
-/**
- * Transfer a call
- * POST /controller/pbx/transfer
- * Body: { callId: string, destination: string, type?: 'blind' | 'attended' }
- */
-export const transferCall = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { callId, destination, type } = req.body
-    
-    // Validation
-    if (!callId || !destination) {
-      res.status(400).json({
-        success: false,
-        error: {
-          code: 'INVALID_REQUEST',
-          message: 'Missing required fields: callId and destination are required'
-        },
-        timestamp: new Date()
-      })
-      return
-    }
-
-    logger.info(`PBX transfer call requested: ${callId} -> ${destination}`)
-    
-    const request: TransferRequest = {
-      callId,
-      destination,
-      type: type || 'blind'
-    }
-    
-    const result = await pbxService.transferCall(request)
-    
-    if (result.success) {
-      res.status(200).json({
-        success: true,
-        message: 'Call transferred successfully',
-        timestamp: result.timestamp
-      })
-    } else {
-      res.status(404).json({
-        success: false,
-        error: result.error,
-        timestamp: result.timestamp
-      })
-    }
-  } catch (error) {
-    logger.error('Transfer call error:', error)
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Call transfer failed',
-        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
-      },
-      timestamp: new Date()
-    })
-  }
-}
 
 /**
  * Get call logs
@@ -466,83 +285,72 @@ export const getCallLogs = async (req: Request, res: Response): Promise<void> =>
   }
 }
 
-/**
- * Get active calls
- * GET /controller/pbx/active-calls
- */
-export const getActiveCalls = async (req: Request, res: Response): Promise<void> => {
-  try {
-    logger.info('PBX active calls requested')
-    
-    const activeCalls = pbxService.getActiveCalls()
-    
-    res.status(200).json({
-      success: true,
-      data: activeCalls,
-      count: activeCalls.length,
-      timestamp: new Date()
-    })
-  } catch (error) {
-    logger.error('Get active calls error:', error)
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to retrieve active calls',
-        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
-      },
-      timestamp: new Date()
-    })
-  }
-}
+// ===============================
+// Routing Rule Management
+// ===============================
 
 /**
- * Get specific call session
- * GET /controller/pbx/call/:callId
+ * Create a new routing rule
+ * POST /controller/pbx/routing-rules
+ * Body: { customerId, dialedNumber, callerPattern, destination, outgoingCid, provider, promptForDestination?, rulePriority?, active? }
  */
-export const getCallSession = async (req: Request, res: Response): Promise<void> => {
+export const createRoutingRule = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { callId } = req.params
+    const { customerId, dialedNumber, callerPattern, destination, outgoingCid, provider, promptForDestination, rulePriority, active } = req.body
     
-    if (!callId) {
+    // Validation
+    const requiredFields = ['customerId', 'dialedNumber', 'callerPattern', 'destination', 'outgoingCid', 'provider']
+    const missingFields = requiredFields.filter(field => !req.body[field])
+    
+    if (missingFields.length > 0) {
       res.status(400).json({
         success: false,
         error: {
           code: 'INVALID_REQUEST',
-          message: 'Call ID is required'
+          message: `Missing required fields: ${missingFields.join(', ')}`
         },
         timestamp: new Date()
       })
       return
     }
 
-    logger.info(`PBX call session requested: ${callId}`)
+    logger.info(`Creating routing rule for customer ${customerId}: ${dialedNumber} -> ${destination}`)
     
-    const callSession = pbxService.getCallSession(callId)
+    const request: CreateRoutingRuleRequest = {
+      customerId: parseInt(customerId),
+      dialedNumber,
+      callerPattern,
+      destination,
+      outgoingCid,
+      provider,
+      promptForDestination,
+      rulePriority,
+      active
+    }
     
-    if (callSession) {
-      res.status(200).json({
+    const result = await pbxService.createRoutingRule(request)
+    
+    if (result.success) {
+      res.status(201).json({
         success: true,
-        data: callSession,
-        timestamp: new Date()
+        message: 'Routing rule created successfully',
+        data: result.data,
+        timestamp: result.timestamp
       })
     } else {
-      res.status(404).json({
+      res.status(500).json({
         success: false,
-        error: {
-          code: 'CALL_NOT_FOUND',
-          message: 'Call session not found'
-        },
-        timestamp: new Date()
+        error: result.error,
+        timestamp: result.timestamp
       })
     }
   } catch (error) {
-    logger.error('Get call session error:', error)
+    logger.error('Create routing rule error:', error)
     res.status(500).json({
       success: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: 'Failed to retrieve call session',
+        message: 'Failed to create routing rule',
         details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
       },
       timestamp: new Date()
@@ -551,138 +359,156 @@ export const getCallSession = async (req: Request, res: Response): Promise<void>
 }
 
 /**
- * Get PBX status
- * GET /controller/pbx/status
+ * Get all routing rules for a customer
+ * GET /controller/pbx/routing-rules/:customerId
  */
-export const getStatus = async (req: Request, res: Response): Promise<void> => {
+export const getCustomerRoutingRules = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.info('PBX status requested')
+    const { customerId } = req.params
     
-    const status = pbxService.getStatus()
-    
-    res.status(200).json({
-      success: true,
-      data: status,
-      timestamp: new Date()
-    })
-  } catch (error) {
-    logger.error('Get PBX status error:', error)
-    res.status(500).json({
-      success: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to retrieve PBX status',
-        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
-      },
-      timestamp: new Date()
-    })
-  }
-}
-
-/**
- * Enhanced route call with additional validation and mapping
- * This maps to the existing FreeSWITCH routing system documented in the integration guide
- * POST /controller/pbx/route-enhanced
- */
-export const routeCallEnhanced = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { did, cid, variables } = req.body
-    
-    // Enhanced validation with detailed error messages
-    const validationErrors: string[] = []
-    
-    if (!did) {
-      validationErrors.push('DID (Dialed Number) is required')
-    }
-    
-    if (!cid) {
-      validationErrors.push('CID (Caller ID) is required')
-    }
-    
-    // Basic format validation
-    if (did && !/^\+?[\d-\s()]+$/.test(did)) {
-      validationErrors.push('DID format is invalid')
-    }
-    
-    if (cid && !/^\+?[\d-\s()]+$/.test(cid)) {
-      validationErrors.push('CID format is invalid')
-    }
-    
-    if (validationErrors.length > 0) {
+    if (!customerId) {
       res.status(400).json({
         success: false,
         error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Validation failed',
-          details: { validationErrors }
+          code: 'INVALID_REQUEST',
+          message: 'Customer ID is required'
         },
         timestamp: new Date()
       })
       return
     }
 
-    logger.info(`Enhanced PBX route call requested: DID=${did}, CID=${cid}`)
+    logger.info(`Getting routing rules for customer ${customerId}`)
     
-    // First validate the DID
-    const didValidation = await pbxService.validateDID({ did, format: 'detailed' })
-    
-    if (!didValidation.success || !didValidation.data?.data?.valid) {
-      res.status(404).json({
-        success: false,
-        error: {
-          code: 'INVALID_DID',
-          message: 'DID number is not valid or not found',
-          details: { did, validation: didValidation.data }
-        },
-        timestamp: new Date()
-      })
-      return
-    }
-    
-    // Proceed with routing
-    const request: RouteRequest = {
-      did,
-      cid,
-      variables: {
-        ...variables,
-        enhanced_routing: 'true',
-        validation_performed: 'true',
-        request_timestamp: new Date().toISOString()
-      }
-    }
-    
-    const result = await pbxService.routeCall(request)
+    const result = await pbxService.getCustomerRules(parseInt(customerId))
     
     if (result.success) {
       res.status(200).json({
         success: true,
-        data: {
-          ...result.data,
-          didValidation: didValidation.data,
-          enhanced: true
+        data: result.data?.data || [],
+        count: result.data?.count || 0,
+        timestamp: result.timestamp
+      })
+    } else {
+      res.status(500).json({
+        success: false,
+        error: result.error,
+        timestamp: result.timestamp
+      })
+    }
+  } catch (error) {
+    logger.error('Get customer routing rules error:', error)
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to get customer routing rules',
+        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
+      },
+      timestamp: new Date()
+    })
+  }
+}
+
+/**
+ * Update a routing rule
+ * PUT /controller/pbx/routing-rules/:ruleId
+ * Body: { customerId?, dialedNumber?, callerPattern?, destination?, outgoingCid?, provider?, promptForDestination?, rulePriority?, active? }
+ */
+export const updateRoutingRule = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { ruleId } = req.params
+    
+    if (!ruleId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'Rule ID is required'
         },
+        timestamp: new Date()
+      })
+      return
+    }
+
+    logger.info(`Updating routing rule ${ruleId}`)
+    
+    const request: UpdateRoutingRuleRequest = req.body
+    
+    const result = await pbxService.updateRoutingRule(parseInt(ruleId), request)
+    
+    if (result.success) {
+      res.status(200).json({
+        success: true,
+        message: 'Routing rule updated successfully',
+        data: result.data,
         timestamp: result.timestamp
       })
     } else {
       res.status(404).json({
         success: false,
-        error: {
-          ...result.error,
-          details: {
-            ...result.error?.details,
-            didValidation: didValidation.data
-          }
-        },
+        error: result.error,
         timestamp: result.timestamp
       })
     }
   } catch (error) {
-    logger.error('Enhanced route call error:', error)
+    logger.error('Update routing rule error:', error)
     res.status(500).json({
       success: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: 'Enhanced call routing failed',
+        message: 'Failed to update routing rule',
+        details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
+      },
+      timestamp: new Date()
+    })
+  }
+}
+
+/**
+ * Delete a routing rule
+ * DELETE /controller/pbx/routing-rules/:ruleId
+ */
+export const deleteRoutingRule = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { ruleId } = req.params
+    
+    if (!ruleId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'Rule ID is required'
+        },
+        timestamp: new Date()
+      })
+      return
+    }
+
+    logger.info(`Deleting routing rule ${ruleId}`)
+    
+    const result = await pbxService.deleteRoutingRule(parseInt(ruleId))
+    
+    if (result.success) {
+      res.status(200).json({
+        success: true,
+        message: 'Routing rule deleted successfully',
+        timestamp: result.timestamp
+      })
+    } else {
+      res.status(404).json({
+        success: false,
+        error: result.error,
+        timestamp: result.timestamp
+      })
+    }
+  } catch (error) {
+    logger.error('Delete routing rule error:', error)
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to delete routing rule',
         details: { originalError: error instanceof Error ? error.message : 'Unknown error' }
       },
       timestamp: new Date()

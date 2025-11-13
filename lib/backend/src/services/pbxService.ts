@@ -13,13 +13,8 @@ import logger from '@utils/logger'
 import {
   // All PBX Types
   PBXConfig,
-  CallSession,
   CallState,
   CallDirection,
-  OriginateRequest,
-  OriginateResponse,
-  HangupRequest,
-  TransferRequest,
   RouteRequest,
   RouteResponse,
   DIDValidationRequest,
@@ -34,8 +29,13 @@ import {
   PBXServiceResponse,
   PBXStatus,
   WebSocketEventMessage,
-  CallStatusUpdate,
-  SystemStatusUpdate
+  SystemStatusUpdate,
+  CreateRoutingRuleRequest,
+  CreateRoutingRuleResponse,
+  UpdateRoutingRuleRequest,
+  UpdateRoutingRuleResponse,
+  GetCustomerRulesResponse,
+  DeleteRoutingRuleResponse
 } from '@model'
 
 /**
@@ -44,7 +44,6 @@ import {
  */
 class PBXService extends EventEmitter {
   private pbxConfig: PBXConfig
-  private activeCalls: Map<string, CallSession> = new Map()
   private wsConnection?: any // WebSocket connection (optional)
   private heartbeatInterval?: NodeJS.Timeout
   private reconnectAttempts = 0
@@ -125,16 +124,6 @@ class PBXService extends EventEmitter {
    * Initialize event handlers for internal processing
    */
   private initializeEventHandlers(): void {
-    this.on('call_created', (callSession: CallSession) => {
-      this.activeCalls.set(callSession.callId, callSession)
-      logger.info(`Call created: ${callSession.callId}`)
-    })
-
-    this.on('call_ended', (callId: string) => {
-      this.activeCalls.delete(callId)
-      logger.info(`Call ended: ${callId}`)
-    })
-
     this.on('connection_lost', () => {
       this.isConnected = false
       this.attemptReconnection()
@@ -171,7 +160,7 @@ class PBXService extends EventEmitter {
         healthy: true,
         version: response.data.version,
         uptime: response.data.uptime || 0,
-        activeCalls: this.activeCalls.size,
+        activeCalls: 0, // Not managed by NodeRouting
         totalCalls: response.data.total_calls || 0,
         lastHeartbeat: new Date(),
         lastCheck: new Date()
@@ -334,202 +323,11 @@ class PBXService extends EventEmitter {
     }
   }
 
-  /**
-   * Originate a new call
-   */
-  async originateCall(request: OriginateRequest): Promise<PBXServiceResponse<OriginateResponse>> {
-    try {
-      logger.info(`Originating call: ${request.callerNumber} -> ${request.calledNumber}`)
-      
-      const callId = this.generateCallId()
-      const url = this.buildUrl('/originate')
-      
-      const requestConfig: any = {
-        timeout: this.pbxConfig.timeout,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: config.env === 'production'
-        })
-      }
 
-      if (this.pbxConfig.username && this.pbxConfig.password) {
-        requestConfig.auth = {
-          username: this.pbxConfig.username,
-          password: this.pbxConfig.password
-        }
-      }
 
-      const response = await axios.post(url, {
-        caller_number: request.callerNumber,
-        called_number: request.calledNumber,
-        timeout: request.timeout || 30,
-        variables: request.variables || {},
-        early_media: request.earlyMedia || false,
-        call_id: callId
-      }, requestConfig)
 
-      // Create call session
-      const callSession: CallSession = {
-        callId,
-        sessionId: response.data.session_id || callId,
-        direction: 'outbound',
-        state: 'ringing',
-        callerNumber: request.callerNumber,
-        calledNumber: request.calledNumber || request.destinationNumber,
-        startTime: new Date(),
-        metadata: request.variables
-      }
 
-      // Emit event
-      this.emit('call_created', callSession)
 
-      const originateResponse: OriginateResponse = {
-        success: true,
-        data: {
-          callId,
-          sessionId: response.data.session_id || callId,
-          status: 'initiated'
-        }
-      }
-
-      return {
-        success: true,
-        data: originateResponse,
-        timestamp: new Date()
-      }
-    } catch (error) {
-      logger.error('Call origination failed:', error)
-      return {
-        success: false,
-        error: {
-          code: PBXErrorCode.INTERNAL_ERROR,
-          message: 'Failed to originate call',
-          details: { 
-            callerNumber: request.callerNumber,
-            calledNumber: request.calledNumber,
-            originalError: error instanceof Error ? error.message : 'Unknown error'
-          }
-        },
-        timestamp: new Date()
-      }
-    }
-  }
-
-  /**
-   * Hangup a call
-   */
-  async hangupCall(request: HangupRequest): Promise<PBXServiceResponse<void>> {
-    try {
-      const identifier = request.callId || request.sessionId
-      logger.info(`Hanging up call: ${identifier}`)
-      
-      const url = this.buildUrl('/hangup')
-      
-      const requestConfig: any = {
-        timeout: this.pbxConfig.timeout,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: config.env === 'production'
-        })
-      }
-
-      if (this.pbxConfig.username && this.pbxConfig.password) {
-        requestConfig.auth = {
-          username: this.pbxConfig.username,
-          password: this.pbxConfig.password
-        }
-      }
-
-      await axios.post(url, {
-        call_id: request.callId,
-        session_id: request.sessionId,
-        cause: request.cause || 'NORMAL_CLEARING'
-      }, requestConfig)
-
-      // Emit event
-      if (request.callId) {
-        this.emit('call_ended', request.callId)
-      }
-
-      return {
-        success: true,
-        timestamp: new Date()
-      }
-    } catch (error) {
-      logger.error('Call hangup failed:', error)
-      return {
-        success: false,
-        error: {
-          code: PBXErrorCode.CALL_NOT_FOUND,
-          message: 'Failed to hangup call',
-          details: { 
-            callId: request.callId,
-            sessionId: request.sessionId,
-            originalError: error instanceof Error ? error.message : 'Unknown error'
-          }
-        },
-        timestamp: new Date()
-      }
-    }
-  }
-
-  /**
-   * Transfer a call
-   */
-  async transferCall(request: TransferRequest): Promise<PBXServiceResponse<void>> {
-    try {
-      logger.info(`Transferring call ${request.callId} to ${request.destination}`)
-      
-      const url = this.buildUrl('/transfer')
-      
-      const requestConfig: any = {
-        timeout: this.pbxConfig.timeout,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: config.env === 'production'
-        })
-      }
-
-      if (this.pbxConfig.username && this.pbxConfig.password) {
-        requestConfig.auth = {
-          username: this.pbxConfig.username,
-          password: this.pbxConfig.password
-        }
-      }
-
-      await axios.post(url, {
-        call_id: request.callId,
-        destination: request.destination,
-        type: request.type || 'blind'
-      }, requestConfig)
-
-      return {
-        success: true,
-        timestamp: new Date()
-      }
-    } catch (error) {
-      logger.error('Call transfer failed:', error)
-      return {
-        success: false,
-        error: {
-          code: PBXErrorCode.CALL_NOT_FOUND,
-          message: 'Failed to transfer call',
-          details: { 
-            callId: request.callId,
-            destination: request.destination,
-            originalError: error instanceof Error ? error.message : 'Unknown error'
-          }
-        },
-        timestamp: new Date()
-      }
-    }
-  }
 
   /**
    * Get call logs
@@ -603,19 +401,9 @@ class PBXService extends EventEmitter {
     }
   }
 
-  /**
-   * Get active call sessions
-   */
-  getActiveCalls(): CallSession[] {
-    return Array.from(this.activeCalls.values())
-  }
 
-  /**
-   * Get specific call session
-   */
-  getCallSession(callId: string): CallSession | undefined {
-    return this.activeCalls.get(callId)
-  }
+
+
 
   /**
    * Get current PBX status
@@ -625,10 +413,223 @@ class PBXService extends EventEmitter {
       connected: this.isConnected,
       healthy: this.isConnected,
       uptime: 0, // This would be fetched from PBX
-      activeCalls: this.activeCalls.size,
+      activeCalls: 0, // Not managed by NodeRouting
       totalCalls: 0, // This would be fetched from PBX
       lastHeartbeat: this.lastHeartbeat,
       lastCheck: new Date()
+    }
+  }
+
+  // ===============================
+  // Routing Rule Management
+  // ===============================
+
+  /**
+   * Create a new routing rule
+   * POST /route/create
+   */
+  async createRoutingRule(request: CreateRoutingRuleRequest): Promise<PBXServiceResponse<CreateRoutingRuleResponse>> {
+    try {
+      logger.info(`Creating routing rule for customer ${request.customerId}: ${request.dialedNumber} -> ${request.destination}`)
+      
+      const url = this.buildUrl('/route/create')
+      
+      const requestConfig: any = {
+        timeout: this.pbxConfig.timeout,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: config.env === 'production'
+        })
+      }
+
+      if (this.pbxConfig.username && this.pbxConfig.password) {
+        requestConfig.auth = {
+          username: this.pbxConfig.username,
+          password: this.pbxConfig.password
+        }
+      }
+
+      const response = await axios.post(url, {
+        customerId: request.customerId,
+        dialedNumber: request.dialedNumber,
+        callerPattern: request.callerPattern,
+        destination: request.destination,
+        outgoingCid: request.outgoingCid,
+        provider: request.provider,
+        promptForDestination: request.promptForDestination || false,
+        rulePriority: request.rulePriority || 1,
+        active: request.active !== false // default to true
+      }, requestConfig)
+
+      return {
+        success: true,
+        data: response.data,
+        timestamp: new Date()
+      }
+    } catch (error) {
+      logger.error('Failed to create routing rule:', error)
+      return {
+        success: false,
+        error: {
+          code: PBXErrorCode.INTERNAL_ERROR,
+          message: 'Failed to create routing rule',
+          details: { 
+            customerId: request.customerId,
+            dialedNumber: request.dialedNumber,
+            originalError: error instanceof Error ? error.message : 'Unknown error'
+          }
+        },
+        timestamp: new Date()
+      }
+    }
+  }
+
+  /**
+   * Get all routing rules for a customer
+   * GET /route/:customerId
+   */
+  async getCustomerRules(customerId: number): Promise<PBXServiceResponse<GetCustomerRulesResponse>> {
+    try {
+      logger.info(`Getting routing rules for customer ${customerId}`)
+      
+      const url = this.buildUrl(`/route/${customerId}`)
+      
+      const requestConfig: any = {
+        timeout: this.pbxConfig.timeout,
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: config.env === 'production'
+        })
+      }
+
+      if (this.pbxConfig.username && this.pbxConfig.password) {
+        requestConfig.auth = {
+          username: this.pbxConfig.username,
+          password: this.pbxConfig.password
+        }
+      }
+
+      const response = await axios.get(url, requestConfig)
+
+      return {
+        success: true,
+        data: response.data,
+        timestamp: new Date()
+      }
+    } catch (error) {
+      logger.error('Failed to get customer routing rules:', error)
+      return {
+        success: false,
+        error: {
+          code: PBXErrorCode.INTERNAL_ERROR,
+          message: 'Failed to get customer routing rules',
+          details: { 
+            customerId,
+            originalError: error instanceof Error ? error.message : 'Unknown error'
+          }
+        },
+        timestamp: new Date()
+      }
+    }
+  }
+
+  /**
+   * Update a routing rule
+   * PUT /route/:ruleId
+   */
+  async updateRoutingRule(ruleId: number, request: UpdateRoutingRuleRequest): Promise<PBXServiceResponse<UpdateRoutingRuleResponse>> {
+    try {
+      logger.info(`Updating routing rule ${ruleId}`)
+      
+      const url = this.buildUrl(`/route/${ruleId}`)
+      
+      const requestConfig: any = {
+        timeout: this.pbxConfig.timeout,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: config.env === 'production'
+        })
+      }
+
+      if (this.pbxConfig.username && this.pbxConfig.password) {
+        requestConfig.auth = {
+          username: this.pbxConfig.username,
+          password: this.pbxConfig.password
+        }
+      }
+
+      const response = await axios.put(url, request, requestConfig)
+
+      return {
+        success: true,
+        data: response.data,
+        timestamp: new Date()
+      }
+    } catch (error) {
+      logger.error('Failed to update routing rule:', error)
+      return {
+        success: false,
+        error: {
+          code: PBXErrorCode.INTERNAL_ERROR,
+          message: 'Failed to update routing rule',
+          details: { 
+            ruleId,
+            originalError: error instanceof Error ? error.message : 'Unknown error'
+          }
+        },
+        timestamp: new Date()
+      }
+    }
+  }
+
+  /**
+   * Delete a routing rule
+   * DELETE /route/:ruleId
+   */
+  async deleteRoutingRule(ruleId: number): Promise<PBXServiceResponse<DeleteRoutingRuleResponse>> {
+    try {
+      logger.info(`Deleting routing rule ${ruleId}`)
+      
+      const url = this.buildUrl(`/route/${ruleId}`)
+      
+      const requestConfig: any = {
+        timeout: this.pbxConfig.timeout,
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: config.env === 'production'
+        })
+      }
+
+      if (this.pbxConfig.username && this.pbxConfig.password) {
+        requestConfig.auth = {
+          username: this.pbxConfig.username,
+          password: this.pbxConfig.password
+        }
+      }
+
+      const response = await axios.delete(url, requestConfig)
+
+      return {
+        success: true,
+        data: response.data,
+        timestamp: new Date()
+      }
+    } catch (error) {
+      logger.error('Failed to delete routing rule:', error)
+      return {
+        success: false,
+        error: {
+          code: PBXErrorCode.INTERNAL_ERROR,
+          message: 'Failed to delete routing rule',
+          details: { 
+            ruleId,
+            originalError: error instanceof Error ? error.message : 'Unknown error'
+          }
+        },
+        timestamp: new Date()
+      }
     }
   }
 
@@ -655,25 +656,6 @@ class PBXService extends EventEmitter {
     logger.debug('Received WebSocket message:', message.type)
 
     switch (message.type) {
-      case 'call_create':
-        if (message.payload && typeof message.payload === 'object' && 'callId' in message.payload) {
-          this.emit('call_created', message.payload as unknown as CallSession)
-        }
-        break
-      
-      case 'call_hangup':
-        if (message.payload && typeof message.payload === 'object' && 'callId' in message.payload) {
-          const session = message.payload as unknown as CallSession
-          this.emit('call_ended', session.callId)
-        }
-        break
-      
-      case 'call_status':
-        if (message.payload && typeof message.payload === 'object' && 'callId' in message.payload) {
-          this.emit('call_status_update', message.payload as unknown as CallStatusUpdate)
-        }
-        break
-      
       case 'system_status':
         this.emit('system_status_update', message.payload as unknown as SystemStatusUpdate)
         break
@@ -751,7 +733,6 @@ class PBXService extends EventEmitter {
       this.wsConnection.close()
     }
 
-    this.activeCalls.clear()
     this.eventSubscriptions.clear()
     this.removeAllListeners()
     
@@ -768,15 +749,10 @@ export { PBXService }
 // Export types for use in other modules
 export {
   PBXConfig,
-  CallSession,
   CallState,
   CallDirection,
   RouteRequest,
   RouteResponse,
-  OriginateRequest,
-  OriginateResponse,
-  HangupRequest,
-  TransferRequest,
   DIDValidationRequest,
   DIDValidationResponse,
   CallLogEntry,
