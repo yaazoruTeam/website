@@ -488,6 +488,8 @@
   "caStatus": "סטטוס CA",
   "apnStatus": "סטטוס APN",
   "domainFilterStatus": "סטטוס סינון דומיין",
+  "lastConnected": "התחברות אחרונה",
+  "registeredOn": "נרשם בתאריך",
   "RegisterInHLR": "רישום ב-HLR",
   "areYouSureRegisterInHLR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
   "RegisterInHLRDescription": "הרישום ל-HLR יאפשר למכשיר שלך להתחבר לרשת HLR וליהנות מהשירותים שלה.",
