@@ -421,7 +421,7 @@ const PBXTestPageUltraSimple: React.FC = () => {
                   onClick={testOriginateCall}
                   sx={{ minWidth: 120 }}
                 >
-                  ☎️ יצור שיחה
+                  ☎️ יצירת שיחה
                 </Button>
                 
                 <Button
