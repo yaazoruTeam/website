@@ -498,5 +498,6 @@
   "imeiFromSamsung": "IMEI from Samsung",
   "networkName": "Network Name",
   "associationDeviceOrChangeSimNumber": "Association Device or Change SIM Number",
-  "updateSim": "Update SIM"
+  "updateSim": "Update SIM",
+  "enterSimNumberToCreateOnlySimCard": "Enter SIM number to create only SIM card"
 }

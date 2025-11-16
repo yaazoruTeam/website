@@ -503,5 +503,6 @@
   "imeiFromSamsung": "IMEI מסמסונג",
   "networkName": "שם רשת",
   "associationDeviceOrChangeSimNumber": "שיוך מכשיר או שינוי מספר סים",
-  "updateSim": "עדכון סים"
+  "updateSim": "עדכון סים",
+  "enterSimNumberToCreateOnlySimCard": "הזן מספר סים ליצירת כרטיס סים בלבד"
 }
