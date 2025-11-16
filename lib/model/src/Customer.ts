@@ -1,5 +1,13 @@
 import { HttpError, Request } from '.'
 
+export enum CustomerCategory {
+  MAIN = 'main',
+  SAND = 'sand',
+  YOUTUBE = 'youtube',
+  APP = 'app',
+  WAZE = 'waze'
+}
+
 interface Model {
   customer_id: number
   first_name: string
@@ -11,6 +19,7 @@ interface Model {
   city: string
   address: string
   status: string
+  category: CustomerCategory | null
   created_at: Date
   updated_at: Date
 }
@@ -134,6 +143,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
     city: customer.city.trim(),
     address: customer.address.trim(),
     status: customer.status || 'active',
+    category: customer.category || null,
     created_at: customer.created_at || new Date(Date.now()),
     updated_at: customer.updated_at || new Date(Date.now()),
   }
