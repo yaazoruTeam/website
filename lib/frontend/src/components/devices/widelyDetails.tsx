@@ -141,6 +141,9 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // לפי המבנה שתיארת: packages.data.items
         const items = packages?.data?.items;
         if (!items || !Array.isArray(items)) return [];
+        console.log('*****************************');
+        
+console.log(items);
 
         return items.map((pkg: PackageItem) => {
             const description = pkg.description?.EN || t('noDescriptionAvailable');
@@ -177,6 +180,8 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                             style={{ width: 20, height: 20, cursor: 'pointer', color: colors.blue700 }}
                             onClick={() => {
                                 if (widelyDetails?.imei1) {
+
+console.log('689596');
                                     window.open(`https://www.imei.info/?imei=${widelyDetails.imei1}`, '_blank');
                                 }
                             }}
@@ -450,6 +455,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         startRefreshing();
 
         try {
+
             const response = await lockUnlockImei(widelyDetails?.endpoint_id || 0, widelyDetails?.iccid || '', lock);
 
             if (response.error_code !== 200) {
@@ -513,10 +519,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setSelectedNetworkConnection('');
                     break;
             }
+        
             // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
             // setValue('replacingPackages', details.someDefaultProgram || 'program1');
             setSelectedPackage(details.package_id || "");
-            const basePackages = await getPackagesWithInfo('base');
+            const basePackages = await getPackagesWithInfo('base');            
             const extraPackages = await getPackagesWithInfo('extra');
 
             // בדיקה ושמירה בטוחה של החבילות

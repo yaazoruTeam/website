@@ -94,14 +94,15 @@ const DeviceCardContent: React.FC<DeviceCardContentProps> = ({
         onCommentsRefresh={fetchLastComment}
         onChatOpenChange={onChatOpenChange}
         onEditClick={() => setShowEditDevice(true)}
+        isSimCard={!simCardState.device}
       />
 
-      {showEditDevice && simCardState.device && (
+      {showEditDevice && /*simCardState.device &&*/ (
         <EditDeviceForm
           open={showEditDevice}
           onClose={() => setShowEditDevice(false)}
           onSuccess={handleEditDeviceSuccess}
-          device={simCardState.device}
+          simCard={simCardState}
         />
       )}
 

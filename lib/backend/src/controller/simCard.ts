@@ -252,8 +252,8 @@ const getSimCardByDeviceId = async (
 /**
  * Update SIM card
  * PATCH /sim-cards/:id
- * Body: {customer_id?, device_id?, receivedAt?, planEndDate?, plan?, status?}
- * Note: This is a partial update, so simCard_id and simNumber cannot be changed
+ * Body: {simNumber?, customer_id?, device_id?, receivedAt?, planEndDate?, plan?, status?}
+ * Note: simCard_id cannot be changed. Other fields can be updated including simNumber
  */
 const updateSimCard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -265,17 +265,39 @@ const updateSimCard = async (req: Request, res: Response, next: NextFunction): P
     const simCard_id = Number(req.params.id)
     const updates = req.body as Partial<Record<keyof SimCard.Model, any>>
 
-    // For PATCH, only validate unique fields if they are being updated
-    if (updates.simNumber || updates.device_id) {
+    // Validate that SIM card exists
+    const existingSimCard = await simCardRepository.getSimCardById(simCard_id)
+    if (!existingSimCard) {
+      const error: HttpError.Model = {
+        status: 404,
+        message: 'SIM card does not exist.',
+      }
+      throw error
+    }
+
+    // For updates, validate unique fields (simNumber and device_id) only if they are being changed
+    if (updates.simNumber !== undefined || updates.device_id !== undefined) {
       const partialData: Partial<SimCard.Model> = {
         simCard_id,
-        simNumber: updates.simNumber,
-        device_id: updates.device_id,
+        simNumber: updates.simNumber !== undefined ? updates.simNumber : existingSimCard.simNumber,
+        device_id: updates.device_id !== undefined ? updates.device_id : existingSimCard.device_id,
       }
+      
+      logger.debug('[Controller] Validating unique fields for SIM card update', {
+        simNumber: partialData.simNumber,
+        device_id: partialData.device_id,
+      })
+      
       await checkExistingSimCard(partialData as SimCard.Model, true)
     }
 
     const updatedSimCard = await simCardRepository.updateSimCard(simCard_id, updates)
+    
+    logger.info('[Controller] SIM card updated successfully', {
+      simCard_id,
+      updatedFields: Object.keys(updates),
+    })
+    
     res.status(200).json(updatedSimCard)
   } catch (error: unknown) {
     handleError(error, next)

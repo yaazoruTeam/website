@@ -210,25 +210,23 @@ export class SimCardRepository {
    * @returns Updated SIM card entity
    * @throws Error if SIM card not found (404)
    * 
-   * Note: customer_id and device_id CAN be updated (needed for assigning customers to SIM cards)
-   * but simCard_id and simNumber are immutable (prevent ID/number changes which would break data integrity)
+   * Note: customer_id, device_id, and simNumber CAN be updated
+   * but simCard_id is immutable (prevent ID changes which would break data integrity)
    */
   async updateSimCard(
     simCard_id: number,
     updateData: Partial<SimCards>,
   ): Promise<SimCards> {
     try {
-      logger.debug('[DB] Updating SIM card in database', { simCard_id })
+      logger.debug('[DB] Updating SIM card in database', { simCard_id, updateData })
 
-      // Prevent updating immutable fields (ID and number)
-      // customer_id and device_id ARE allowed to be updated (for customer assignment and device linking)
-      const { simCard_id: id, simNumber, ...safeData } = updateData
+      // Prevent updating immutable field (ID only)
+      // simNumber, device_id, and customer_id ARE allowed to be updated
+      const { simCard_id: id, ...safeData } = updateData
 
       // Update with new updated_at timestamp
       await this.repository.update(simCard_id, {
         ...safeData,
-        device_id: safeData.device_id,
-        customer_id: safeData.customer_id,
         updated_at: new Date(),
       })
 

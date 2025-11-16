@@ -335,6 +335,9 @@
   "editingDevice": "עריכת מכשיר",
   "deviceUpdatedSuccessfully": "המכשיר עודכן בהצלחה",
   "deviceUpdateFailed": "עדכון המכשיר נכשל",
+  "linkingDeviceToSimCard": "שיוך מכשיר לכרטיס SIM",
+  "linkingDevice": "שיוך מכשיר",
+  "deviceLinkingFailed": "שיוך המכשיר לכרטיס SIM נכשל",
   "deviceData": "נתוני מכשיר",
   "serialNumber": "מספר סידורי",
   "plan": "מסלול",
@@ -488,8 +491,6 @@
   "caStatus": "סטטוס CA",
   "apnStatus": "סטטוס APN",
   "domainFilterStatus": "סטטוס סינון דומיין",
-  "lastConnected": "התחברות אחרונה",
-  "registeredOn": "נרשם בתאריך",
   "RegisterInHLR": "רישום ב-HLR",
   "areYouSureRegisterInHLR": "האם אתה בטוח שברצונך לרשום את המכשיר ב-HLR?",
   "RegisterInHLRDescription": "הרישום ל-HLR יאפשר למכשיר שלך להתחבר לרשת HLR וליהנות מהשירותים שלה.",
@@ -500,5 +501,7 @@
   "imeiFromDatabase": "IMEI ממסד הנתונים",
   "imeiFromSim": "IMEI מהסים (Widely)",
   "imeiFromSamsung": "IMEI מסמסונג",
-  "networkName": "שם רשת"
+  "networkName": "שם רשת",
+  "associationDeviceOrChangeSimNumber": "שיוך מכשיר או שינוי מספר סים",
+  "updateSim": "עדכון סים"
 }
