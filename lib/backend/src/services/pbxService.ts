@@ -5,7 +5,7 @@
  * including call origination, routing, status monitoring, and event handling.
  */
 
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios from 'axios'
 import * as https from 'https'
 import { EventEmitter } from 'events'
 import config from '@config/index'
@@ -21,9 +21,6 @@ import {
   DIDValidationResponse,
   CallLogEntry,
   CallLogFilter,
-  PBXHealthStatus,
-  PBXStatusResponse,
-  APIResponse,
   PBXError,
   PBXErrorCode,
   PBXServiceResponse,
