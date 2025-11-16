@@ -486,7 +486,7 @@
   "RegisterInHLRSuccessful": "Device successfully re-registered in HLR",
   "RegisterInHLRFailed": "Failed to re-register device in HLR",
   "RegisterInHLRError": "Error during HLR re-registration",
-  "areYouSureComprehensiveReset": "Are you sure you want to perform a comprehensive reset on device",
+  "areYouSureComprehensiveReset": "Are you sure you want to perform a comprehensive reset on the device",
   "ComprehensiveResetDescription": "This action will perform a comprehensive reset of the device, including re-registration in HLR and network settings restoration.",
   "connectedTo":"Connected to",
   "pleaseSelectDevice": "Please select a device",
