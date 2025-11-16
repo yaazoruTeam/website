@@ -6,7 +6,6 @@
  */
 
 import {
-  CallSession,
   PBXStatus,
   PBXServiceResponse
 } from '@model'
@@ -24,7 +23,6 @@ export interface PBXClientConfig {
   enablePolling: boolean
   pollingIntervals: {
     status: number
-    calls: number
   }
 }
 
@@ -33,10 +31,6 @@ export type APIResponse<T = unknown> = PBXServiceResponse<T>
 export interface PBXClientEvents {
   'status_update': (status: PBXStatus) => void
   'status_error': (error: unknown) => void
-  'calls_update': (calls: CallSession[]) => void
-  'calls_error': (error: unknown) => void
-  'call_started': (call: CallSession) => void
-  'call_ended': (call: CallSession) => void
   'connection_lost': () => void
   'connection_restored': () => void
 }
@@ -59,8 +53,7 @@ export class PBXClient {
       retryAttempts: config?.retryAttempts || PBX_CONSTANTS.DEFAULT_RETRY_ATTEMPTS,
       enablePolling: config?.enablePolling ?? true,
       pollingIntervals: {
-        status: config?.pollingIntervals?.status || PBX_CONSTANTS.POLLING_INTERVALS.STATUS,
-        calls: config?.pollingIntervals?.calls || PBX_CONSTANTS.POLLING_INTERVALS.CALLS
+        status: config?.pollingIntervals?.status || PBX_CONSTANTS.POLLING_INTERVALS.STATUS
       }
     }
   }
@@ -153,7 +146,6 @@ export class PBXClient {
    */
   private startAllPolling(): void {
     this.startStatusPolling()
-    this.startCallsPolling()
   }
 
   /**
@@ -170,7 +162,7 @@ export class PBXClient {
   private startStatusPolling(): void {
     const intervalId = setInterval(async () => {
       try {
-        const status = await PBXApi.getStatus()
+        const status = await PBXApi.healthCheck()
         if (status.success) {
           this.emit('status_update', status.data)
         } else {
@@ -184,25 +176,7 @@ export class PBXClient {
     this.pollingIntervals.set('status', intervalId)
   }
 
-  /**
-   * Start calls polling
-   */
-  private startCallsPolling(): void {
-    const intervalId = setInterval(async () => {
-      try {
-        const calls = await PBXApi.getActiveCalls()
-        if (calls.success) {
-          this.emit('calls_update', calls.data || [])
-        } else {
-          this.emit('calls_error', { code: 'CALLS_ERROR', message: 'Failed to get active calls' })
-        }
-      } catch {
-        this.emit('calls_error', { code: 'POLLING_ERROR', message: 'Calls polling failed' })
-      }
-    }, this.config.pollingIntervals.calls)
 
-    this.pollingIntervals.set('calls', intervalId)
-  }
 
   // ===============================
   // Error Handling

@@ -10,10 +10,8 @@ import { pbxClient, PBXClient } from '../services/pbxClient'
 import * as PBXApi from '../api/pbxApi'
 import * as PBXUtils from '../utils/pbxUtils'
 import {
-  CallSession,
   RouteRequest,
   RouteResponse,
-  OriginateRequest,
   PBXStatus,
   CallLogEntry,
   CallLogFilter,
@@ -28,9 +26,7 @@ import {
 export interface UsePBXOptions {
   autoConnect?: boolean
   statusPollingInterval?: number
-  callsPollingInterval?: number
   onStatusUpdate?: (status: PBXStatus) => void
-  onCallUpdate?: (calls: CallSession[]) => void
   onError?: (error: unknown) => void
 }
 
@@ -43,10 +39,6 @@ export interface PBXHookState {
   // PBX Status
   pbxStatus: PBXStatus | null
   lastStatusUpdate: Date | null
-
-  // Active Calls
-  activeCalls: CallSession[]
-  callCount: number
 
   // Operation States
   isRouting: boolean
@@ -68,16 +60,12 @@ export interface PBXHookActions {
   reconnect: () => Promise<boolean>
   
   // Call Management
-  routeCall: (request: RouteRequest, enhanced?: boolean) => Promise<RouteResponse | null>
-  originateCall: (request: OriginateRequest) => Promise<string | null>
-  hangupCall: (callId: string, cause?: string) => Promise<boolean>
-  transferCall: (callId: string, destination: string, type?: 'blind' | 'attended') => Promise<boolean>
+  routeCall: (request: RouteRequest) => Promise<RouteResponse | null>
   
   // Information
   validateDID: (request: DIDValidationRequest) => Promise<DIDValidationResponse | null>
   getCallLogs: (filter?: CallLogFilter) => Promise<CallLogEntry[] | null>
   refreshStatus: () => Promise<void>
-  refreshCalls: () => Promise<void>
   
   // Utilities
   formatPhoneNumber: (number: string) => string
@@ -93,7 +81,6 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
   const {
     autoConnect = false,
     statusPollingInterval = 30000,
-    callsPollingInterval = 10000,
     onError
   } = options
 
@@ -107,8 +94,6 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
     connectionError: null,
     pbxStatus: null,
     lastStatusUpdate: null,
-    activeCalls: [],
-    callCount: 0,
     isRouting: false,
     isOriginating: false,
     isValidating: false,
@@ -124,7 +109,6 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
   // ===============================
 
   const statusPollingCleanupRef = useRef<(() => void) | null>(null)
-  const callsPollingCleanupRef = useRef<(() => void) | null>(null)
   const clientRef = useRef<PBXClient>(pbxClient)
 
   // ===============================
@@ -202,8 +186,6 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
     updateState({
       isConnected: false,
       pbxStatus: null,
-      activeCalls: [],
-      callCount: 0,
       connectionError: null
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,13 +206,13 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
     if (statusPollingInterval > 0) {
       const statusInterval = setInterval(async () => {
         try {
-          const result = await PBXApi.getStatus()
+          const result = await PBXApi.healthCheck()
           
           if (result.success) {
             updateState({
               pbxStatus: result.data || null,
               lastStatusUpdate: new Date(),
-              isConnected: result.data?.connected || false
+              isConnected: result.data ? true : false
             })
           }
         } catch (error) {
@@ -242,59 +224,28 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
         clearInterval(statusInterval)
       }
     }
-
-    // Calls polling  
-    if (callsPollingInterval > 0) {
-      const callsInterval = setInterval(async () => {
-        try {
-          const result = await PBXApi.getActiveCalls()
-          
-          if (result.success) {
-            updateState({
-              activeCalls: result.data || [],
-              callCount: result.data?.length || 0
-            })
-          }
-        } catch (error) {
-          console.warn('Failed to refresh calls:', error)
-        }
-      }, callsPollingInterval)
-      
-      callsPollingCleanupRef.current = () => {
-        clearInterval(callsInterval)
-      }
-    }
-  }, [statusPollingInterval, callsPollingInterval, updateState])
+  }, [statusPollingInterval, updateState])
 
   const stopPolling = useCallback(() => {
     if (statusPollingCleanupRef.current) {
       statusPollingCleanupRef.current()
       statusPollingCleanupRef.current = null
     }
-    
-    if (callsPollingCleanupRef.current) {
-      callsPollingCleanupRef.current()
-      callsPollingCleanupRef.current = null
-    }
 
     // Remove all event listeners
     clientRef.current.off('status_update')
     clientRef.current.off('status_error')
-    clientRef.current.off('calls_update')
-    clientRef.current.off('calls_error')
   }, [])
 
   // ===============================
   // Call Management Actions
   // ===============================
 
-  const routeCall = useCallback(async (request: RouteRequest, enhanced: boolean = false): Promise<RouteResponse | null> => {
+  const routeCall = useCallback(async (request: RouteRequest): Promise<RouteResponse | null> => {
     updateState({ isRouting: true, routingError: null })
     
     try {
-      const result = enhanced 
-        ? await PBXApi.routeCallEnhanced(request)
-        : await PBXApi.routeCall(request)
+      const result = await PBXApi.routeCall(request)
       
       updateState({ isRouting: false })
       return result
@@ -304,67 +255,6 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
       return null
     }
   }, [updateState, handleError])
-
-  const originateCall = useCallback(async (request: OriginateRequest): Promise<string | null> => {
-    updateState({ isOriginating: true, originatingError: null })
-    
-    try {
-      const result = await PBXApi.originateCall(request)
-      updateState({ isOriginating: false })
-      
-      if (result.success && result.data?.callId) {
-        // Refresh active calls after origination
-        // Note: refreshCalls will be called on next polling cycle
-        return result.data.callId
-      } else {
-        handleError(result.error, 'originatingError')
-        return null
-      }
-    } catch (error) {
-      updateState({ isOriginating: false })
-      handleError(error, 'originatingError')
-      return null
-    }
-  }, [updateState, handleError])
-
-  const hangupCall = useCallback(async (callId: string, cause?: string): Promise<boolean> => {
-    try {
-      const result = await PBXApi.hangupCall(callId, cause)
-      
-      if (result.success) {
-        // Remove from active calls
-        updateState({
-          activeCalls: state.activeCalls.filter(call => call.callId !== callId),
-          callCount: state.callCount - 1
-        })
-        return true
-      } else {
-        handleError(result.message, 'originatingError')
-        return false
-      }
-    } catch (error) {
-      handleError(error, 'originatingError')
-      return false
-    }
-  }, [state.activeCalls, state.callCount, updateState, handleError])
-
-  const transferCall = useCallback(async (callId: string, destination: string, type: 'blind' | 'attended' = 'blind'): Promise<boolean> => {
-    try {
-      const result = await PBXApi.transferCall({ callId, destination, type })
-      
-      if (result.success) {
-        // Refresh active calls after transfer
-        // Note: refreshCalls will be called on next polling cycle
-        return true
-      } else {
-        handleError(result.message, 'originatingError')
-        return false
-      }
-    } catch (error) {
-      handleError(error, 'originatingError')
-      return false
-    }
-  }, [handleError])
 
   // ===============================
   // Information Actions
@@ -406,32 +296,17 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
 
   const refreshStatus = useCallback(async (): Promise<void> => {
     try {
-      const result = await PBXApi.getStatus()
+      const result = await PBXApi.healthCheck()
       
       if (result.success) {
         updateState({
           pbxStatus: result.data || null,
           lastStatusUpdate: new Date(),
-          isConnected: result.data?.connected || false
+          isConnected: result.data ? true : false
         })
       }
     } catch (error) {
       console.warn('Failed to refresh status:', error)
-    }
-  }, [updateState])
-
-  const refreshCalls = useCallback(async (): Promise<void> => {
-    try {
-      const result = await PBXApi.getActiveCalls()
-      
-      if (result.success) {
-        updateState({
-          activeCalls: result.data || [],
-          callCount: result.data?.length || 0
-        })
-      }
-    } catch (error) {
-      console.warn('Failed to refresh calls:', error)
     }
   }, [updateState])
 
@@ -481,13 +356,9 @@ export const usePBX = (options: UsePBXOptions = {}): [PBXHookState, PBXHookActio
     disconnect,
     reconnect,
     routeCall,
-    originateCall,
-    hangupCall,
-    transferCall,
     validateDID,
     getCallLogs,
     refreshStatus,
-    refreshCalls,
     formatPhoneNumber,
     formatDuration,
     getCallStateColor
@@ -513,39 +384,3 @@ export const usePBXRouting = () => {
     validateDID
   }
 }
-
-/**
- * Hook specifically for call management
- */
-export const usePBXCalls = () => {
-  const [{ activeCalls, callCount, isOriginating, originatingError }, { originateCall, hangupCall, transferCall, refreshCalls }] = usePBX({ autoConnect: true })
-  
-  return {
-    activeCalls,
-    callCount,
-    isOriginating,
-    originatingError,
-    originateCall,
-    hangupCall,
-    transferCall,
-    refreshCalls
-  }
-}
-
-/**
- * Hook specifically for PBX status monitoring
- */
-export const usePBXStatus = () => {
-  const [{ isConnected, pbxStatus, lastStatusUpdate, connectionError }, { connect, disconnect, refreshStatus }] = usePBX({ autoConnect: true })
-  
-  return {
-    isConnected,
-    pbxStatus,
-    lastStatusUpdate,
-    connectionError,
-    connect,
-    disconnect,
-    refreshStatus
-  }
-}
-

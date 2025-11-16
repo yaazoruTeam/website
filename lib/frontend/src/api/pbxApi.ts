@@ -1,14 +1,11 @@
 import {
   RouteRequest,
   RouteResponse,
-  OriginateRequest,
-  OriginateResponse,
   DIDValidationRequest,
   DIDValidationResponse,
   PBXStatus,
   CallLogEntry,
-  CallLogFilter,
-  CallSession
+  CallLogFilter
 } from '@model'
 import { 
   apiGet,
@@ -29,13 +26,6 @@ export const healthCheck = async (): Promise<{ success: boolean; data?: PBXStatu
 }
 
 /**
- * Get PBX status
- */
-export const getStatus = async (): Promise<{ success: boolean; data?: PBXStatus; error?: unknown }> => {
-  return apiGet(`${ENDPOINT}/status`)
-}
-
-/**
  * Initialize PBX connection
  */
 export const initialize = async (): Promise<{ success: boolean; data?: PBXStatus; error?: unknown }> => {
@@ -51,34 +41,6 @@ export const initialize = async (): Promise<{ success: boolean; data?: PBXStatus
  */
 export const routeCall = async (request: RouteRequest): Promise<RouteResponse> => {
   return apiPost(`${ENDPOINT}/route`, request)
-}
-
-/**
- * Enhanced route call with validation
- */
-export const routeCallEnhanced = async (request: RouteRequest): Promise<RouteResponse & { didValidation?: DIDValidationResponse; enhanced?: boolean }> => {
-  return apiPost(`${ENDPOINT}/route-enhanced`, request)
-}
-
-/**
- * Originate a new call
- */
-export const originateCall = async (request: OriginateRequest): Promise<OriginateResponse> => {
-  return apiPost(`${ENDPOINT}/originate`, request)
-}
-
-/**
- * Hangup a call
- */
-export const hangupCall = async (callId: string, cause?: string): Promise<{ success: boolean; message?: string }> => {
-  return apiPost(`${ENDPOINT}/hangup`, { callId, cause })
-}
-
-/**
- * Transfer a call
- */
-export const transferCall = async (request: { callId: string; destination: string; type?: 'blind' | 'attended' }): Promise<{ success: boolean; message?: string }> => {
-  return apiPost(`${ENDPOINT}/transfer`, request)
 }
 
 // ===============================
@@ -102,20 +64,6 @@ export const validateDIDFormat = async (did: string): Promise<DIDValidationRespo
 // ===============================
 // Call Information
 // ===============================
-
-/**
- * Get active calls
- */
-export const getActiveCalls = async (): Promise<{ success: boolean; data?: CallSession[]; count?: number }> => {
-  return apiGet(`${ENDPOINT}/active-calls`)
-}
-
-/**
- * Get specific call session
- */
-export const getCallSession = async (callId: string): Promise<{ success: boolean; data?: CallSession }> => {
-  return apiGet(`${ENDPOINT}/call/${callId}`)
-}
 
 /**
  * Get call logs with filtering
