@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Box, Snackbar, Alert, useMediaQuery } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import CustomModal from '../designComponent/Modal'
 import CustomTypography from '../designComponent/Typography'
 import { CustomTextField } from '../designComponent/Input'
@@ -27,6 +28,7 @@ interface DeviceFormData {
 
 const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess }) => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null)
@@ -72,6 +74,8 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
         throw { status: 400, message: t('simNumberRequired') }
       }
 
+      let simCardId: number | undefined
+
       // If device fields are partially filled, require all of them
       if (hasDeviceFields) {
         if (!data.device_number || !data.IMEI_1 || !data.model || !data.serialNumber) {
@@ -93,11 +97,12 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           simNumber: data.simNumber,
         }
 
-        await createDeviceWithSimCard({
+        const response = await createDeviceWithSimCard({
           device: deviceData,
           simCard: simCardData,
         })
 
+        simCardId = response.simCard.simCard_id
         setSuccessMessage(t('deviceAndSimCardAddedSuccessfully'))
       } else {
         // Minimal mode: Create only simCard
@@ -105,18 +110,26 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           simNumber: data.simNumber,
         }
 
-        await createSimCard(simCardData as Omit<SimCard.Model, 'simCard_id'>)
+        const response = await createSimCard(simCardData as Omit<SimCard.Model, 'simCard_id'>)
+        simCardId = response.simCard_id
         setSuccessMessage(t('simCardAddedSuccessfully'))
       }
 
       reset()
-      onClose()
       onSuccess() // Refresh the devices list
+      onClose()
+
+      // Navigate immediately to the device card
+      if (simCardId) {
+        navigate(`/device/card/${simCardId}`)
+      } else {
+        navigate('/devices')
+      }
     } catch (error: unknown) {
       const errorMsg = extractErrorMessage(error, t('deviceAddFailed'))
       setErrorMessage(errorMsg)
     }
-  }, [t, reset, onClose, onSuccess, hasDeviceFields])
+  }, [t, reset, onClose, onSuccess, hasDeviceFields, navigate])
 
   useEffect(() => {
     setSubmitHandler(() => handleSubmit(onSubmit))
