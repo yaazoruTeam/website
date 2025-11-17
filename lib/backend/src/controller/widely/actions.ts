@@ -241,6 +241,127 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
   }
 }
 
+const provCreateDid = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { 
+      purchase_type, 
+      number, 
+      number_type, 
+      auth_id, 
+      type, 
+      country, 
+      ring_to, 
+      assign_to_package,
+      sms_to_mail
+    } = req.body
+
+    // ולידציה של פרמטר חובה
+    validateRequiredParams({ purchase_type })
+
+    // ולידציה של סוג הרכישה
+    if (purchase_type !== 'new' && purchase_type !== 'port') {
+      const error: HttpError.Model = {
+        status: 400,
+        message: 'Invalid purchase_type provided. It must be either "new" or "port".'
+      }
+      throw error
+    }
+
+    // ולידציה עבור ניוד מספר
+    if (purchase_type === 'port') {
+      validateRequiredParams({ number, auth_id })
+      
+      if (number_type && number_type !== 'U') {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'Invalid number_type provided. For port operations, it should be null or "U" for prepaid numbers.'
+        }
+        throw error
+      }
+    }
+
+    // ולידציה עבור רכישת מספר חדש
+    if (purchase_type === 'new') {
+      validateRequiredParams({ type, country })
+      
+      if (!['mobile', 'landline', 'kosher'].includes(type)) {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'Invalid type provided. It must be one of: "mobile", "landline", "kosher".'
+        }
+        throw error
+      }
+    }
+
+    // ולידציה של כתובת מייל אם צוינה
+    if (sms_to_mail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(sms_to_mail)) {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'Invalid email format provided for sms_to_mail.'
+        }
+        throw error
+      }
+    }
+
+    // הכנת הנתונים לשליחה
+    const requestData: any = {
+      fake: false,
+      domain_user_id: req.body.domain_user_id,
+      purchase_type,
+    }
+
+    // הוספת פרמטרים לפי סוג הפעולה
+    if (purchase_type === 'port') {
+      requestData.number = number
+      requestData.number_type = number_type || null
+      requestData.auth_id = auth_id
+    } else if (purchase_type === 'new') {
+      requestData.number = ''
+      requestData.type = type
+      requestData.country = country
+    }
+
+    // הוספת פרמטרים אופציונליים
+    if (ring_to) {
+      // ולידציה שזה מערך של אובייקטים עם endpoint_id
+      if (!Array.isArray(ring_to)) {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'ring_to must be an array of objects with endpoint_id.'
+        }
+        throw error
+      }
+      requestData.ring_to = ring_to
+    }
+
+    if (assign_to_package !== undefined) {
+      if (typeof assign_to_package !== 'boolean') {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'assign_to_package must be a boolean value.'
+        }
+        throw error
+      }
+      requestData.assign_to_package = assign_to_package
+    }
+
+    // הוספת שדות נוספים לפי הצורך
+    requestData.sms_to_mail = sms_to_mail || null
+
+    const result: Widely.Model = await callingWidely(
+      'prov_create_did',
+      requestData
+    )
+
+    validateWidelyResult(result, 'Failed to create DID', false)
+    res.status(200).json(result)
+  } catch (error: unknown) {
+    handleError(error, next)
+  }
+}
+
 const reregisterInHlr = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id } = req.body
@@ -309,6 +430,7 @@ export {
   changeNetwork,
   addOneTimePackage,
   freezeUnFreezeMobile,
+  provCreateDid,
   updateImeiLockStatus,
   reregisterInHlr,
   cancelAllLocations
