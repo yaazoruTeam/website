@@ -32,6 +32,7 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
   const typeOptions = [
     { label: 'נייח', value: 'landline' },
     { label: 'נייד', value: 'mobile' },
+    { label: 'מספר כשר', value: 'kosher' },
   ]
 
   const handleCountrySelect = (country: { label: string; value: string; icon: React.ReactElement }) => {
@@ -85,16 +86,6 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
               name='target'
               label='בחירת סוג'
               options={typeOptions}
-            />
-          </Box>
-
-          {/* Kosher Number */}
-          <Box>
-            <CustomTextField
-              control={control}
-              name='personalID'
-              label='מספר כשר'
-              placeholder='הקלד מספר'
             />
           </Box>
 
