@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely } from '@model'
+import { HttpError, Widely, CreateDidRequest, WidelyCreateDidPayload } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, reprovisionDevice } from '@integration/widely/widelyActions'
@@ -243,6 +243,7 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
 
 const provCreateDid = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const requestBody = req.body as CreateDidRequest & { domain_user_id?: number }
     const { 
       purchase_type, 
       number, 
@@ -253,7 +254,7 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       ring_to, 
       assign_to_package,
       sms_to_mail
-    } = req.body
+    } = requestBody
 
     // ולידציה של פרמטר חובה
     validateRequiredParams({ purchase_type })
@@ -284,7 +285,7 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
     if (purchase_type === 'new') {
       validateRequiredParams({ type, country })
       
-      if (!['mobile', 'landline', 'kosher'].includes(type)) {
+      if (!['mobile', 'landline', 'kosher'].includes(type as string)) {
         const error: HttpError.Model = {
           status: 400,
           message: 'Invalid type provided. It must be one of: "mobile", "landline", "kosher".'
@@ -305,11 +306,12 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       }
     }
 
-    // הכנת הנתונים לשליחה
-    const requestData: any = {
+    // הכנת הנתונים לשליחה עם typing נכון
+    const requestData: WidelyCreateDidPayload = {
+      ...requestBody, // כל השדות מ-CreateDidRequest
       fake: false,
-      domain_user_id: req.body.domain_user_id,
-      purchase_type,
+      domain_user_id: requestBody.domain_user_id,
+      sms_to_mail: sms_to_mail || undefined
     }
 
     // הוספת פרמטרים לפי סוג הפעולה
@@ -323,8 +325,8 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       requestData.country = country
     }
 
-    // הוספת פרמטרים אופציונליים
-    if (ring_to) {
+    // הוספת פרמטרים אופציונליים (אם לא כבר קיימים)
+    if (ring_to && !requestData.ring_to) {
       // ולידציה שזה מערך של אובייקטים עם endpoint_id
       if (!Array.isArray(ring_to)) {
         const error: HttpError.Model = {
@@ -336,7 +338,7 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       requestData.ring_to = ring_to
     }
 
-    if (assign_to_package !== undefined) {
+    if (assign_to_package !== undefined && requestData.assign_to_package === undefined) {
       if (typeof assign_to_package !== 'boolean') {
         const error: HttpError.Model = {
           status: 400,
@@ -346,9 +348,6 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       }
       requestData.assign_to_package = assign_to_package
     }
-
-    // הוספת שדות נוספים לפי הצורך
-    requestData.sms_to_mail = sms_to_mail || null
 
     const result: Widely.Model = await callingWidely(
       'prov_create_did',

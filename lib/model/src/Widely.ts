@@ -88,4 +88,10 @@ interface CreateDidRequest {
   sms_to_mail?: string // Email address for SMS forwarding
 }
 
-export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest }
+// Interface for the API request payload to WIDELY (extends CreateDidRequest with system fields)
+interface WidelyCreateDidPayload extends CreateDidRequest {
+  fake: boolean // System field for WIDELY API
+  [key: string]: unknown // Allow additional properties
+}
+
+export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest, WidelyCreateDidPayload }
