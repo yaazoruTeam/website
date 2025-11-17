@@ -74,4 +74,24 @@ interface WidelyPackageData {
 // Union type for all possible data types
 type WidelyData = WidelyUserData | WidelyMobileData | WidelyPackageData | Record<string, unknown>
 
-export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData }
+// Interface for creating a new DID (Direct Inward Dialing)
+interface CreateDidRequest {
+  purchase_type: 'new' | 'port'
+  number?: string // Required for port operations
+  number_type?: string | null // For port operations, can be null or "U"
+  auth_id?: string // Required for port operations
+  type?: 'mobile' | 'landline' | 'kosher' // Required for new purchases
+  country?: string // Required for new purchases, ISO2 format like 'IL'
+  ring_to?: Array<{ endpoint_id: number }> // Array of mobile IDs to ring
+  assign_to_package?: boolean // Whether to assign to subscription
+  domain_user_id?: number // Optional domain user ID
+  sms_to_mail?: string // Email address for SMS forwarding
+}
+
+// Interface for the API request payload to WIDELY (extends CreateDidRequest with system fields)
+interface WidelyCreateDidPayload extends CreateDidRequest {
+  fake: boolean // System field for WIDELY API
+  [key: string]: unknown // Allow additional properties
+}
+
+export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest, WidelyCreateDidPayload }

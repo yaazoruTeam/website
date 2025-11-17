@@ -20,6 +20,7 @@ import * as PaymentCreditLink from './PaymentCreditLink'
 import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
+import type { CreateDidRequest, WidelyCreateDidPayload } from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ReprovisionDeviceResponse from './ReprovisionDevice'
 import * as Request from './Request'
@@ -60,4 +61,6 @@ export {
   TempComment,
   MapLocation,
   Samsung,
+  CreateDidRequest,
+  WidelyCreateDidPayload,
 }
