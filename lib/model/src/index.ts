@@ -29,7 +29,7 @@ import * as GoogleAuth from './GoogleAuth'
 import * as TempComment from './TempComment'
 import * as MapLocation from './MapLocation'
 import * as Samsung from './Samsung'
-import * as CallRecord from "./CallRecord";
+import * as CallRecord from './CallRecord'
 
 export {
   Customer,

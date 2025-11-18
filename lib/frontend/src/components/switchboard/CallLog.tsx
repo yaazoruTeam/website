@@ -64,41 +64,46 @@ const CallLog: React.FC = () => {
         return
       }
 
-      // יצירת headers של CSV
+      // יצירת headers של CSV עם תרגומים
       const headers = [
-        'מזהה',
-        'מזהה לקוח',
-        'מספר המתקשר',
-        'מספר חייוג',
-        'CID יוצא',
-        'יעד',
-        'משך (שניות)',
-        'עלות',
-        'סוג קריאה',
-        'ספק',
-        'סטטוס',
-        'זמן התחלה',
-        'שם לקוח',
+        t('callRecordId'),
+        t('callRecordCustomerId'),
+        t('callRecordCallerId'),
+        t('callRecordDialedNumber'),
+        t('callRecordOutgoingCid'),
+        t('callRecordDestination'),
+        t('callRecordDuration'),
+        t('callRecordCost'),
+        t('callRecordCallType'),
+        t('callRecordProvider'),
+        t('callRecordStatus'),
+        t('callRecordStartTime'),
+        t('callRecordCustomerName'),
       ]
 
       // יצירת שורות CSV מהנתונים
-      const rows = callRecords.map((record: CallRecord.Model) => [
-        record.id,
-        record.customerId,
-        record.callerId,
-        record.dialedNumber,
-        record.outgoingCid,
-        record.destination,
-        record.duration,
-        record.cost.toFixed(2),
-        record.callType,
-        record.provider,
-        record.status,
-        new Date(record.startTime).toLocaleString('he-IL'),
-        record.customer
-          ? `${record.customer.first_name} ${record.customer.last_name}`
-          : '',
-      ])
+      const rows = callRecords.map((record: CallRecord.Model) => {
+        const customerName =
+          record.customer?.first_name && record.customer?.last_name
+            ? `${record.customer.first_name} ${record.customer.last_name}`.trim()
+            : ''
+
+        return [
+          record.id,
+          record.customerId,
+          record.callerId,
+          record.dialedNumber,
+          record.outgoingCid,
+          record.destination,
+          record.duration,
+          record.cost.toFixed(2),
+          record.callType,
+          record.provider,
+          record.status,
+          new Date(record.startTime).toLocaleString('he-IL'),
+          customerName,
+        ]
+      })
 
       // עיצוב CSV עם BOM לתמיכה בעברית
       const csvContent = [

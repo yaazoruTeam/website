@@ -13,7 +13,7 @@ interface Model {
     provider: string,
     status: 'completed' | 'failed' | 'missed',
     startTime: Date,
-    customer: Customer.Model,
+    customer?: Customer.Model,
 }
 
 export type { Model };
