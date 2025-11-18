@@ -77,6 +77,7 @@ type WidelyData = WidelyUserData | WidelyMobileData | WidelyPackageData | Record
 // Interface for creating a new DID (Direct Inward Dialing)
 interface CreateDidRequest {
   purchase_type: 'new' | 'port'
+  domain_user_id: number // Required domain user ID
   number?: string // Required for port operations
   number_type?: string | null // For port operations, can be null or "U"
   auth_id?: string // Required for port operations
@@ -84,7 +85,6 @@ interface CreateDidRequest {
   country?: string // Required for new purchases, ISO2 format like 'IL'
   ring_to?: Array<{ endpoint_id: number }> // Array of mobile IDs to ring
   assign_to_package?: boolean // Whether to assign to subscription
-  domain_user_id?: number // Optional domain user ID
   sms_to_mail?: string // Email address for SMS forwarding
 }
 

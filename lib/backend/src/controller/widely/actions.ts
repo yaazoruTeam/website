@@ -243,7 +243,7 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
 
 const provCreateDid = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const requestBody = req.body as CreateDidRequest & { domain_user_id?: number }
+    const requestBody = req.body as CreateDidRequest
     const { 
       purchase_type, 
       number, 
@@ -253,11 +253,12 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       country, 
       ring_to, 
       assign_to_package,
-      sms_to_mail
+      sms_to_mail,
+      domain_user_id
     } = requestBody
 
-    // ולידציה של פרמטר חובה
-    validateRequiredParams({ purchase_type })
+    // ולידציה של פרמטרים חובה
+    validateRequiredParams({ purchase_type, domain_user_id })
 
     // ולידציה של סוג הרכישה
     if (purchase_type !== 'new' && purchase_type !== 'port') {
@@ -310,7 +311,7 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
     const requestData: WidelyCreateDidPayload = {
       ...requestBody, // כל השדות מ-CreateDidRequest
       fake: false,
-      domain_user_id: requestBody.domain_user_id,
+      domain_user_id: domain_user_id,
       sms_to_mail: sms_to_mail || undefined
     }
 
