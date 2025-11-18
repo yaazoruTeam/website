@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { HttpError, Widely, CreateDidRequest, WidelyCreateDidPayload } from '@model'
+import { HttpError, Widely, CreateDidRequest, WidelyCreateDidPayload, GetAvailableNumbersRequest } from '@model'
 import { callingWidely } from '@integration/widely/callingWidely'
 import { validateRequiredParams, validateWidelyResult } from '@utils/widelyValidation'
 import { sendMobileAction, reprovisionDevice } from '@integration/widely/widelyActions'
@@ -389,6 +389,70 @@ const cancelAllLocations = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+const getAvailableNumbers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { country_code, number_type, city, prefix } = req.body as GetAvailableNumbersRequest
+
+    // אם נתונו prefix או city, אין צורך ב-country_code ו-number_type
+    if (prefix || city) {
+      // ולידציה שלפחות אחד מהם קיים
+      if (!prefix && !city) {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'Either prefix or city must be provided when not using country_code and number_type.'
+        }
+        throw error
+      }
+    } else {
+      // אם לא נתונו prefix או city, country_code ו-number_type הם חובה
+      validateRequiredParams({ country_code, number_type })
+
+      // ולידציה של number_type
+      const validNumberTypes = ['mobile', 'landline', 'kosher'] as const
+      if (!validNumberTypes.includes(number_type!)) {
+        const error: HttpError.Model = {
+          status: 400,
+          message: `Invalid number_type provided. It must be one of: ${validNumberTypes.join(', ')}.`
+        }
+        throw error
+      }
+
+      // ולידציה של country_code (אם נדרש)
+      if (typeof country_code !== 'string' || country_code.length !== 2) {
+        const error: HttpError.Model = {
+          status: 400,
+          message: 'Invalid country_code provided. It must be a 2-letter country code (e.g., "IL").'
+        }
+        throw error
+      }
+    }
+
+    // הכנת הנתונים לשליחה
+    const requestData: Partial<GetAvailableNumbersRequest> = {}
+
+    if (prefix) {
+      requestData.prefix = prefix
+    }
+    if (city) {
+      requestData.city = city
+    }
+    if (!prefix && !city) {
+      requestData.country_code = country_code
+      requestData.number_type = number_type
+    }
+
+    const result: Widely.Model = await callingWidely(
+      'get_available_numbers',
+      requestData
+    )
+
+    validateWidelyResult(result, 'Failed to get available numbers', false)
+    res.status(200).json(result)
+  } catch (error: unknown) {
+    handleError(error, next)
+  }
+}
+
 const updateImeiLockStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { endpoint_id, iccid, action } = req.body
@@ -432,5 +496,6 @@ export {
   provCreateDid,
   updateImeiLockStatus,
   reregisterInHlr,
-  cancelAllLocations
+  cancelAllLocations,
+  getAvailableNumbers
 }
