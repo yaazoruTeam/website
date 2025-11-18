@@ -67,4 +67,8 @@ export class SimCards {
     default: DeviceStatus.ACTIVE
   })
   status: DeviceStatus = DeviceStatus.ACTIVE
+
+  @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
+  IMEI_1: string | null = null
+
 }

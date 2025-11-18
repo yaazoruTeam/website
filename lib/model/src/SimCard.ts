@@ -20,6 +20,7 @@ interface Model {
   created_at: Date,
   updated_at: Date,
   status?: DeviceStatus,
+  IMEI_1?: string | null,
 }
 
 function sanitize(simCard: Partial<Model>, hasId: boolean): Partial<Model> {
@@ -47,6 +48,7 @@ function sanitize(simCard: Partial<Model>, hasId: boolean): Partial<Model> {
     planEndDate: simCard.planEndDate,
     plan: simCard.plan,
     status: simCard.status,
+    IMEI_1: simCard.IMEI_1,
   }
 
   return newSimCard

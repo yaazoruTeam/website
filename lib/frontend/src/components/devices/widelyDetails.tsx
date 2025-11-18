@@ -56,7 +56,12 @@ import SwitchWithLoader from '../designComponent/SwitchWithLoader'
 import { handleError as handleErrorUtil } from '../../utils/errorHelpers'
 
 
-const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
+interface WidelyDetailsProps {
+    simNumber: string
+    onWidelyDetailsLoaded?: (widelyDetails: WidelyDeviceDetails.Model) => void
+}
+
+const WidelyDetails: React.FC<WidelyDetailsProps> = ({ simNumber, onWidelyDetailsLoaded }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
     const [basePackages, setBasePackages] = useState<PackagesData | null>(null)
     const [extraPackages, setExtraPackages] = useState<PackagesData | null>(null)
@@ -141,10 +146,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // לפי המבנה שתיארת: packages.data.items
         const items = packages?.data?.items;
         if (!items || !Array.isArray(items)) return [];
-        console.log('*****************************');
-        
-console.log(items);
-
         return items.map((pkg: PackageItem) => {
             const description = pkg.description?.EN || t('noDescriptionAvailable');
             const price = pkg.price || 0;
@@ -180,8 +181,6 @@ console.log(items);
                             style={{ width: 20, height: 20, cursor: 'pointer', color: colors.blue700 }}
                             onClick={() => {
                                 if (widelyDetails?.imei1) {
-
-console.log('689596');
                                     window.open(`https://www.imei.info/?imei=${widelyDetails.imei1}`, '_blank');
                                 }
                             }}
@@ -502,7 +501,7 @@ console.log('689596');
             setError(null);
             const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber);
             setWidelyDetails(details);
-
+            
             // עדכון הערך בטופס
             setValue('simNumber', details.simNumber);
             // עדכון ערך החיבור הנבחר
@@ -581,6 +580,15 @@ console.log('689596');
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
+
+            // קריאה ל-callback לעדכון IMEI_1 מ-Widely אם הוא מוגדר
+            if (onWidelyDetailsLoaded) {
+                try {
+                    await onWidelyDetailsLoaded(details);
+                } catch (callbackErr) {
+                    console.error('[WidelyDetails] Callback error:', callbackErr);
+                }
+            }
         } catch (err: unknown) {
             // Parse error response to determine appropriate user message
             const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingsimDetails'));
@@ -611,7 +619,7 @@ console.log('689596');
         } finally {
             setLoading(false);
         }
-    }, [simNumber, setValue, t, isUpdatingLineSuspension, isUpdatingImeiLock]);
+    }, [simNumber, setValue, t, isUpdatingLineSuspension, isUpdatingImeiLock, onWidelyDetailsLoaded]);
 
     const handleRefresh = async () => {
         // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh

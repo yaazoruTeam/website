@@ -62,7 +62,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
       simNumber: item.simNumber,
       device_number: item.device?.device_number ? item.device.device_number : '-',
       serialNumber: item.device?.serialNumber ? item.device.serialNumber : '-',
-      IMEI: item.device?.IMEI_1 ? item.device.IMEI_1 : '-',
+      IMEI: item.IMEI_1,// האם להציג כאן או את הIMEI מהסים או מהמכשיר? בינתיים הצגתי רק מהסים
       model: item.device?.model ? item.device.model : '-',
       purchaseDate: item.receivedAt ? `${formatDateToString(item.receivedAt)}` : '-',
       plan: item.plan,
