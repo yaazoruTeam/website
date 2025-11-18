@@ -4,8 +4,8 @@ import * as MonthlyPaymentManagementController from '@controller/MonthlyPaymentM
 
 import customerRouter from './customer'
 import deviceRouter from './device'
-import customerDeviceRouter from './customerDevice'
 import userRouter from './user'
+import simCardRouter from './simCard'
 import branchRouter from './branch'
 import branchCustomerRouter from './branchCustomer'
 import branchUserRouter from './branchUser'
@@ -27,8 +27,8 @@ const ROUTE_PATH = '/controller'
 
 router.use(`${ROUTE_PATH}/customer`, customerRouter)
 router.use(`${ROUTE_PATH}/device`, deviceRouter)
-router.use(`${ROUTE_PATH}/customerDevice`, customerDeviceRouter)
 router.use(`${ROUTE_PATH}/user`, userRouter)
+router.use(`${ROUTE_PATH}/simCard`, simCardRouter)
 router.use(`${ROUTE_PATH}/branch`, branchRouter)
 router.use(`${ROUTE_PATH}/branchCustomer`, branchCustomerRouter)
 router.use(`${ROUTE_PATH}/branchUser`, branchUserRouter)

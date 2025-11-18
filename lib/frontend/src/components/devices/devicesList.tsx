@@ -4,7 +4,7 @@ import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
 import CustomTypography from '../designComponent/Typography'
 import { useTranslation } from 'react-i18next'
-import { Device } from '@model'
+import { SimCard } from '@model'
 import CustomTable, { TableRowData } from '../designComponent/CustomTable'
 import StatusTag from '../designComponent/Status'
 import { useNavigate } from 'react-router-dom'
@@ -13,20 +13,20 @@ import FilterResetButton from '../designComponent/FilterResetButton'
 import AddDeviceForm from './AddDeviceForm'
 import { formatDateToString } from '../designComponent/FormatDate'
 
-type DeviceFilterType = 
+type DeviceFilterType =
   | { type: 'status'; value: 'active' | 'inactive' }
   | { type: 'date'; value: { start: Date; end: Date } }
   | null
 
 interface DevicesListProps {
-  devices: Device.Model[]
+  devices: SimCard.Model[]
   total: number
   page: number
   limit: number
   onPageChange: (page: number) => void
   onFilterChange: (filter: DeviceFilterType) => void
   onRefresh: () => void
-  isResetDisabled: boolean 
+  isResetDisabled: boolean
 }
 
 const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, onPageChange, onFilterChange, onRefresh, isResetDisabled }) => {
@@ -45,29 +45,36 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   }
 
   const columns = [
+    { label: t('simNumber'), key: 'simNumber' },
     { label: t('deviceNumber'), key: 'device_number' },
     { label: t('serialNumber'), key: 'serialNumber' },
+    { label: t('IMEI'), key: 'IMEI' },
+    { label: t('deviceModel'), key: 'model' },
     { label: t('purchaseDate'), key: 'purchaseDate' },
     { label: t('plan'), key: 'plan' },
     { label: '', key: 'status' },
   ]
 
-  const tableData = (devices ?? []).map((device) => ({
-    device_id: device.device_id,
-    device_number: device.device_number,
-    serialNumber: device.serialNumber || '-',
-    purchaseDate: device.purchaseDate != null ? `${formatDateToString(new Date(device.purchaseDate))}` : '--',
-    plan: device.plan,
-    status:
-      device.status === 'active' ? (
-        <StatusTag status='active' />
-      ) : (
-        <StatusTag status='inactive' />
-      ),
-  }))
+  const tableData = (devices ?? []).map((item: SimCard.Model) => {
 
-  const onClickDevice = (device: Device.Model) => {
-    navigate(`/device/card/${device.device_id}`)
+    return {
+      simCard_id: item.simCard_id,
+      simNumber: item.simNumber,
+      device_number: item.device?.device_number ? item.device.device_number : '-',
+      serialNumber: item.device?.serialNumber ? item.device.serialNumber : '-',
+      IMEI: item.IMEI_1,// האם להציג כאן או את הIMEI מהסים או מהמכשיר? בינתיים הצגתי רק מהסים
+      model: item.device?.model ? item.device.model : '-',
+      purchaseDate: item.receivedAt ? `${formatDateToString(item.receivedAt)}` : '-',
+      plan: item.plan,
+      status: item.device
+        ? (item.status === 'active' ? <StatusTag status='active' /> : <StatusTag status='inactive' />)
+        : <StatusTag status='active' />,
+    }
+  })
+
+  const onClickDevice = (item: SimCard.Model) => {
+    // Navigate to device card using the SIM card ID
+    navigate(`/device/card/${item.simCard_id}`)
   }
 
   const handleAddDeviceSuccess = () => {
@@ -76,10 +83,13 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
   }
 
   const handleRowClick = (rowData: TableRowData, _rowIndex: number) => {
-    const deviceId = rowData.device_id
-    const device = devices.find(d => d.device_id == deviceId)
-    if (device) {
-      onClickDevice(device)
+    const simCardId = rowData.simCard_id
+    const item = devices.find(d => {
+      const id = (d as any).simCard_id || (d as any).device_id
+      return id === simCardId
+    })
+    if (item) {
+      onClickDevice(item)
     }
   }
 
@@ -117,7 +127,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           weight='bold'
           color={colors.blue900}
         />
-        
+
         <CustomButton
           label={t('addingNewDevice')}
           size={isMobile ? 'small' : 'large'}
@@ -164,7 +174,7 @@ const DevicesList: React.FC<DevicesListProps> = ({ devices, total, page, limit, 
           <FilterResetButton onReset={handleResetFilters} disabled={isResetDisabled} />
         </Box>
       </Box>
-        
+
       <Box
         sx={{
           width: '100%',

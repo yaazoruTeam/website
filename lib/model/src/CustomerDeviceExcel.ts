@@ -38,8 +38,8 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
         customerDeviceExcel.receivedAt instanceof Date
           ? customerDeviceExcel.receivedAt
           : parseDate(customerDeviceExcel.receivedAt)
-      customerDeviceExcel.device.purchaseDate =
-        customerDeviceExcel.receivedAt
+      // customerDeviceExcel.device.purchaseDate =
+      //   customerDeviceExcel.receivedAt
       if (!customerDeviceExcel.customer) {
         const error: HttpError.Model = {
           status: 400,
@@ -53,7 +53,7 @@ const sanitize = (customerDeviceExcel: Model, isCustomer: boolean): Model => {
         device: Device.sanitize(customerDeviceExcel.device, false),
       }
     } else {
-      customerDeviceExcel.device.purchaseDate = null
+      // customerDeviceExcel.device.purchaseDate = null
       return {
         ...customerDeviceExcel,
         customer: undefined,

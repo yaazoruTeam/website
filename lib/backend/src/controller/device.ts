@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { deviceRepository } from '@repositories'
-import { Device, HttpError, DeviceStatus } from '@model'
+import { Device, HttpError } from '@model'
 import config from '@config/index'
 import { handleError } from './err'
 import logger from '@/src/utils/logger'
@@ -95,46 +95,46 @@ const getDeviceById = async (req: Request, res: Response, next: NextFunction): P
  * Get devices by status with pagination
  * GET /devices/status/:status?page=1
  */
-const getDevicesByStatus = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { status } = req.params
-    logger.debug('[Controller] Fetching devices by status', { status })
+// const getDevicesByStatus = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ): Promise<void> => {
+//   try {
+//     const { status } = req.params
+//     logger.debug('[Controller] Fetching devices by status', { status })
 
-    // Validate status
-    const validStatuses = Object.values(DeviceStatus)
-    if (!validStatuses.includes(status as DeviceStatus)) {
-      const error: HttpError.Model = {
-        status: 400,
-        message: `Invalid status. Allowed values: ${validStatuses.join(', ')}.`,
-      }
-      throw error
-    }
+//     // Validate status
+//     const validStatuses = Object.values(DeviceStatus)
+//     if (!validStatuses.includes(status as DeviceStatus)) {
+//       const error: HttpError.Model = {
+//         status: 400,
+//         message: `Invalid status. Allowed values: ${validStatuses.join(', ')}.`,
+//       }
+//       throw error
+//     }
 
-    const page = parseInt(req.params.page as string, 10) || 1
-    if (page < 1) {
-      throw { status: 400, message: 'Page must be greater than 0' }
-    }
+//     const page = parseInt(req.params.page as string, 10) || 1
+//     if (page < 1) {
+//       throw { status: 400, message: 'Page must be greater than 0' }
+//     }
 
-    const offset = (page - 1) * limit
-    const { devices, total } = await deviceRepository.getDevicesByStatus(
-      status as DeviceStatus,
-      offset,
-    )
+//     const offset = (page - 1) * limit
+//     const { devices, total } = await deviceRepository.getDevicesByStatus(
+//       status as DeviceStatus,
+//       offset,
+//     )
 
-    res.status(200).json({
-      data: devices,
-      page,
-      totalPages: Math.ceil(total / limit),
-      total,
-    })
-  } catch (error: unknown) {
-    handleError(error, next)
-  }
-}
+//     res.status(200).json({
+//       data: devices,
+//       page,
+//       totalPages: Math.ceil(total / limit),
+//       total,
+//     })
+//   } catch (error: unknown) {
+//     handleError(error, next)
+//   }
+// }
 
 /**
  * Update device
@@ -168,32 +168,32 @@ const updateDevice = async (req: Request, res: Response, next: NextFunction): Pr
  * Delete device (soft delete - marks as inactive)
  * DELETE /devices/:id
  */
-const deleteDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    logger.debug('[Controller] Deleting device', { device_id: req.params.id })
+// const deleteDevice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//   try {
+//     logger.debug('[Controller] Deleting device', { device_id: req.params.id })
 
-    Device.sanitizeIdExisting(req)
+//     Device.sanitizeIdExisting(req)
 
-    const device_id = parseInt(req.params.id, 10)
-    if (isNaN(device_id)) {
-      throw { status: 400, message: 'Invalid device ID' }
-    }
+//     const device_id = parseInt(req.params.id, 10)
+//     if (isNaN(device_id)) {
+//       throw { status: 400, message: 'Invalid device ID' }
+//     }
 
-    const existDevice = await deviceRepository.doesDeviceExist(device_id)
-    if (!existDevice) {
-      const error: HttpError.Model = {
-        status: 404,
-        message: 'Device does not exist.',
-      }
-      throw error
-    }
+//     const existDevice = await deviceRepository.doesDeviceExist(device_id)
+//     if (!existDevice) {
+//       const error: HttpError.Model = {
+//         status: 404,
+//         message: 'Device does not exist.',
+//       }
+//       throw error
+//     }
 
-    const deletedDevice = await deviceRepository.deleteDevice(device_id)
-    res.status(200).json(deletedDevice)
-  } catch (error: unknown) {
-    handleError(error, next)
-  }
-}
+//     const deletedDevice = await deviceRepository.deleteDevice(device_id)
+//     res.status(200).json(deletedDevice)
+//   } catch (error: unknown) {
+//     handleError(error, next)
+//   }
+// }
 
 /**
  * Check if device with same unique fields already exists
@@ -208,7 +208,6 @@ const checkExistingDevice = async (device: Device.Model, isUpdate: boolean) => {
 
     const existingDevice = await deviceRepository.findExistingDevice({
       device_id: isUpdate ? device.device_id : undefined,
-      SIM_number: device.SIM_number,
       IMEI_1: device.IMEI_1,
       device_number: device.device_number,
       serialNumber: device.serialNumber,
@@ -231,4 +230,4 @@ const checkExistingDevice = async (device: Device.Model, isUpdate: boolean) => {
   }
 }
 
-export { createDevice, getDevices, getDeviceById, getDevicesByStatus, updateDevice, deleteDevice }
+export { createDevice, getDevices, getDeviceById, updateDevice }

@@ -2,14 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Box, Snackbar, Alert, useMediaQuery } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import CustomModal from '../designComponent/Modal'
 import CustomTypography from '../designComponent/Typography'
 import { CustomTextField } from '../designComponent/Input'
 import { CustomButton } from '../designComponent/Button'
 import { colors } from '../../styles/theme'
-import { createDevice } from '../../api/device'
-import { Device, DeviceStatus } from '@model'
+import { Device, SimCard } from '@model'
 import { extractErrorMessage } from '../../utils/errorHelpers'
+import { createDeviceWithSimCard, createSimCard } from '../../api/simCard'
 
 interface AddDeviceFormProps {
   open: boolean
@@ -18,16 +19,16 @@ interface AddDeviceFormProps {
 }
 
 interface DeviceFormData {
-  device_number: string
-  SIM_number: string
-  IMEI_1: string
-  // mehalcha_number: string
-  serialNumber: string
-  model: string
+  device_number?: string
+  simNumber: string
+  IMEI_1?: string
+  serialNumber?: string
+  model?: string
 }
 
 const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess }) => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submitHandler, setSubmitHandler] = useState<(() => void) | null>(null)
@@ -47,38 +48,88 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
     }
   })
 
-  const { control, handleSubmit, reset } = useForm<DeviceFormData>({
+  const { control, handleSubmit, reset, watch } = useForm<DeviceFormData>({
     defaultValues: {
       device_number: '',
-      SIM_number: '',
+      simNumber: '',
       IMEI_1: '',
       serialNumber: '',
       model: '',
     }
   })
 
+  // Watch all fields to determine mode
+  const device_number = watch('device_number')
+  const IMEI_1 = watch('IMEI_1')
+  const model = watch('model')
+  const serialNumber = watch('serialNumber')
+
+  // Determine if it's full device + sim mode or just sim mode
+  const hasDeviceFields = !!(device_number || IMEI_1 || model || serialNumber)
+
   const onSubmit = useCallback(async (data: DeviceFormData) => {
     try {
-      const deviceData: Omit<Device.Model, 'device_id'> = {
-        ...data,
-        status: DeviceStatus.ACTIVE,
-        purchaseDate: null,
-        registrationDate: new Date(),
-        plan: '', //?? מאיפה מקבלים את זה to do
+      // Validation: SIM number is always required
+      if (!data.simNumber) {
+        throw { status: 400, message: t('simNumberRequired') }
       }
 
-      await createDevice(deviceData)
+      let simCardId: number | undefined
 
-      setSuccessMessage(t('deviceAddedSuccessfully'))
+      // If device fields are partially filled, require all of them
+      if (hasDeviceFields) {
+        if (!data.device_number || !data.IMEI_1 || !data.model || !data.serialNumber) {
+          throw {
+            status: 400,
+            message: t('deviceAddFormValidationError'),
+          }
+        }
+
+        // Full mode: Create device + simCard together
+        const deviceData: Omit<Device.Model, 'device_id'> = {
+          device_number: data.device_number,
+          IMEI_1: data.IMEI_1,
+          model: data.model,
+          serialNumber: data.serialNumber,
+        }
+
+        const simCardData: Partial<Omit<SimCard.Model, 'simCard_id'>> = {
+          simNumber: data.simNumber,
+        }
+
+        const response = await createDeviceWithSimCard({
+          device: deviceData,
+          simCard: simCardData,
+        })
+
+        simCardId = response.simCard.simCard_id
+        setSuccessMessage(t('deviceAndSimCardAddedSuccessfully'))
+      } else {
+        // Minimal mode: Create only simCard
+        const simCardData: Partial<Omit<SimCard.Model, 'simCard_id'>> = {
+          simNumber: data.simNumber,
+        }
+
+        const response = await createSimCard(simCardData as Omit<SimCard.Model, 'simCard_id'>)
+        simCardId = response.simCard_id
+        setSuccessMessage(t('simCardAddedSuccessfully'))
+      }
 
       reset()
-      onClose()
       onSuccess() // Refresh the devices list
+      onClose()
+
+      // Navigate immediately to the device card
+      if (simCardId) {
+        navigate(`/device/card/${simCardId}`)
+      } else {
+        navigate('/devices')
+      }
     } catch (error: unknown) {
       const errorMsg = extractErrorMessage(error, t('deviceAddFailed'))
       setErrorMessage(errorMsg)
     }
-  }, [t, reset, onClose, onSuccess])
+  }, [t, reset, onClose, onSuccess, hasDeviceFields, navigate])
 
   useEffect(() => {
     setSubmitHandler(() => handleSubmit(onSubmit))
@@ -109,36 +160,62 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
         />
       </Box>
 
-      {/* First row: mehalcha_number and model */}
+      {/* Information text */}
+      <Box sx={{ mb: 2, p: 1.5, backgroundColor: colors.blue100, borderRadius: 1 }}>
+        <CustomTypography
+          text={hasDeviceFields 
+            ? t('fillAllDeviceFieldsToCreate')
+            : t('enterSimNumberToCreateOnlySimCard')
+          }
+          variant='h5'
+          weight='regular'
+          color={colors.blue700}
+        />
+      </Box>
+
+      {/* SIM Number - Always required */}
+      <Box sx={{ mb: 2 }}>
+        <CustomTextField
+          control={control}
+          name="simNumber"
+          label={t('simNumber')}
+          inputProps={numericInputProps}
+          rules={getNumericFieldRules()}
+        />
+      </Box>
+
+      {/* Device Fields - Optional but all required if any is filled */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
           gap: 3.5,
           flexWrap: isMobile ? 'wrap' : 'nowrap',
+          mb: 2,
         }}
       >
         <CustomTextField
           control={control}
           name="serialNumber"
           label={t('serialNumber')}
-        // to do : להוסיף ולידציות 
+          rules={hasDeviceFields ? { required: t('requiredField') } : undefined}
         />
         <CustomTextField
           control={control}
           name="model"
           label={t('deviceModel')}
-          rules={{ required: t('requiredField') }}
+          rules={hasDeviceFields ? { required: t('requiredField') } : undefined}
         />
       </Box>
 
-      {/* Second row: device_number and SIM_number */}
+      {/* Second row: device_number and IMEI_1 */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
           gap: 3.5,
           flexWrap: isMobile ? 'wrap' : 'nowrap',
+          mb: 2,
         }}
       >
         <CustomTextField
@@ -146,31 +223,14 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ open, onClose, onSuccess 
           name="device_number"
           label={t('deviceNumber')}
           inputProps={numericInputProps}
-          rules={getNumericFieldRules()}
+          rules={hasDeviceFields ? getNumericFieldRules() : undefined}
         />
-        <CustomTextField
-          control={control}
-          name="SIM_number"
-          label={t('simNumber')}
-          inputProps={numericInputProps}
-          rules={getNumericFieldRules()}
-        />
-      </Box>
-
-      {/* Third row: IMEI_1 */}
-      <Box
-        sx={{
-          width: { xs: '100%', md: '50%' },
-          display: 'flex',
-          justifyContent: 'flex-start',
-        }}
-      >
         <CustomTextField
           control={control}
           name="IMEI_1"
           label="IMEI 1"
           inputProps={numericInputProps}
-          rules={getNumericFieldRules()}
+          rules={hasDeviceFields ? getNumericFieldRules() : undefined}
         />
       </Box>
 

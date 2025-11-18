@@ -56,7 +56,12 @@ import SwitchWithLoader from '../designComponent/SwitchWithLoader'
 import { handleError as handleErrorUtil } from '../../utils/errorHelpers'
 
 
-const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
+interface WidelyDetailsProps {
+    simNumber: string
+    onWidelyDetailsLoaded?: (widelyDetails: WidelyDeviceDetails.Model) => void
+}
+
+const WidelyDetails: React.FC<WidelyDetailsProps> = ({ simNumber, onWidelyDetailsLoaded }) => {
     const [widelyDetails, setWidelyDetails] = useState<WidelyDeviceDetails.Model | null>(null)
     const [basePackages, setBasePackages] = useState<PackagesData | null>(null)
     const [extraPackages, setExtraPackages] = useState<PackagesData | null>(null)
@@ -141,7 +146,6 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         // לפי המבנה שתיארת: packages.data.items
         const items = packages?.data?.items;
         if (!items || !Array.isArray(items)) return [];
-
         return items.map((pkg: PackageItem) => {
             const description = pkg.description?.EN || t('noDescriptionAvailable');
             const price = pkg.price || 0;
@@ -450,6 +454,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         startRefreshing();
 
         try {
+
             const response = await lockUnlockImei(widelyDetails?.endpoint_id || 0, widelyDetails?.iccid || '', lock);
 
             if (response.error_code !== 200) {
@@ -496,7 +501,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
             setError(null);
             const details: WidelyDeviceDetails.Model = await getWidelyDetails(simNumber);
             setWidelyDetails(details);
-
+            
             // עדכון הערך בטופס
             setValue('simNumber', details.simNumber);
             // עדכון ערך החיבור הנבחר
@@ -513,10 +518,11 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setSelectedNetworkConnection('');
                     break;
             }
+        
             // ניתן להוסיף גם ערך ברירת מחדל לתוכנית החלפה בהתבסס על נתונים מהשרת
             // setValue('replacingPackages', details.someDefaultProgram || 'program1');
             setSelectedPackage(details.package_id || "");
-            const basePackages = await getPackagesWithInfo('base');
+            const basePackages = await getPackagesWithInfo('base');            
             const extraPackages = await getPackagesWithInfo('extra');
 
             // בדיקה ושמירה בטוחה של החבילות
@@ -574,6 +580,15 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
                     setValue('addOneTimeGigabyte', defaultValue);
                 }
             }
+
+            // קריאה ל-callback לעדכון IMEI_1 מ-Widely אם הוא מוגדר
+            if (onWidelyDetailsLoaded) {
+                try {
+                    await onWidelyDetailsLoaded(details);
+                } catch (callbackErr) {
+                    console.error('[WidelyDetails] Callback error:', callbackErr);
+                }
+            }
         } catch (err: unknown) {
             // Parse error response to determine appropriate user message
             const errorMessage = handleErrorUtil('fetchWidelyDetails', err, t('errorLoadingsimDetails'));
@@ -604,7 +619,7 @@ const WidelyDetails = ({ simNumber }: { simNumber: string }) => {
         } finally {
             setLoading(false);
         }
-    }, [simNumber, setValue, t, isUpdatingLineSuspension, isUpdatingImeiLock]);
+    }, [simNumber, setValue, t, isUpdatingLineSuspension, isUpdatingImeiLock, onWidelyDetailsLoaded]);
 
     const handleRefresh = async () => {
         // אם במהלך עדכון של line suspension או IMEI lock, לא נבצע refresh

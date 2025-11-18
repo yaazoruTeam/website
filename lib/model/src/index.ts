@@ -1,12 +1,12 @@
 import { EntityType } from "./Comment";
 import * as Customer from './Customer'
 import * as Device from './Device'
-import { DeviceStatus } from './Device'
+import { DeviceStatus } from './SimCard'
 import * as HttpError from './HttpError'
 import * as HttpErrorWithStatus from './HttpErrorWithStatus'
 import * as CreateCommentDto from './Dtos'
-import * as CustomerDevice from './CustomerDevice'
 import * as User from './User'
+import * as SimCard from './SimCard'
 import * as JwtPayload from './JwtPayload'
 import * as Branch from './Branch'
 import * as BranchCustomer from './BranchCustomer'
@@ -37,8 +37,8 @@ export {
   DeviceStatus,
   HttpError,
   HttpErrorWithStatus,
-  CustomerDevice,
   User,
+  SimCard,
   JwtPayload,
   Branch,
   BranchCustomer,

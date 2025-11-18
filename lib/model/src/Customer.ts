@@ -1,4 +1,4 @@
-import { HttpError, Request } from '.'
+import { HttpError, Request, SimCard } from '.'
 
 interface Model {
   customer_id: number
@@ -13,27 +13,28 @@ interface Model {
   status: string
   created_at: Date
   updated_at: Date
+  simCards?: SimCard.Model[] // array של sim_card_ids או מספרי סימים
 }
 
 function sanitize(customer: Model, hasId: boolean): Model {
   console.log('Sanitizing Customer:', customer.email, 'hasId:', hasId);
-  
+
   const isString = (value: unknown) => typeof value === 'string'
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  
+
   // פונקציה לניקוי וחיזור מספר טלפון
   const cleanAndNormalizePhone = (phone: string | number): string => {
     const phoneStr = String(phone) // המרה למחרוזת
     const cleaned = phoneStr.replace(/[\s\-()]/g, '') // מסיר רווחים, מקפים וסוגריים
-    
+
     // אם המספר לא מתחיל ב-0 ו-הוא נראה כמו מספר ישראלי (9 ספרות), מוסיף 0 בהתחלה
     if (!cleaned.startsWith('0') && cleaned.length === 9 && /^\d{9}$/.test(cleaned)) {
       return '0' + cleaned
     }
-    
+
     return cleaned
   }
-  
+
   const isValidPhoneNumber = (phone: string | number) => {
     const normalizedPhone = cleanAndNormalizePhone(phone)
     // תמיכה במספרי טלפון בינלאומיים - בין 7 ל-15 ספרות
@@ -41,7 +42,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (hasId && !customer.customer_id) {
     console.log('Customer missing customer_id');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "customer_id".',
@@ -50,7 +51,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!isString(customer.first_name) || customer.first_name.trim() === '') {
     console.log('Customer missing or invalid first_name');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "first_name".',
@@ -59,7 +60,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!isString(customer.last_name) || customer.last_name.trim() === '') {
     console.log('Customer missing or invalid last_name');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "last_name".',
@@ -68,7 +69,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!customer.id_number) {
     console.log('Customer missing id_number');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "id_number".',
@@ -77,7 +78,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!customer.phone_number || !isValidPhoneNumber(customer.phone_number)) {
     console.log('Customer missing or invalid phone_number');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "phone_number". It must be a valid phone number with 7-15 digits.',
@@ -97,7 +98,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!isString(customer.email) || !isValidEmail(customer.email.trim())) {
     console.log('Customer missing or invalid email');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "email".',
@@ -106,7 +107,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!isString(customer.city) || customer.city.trim() === '') {
     console.log('Customer missing or invalid city');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "city".',
@@ -115,7 +116,7 @@ function sanitize(customer: Model, hasId: boolean): Model {
   }
   if (!isString(customer.address) || customer.address.trim() === '') {
     console.log('Customer missing or invalid address');
-    
+
     const error: HttpError.Model = {
       status: 400,
       message: 'Invalid or missing "address".',
@@ -177,4 +178,5 @@ const sanitizeBodyExisting = (req: Request.RequestWithBody) => {
   }
 }
 
-export { Model, sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }
+export type { Model }
+export { sanitize, sanitizeExistingCustomer, sanitizeIdExisting, sanitizeBodyExisting }
