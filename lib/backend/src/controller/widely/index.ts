@@ -12,6 +12,7 @@ export {
     changeNetwork,
     addOneTimePackage,
     freezeUnFreezeMobile,
+    provCreateDid,
     updateImeiLockStatus,
     reregisterInHlr,
     cancelAllLocations

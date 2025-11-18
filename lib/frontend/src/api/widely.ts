@@ -1,4 +1,5 @@
 import { Widely, WidelyDeviceDetails, ReprovisionDeviceResponse } from '@model'
+import type { CreateDidRequest } from '@model'
 import {
   apiPost,
   apiPostPublic,
@@ -86,5 +87,9 @@ export const registerInHlr = async (endpoint_id: number): Promise<Widely.Model> 
 
 export const softResetDevice = async (endpoint_id: number): Promise<Widely.Model> => {
   return apiPost<Widely.Model>(`${ENDPOINT}/cancel_all_locations`, { endpoint_id })
+}
+
+export const createDid = async (requestData: CreateDidRequest): Promise<Widely.Model> => {
+  return apiPost<Widely.Model>(`${ENDPOINT}/prov_create_did`, requestData)
 }
 

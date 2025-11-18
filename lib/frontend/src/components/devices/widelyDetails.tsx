@@ -341,7 +341,7 @@ console.log('689596');
 
         // בקשת אישור מהמשתמש
         const confirmed = window.confirm(
-            `${t('areYouSureRegisterInHLR')} ${widelyDetails.endpoint_id}?\n\n${t('RegisterInHLRDescription')}`
+            `${t('areYouSureComprehensiveReset')} ${widelyDetails.endpoint_id}?\n\n${t('ComprehensiveResetDescription')}`
         );
 
         if (!confirmed) return;
@@ -828,7 +828,7 @@ console.log('689596');
 
             <WidelyButtonSection>
                 <CustomButton
-                    label={t('RegisterInHLR')}
+                    label={t('ComprehensiveReset')}
                     onClick={handleRegisterInHLR}
                     buttonType="fourth"
                     size="large"
