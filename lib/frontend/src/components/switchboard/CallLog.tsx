@@ -8,7 +8,8 @@ import { ArrowDownOnSquareIcon, ArrowPathIcon } from '@heroicons/react/24/outlin
 import PhoneNumber from './PhoneNumer'
 import { formatDateToString } from '../designComponent/FormatDate'
 import CustomTable from '../designComponent/CustomTable'
-import { Switchboard } from '@model'
+import { Switchboard, CallRecord } from '@model'
+import { getCallHistory } from '../../api/switchboard'
 
 //to do: טיפוס זמני לשנות לטיפוס הנכון
 type CallLogEntry = Switchboard.CallLogEntry
@@ -53,9 +54,89 @@ const CallLog: React.FC = () => {
 
   console.log('callId', callId)
 
-  const downloadFile = () => {
-    //to do: download data to file
-    console.log('Downloading file...')
+  const downloadFile = async () => {
+    try {
+      // קריאה לשרת לקבלת הנתונים
+      const callRecords = await getCallHistory()
+      
+      if (!callRecords || callRecords.length === 0) {
+        alert(t('noDataAvailable'))
+        return
+      }
+
+      // יצירת headers של CSV
+      const headers = [
+        'מזהה',
+        'מזהה לקוח',
+        'מספר המתקשר',
+        'מספר חייוג',
+        'CID יוצא',
+        'יעד',
+        'משך (שניות)',
+        'עלות',
+        'סוג קריאה',
+        'ספק',
+        'סטטוס',
+        'זמן התחלה',
+        'שם לקוח',
+      ]
+
+      // יצירת שורות CSV מהנתונים
+      const rows = callRecords.map((record: CallRecord.Model) => [
+        record.id,
+        record.customerId,
+        record.callerId,
+        record.dialedNumber,
+        record.outgoingCid,
+        record.destination,
+        record.duration,
+        record.cost.toFixed(2),
+        record.callType,
+        record.provider,
+        record.status,
+        new Date(record.startTime).toLocaleString('he-IL'),
+        record.customer
+          ? `${record.customer.first_name} ${record.customer.last_name}`
+          : '',
+      ])
+
+      // עיצוב CSV עם BOM לתמיכה בעברית
+      const csvContent = [
+        '\uFEFF', // BOM for UTF-8
+        headers.join(','),
+        ...rows.map((row: (string | number)[]) =>
+          row
+            .map((cell: string | number) => {
+              // עטיפת תאים שמכילים פסיקים או מרכאות בגרשיים
+              const stringCell = String(cell)
+              if (stringCell.includes(',') || stringCell.includes('"') || stringCell.includes('\n')) {
+                return `"${stringCell.replace(/"/g, '""')}"` // Escape quotes
+              }
+              return stringCell
+            })
+            .join(',')
+        ),
+      ].join('\n')
+
+      // יצירת blob וקישור להורדה
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+
+      link.setAttribute('href', url)
+      link.setAttribute('download', `call-history-${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
+
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      // ניקוי הזיכרון
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading call history:', error)
+      alert(t('downloadError') || 'שגיאה בהורדת הקובץ')
+    }
   }
 
   const refresh = () => {
