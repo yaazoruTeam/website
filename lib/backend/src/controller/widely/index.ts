@@ -15,5 +15,6 @@ export {
     provCreateDid,
     updateImeiLockStatus,
     reregisterInHlr,
-    cancelAllLocations
+    cancelAllLocations,
+    getAvailableNumbers
 } from './actions'

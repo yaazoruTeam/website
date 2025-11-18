@@ -22,5 +22,6 @@ widelyRouter.post('/prov_create_did', hasRole('admin'), widelyController.provCre
 widelyRouter.post('/lock_unlock_imei', hasRole('admin'), widelyController.updateImeiLockStatus)
 widelyRouter.post('/reregister_in_hlr', hasRole('admin'), widelyController.reregisterInHlr)
 widelyRouter.post('/cancel_all_locations', hasRole('admin'), widelyController.cancelAllLocations)
+widelyRouter.post('/get_available_numbers', hasRole('admin'), widelyController.getAvailableNumbers)
 
 export default widelyRouter

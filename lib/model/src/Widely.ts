@@ -94,4 +94,12 @@ interface WidelyCreateDidPayload extends CreateDidRequest {
   [key: string]: unknown // Allow additional properties
 }
 
-export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest, WidelyCreateDidPayload }
+// Interface for getting available phone numbers from WIDELY
+interface GetAvailableNumbersRequest {
+  country_code: string // Required - 2-letter country code like 'IL'
+  number_type: 'mobile' | 'landline' | 'kosher' // Required - type of number
+  city?: string // Optional - if provided, country_code/number_type are ignored
+  prefix?: string // Optional - if provided, country_code/number_type are ignored
+}
+
+export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest, WidelyCreateDidPayload, GetAvailableNumbersRequest }
