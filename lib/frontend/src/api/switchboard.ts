@@ -1,6 +1,6 @@
-import { apiGet } from "./core/apiHelpers"
+import { apiGet, apiPost } from "./core/apiHelpers"
 const ENDPOINT = '/switchboard'
-import { CallRecord } from "@model"
+import { CallRecord, Switchboard } from "@model"
 
 interface CallHistoryResponse {
   success: boolean
@@ -13,4 +13,12 @@ export const getCallHistory = async (): Promise<CallRecord.Model[]> => {
     `${ENDPOINT}/call-log`
   )
   return response.data || []
+}
+
+export const createCustomer = async (customerData: Switchboard.CustomerData): Promise<Switchboard.CreateCustomerResponse> => {
+  const response = await apiPost<Switchboard.CreateCustomerResponse>(
+    `${ENDPOINT}/customer`,
+    customerData
+  )
+  return response
 }
