@@ -5,7 +5,7 @@ import fs from 'fs'
 // Function to find project root by looking for .env file
 const findProjectRoot = (startPath: string = __dirname): string => {
     let currentPath = startPath
-    
+
     while (currentPath !== path.dirname(currentPath)) { // Until we reach filesystem root
         const envPath = path.join(currentPath, '.env')
         if (fs.existsSync(envPath)) {
@@ -13,7 +13,7 @@ const findProjectRoot = (startPath: string = __dirname): string => {
         }
         currentPath = path.dirname(currentPath)
     }
-    
+
     // Fallback to process.cwd() if .env not found
     return process.cwd()
 }
@@ -89,6 +89,10 @@ export const config = {
         urlSamsungApi: process.env.URL_SAMSUNG_API as string,
         bearerToken: process.env.SAMSUNG_BEARER_TOKEN as string,
     },
+    switchboard: {
+        apiUrl: process.env.SWITCHBOARD_API_URL as string,
+    }
+
 };
 
 export default config

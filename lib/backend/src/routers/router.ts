@@ -20,6 +20,7 @@ import commentRouter from './comments'
 import widelyRouter from './widely'
 import excelRouter from './excel'
 import samsungRouter from './samsung'
+import switchboardRouter from './switchboard'
 
 const router = Router()
 const ROUTE_PATH = '/controller'
@@ -41,6 +42,8 @@ router.use(`${ROUTE_PATH}/comment`, commentRouter)
 router.use(`${ROUTE_PATH}/widely`, widelyRouter)
 router.use(`${ROUTE_PATH}/excel`, excelRouter)
 router.use(`${ROUTE_PATH}/samsung`, samsungRouter)
+router.use(`${ROUTE_PATH}/switchboard`, switchboardRouter)
+
 
 router.post(
   `${ROUTE_PATH}/addMonthlyPayment`,

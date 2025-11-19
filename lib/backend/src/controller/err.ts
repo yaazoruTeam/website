@@ -1,4 +1,5 @@
 import { NextFunction } from "express"
+import logger from "../utils/logger"
 
 const handleError = (error: unknown, next: NextFunction) => {
     if (error instanceof Error) {

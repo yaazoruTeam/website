@@ -31,6 +31,7 @@ import * as MapLocation from './MapLocation'
 import * as Samsung from './Samsung'
 import * as CountryNumberPattern from './CountryNumberPattern'
 import type { CountryNumberPattern as CountryNumberPatternType } from './CountryNumberPattern'
+import * as CallRecord from './CallRecord'
 
 export {
   Customer,
@@ -68,4 +69,5 @@ export {
   CreateDidApiResponse,
   CountryNumberPattern,
   CountryNumberPatternType,
+  CallRecord,
 }

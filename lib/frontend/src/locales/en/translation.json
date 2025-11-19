@@ -515,5 +515,20 @@
   "enterNumber": "Enter number",
   "selectNumber": "Select number",
   "enterNote": "Enter note",
-  "emailPlaceholder": "example@email.com"
-  }
+  "emailPlaceholder": "example@email.com",
+  "callRecordId": "ID",
+  "callRecordCustomerId": "Customer ID",
+  "callRecordCallerId": "Caller Number",
+  "callRecordDialedNumber": "Dialed Number",
+  "callRecordOutgoingCid": "Outgoing CID",
+  "callRecordDestination": "Destination",
+  "callRecordDuration": "Duration (seconds)",
+  "callRecordCost": "Cost",
+  "callRecordCallType": "Call Type",
+  "callRecordProvider": "Provider",
+  "callRecordStatus": "Status",
+  "callRecordStartTime": "Start Time",
+  "callRecordCustomerName": "Customer Name",
+  "noDataAvailable": "No data available",
+  "downloadError": "Error downloading file"
+}
