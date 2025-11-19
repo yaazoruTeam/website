@@ -8,8 +8,10 @@ import { CustomButton } from '../designComponent/Button'
 import CustomSelect from '../designComponent/CustomSelect'
 import { CustomTextField } from '../designComponent/Input'
 import { useForm } from 'react-hook-form'
-import { Switchboard } from '@model'
+import { Switchboard, CreateDidRequest, Widely } from '@model'
 import CountrySelectionModal from './CountrySelectionModal'
+import { createDid } from '../../api/widely'
+import { extractNumberFromWidelyResponse } from '../../utils/numberExtractor'
 
 interface NewNumberPurchaseModalProps {
   open: boolean
@@ -21,27 +23,79 @@ type FormData = Switchboard.PurchasingNumberFormData
 
 const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation()
-  const { control, handleSubmit, setValue } = useForm<FormData>({})
+  const { control, handleSubmit, setValue, watch } = useForm<FormData>({})
   const [openCountryModal, setOpenCountryModal] = useState(false)
   const [selectedCountry, setSelectedCountry] = useState<{
     label: string;
     value: string;
     icon: React.ReactElement;
   } | null>(null)
-
+  const [isLoadingNumber, setIsLoadingNumber] = useState(false)
+  const [newDidNumber, setNewDidNumber] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  
+  // Watch the form values to enable/disable the button
+  const selectedType = watch('target')
+  const isFormValid = selectedType && selectedCountry
+  
   const typeOptions = [
-    { label: 'נייח', value: 'landline' },
-    { label: 'נייד', value: 'mobile' },
-    { label: 'מספר כשר', value: 'kosher' },
+    { label: t('landline') || 'נייח', value: 'landline' },
+    { label: t('mobile') || 'נייד', value: 'mobile' },
+    { label: t('kosherNumber') || 'מספר כשר', value: 'kosher' },
   ]
 
   const handleCountrySelect = (country: { label: string; value: string; icon: React.ReactElement }) => {
     setSelectedCountry(country)
-    setValue('notes', country.value)
+    setValue('notifyEmailCalls', country.value)
+    // Reset previous number and error when country changes
+    setNewDidNumber(null)
+    setErrorMessage(null) 
   }
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form submitted:', data)
+  const handleGetNewNumber = async () => {
+    
+    if (!selectedType || !selectedCountry) {
+      setErrorMessage(t('pleaseSelectTypeAndCountry') || 'נא לבחור סוג ומדינה')
+      return
+    }
+
+    setIsLoadingNumber(true)
+    setErrorMessage(null)
+    setNewDidNumber(null)
+
+    try {
+      const requestData: CreateDidRequest = {
+        purchase_type: 'new',
+        country: selectedCountry.value,
+        type: selectedType as 'mobile' | 'landline' | 'kosher',
+        domain_user_id: 0 // This will be overridden by backend with env variable
+      }
+      
+      const response = await createDid(requestData)      
+      // Check if response is successful based on WIDELY API format
+      if (response && response.error_code === 200) {
+        // Extract the DID number using the utility function
+        const extractedNumber = extractNumberFromWidelyResponse(
+          response as Widely.Model, 
+          selectedCountry.value
+        )
+        
+        if (extractedNumber) {
+          setNewDidNumber(extractedNumber)
+        } else {
+          setNewDidNumber(t('numberCreatedSuccessfully') || 'מספר נוצר בהצלחה')
+        }
+      } else {
+        setErrorMessage(`${t('errorCreatingNumber') || 'שגיאה ביצירת המספר'}: ${response?.message || t('tryAgain') || 'נסה שוב'}`)
+      }
+    } catch {
+      setErrorMessage(t('errorCreatingNumberTryAgain') || 'שגיאה ביצירת המספר. נסה שוב.')
+    } finally {
+      setIsLoadingNumber(false)
+    }
+  }
+
+  const onSubmit = () => {
     // TODO: Implement the actual purchase logic
     onClose()
   }
@@ -84,7 +138,7 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
             <CustomSelect
               control={control}
               name='target'
-              label='בחירת סוג'
+              label={t('typeSelection') || 'בחירת סוג'}
               options={typeOptions}
             />
           </Box>
@@ -92,7 +146,7 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
           {/* Country */}
           <Box>
             <CustomTypography 
-              text='מדינה'
+              text={t('country') || 'מדינה'}
               variant='h4' 
               weight='regular'
               sx={{ mb: 1, textAlign: 'right', color: colors.neutral600 }}
@@ -132,7 +186,7 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
                   </>
                 ) : (
                   <CustomTypography
-                    text='בחר מדינה'
+                    text={t('selectCountry') || 'בחר מדינה'}
                     variant='h4'
                     weight='regular'
                     color={colors.neutral400}
@@ -153,13 +207,59 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
             </Box>
           </Box>
 
+          {/* Get New Number Button */}
+          <Box sx={{ textAlign: 'center', my: 2 }}>
+            <CustomButton
+              label={isLoadingNumber ? (t('gettingNumber') || 'מקבל מספר...') : (t('getNewNumberFromWIDELY') || 'קבלת מספר חדש מ-WIDELY')}
+              buttonType='second'
+              state='default'
+              onClick={handleGetNewNumber}
+              disabled={!isFormValid || isLoadingNumber}
+            />
+          </Box>
+
+          {/* Display New Number or Error */}
+          {newDidNumber && (
+            <Box sx={{ 
+              textAlign: 'center', 
+              p: 2, 
+              backgroundColor: colors.green75, 
+              borderRadius: 1,
+              border: `1px solid ${colors.green500}`
+            }}>
+              <CustomTypography
+                text={`${t('newNumber') || 'מספר חדש'}: ${newDidNumber}`}
+                variant='h4'
+                weight='bold'
+                color={colors.green500}
+              />
+            </Box>
+          )}
+
+          {errorMessage && (
+            <Box sx={{ 
+              textAlign: 'center', 
+              p: 2, 
+              backgroundColor: colors.red75, 
+              borderRadius: 1,
+              border: `1px solid ${colors.red500}`
+            }}>
+              <CustomTypography
+                text={errorMessage}
+                variant='h4'
+                weight='regular'
+                color={colors.red500}
+              />
+            </Box>
+          )}
+
           {/* Target */}
           <Box>
             <CustomTextField
               control={control}
               name='SMSToEmail'
-              label='יעד'
-              placeholder='הקלד מספר'
+              label={t('target') || 'יעד'}
+              placeholder={t('enterNumber') || 'הקלד מספר'}
             />
           </Box>
 
@@ -168,8 +268,8 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
             <CustomTextField
               control={control}
               name='notifyEmailCalls'
-              label='יעד נוסף'
-              placeholder='בחר מספר'
+              label={t('additionalTarget') || 'יעד נוסף'}
+              placeholder={t('selectNumber') || 'בחר מספר'}
             />
           </Box>
 
@@ -178,8 +278,8 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
             <CustomTextField
               control={control}
               name='notifyEmailCalls'
-              label='הערות'
-              placeholder='הקלד הערה'
+              label={t('notes') || 'הערות'}
+              placeholder={t('enterNote') || 'הקלד הערה'}
             />
           </Box>
 
@@ -188,8 +288,8 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
             <CustomTextField
               control={control}
               name='SMSToEmail'
-              label='לקבלת SMS למייל'
-              placeholder='example@email.com'
+              label={t('smsToEmail') || 'לקבלת SMS למייל'}
+              placeholder={t('emailPlaceholder') || 'example@email.com'}
             />
           </Box>
 
@@ -198,8 +298,8 @@ const NewNumberPurchaseModal: React.FC<NewNumberPurchaseModalProps> = ({ open, o
             <CustomTextField
               control={control}
               name='notifyEmailCalls'
-              label='להודיע במייל על כל השיחות'
-              placeholder='example@email.com'
+              label={t('notifyEmailCalls') || 'להודיע במייל על כל השיחות'}
+              placeholder={t('emailPlaceholder') || 'example@email.com'}
             />
           </Box>
         </Box>

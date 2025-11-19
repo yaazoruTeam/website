@@ -32,18 +32,18 @@ const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
   const countries: CountryOption[] = [
     {
       label: 'ישראל',
-      value: 'israel',
+      value: 'IL',
       icon: <img src={israelIcon} alt='ישראל' style={{ width: '20px', height: '15px' }} />,
     },
     {
       label: 'אנגליה',
-      value: 'england', 
+      value: 'GB', 
       icon: <img src={englandIcon} alt='אנגליה' style={{ width: '20px', height: '15px' }} />,
     },
     {
-      label: 'שוויץ',
-      value: 'switzerland',
-      icon: <img src={usaIcon} alt='שוויץ' style={{ width: '20px', height: '15px' }} />,
+      label: 'ארצות הברית',
+      value: 'US',
+      icon: <img src={usaIcon} alt='ארצות הברית' style={{ width: '20px', height: '15px' }} />,
     },
   ]
 

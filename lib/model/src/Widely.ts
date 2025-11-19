@@ -3,7 +3,13 @@ interface Model {
   status: string
   error_code: number
   message: string
-  data: WidelyData[]
+  data: WidelyData[] | WidelyCreateDidResponse
+}
+
+// Response structure specifically for createDid API
+interface WidelyCreateDidResponse {
+  notes: string[]
+  [key: string]: unknown
 }
 
 // Data types that can be returned by Widely API
@@ -94,4 +100,15 @@ interface WidelyCreateDidPayload extends CreateDidRequest {
   [key: string]: unknown // Allow additional properties
 }
 
-export { Model, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest, WidelyCreateDidPayload }
+// Type definition for createDid API response
+interface CreateDidApiResponse {
+  error_code: number
+  status?: string
+  message?: string
+  data?: {
+    notes?: string[]
+    [key: string]: unknown
+  }
+}
+
+export { Model, WidelyCreateDidResponse, WidelyUserData, WidelyMobileData, WidelyPackageData, WidelyData, CreateDidRequest, WidelyCreateDidPayload, CreateDidApiResponse }
