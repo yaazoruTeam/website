@@ -52,6 +52,43 @@ export interface PurchasingNumberFormData {
   notifyEmailCalls: string
 }
 
+// Customer management types
+export interface CustomerData {
+  name: string
+  realPhone: string
+  destinationPhone: string
+  email: string
+  balance?: number
+  status?: 'active' | 'inactive' | 'suspended'
+}
+
+export interface CreateCustomerResponse {
+  success: boolean
+  message: string
+  data: {
+    id: number
+    name: string
+    realPhone: string
+    destinationPhone: string
+    email: string
+    balance: number
+    status: string
+    createdAt: string
+  }
+}
+
+export interface CustomerModel {
+  id: number
+  name: string
+  realPhone: string
+  destinationPhone: string
+  email: string
+  balance: number
+  status: 'active' | 'inactive' | 'suspended'
+  createdAt: string
+  updatedAt?: string
+}
+
 // Event handler types
 export interface SwitchEventHandler {
   (checked: boolean): void

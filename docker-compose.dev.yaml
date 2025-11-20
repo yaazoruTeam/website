@@ -27,6 +27,8 @@ services:
     networks:
       - yaazoru-network
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   db:
     image: postgres:15-alpine

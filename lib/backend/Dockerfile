@@ -5,8 +5,9 @@ WORKDIR /app
 # העתקת קבצי package.json והתקנת תלויות (מנצל cache)
 COPY lib/backend/package*.json ./ 
 
-# העתקת תיקיית המודל הנדרשת כ-dependency
-COPY lib/model ./model
+# העתקת תיקיית המודל הנדרשת כ-dependency - יצירת מבנה הנכון
+RUN mkdir -p ../model
+COPY lib/model ../model
 
 # שימוש ב-npm ci שמבטיח התקנה נקייה
 RUN npm ci --include=dev
@@ -27,7 +28,7 @@ WORKDIR /app
 COPY --from=builder /app/package*.json ./ 
 
 # העתקת תיקיית המודל משלב ה-builder
-COPY --from=builder /app/model ./model 
+COPY --from=builder /model ./model 
 
 # התקנת תלויות Production עם npm ci
 RUN npm ci --omit=dev
