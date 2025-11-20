@@ -13,6 +13,14 @@ export enum CustomerStatus {
   INACTIVE = 'inactive'
 }
 
+export enum CustomerCategory {
+  MAIN = 'main',
+  SAND = 'sand',
+  YOUTUBE = 'youtube',
+  APP = 'app',
+  WAZE = 'waze'
+}
+
 @Entity('customers', { schema: 'yaazoru' })
 @Unique(['email'])
 @Unique(['phone_number'])
@@ -53,6 +61,13 @@ export class Customer {
     default: CustomerStatus.ACTIVE
   })
   status: CustomerStatus = CustomerStatus.ACTIVE
+
+  @Column({
+    type: 'enum',
+    enum: CustomerCategory,
+    nullable: true
+  })
+  category: CustomerCategory | null = null
 
   @Index()
   @CreateDateColumn()

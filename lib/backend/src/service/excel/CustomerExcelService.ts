@@ -17,6 +17,7 @@ import {
   validateRowData,
   createCommentForEntity
 } from './BaseExcelService'
+import { CustomerCategory } from '@model/Customer'
 
 /**
  * ממיר נתוני שורה גולמיים למודל לקוח
@@ -34,7 +35,8 @@ const convertFlatRowToCustomerModel = (item: ExcelRowData): Customer.Model => {
     address: String(item.address || '').trim(),
     status: 'active', // סטטוס ברירת מחדל
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
+    category: (item.category as CustomerCategory) || null,
   }
 }
 

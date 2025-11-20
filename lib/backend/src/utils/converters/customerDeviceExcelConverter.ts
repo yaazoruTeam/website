@@ -1,5 +1,6 @@
 import { DeviceStatus } from '@/src/entities'
 import { CustomerDeviceExcel } from '@model'
+import { CustomerCategory } from '@model/Customer'
 
 const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExcel.Model => {
   return {
@@ -16,6 +17,7 @@ const convertFlatRowToModel = (row: Record<string, unknown>): CustomerDeviceExce
       status: 'active',
       created_at: new Date(),
       updated_at: new Date(),
+      category: (row.category as CustomerCategory) || null,
     },
     device: {
       device_number: (row.device_number as string) || '',
