@@ -34,6 +34,7 @@ const requiredEnvVars = {
     GOOGLE_APPLICATION_CREDENTIALS_JSON: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
     URL_SAMSUNG_API: process.env.URL_SAMSUNG_API,
     SAMSUNG_BEARER_TOKEN: process.env.SAMSUNG_BEARER_TOKEN,
+    WIDELY_DOMAIN_USER_ID: process.env.WIDELY_DOMAIN_USER_ID,
 };
 
 // Check for missing required variables
@@ -79,6 +80,7 @@ export const config = {
         authId: Number(process.env.AUTH_ID) || 0,
         urlAccountAction: process.env.ACCOUNT_ACTION as string,
         urlAppAction: process.env.APP_ACTION as string,
+        domainUserId: Number(process.env.WIDELY_DOMAIN_USER_ID) || 0,
     },
     google: {
         applicationCredentialsJson: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string,

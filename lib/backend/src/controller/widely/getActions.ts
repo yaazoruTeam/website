@@ -112,7 +112,9 @@ const getMobilesData = async (domain_user_id: number): Promise<Widely.WidelyMobi
   validateWidelyResult(result, 'Failed to load user devices.')
   logger.debug('getMobilesData validateWidelyResult passed')
 
-  const mobileData = result.data[0]
+  const mobileData = Array.isArray(result.data) && result.data.length > 0 
+    ? result.data[0] 
+    : null
   logger.debug('getMobilesData extracted first mobile data', { 
     mobileData,
     mobileDataKeys: mobileData ? Object.keys(mobileData) : 'mobileData is null/undefined',
@@ -160,7 +162,9 @@ const getMobileInfoData = async (endpoint_id: number): Promise<Widely.WidelyMobi
   // Handle response with data property (Widely.Model structure)
   if (result.data !== undefined) {
     logger.debug('getMobileInfoData handling response with data property')
-    const mobileData = Array.isArray(result.data) ? result.data[0] : result.data
+    const mobileData = Array.isArray(result.data) && result.data.length > 0 
+      ? result.data[0] 
+      : (typeof result.data === 'object' && result.data !== null ? result.data : null)
     
     logger.debug('getMobileInfoData extracted mobile data from result.data', { 
       mobileData,

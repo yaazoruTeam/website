@@ -140,7 +140,9 @@ const reprovisionDeviceController = async (req: Request, res: Response, next: Ne
         originalInfo: result.originalInfo,
         terminationSuccess,
         creationSuccess,
-        newEndpointId: result.creationResult.data?.[0]?.endpoint_id || null,
+        newEndpointId: Array.isArray(result.creationResult.data) && result.creationResult.data.length > 0
+          ? (result.creationResult.data[0] as any)?.endpoint_id || null
+          : null,
         terminationResult: result.terminationResult,
         creationResult: result.creationResult
       }
@@ -243,7 +245,7 @@ const freezeUnFreezeMobile = async (req: Request, res: Response, next: NextFunct
 
 const provCreateDid = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const requestBody = req.body as CreateDidRequest & { domain_user_id?: number }
+    const requestBody = req.body as CreateDidRequest
     const { 
       purchase_type, 
       number, 
@@ -253,10 +255,25 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
       country, 
       ring_to, 
       assign_to_package,
-      sms_to_mail
+      sms_to_mail,
+      domain_user_id
     } = requestBody
 
-    // ולידציה של פרמטר חובה
+    // If domain_user_id is not provided or is 0, use environment variable
+    let finalDomainUserId = domain_user_id
+    if (domain_user_id === 0) {
+      const envDomainUserId = config.widely.domainUserId
+      
+      if (!envDomainUserId) {
+        const error: HttpError.Model = {
+          status: 500,
+          message: 'WIDELY_DOMAIN_USER_ID environment variable is required when domain_user_id = 0.'
+        }
+        throw error
+      }
+      finalDomainUserId = Number(envDomainUserId)
+    }
+    // ולידציה של פרמטרים חובה
     validateRequiredParams({ purchase_type })
 
     // ולידציה של סוג הרכישה
@@ -310,7 +327,7 @@ const provCreateDid = async (req: Request, res: Response, next: NextFunction): P
     const requestData: WidelyCreateDidPayload = {
       ...requestBody, // כל השדות מ-CreateDidRequest
       fake: false,
-      domain_user_id: requestBody.domain_user_id,
+      domain_user_id: finalDomainUserId, // Use the resolved domain_user_id
       sms_to_mail: sms_to_mail || undefined
     }
 

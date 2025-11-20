@@ -29,6 +29,13 @@ const Switchboard: React.FC = () => {
       notes: 'אין לי מה לכתוב...',
       balanceForUse: 100,
     },
+    {
+      ID: 400114381,
+      customerName: 'יעזורו',
+      email: 'yaazoru@gmail.com',
+      notes: 'אין לי מה לכתוב...',
+      balanceForUse: 100,
+    },
   ])
 
   const settings = () => {

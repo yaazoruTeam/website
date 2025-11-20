@@ -20,7 +20,7 @@ import * as PaymentCreditLink from './PaymentCreditLink'
 import * as MonthlyPaymentManagement from './MonthlyPaymentManagement'
 import * as Comment from './Comment'
 import * as Widely from './Widely'
-import type { CreateDidRequest, WidelyCreateDidPayload } from './Widely'
+import type { CreateDidRequest, WidelyCreateDidPayload, CreateDidApiResponse } from './Widely'
 import * as WidelyDeviceDetails from './WidelyDeviceDetails'
 import * as ReprovisionDeviceResponse from './ReprovisionDevice'
 import * as Request from './Request'
@@ -29,6 +29,8 @@ import * as GoogleAuth from './GoogleAuth'
 import * as TempComment from './TempComment'
 import * as MapLocation from './MapLocation'
 import * as Samsung from './Samsung'
+import * as CountryNumberPattern from './CountryNumberPattern'
+import type { CountryNumberPattern as CountryNumberPatternType } from './CountryNumberPattern'
 import * as CallRecord from './CallRecord'
 
 export {
@@ -64,5 +66,8 @@ export {
   Samsung,
   CreateDidRequest,
   WidelyCreateDidPayload,
+  CreateDidApiResponse,
+  CountryNumberPattern,
+  CountryNumberPatternType,
   CallRecord,
 }

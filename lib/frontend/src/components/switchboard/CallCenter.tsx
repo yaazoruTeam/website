@@ -14,7 +14,7 @@ import TableWithArrow from '../../assets/TableWithArrow.svg'
 import ChangingDestinations from '../../assets/ChangingDestinations.svg'
 import CallLog from '../../assets/CallLog.svg'
 import ChangeAccountModal from './ChangeAccountModal'
-import PurchasingNewNumber from './PurchasingNewNumber'
+import NewNumberPurchaseModal from './NewNumberPurchaseModal'
 import SwitchboardTabs from './SwitchboardTabs'
 import CustomSearchSelect from '../designComponent/CustomSearchSelect'
 import { Switchboard } from '@model'
@@ -203,7 +203,7 @@ const CallCenter: React.FC = () => {
   return (
     <Box>
       <ChangeAccountModal open={openSwitchAccount} onClose={() => setOpenSwitchAccount(false)} />
-      <PurchasingNewNumber open={openBuyNew} onClose={() => setOpenBuyNew(false)} />
+      <NewNumberPurchaseModal open={openBuyNew} onClose={() => setOpenBuyNew(false)} />
       <Box
         sx={{
           display: 'flex',
